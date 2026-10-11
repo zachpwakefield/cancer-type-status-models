@@ -1,0 +1,169 @@
+{
+  "bootstrap_95ci": {
+    "auprc_normal": [
+      0.8231842185412349,
+      0.969250643795311
+    ],
+    "auroc": [
+      0.9816839013247433,
+      0.9962134938688001
+    ],
+    "balanced_accuracy": [
+      0.8931304741316451,
+      0.9760185008683864
+    ],
+    "mcc": [
+      0.7650148071318557,
+      0.9183497135032257
+    ]
+  },
+  "classes": [
+    "Normal",
+    "Tumour"
+  ],
+  "cohort": "LIHC",
+  "config": {
+    "model": {
+      "device": "cpu",
+      "max_epochs": {
+        "cancer_type": 100,
+        "tumor_status": 300
+      },
+      "patience": {
+        "cancer_type": 12,
+        "tumor_status": 20
+      }
+    },
+    "preprocess": {
+      "clip_z": 10.0,
+      "gex_min_expressed_frac": 0.1,
+      "gex_min_log2cpm": 1.0,
+      "min_observed_frac": 0.5
+    },
+    "shap": {
+      "background_size": 100,
+      "top_k_report": 30
+    },
+    "splits": {
+      "inner_folds": 3,
+      "inner_folds_used": {
+        "cancer_type": 1,
+        "tumor_status": 3
+      },
+      "outer_folds": 5,
+      "seed": 20261010
+    },
+    "tuning": {
+      "n_trials": {
+        "cancer_type": 20,
+        "tumor_status": 30
+      },
+      "pruner_startup_trials": 6,
+      "search_space": {
+        "batch_size": {
+          "cancer_type": [
+            128,
+            256,
+            512
+          ],
+          "tumor_status": [
+            32,
+            64,
+            128,
+            256
+          ]
+        },
+        "dropout": [
+          0.0,
+          0.6
+        ],
+        "input_dropout": [
+          0.0,
+          0.5
+        ],
+        "lr": [
+          0.0001,
+          0.003
+        ],
+        "n_features": [
+          500,
+          1000,
+          2000,
+          4000
+        ],
+        "n_layers": [
+          1,
+          3
+        ],
+        "selection": [
+          "variance",
+          "anova"
+        ],
+        "weight_decay": [
+          1e-06,
+          0.01
+        ],
+        "width": [
+          64,
+          1024
+        ]
+      }
+    }
+  },
+  "git_commit": "HEAD+dirty",
+  "n_features_by_fold": [
+    4000,
+    4000,
+    4000,
+    4000,
+    1000
+  ],
+  "packages": {
+    "numpy": "1.26.4",
+    "optuna": "4.6.0",
+    "pandas": "2.3.3",
+    "pyarrow": "23.0.1",
+    "python": "3.10.20",
+    "scipy": "1.15.3",
+    "shap": "0.48.0",
+    "sklearn": "1.7.2",
+    "torch": "2.2.2"
+  },
+  "per_fold_mean": {
+    "auprc_normal": 0.9243800013118195,
+    "auroc": 0.9913548853959814,
+    "balanced_accuracy": 0.9301712328767124,
+    "mcc": 0.837714347221145
+  },
+  "per_fold_sd": {
+    "auprc_normal": 0.10181439975091926,
+    "auroc": 0.010467616346083675,
+    "balanced_accuracy": 0.08596575997328137,
+    "mcc": 0.1449987546626245
+  },
+  "pooled_oof": {
+    "accuracy": 0.9663461538461539,
+    "auprc_normal": 0.898360529781739,
+    "auprc_tumour": 0.9986582825505764,
+    "auroc": 0.9896174863387978,
+    "balanced_accuracy": 0.9377049180327869,
+    "brier": 0.025189786469238695,
+    "f1_normal": 0.8653846153846154,
+    "log_loss": 0.09788091356512583,
+    "mcc": 0.8470046638850685,
+    "n": 416,
+    "n_normal": 50,
+    "n_tumour": 366,
+    "sensitivity_tumour": 0.9754098360655737,
+    "specificity_normal": 0.9
+  },
+  "selection_method_by_fold": [
+    "variance",
+    "anova",
+    "variance",
+    "anova",
+    "anova"
+  ],
+  "task": "tumor_status",
+  "view": "ri"
+}

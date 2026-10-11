@@ -150,6 +150,9 @@ OMP_NUM_THREADS=1 python scripts/04_run_job.py tumor_status se BRCA
   redistributed.
 - **Local-only outputs:** processed matrices, model weights, SHAP arrays and per-sample
   predictions are written to the git-ignored `data.nosync/`.
+- **Provenance of the published results:** the 144 jobs were run on 2026-10-10/11 with the
+  code of commit `b249c3c`. Each `metrics.json` records `git_commit: null` because the runs
+  finished before that first commit. Its `config` block records the exact settings.
 - **Environment note:** set `OMP_NUM_THREADS` before Python starts. In this environment
   (torch 2.2.2 + conda-forge numpy, macOS), importing numpy before torch with multiple OpenMP
   threads segfaults; `scripts/_common.py` handles it.
