@@ -1,0 +1,1 @@
+**How well does each view identify the cancer type (33 TCGA projects + pooled normal, 34 classes)?** Out-of-fold accuracy, balanced accuracy and macro F1, with 95% case-level bootstrap CIs (200 resamples).

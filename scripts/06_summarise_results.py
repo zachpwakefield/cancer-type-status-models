@@ -1,12 +1,14 @@
 """Step 06: cross-job summary tables, figures and results/RESULTS.md.
 
 Reads results/<task>/<view>/<cohort>/metrics.json (+ local SHAP arrays for the figures).
-Writes results/summary/*.csv and *.png, per-job figures, results/RESULTS.md, and the results
-block of README.md (between the RESULTS markers). Safe to run while jobs are still running:
+Writes results/summary/*.csv and figures (house style, docs/FIGURE_GUIDELINES.md: SVG, PDF,
+400-dpi PNG, a CSV of the plotted values and a caption file each), per-job figures (PNG),
+results/RESULTS.md, and the results block of README.md (between the RESULTS markers). Safe to run while jobs are still running:
 missing jobs are reported as such.
 """
 from __future__ import annotations
 
+import argparse
 import json
 import re
 
@@ -16,6 +18,7 @@ from _common import REPO, log
 
 from ctsm.config import PAN, load_config
 from ctsm.explain import class_importance_matrix, load_folds
+from ctsm.figstyle import feature_label
 from ctsm.plots import VIEW_NAMES, beeswarm, dot_metrics, heatmap
 
 N_BEESWARM = 15
@@ -62,9 +65,15 @@ def per_job_figures(cfg, task: str, view: str, cohort: str) -> None:
                     v.append(f["X"][:, j])
             shs.append(np.concatenate(s))
             vals.append(np.concatenate(v))
-        labels = [f"{lab}  ({n}/5)" for lab, n in zip(top["label"], top["n_folds_selected"])]
-        beeswarm(shs, vals, labels, f"{cohort} · {vname} · tumour vs normal: top {len(top)} features by mean |SHAP|",
-                 "SHAP value (impact on tumour log-odds; > 0 pushes towards tumour)", out / "shap_beeswarm.png")
+        labels = [f"{feature_label(lab)}  ({n}/5)" for lab, n in zip(top["label"], top["n_folds_selected"])]
+        beeswarm(shs, vals, labels, f"SHAP, {cohort} tumour log-odds", out, "fig_shap_beeswarm",
+                 caption=f"**{cohort}, {vname}, tumour vs normal: the {len(top)} features with the largest mean "
+                         "|SHAP|.** Each dot is one held-out sample (every outer fold explains only its own test "
+                         "samples); x = SHAP value on the tumour log-odds (> 0 pushes towards tumour); colour = "
+                         "the feature's standardised value (blue low, red high, clipped at ±2.5). Row label: "
+                         "host gene (HGNC) and event coordinates, then the number of the 5 outer folds whose "
+                         "feature selection kept the feature. Values: `shap_top_features.csv` (per-sample SHAP "
+                         "values stay local, D-12).")
         return
     classes = json.loads((out / "metrics.json").read_text())["classes"]
     imp = class_importance_matrix(folds, classes)
@@ -76,14 +85,20 @@ def per_job_figures(cfg, task: str, view: str, cohort: str) -> None:
             if fid not in rows:
                 rows.append(fid)
     mat = imp.loc[rows].copy()
-    mat.index = [lab.get(f, f) for f in rows]
-    heatmap(mat, f"PANCAN · {vname} · mean |SHAP| of each class's top-2 features (rows) across classes",
-            out / "shap_class_heatmap.png", vmin=0, fmt=None, cbar_label="mean |SHAP| (centred logit)",
-            cell=0.26, xrot=90)
+    mat.index = [feature_label(lab.get(f, f)) for f in rows]
+    heatmap(mat, out, "fig_shap_class_heatmap", vmin=0, fmt=None, cbar_label="mean |SHAP|", cell=0.11, xrot=90,
+            formats=("png",), label_size=4.5,
+            caption=f"**Cancer type, {vname}: what each class relies on.** Rows: the two features with the largest "
+                    "mean |SHAP| for each class (host gene and coordinates); columns: classes. Cell: mean |SHAP| "
+                    "of the row's feature over the held-out samples of the column's class, explaining each "
+                    "sample's own centred class logit (D-10). A block on the diagonal means the class's top "
+                    "features are specific to it.")
     cm = pd.read_csv(out / "confusion_matrix.csv", index_col=0)
     cmn = cm.div(cm.sum(axis=1).replace(0, np.nan), axis=0)
-    heatmap(cmn, f"PANCAN · {vname} · confusion matrix (row-normalised, out-of-fold)", out / "confusion_matrix.png",
-            vmin=0, vmax=1, fmt=None, cbar_label="fraction of true class", cell=0.26, xrot=90)
+    heatmap(cmn, out, "fig_confusion_matrix", vmin=0, vmax=1, fmt=None, cbar_label="fraction of true class",
+            cell=0.11, xrot=90, formats=("png",), label_size=4.5,
+            caption=f"**Cancer type, {vname}: out-of-fold confusion matrix, row-normalised** (rows = true class, "
+                    "columns = predicted class). Counts: `confusion_matrix.csv`.")
 
 
 def top_genes(cfg, task: str, cohorts: list[str], k: int = 5) -> pd.DataFrame:
@@ -98,6 +113,9 @@ def top_genes(cfg, task: str, cohorts: list[str], k: int = 5) -> pd.DataFrame:
 
 
 def main() -> None:
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--no-job-figures", action="store_true", help="skip the per-job figures (summary only)")
+    args = ap.parse_args()
     cfg = load_config()
     out = cfg.results_dir / "summary"
     out.mkdir(parents=True, exist_ok=True)
@@ -119,15 +137,15 @@ def main() -> None:
         views = view_order(cfg, ts)
         names = [VIEW_NAMES[v] for v in views]
         auc = ts.pivot(index="cohort", columns="view", values="auroc").reindex(index=cancers, columns=views)
-        bac = ts.pivot(index="cohort", columns="view", values="balanced_accuracy").reindex(index=cancers, columns=views)
-        auc.columns = bac.columns = names
-        heatmap(auc, "Tumour vs normal · pooled out-of-fold AUROC", out / "fig_tumor_status_auroc.png",
-                vmin=max(0.5, float(np.nanmin(auc.values)) - 0.01), vmax=1.0, cbar_label="AUROC")
-        heatmap(bac, "Tumour vs normal · balanced accuracy (threshold 0.5)", out / "fig_tumor_status_balanced_accuracy.png",
-                vmin=max(0.5, float(np.nanmin(bac.values)) - 0.01), vmax=1.0, cbar_label="balanced accuracy")
+        auc.columns = names
+        auc.index.name = "cancer"
+        heatmap(auc, out, "fig_tumor_status_auroc", vmin=0.85, vmax=1.0, extend="min", cbar_label="AUROC", cell=0.27,
+                caption="**How well does each view separate tumour from matched-site normal tissue?** Pooled "
+                        "out-of-fold AUROC of each per-cancer tumour-vs-normal model (rows: the 15 cancers with "
+                        ">= 10 normal cases; columns: views). Each sample is scored by the outer-fold model that "
+                        "never saw its patient. CIs and balanced accuracy: `results/RESULTS.md`.")
         md += ["## Task 1 — tumour vs normal, per cancer", "",
                "![AUROC](summary/fig_tumor_status_auroc.png)", "",
-               "![Balanced accuracy](summary/fig_tumor_status_balanced_accuracy.png)", "",
                "### AUROC (95 % CI)", "", "| Cancer | n (normal) | " + " | ".join(names) + " |",
                "|---|---|" + "---|" * len(names)]
         for c in cancers:
@@ -159,16 +177,21 @@ def main() -> None:
         d = ct.set_index("view").loc[views]
         d.index = [VIEW_NAMES[v] for v in views]
         dot_metrics(d, ["accuracy", "balanced_accuracy", "macro_f1"], ["accuracy", "balanced accuracy", "macro F1"],
-                    "Cancer type (33 TCGA projects + Normal) · out-of-fold metrics with 95 % CI",
-                    out / "fig_cancer_type_metrics.png")
+                    out, "fig_cancer_type_metrics",
+                    caption="**How well does each view identify the cancer type (33 TCGA projects + pooled "
+                            "normal, 34 classes)?** Out-of-fold accuracy, balanced accuracy and macro F1, with "
+                            "95% case-level bootstrap CIs (200 resamples).")
         rec = {}
         for v in views:
             pc = pd.read_csv(cfg.result_dir("cancer_type", v, PAN) / "per_class_metrics.csv")
             rec[VIEW_NAMES[v]] = pc.set_index("class")["recall"]
         rec = pd.DataFrame(rec)
         rec.to_csv(out / "cancer_type_recall_by_class.csv")
-        heatmap(rec, "Cancer type · per-class recall (out-of-fold)", out / "fig_cancer_type_recall.png",
-                vmin=0, vmax=1, fmt="{:.2f}", cbar_label="recall", cell=0.4)
+        rec.index.name = "class"
+        heatmap(rec, out, "fig_cancer_type_recall", vmin=0.5, vmax=1, extend="min", fmt="{:.2f}", cbar_label="recall",
+                cell=0.24,
+                caption="**Which classes does each view recover?** Out-of-fold recall per class (rows) and view "
+                        "(columns).")
         md += ["## Task 2 — cancer type (33 TCGA projects + pooled Normal), pan-cancer", "",
                "![Cancer type metrics](summary/fig_cancer_type_metrics.png)", "",
                "| View | Accuracy | Balanced accuracy | Macro F1 | Macro AUROC (OvR) | Top-3 accuracy | Log loss |",
@@ -191,8 +214,8 @@ def main() -> None:
            "- `shap_top_genes.csv`: the same importances summed per host gene;",
            "- `shap_top_features_by_class.csv` (cancer type): top 30 features per class, explaining each "
            "sample's own centred class logit, with a per-class direction;",
-           "- figures: `shap_beeswarm.png` (tumour status), `shap_class_heatmap.png` and "
-           "`confusion_matrix.png` (cancer type).", ""]
+           "- figures: `fig_shap_beeswarm.png` (tumour status), `fig_shap_class_heatmap.png` and "
+           "`fig_confusion_matrix.png` (cancer type), each with a `.caption.md`.", ""]
     for task, cohorts in [("tumor_status", cancers), ("cancer_type", [PAN])]:
         tg = top_genes(cfg, task, cohorts)
         if len(tg):
@@ -208,7 +231,7 @@ def main() -> None:
     # ---- per-job figures and links -----------------------------------------------------------
     done = [(t, v, c) for t, df in [("tumor_status", ts), ("cancer_type", ct)] if len(df)
             for v, c in zip(df["view"], df["cohort"])]
-    for t, v, c in done:
+    for t, v, c in ([] if args.no_job_figures else done):
         try:
             per_job_figures(cfg, t, v, c)
         except FileNotFoundError as e:

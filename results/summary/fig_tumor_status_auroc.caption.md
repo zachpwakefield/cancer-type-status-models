@@ -1,0 +1,1 @@
+**How well does each view separate tumour from matched-site normal tissue?** Pooled out-of-fold AUROC of each per-cancer tumour-vs-normal model (rows: the 15 cancers with >= 10 normal cases; columns: views). Each sample is scored by the outer-fold model that never saw its patient. CIs and balanced accuracy: `results/RESULTS.md`.

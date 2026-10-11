@@ -1,0 +1,1 @@
+**Cancer type, MXE: what each class relies on.** Rows: the two features with the largest mean |SHAP| for each class (host gene and coordinates); columns: classes. Cell: mean |SHAP| of the row's feature over the held-out samples of the column's class, explaining each sample's own centred class logit (D-10). A block on the diagonal means the class's top features are specific to it.
