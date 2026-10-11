@@ -1,0 +1,2 @@
+collection,term,set_size,overlap,expected,fold_enrichment,p_wallenius,p_hyper,genes,q,task,view,cohort,label,n_top,universe
+hallmark,HALLMARK_E2F_TARGETS,53,9,3.1264187101654257,2.878693110022934,0.003307780760446466,0.0034172546179387915,"CIT,DDX39A,KPNA2,MXD3,NOP56,PPP1R8,PSMC3IP,SSRP1,STMN1",0.13892679193875157,tumor_status,ri,LIHC,LIHC,200,3374

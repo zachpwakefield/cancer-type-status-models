@@ -1,0 +1,2 @@
+collection,term,set_size,overlap,expected,fold_enrichment,p_wallenius,p_hyper,genes,q,task,view,cohort,label,n_top,universe
+hallmark,HALLMARK_KRAS_SIGNALING_UP,30,6,1.479558990889351,4.055262437622341,0.002931662211253072,0.003388722791755061,"AKT2,CSF2RA,EPB41L3,LAT2,PLAU,PTBP2",0.1260614750838821,tumor_status,a5ss,ESCA,ESCA,200,3939

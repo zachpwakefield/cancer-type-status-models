@@ -1,0 +1,2 @@
+collection,term,set_size,overlap,expected,fold_enrichment,p_wallenius,p_hyper,genes,q,task,view,cohort,label,n_top,universe,excluded
+hallmark,HALLMARK_P53_PATHWAY,56,10,3.8062363478186043,2.6272672231011374,0.003785554621942522,0.00087436614252962,"BAX,CTSD,DCXR,DDIT3,GLS2,PLK3,RACK1,RALGDS,SLC3A2,SPHK1",0.15899329412158592,cancer_type,ri,PANCAN,BRCA,200,3582,ribosomal

@@ -1,0 +1,2 @@
+collection,term,set_size,overlap,expected,fold_enrichment,p_wallenius,p_hyper,genes,q,task,view,cohort,label,n_top,universe
+go_bp,GOBP_POSITIVE_REGULATION_OF_B_CELL_MEDIATED_IMMUNITY,22,5,0.4501014820687553,11.10860594597248,6.762749823741032e-05,5.130906687775701e-05,"EXOSC3,KMT5B,NECTIN2,STAT6,TGFB1",0.21262085445841805,cancer_type,ale,PANCAN,READ,200,10364

@@ -1,0 +1,2 @@
+collection,term,set_size,overlap,expected,fold_enrichment,p_wallenius,p_hyper,genes,q,task,view,cohort,label,n_top,universe
+reactome,REACTOME_NCAM1_INTERACTIONS,15,4,0.33233996267773475,12.035868234957775,0.00026353680939172897,0.00015546774070968823,"AGRN,COL4A5,COL5A2,COL6A2",0.23876434930890644,cancer_type,ale,PANCAN,SARC,200,10364

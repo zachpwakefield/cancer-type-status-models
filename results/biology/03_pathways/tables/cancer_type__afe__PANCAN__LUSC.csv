@@ -1,0 +1,2 @@
+collection,term,set_size,overlap,expected,fold_enrichment,p_wallenius,p_hyper,genes,q,task,view,cohort,label,n_top,universe
+hallmark,HALLMARK_UV_RESPONSE_UP,107,8,2.5855930408251435,3.0940677336627385,0.004268333473132047,0.003353710609281443,"ACAA1,ARRB2,BTG3,FURIN,HLA-F,MGAT1,PRKACA,TMBIM6",0.20488000671033824,cancer_type,afe,PANCAN,LUSC,200,8616

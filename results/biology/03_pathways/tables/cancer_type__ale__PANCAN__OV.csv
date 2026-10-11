@@ -1,0 +1,2 @@
+collection,term,set_size,overlap,expected,fold_enrichment,p_wallenius,p_hyper,genes,q,task,view,cohort,label,n_top,universe
+reactome,REACTOME_SARS_COV_2_MODULATES_HOST_TRANSLATION_MACHINERY,29,6,0.4951503862006944,12.117530688076812,7.867600112287931e-06,1.571430352549263e-05,"RPS24,RPS29,RPS4X,SMN1,SMN2,SNRPD2",0.007128045701732866,cancer_type,ale,PANCAN,OV,200,10364

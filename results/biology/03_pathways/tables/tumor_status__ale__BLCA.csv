@@ -1,0 +1,2 @@
+collection,term,set_size,overlap,expected,fold_enrichment,p_wallenius,p_hyper,genes,q,task,view,cohort,label,n_top,universe
+hallmark,HALLMARK_TNFA_SIGNALING_VIA_NFKB,47,7,2.0404443351338313,3.430625319921249,0.0037517254908389086,0.0031745999318804363,"CFLAR,MXD1,NFKB2,PDLIM5,PLAUR,SOD2,SQSTM1",0.16507592159691198,tumor_status,ale,BLCA,BLCA,200,4748

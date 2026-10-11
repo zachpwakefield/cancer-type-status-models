@@ -1,0 +1,2 @@
+collection,term,set_size,overlap,expected,fold_enrichment,p_wallenius,p_hyper,genes,q,task,view,cohort,label,n_top,universe
+reactome,REACTOME_FANCONI_ANEMIA_PATHWAY,36,5,0.5288592594136158,9.454311163132246,0.0001694217997953995,0.00011509179873714562,"FAN1,FANCA,FANCI,FANCL,RPA3",0.1736573447902845,cancer_type,hit,PANCAN,CESC,200,14796

@@ -28,3 +28,13 @@ tcga:
   gdc_tpm_samples: data/intermediate/gdc_tpm/samples.csv.gz
 
 gencode_v45_gtf: /Users/zacharywakefield/Desktop/annotation_cache/gencode.v45.annotation.gtf.gz
+
+# Biological reference data (read-only), used only by the interpretation steps 07+
+reference:
+  root: /Users/zacharywakefield/Desktop/cancer_7_16_2026/data/reference
+  msigdb_dir: gene_sets/msigdb_v2026.1.Hs           # MSigDB v2026.1 (HGNC symbols)
+  gene_sets:
+    hallmark: h.all.v2026.1.Hs.symbols.gmt
+    reactome: c2.cp.reactome.v2026.1.Hs.symbols.gmt
+    go_bp: c5.go.bp.v2026.1.Hs.symbols.gmt
+  protein_dir: protein_annotation                   # GENCODE transcripts, exons, CDS (1-based), protein features

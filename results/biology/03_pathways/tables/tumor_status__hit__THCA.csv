@@ -1,0 +1,2 @@
+collection,term,set_size,overlap,expected,fold_enrichment,p_wallenius,p_hyper,genes,q,task,view,cohort,label,n_top,universe
+hallmark,HALLMARK_ESTROGEN_RESPONSE_LATE,161,8,2.369501068132157,3.3762381910662245,0.002638478270147182,0.0020900980160163305,"CXCL12,HOMER2,IGSF1,LAMC2,MDK,RABEP1,SCNN1A,SEMA3B",0.1319239135073591,tumor_status,hit,THCA,THCA,200,14116

@@ -21,3 +21,9 @@ wait $p1 && wait $p2 && wait $p3
 run scripts/03_validate_data.py
 run scripts/05_run_all.py --workers "${WORKERS:-8}"
 run scripts/06_summarise_results.py
+# interpretation layer (docs/BIOLOGY_METHODS.md); no model is refitted
+run scripts/07_shap_importance.py --workers "${WORKERS:-6}"
+for s in 08_bio_complementarity 09_bio_global_shifts 10_bio_pathways 11_bio_events 12_bio_regulators \
+         13_bio_lineage 14_bio_site_probe 15_bio_figures; do
+  run "scripts/$s.py"
+done

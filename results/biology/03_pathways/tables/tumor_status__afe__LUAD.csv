@@ -1,0 +1,2 @@
+collection,term,set_size,overlap,expected,fold_enrichment,p_wallenius,p_hyper,genes,q,task,view,cohort,label,n_top,universe
+hallmark,HALLMARK_PEROXISOME,70,7,2.0001679394648657,3.4997061306126187,0.0036581421604640063,0.0041749080978165185,"ACAA1,ACSL5,ERCC3,LONP2,PRDX1,SCP2,SOD1",0.1682745393813443,tumor_status,afe,LUAD,LUAD,200,6832

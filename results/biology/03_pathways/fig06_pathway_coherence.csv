@@ -1,0 +1,10 @@
+view,tumour status (15 cancers),"cancer type, per class (34)","cancer type, per class, ribosomal genes removed",q_family
+afe,0.1333333333333333,0.2647058823529412,0.1470588235294117,"BH within collection per model (Hallmark, Reactome, GO-BP)"
+ale,0.0666666666666666,0.1176470588235294,0.088235294117647,"BH within collection per model (Hallmark, Reactome, GO-BP)"
+hit,0.2666666666666666,0.088235294117647,0.088235294117647,"BH within collection per model (Hallmark, Reactome, GO-BP)"
+se,0.6,0.7352941176470589,0.6764705882352942,"BH within collection per model (Hallmark, Reactome, GO-BP)"
+a5ss,0.2,0.9117647058823528,0.4705882352941176,"BH within collection per model (Hallmark, Reactome, GO-BP)"
+a3ss,0.1333333333333333,0.7058823529411765,0.6176470588235294,"BH within collection per model (Hallmark, Reactome, GO-BP)"
+mxe,0.4,0.8823529411764706,0.7352941176470589,"BH within collection per model (Hallmark, Reactome, GO-BP)"
+ri,0.0,0.5,0.2352941176470588,"BH within collection per model (Hallmark, Reactome, GO-BP)"
+gex,0.9333333333333332,1.0,,"BH within collection per model (Hallmark, Reactome, GO-BP)"

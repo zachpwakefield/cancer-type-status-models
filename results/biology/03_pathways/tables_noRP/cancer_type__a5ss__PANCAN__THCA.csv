@@ -1,0 +1,2 @@
+collection,term,set_size,overlap,expected,fold_enrichment,p_wallenius,p_hyper,genes,q,task,view,cohort,label,n_top,universe,excluded
+reactome,REACTOME_TRANSLATION,71,13,4.74911544807399,2.737351858917678,0.0006641123264615745,7.36154767162204e-05,"DAP3,EEF1B2,EEF1D,EIF2B5,EIF3E,EIF3I,EIF3K,GARS1,MRPL21,MRPL28,MRPL55,PSMA4,SSR2",0.23841632519970524,cancer_type,a5ss,PANCAN,THCA,200,3739,ribosomal

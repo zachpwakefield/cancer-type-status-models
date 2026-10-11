@@ -1,0 +1,2 @@
+collection,term,set_size,overlap,expected,fold_enrichment,p_wallenius,p_hyper,genes,q,task,view,cohort,label,n_top,universe
+go_bp,GOBP_NEGATIVE_REGULATION_OF_ADAPTIVE_IMMUNE_RESPONSE,31,6,0.75916321813307,7.903438755575075,8.83591875934231e-05,6.581988408234395e-05,"BCL6,HAVCR2,IL18,IL18BP,IL20RB,TNFRSF14",0.24926126820104655,cancer_type,afe,PANCAN,KIRC,200,8616

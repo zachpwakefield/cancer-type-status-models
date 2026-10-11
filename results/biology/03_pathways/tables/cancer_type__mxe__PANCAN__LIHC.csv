@@ -1,0 +1,2 @@
+collection,term,set_size,overlap,expected,fold_enrichment,p_wallenius,p_hyper,genes,q,task,view,cohort,label,n_top,universe
+hallmark,HALLMARK_MYC_TARGETS_V1,27,11,3.2659763370969004,3.3680586950540525,0.00013985140625383252,5.4042833368113574e-05,"ACP1,DEK,HDDC2,HNRNPA2B1,PABPC1,PPIA,PSMA4,PSMD1,PTGES3,RPS3,SLC25A3",0.004055690781361143,cancer_type,mxe,PANCAN,LIHC,200,1832

@@ -1,0 +1,2 @@
+collection,term,set_size,overlap,expected,fold_enrichment,p_wallenius,p_hyper,genes,q,task,view,cohort,label,n_top,universe,excluded
+hallmark,HALLMARK_MYOGENESIS,148,8,2.413455032617053,3.3147499712580615,0.00292732337018764,0.00094008949054528,"AGRN,CHRNB1,GAA,MAPK12,MYH11,MYLK,PDE4DIP,SORBS3",0.14343884513919436,cancer_type,hit,PANCAN,COAD,200,14718,ribosomal

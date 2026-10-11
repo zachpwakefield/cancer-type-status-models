@@ -1,0 +1,2 @@
+collection,term,set_size,overlap,expected,fold_enrichment,p_wallenius,p_hyper,genes,q,task,view,cohort,label,n_top,universe,excluded
+hallmark,HALLMARK_OXIDATIVE_PHOSPHORYLATION,43,9,3.386662263523909,2.6574837700631146,0.005193859265619327,0.0004722310606026773,"ACAA1,ACO2,AIFM1,HADHA,HSPA9,IDH3B,NDUFV1,RHOT2,TCIRG1",0.21814208915601174,cancer_type,ri,PANCAN,ACC,200,3582,ribosomal

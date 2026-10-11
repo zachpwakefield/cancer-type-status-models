@@ -1,0 +1,2 @@
+collection,term,set_size,overlap,expected,fold_enrichment,p_wallenius,p_hyper,genes,q,task,view,cohort,label,n_top,universe,excluded
+reactome,REACTOME_MUSCLE_CONTRACTION,31,7,1.4336475806347702,4.882650446702278,0.00041460061240039536,0.0012701270777147283,"ANXA2,ATP1A3,MYH11,MYL6,SORBS3,TPM1,TPM2",0.16625484557255854,cancer_type,ri,PANCAN,LGG,200,3582,ribosomal

@@ -1,0 +1,2 @@
+collection,term,set_size,overlap,expected,fold_enrichment,p_wallenius,p_hyper,genes,q,task,view,cohort,label,n_top,universe
+hallmark,HALLMARK_PROTEIN_SECRETION,86,7,1.6830354457030614,4.15915185736083,0.0014415098512694513,0.0003454279153634379,"AP2M1,ARFIP1,ATP6V1H,DNM1L,GNAS,NAPA,SEC31A",0.07207549256347257,cancer_type,se,PANCAN,UCS,200,13050

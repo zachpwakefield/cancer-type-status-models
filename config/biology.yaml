@@ -1,0 +1,44 @@
+# Interpretation layer (scripts 07-12). Descriptive analyses of the fitted models and the data.
+# No model is refitted and no outer-test result feeds back into any modelling choice.
+
+# B-01 Complementarity: late fusion of out-of-fold probabilities, weights fixed in advance
+fusion:
+  schemes:
+    all_equal: "mean of the 9 views' probabilities"
+    gex_as_half: "0.5 x GEX + 0.5 x mean of the 8 AS views"
+
+# B-02 Global directional shifts in matched tumour-normal pairs (all measured events, no selection)
+shifts:
+  min_delta: 0.05            # an event 'shifts' if |median(T) - median(N)| > 0.05
+  terminal_min_usage: 0.5    # AFE/ALE gene-level position index needs >= 0.5 total usage of kept siblings
+
+# B-03 Pathway over-representation (GOseq-style, corrected for events per gene)
+pathways:
+  top_genes: 200             # genes ranked by max feature mean|SHAP|
+  min_set_size: 15           # within the universe
+  max_set_size: 500
+  min_overlap: 3
+  fdr: 0.05
+  collections: [hallmark, reactome, go_bp]
+  # sensitivity for the cancer-type AS models: cytosolic ribosomal-protein genes removed
+  ribosomal_regex: "^(RPL|RPS)[0-9]+[AXY]?L?[0-9]*$|^RPLP[0-2]$|^RPSA$"
+
+# B-04 Events
+events:
+  top_k: 100                 # top features per (cohort, view) used for recurrence
+  min_cancers_recurrent: 4   # an event is 'recurrent' if in the top_k of >= 4 cancers
+
+# B-05 Splicing-factor regulators (GEX log2CPM vs event PSI, within tumours,
+# partial Spearman adjusting for stromal and immune expression scores)
+regulators:
+  top_events_per_view: 50
+  views: [se, a3ss, a5ss, mxe, ri]
+  n_background_events: 500
+  stromal_genes: [COL1A1, COL1A2, COL3A1, DCN, LUM, PDGFRB, FAP, SPARC]
+  immune_genes: [PTPRC, CD3E, CD2, CD48, LCP2, CD53, CORO1A, ITGB2]
+  splicing_factors:
+    SR proteins: [SRSF1, SRSF2, SRSF3, SRSF4, SRSF5, SRSF6, SRSF7, SRSF9, SRSF10, SRSF11, TRA2A, TRA2B]
+    hnRNPs: [HNRNPA1, HNRNPA2B1, HNRNPC, HNRNPD, HNRNPF, HNRNPH1, HNRNPK, HNRNPL, HNRNPM, HNRNPU, PTBP1, PTBP2, PCBP1, PCBP2]
+    tissue / differentiation: [ESRP1, ESRP2, RBFOX1, RBFOX2, MBNL1, MBNL2, MBNL3, CELF1, CELF2, NOVA1, NOVA2, QKI, SRRM3, SRRM4, ELAVL1, ELAVL3, ELAVL4, KHDRBS1, KHDRBS3, RBM4, RBM47, RBM24, RBM20]
+    core spliceosome: [SF3B1, U2AF1, U2AF2, SRRM2, SNRNP70, PRPF8, ZRSR2, SON, RBM10, RBM5, RBM39]
+    3' end processing: [CPSF6, NUDT21, CSTF2, CSTF2T, CPSF1, CPSF4, PCF11, FIP1L1, PABPN1, PAPOLA]

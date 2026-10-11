@@ -1,0 +1,2 @@
+collection,term,set_size,overlap,expected,fold_enrichment,p_wallenius,p_hyper,genes,q,task,view,cohort,label,n_top,universe
+go_bp,GOBP_NATURAL_KILLER_CELL_MEDIATED_IMMUNITY,45,7,1.0746141126581956,6.5139661926499395,8.378935083597217e-05,7.020155251659563e-05,"HLA-F,LAMP1,NECTIN2,PRDX1,RAB27A,TGFB1,VAMP7",0.23636975870827748,cancer_type,afe,PANCAN,LUAD,200,8616

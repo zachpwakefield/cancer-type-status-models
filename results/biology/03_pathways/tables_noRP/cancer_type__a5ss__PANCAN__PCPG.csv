@@ -1,0 +1,2 @@
+collection,term,set_size,overlap,expected,fold_enrichment,p_wallenius,p_hyper,genes,q,task,view,cohort,label,n_top,universe,excluded
+hallmark,HALLMARK_MYC_TARGETS_V1,57,11,4.132293238775815,2.661960167003717,0.0021044204864272276,0.00016373274234731956,"APEX1,CNBP,HNRNPA1,HNRNPA2B1,HNRNPA3,HNRNPC,IMPDH2,MRPL9,NOP56,NPM1,PSMA4",0.09049008091637079,cancer_type,a5ss,PANCAN,PCPG,200,3739,ribosomal

@@ -1,0 +1,2 @@
+collection,term,set_size,overlap,expected,fold_enrichment,p_wallenius,p_hyper,genes,q,task,view,cohort,label,n_top,universe,excluded
+reactome,REACTOME_DISEASES_OF_METABOLISM,55,11,3.341219744964262,3.292210880945113,0.0003548285934581452,0.00017045443783127143,"ABCD4,ASL,DCXR,DPM2,GALT,MPDU1,NAGS,NEU1,NOTCH4,POMGNT1,POMT1",0.14228626597671623,cancer_type,ri,PANCAN,PCPG,200,3582,ribosomal

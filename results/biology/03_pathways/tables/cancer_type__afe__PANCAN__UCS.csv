@@ -1,0 +1,2 @@
+collection,term,set_size,overlap,expected,fold_enrichment,p_wallenius,p_hyper,genes,q,task,view,cohort,label,n_top,universe
+hallmark,HALLMARK_GLYCOLYSIS,146,10,3.5376777096623595,2.8267131210645,0.0028279069901243625,0.002075939997925517,"ABCB6,ALDH7A1,ALDOA,B4GALT2,B4GALT7,CENPA,CHPF2,DCN,PGK1,UGP2",0.1357395355259694,cancer_type,afe,PANCAN,UCS,200,8616

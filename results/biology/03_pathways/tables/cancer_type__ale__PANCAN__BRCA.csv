@@ -1,0 +1,2 @@
+collection,term,set_size,overlap,expected,fold_enrichment,p_wallenius,p_hyper,genes,q,task,view,cohort,label,n_top,universe
+reactome,REACTOME_COMPLEX_IV_ASSEMBLY,26,5,0.4683042546787827,10.676819503657038,8.716099799854771e-05,0.00012036569566355594,"COX17,COX19,COX6C,SCO2,TMEM223",0.07896786418668422,cancer_type,ale,PANCAN,BRCA,200,10364

@@ -64,6 +64,16 @@ patient-grouped cross-validation. It is explained with SHAP on held-out samples 
 Full tables, CIs, figures and top SHAP features per cohort and modality are in
 **[results/RESULTS.md](results/RESULTS.md)**.
 
+**What the models learned:** see **[results/BIOLOGY.md](results/BIOLOGY.md)**. It covers:
+- what splicing adds to expression;
+- the tumour-wide shifts in RNA processing;
+- pathways, shared events and their protein consequences;
+- candidate regulators;
+- cell lineage;
+- a check for tissue-source-site confounding.
+
+The methods are in [docs/BIOLOGY_METHODS.md](docs/BIOLOGY_METHODS.md).
+
 ## How the models are built
 
 ```
@@ -103,8 +113,9 @@ For each job, `results/<task>/<view>/<cohort>/` contains:
 | `shap_top_genes.csv` | importance summed per host gene |
 | `shap_top_features_by_class.csv` | *cancer type only*: top 30 features for each of the 34 classes, with per-class direction |
 | `per_class_metrics.csv`, `confusion_matrix.csv` | *cancer type only* |
-| `shap_beeswarm.png` | *tumour status*: each dot is one held-out sample, x = SHAP (tumour log-odds), colour = feature value |
-| `shap_class_heatmap.png`, `confusion_matrix.png` | *cancer type* |
+| `fig_shap_beeswarm.png` | *tumour status*: each dot is one held-out sample, x = SHAP (tumour log-odds), colour = feature value |
+| `fig_shap_class_heatmap.png`, `fig_confusion_matrix.png` | *cancer type* |
+| `*.caption.md` | what each figure shows (figures carry no in-plot titles; [docs/FIGURE_GUIDELINES.md](docs/FIGURE_GUIDELINES.md)) |
 
 **How to read `direction_spearman`:**
 - Tumour status: > 0 means higher PSI, usage, HIT or expression pushes a sample towards
@@ -117,17 +128,22 @@ centred logit zₖ − z̄ of the sample's true class (see [docs/METHODS.md](doc
 ## Repository layout
 
 ```
-config/       study.yaml (every rule and the search space), sources.yaml (raw data paths)
+config/       study.yaml (every rule and the search space), sources.yaml (raw data and reference paths),
+              biology.yaml (interpretation thresholds)
 src/ctsm/     library
   cohort.py splits.py annotation.py extract.py matrix_io.py   data
-  preprocess.py model.py pipeline.py metrics.py explain.py plots.py   modelling
+  preprocess.py model.py pipeline.py metrics.py explain.py    modelling
+  biology.py                                                  interpretation helpers (GOseq, protein mapping, ...)
+  figstyle.py plots.py                                        house figure style and phase-1 figures
 scripts/      00_register_sources → 01_build_cohort → 02_extract_matrices → 03_validate_data
               → 04_run_job (one job) / 05_run_all (all jobs, parallel) → 06_summarise_results
+              → 07_shap_importance → 08–14 biology analyses (tables) → 15_bio_figures
               run_pipeline.sh
-tests/        unit tests (leakage guards, encodings, preprocessing, SHAP additivity)
-docs/         METHODS, DECISIONS, LEAKAGE_POLICY
+tests/        unit tests (leakage guards, encodings, preprocessing, SHAP additivity, biology helpers)
+docs/         METHODS, DECISIONS, LEAKAGE_POLICY, BIOLOGY_METHODS, FIGURE_GUIDELINES
 results/      data/ (cohort, splits, extraction, validation summaries)
               tumor_status/<view>/<cancer>/, cancer_type/<view>/PANCAN/, summary/, RESULTS.md
+              biology/01_complementarity … 07_site_probe/ (tables + figures), BIOLOGY.md
 ```
 
 ## Reproducing

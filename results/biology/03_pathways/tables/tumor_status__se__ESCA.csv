@@ -1,0 +1,2 @@
+collection,term,set_size,overlap,expected,fold_enrichment,p_wallenius,p_hyper,genes,q,task,view,cohort,label,n_top,universe
+hallmark,HALLMARK_EPITHELIAL_MESENCHYMAL_TRANSITION,144,7,2.03509976484919,3.4396348134405743,0.004371778855404296,0.004644838666724109,"BMP1,COL16A1,COL6A3,IL32,TNC,TPM1,VEGFA",0.2185889427702148,tumor_status,se,ESCA,ESCA,200,13993

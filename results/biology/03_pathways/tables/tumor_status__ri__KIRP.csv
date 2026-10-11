@@ -1,0 +1,2 @@
+collection,term,set_size,overlap,expected,fold_enrichment,p_wallenius,p_hyper,genes,q,task,view,cohort,label,n_top,universe
+reactome,REACTOME_MUSCLE_CONTRACTION,30,7,1.3955302002241288,5.016014700990181,0.0003459092479084491,0.0012445016633641592,"CACNA2D2,FXYD6,MYL6,RANGRF,SCN2A,TPM1,TPM2",0.139401426907105,tumor_status,ri,KIRP,KIRP,200,3469

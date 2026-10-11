@@ -1,0 +1,2 @@
+collection,term,set_size,overlap,expected,fold_enrichment,p_wallenius,p_hyper,genes,q,task,view,cohort,label,n_top,universe
+go_bp,GOBP_KERATINIZATION,17,5,0.48565262648558316,10.295424604582937,8.462498833672338e-05,0.0001673398865715279,"KRT10,KRT5,KRT6B,KRT6C,TMEM79",0.1982763476729429,tumor_status,afe,LUSC,LUSC,200,6055

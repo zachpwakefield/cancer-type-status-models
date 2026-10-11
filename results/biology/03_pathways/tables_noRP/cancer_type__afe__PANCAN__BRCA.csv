@@ -1,0 +1,2 @@
+collection,term,set_size,overlap,expected,fold_enrichment,p_wallenius,p_hyper,genes,q,task,view,cohort,label,n_top,universe,excluded
+hallmark,HALLMARK_EPITHELIAL_MESENCHYMAL_TRANSITION,137,10,3.555325282471067,2.8126821614054043,0.0029034988388090266,0.001358608947442695,"CALD1,COL6A2,DCN,FBLN1,GLIPR1,PMP22,SGCB,TPM1,TPM4,VCAN",0.13936794426283328,cancer_type,afe,PANCAN,BRCA,200,8554,ribosomal

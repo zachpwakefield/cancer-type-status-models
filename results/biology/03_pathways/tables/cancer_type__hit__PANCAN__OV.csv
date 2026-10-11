@@ -1,0 +1,2 @@
+collection,term,set_size,overlap,expected,fold_enrichment,p_wallenius,p_hyper,genes,q,task,view,cohort,label,n_top,universe
+hallmark,HALLMARK_MYOGENESIS,148,9,2.366603124817784,3.8029190047203003,0.000617462767547261,0.00018285485109313502,"AGRN,COL6A3,FGF2,MYH11,MYL6B,MYLK,PDE4DIP,PDLIM7,SORBS3",0.03025567560981579,cancer_type,hit,PANCAN,OV,200,14796

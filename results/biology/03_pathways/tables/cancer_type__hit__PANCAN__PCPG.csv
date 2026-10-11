@@ -1,0 +1,2 @@
+collection,term,set_size,overlap,expected,fold_enrichment,p_wallenius,p_hyper,genes,q,task,view,cohort,label,n_top,universe
+reactome,REACTOME_SMOOTH_MUSCLE_CONTRACTION,35,5,0.5591781766612903,8.941693736786581,0.00021767157418761673,0.00010019869128742236,"MYH11,MYL6B,MYLK,PXN,SORBS3",0.22311336354230715,cancer_type,hit,PANCAN,PCPG,200,14796

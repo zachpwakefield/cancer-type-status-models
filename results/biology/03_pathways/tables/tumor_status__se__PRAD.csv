@@ -1,0 +1,2 @@
+collection,term,set_size,overlap,expected,fold_enrichment,p_wallenius,p_hyper,genes,q,task,view,cohort,label,n_top,universe
+reactome,REACTOME_SARS_COV_1_MODULATES_HOST_TRANSLATION_MACHINERY,28,5,0.5523150491329157,9.05280420631222,0.00019295858945456157,7.003073399081425e-05,"HNRNPA1,RPS15,RPS18,RPS24,RPS3A",0.17945148819274226,tumor_status,se,PRAD,PRAD,200,12598

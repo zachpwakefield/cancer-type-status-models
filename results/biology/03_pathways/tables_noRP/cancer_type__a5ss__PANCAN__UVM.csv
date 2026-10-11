@@ -1,0 +1,2 @@
+collection,term,set_size,overlap,expected,fold_enrichment,p_wallenius,p_hyper,genes,q,task,view,cohort,label,n_top,universe,excluded
+hallmark,HALLMARK_DNA_REPAIR,43,9,2.7596847644527296,3.261242050515426,0.0012848533928713213,0.0003446042588997845,"GUK1,ITPA,LIG1,NELFCD,NT5C,POLL,POLR1C,POLR2E,POLR2G",0.055248695893466815,cancer_type,a5ss,PANCAN,UVM,200,3739,ribosomal

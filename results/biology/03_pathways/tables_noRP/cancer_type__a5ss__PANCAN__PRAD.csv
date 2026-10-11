@@ -1,0 +1,2 @@
+collection,term,set_size,overlap,expected,fold_enrichment,p_wallenius,p_hyper,genes,q,task,view,cohort,label,n_top,universe,excluded
+hallmark,HALLMARK_UV_RESPONSE_UP,35,8,1.8211386842381798,4.392856002258041,0.0003254987196465997,0.0003922231689238798,"ACAA1,DNAJB1,GPX3,HNRNPU,MARK2,PDLIM3,SOD2,SULT1A1",0.013996444944803788,cancer_type,a5ss,PANCAN,PRAD,200,3739,ribosomal

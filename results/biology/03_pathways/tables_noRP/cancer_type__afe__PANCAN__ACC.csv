@@ -1,0 +1,2 @@
+collection,term,set_size,overlap,expected,fold_enrichment,p_wallenius,p_hyper,genes,q,task,view,cohort,label,n_top,universe,excluded
+hallmark,HALLMARK_UV_RESPONSE_UP,107,11,2.6101227306487873,4.214361214066656,5.5378801583239046e-05,3.7825373881316394e-05,"ALDOA,CCND3,CNP,HNRNPU,MGAT1,NR4A1,PDAP1,PRKACA,SULT1A1,TMBIM6,TUBA4A",0.002658182475995474,cancer_type,afe,PANCAN,ACC,200,8554,ribosomal
