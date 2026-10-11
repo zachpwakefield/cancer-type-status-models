@@ -1,0 +1,22 @@
+# Data and run artefacts never go to git: raw sources live outside the repo,
+# processed matrices, models, SHAP arrays and per-sample predictions in data.nosync/
+data.nosync/
+*.npy
+*.npz
+*.pt
+*.parquet
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# OS / editors
+.DS_Store
+.idea/
+.vscode/
+
+# Logs and temp
+logs/
+*.log
+*.tmp

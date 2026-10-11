@@ -1,0 +1,138 @@
+{
+  "V1_cohort": {
+    "samples": 9729,
+    "cases": 9075,
+    "tumour": 9034,
+    "normal": 695
+  },
+  "V2_splits": {
+    "cancer_type__PANCAN": {
+      "n": 9729,
+      "min_inner_train": 5163
+    },
+    "tumor_status__BLCA": {
+      "n": 420,
+      "min_inner_train": 222
+    },
+    "tumor_status__BRCA": {
+      "n": 1185,
+      "min_inner_train": 625
+    },
+    "tumor_status__COAD": {
+      "n": 302,
+      "min_inner_train": 157
+    },
+    "tumor_status__ESCA": {
+      "n": 172,
+      "min_inner_train": 90
+    },
+    "tumor_status__HNSC": {
+      "n": 545,
+      "min_inner_train": 288
+    },
+    "tumor_status__KICH": {
+      "n": 88,
+      "min_inner_train": 44
+    },
+    "tumor_status__KIRC": {
+      "n": 593,
+      "min_inner_train": 310
+    },
+    "tumor_status__KIRP": {
+      "n": 319,
+      "min_inner_train": 166
+    },
+    "tumor_status__LIHC": {
+      "n": 416,
+      "min_inner_train": 219
+    },
+    "tumor_status__LUAD": {
+      "n": 547,
+      "min_inner_train": 288
+    },
+    "tumor_status__LUSC": {
+      "n": 543,
+      "min_inner_train": 286
+    },
+    "tumor_status__PRAD": {
+      "n": 549,
+      "min_inner_train": 288
+    },
+    "tumor_status__STAD": {
+      "n": 383,
+      "min_inner_train": 201
+    },
+    "tumor_status__THCA": {
+      "n": 562,
+      "min_inner_train": 296
+    },
+    "tumor_status__UCEC": {
+      "n": 191,
+      "min_inner_train": 100
+    }
+  },
+  "V3_raw_values": {
+    "afe": {
+      "features_checked": 1544,
+      "cells_checked": 463200,
+      "max_abs_error": 2.975597368504168e-08,
+      "structural_zero_fills_checked": 179185
+    },
+    "ale": {
+      "features_checked": 1731,
+      "cells_checked": 519300,
+      "max_abs_error": 2.9743771667867236e-08,
+      "structural_zero_fills_checked": 268952
+    },
+    "hit": {
+      "features_checked": 1440,
+      "cells_checked": 432000,
+      "max_abs_error": 2.95639037695139e-08,
+      "structural_zero_fills_checked": 0
+    },
+    "se": {
+      "features_checked": 722,
+      "cells_checked": 216600,
+      "max_abs_error": 2.95639037695139e-08,
+      "structural_zero_fills_checked": 0
+    },
+    "a5ss": {
+      "features_checked": 1270,
+      "cells_checked": 381000,
+      "max_abs_error": 2.95639037695139e-08,
+      "structural_zero_fills_checked": 0
+    },
+    "a3ss": {
+      "features_checked": 1251,
+      "cells_checked": 375300,
+      "max_abs_error": 2.95639037695139e-08,
+      "structural_zero_fills_checked": 0
+    },
+    "mxe": {
+      "features_checked": 246,
+      "cells_checked": 73800,
+      "max_abs_error": 2.95639037695139e-08,
+      "structural_zero_fills_checked": 0
+    },
+    "ri": {
+      "features_checked": 1358,
+      "cells_checked": 407400,
+      "max_abs_error": 2.95639037695139e-08,
+      "structural_zero_fills_checked": 0
+    },
+    "gex": {
+      "features_checked": 409,
+      "max_abs_error": 6.330446797875311e-07
+    }
+  },
+  "V4_gex_vs_tpm": {
+    "samples": 300,
+    "genes": 23640,
+    "spearman_median": 0.9642077122316011,
+    "spearman_min": 0.8470486108798969
+  },
+  "V5_prefilter": {
+    "cohorts": 16,
+    "views": 9
+  }
+}

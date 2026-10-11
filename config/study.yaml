@@ -1,0 +1,84 @@
+# Single source of truth for every rule in the study. Each block cites its decision in
+# docs/DECISIONS.md. Changing a value that changes data or results requires a new study_id.
+
+study_id: ctsm_v1
+data_root: data.nosync          # relative to repo root; .nosync keeps iCloud from evicting it
+
+# Modalities, each modelled independently (D-05). Order is the display order everywhere.
+views: [afe, ale, hit, se, a5ss, a3ss, mxe, ri, gex]
+
+# D-01: sample selection. One RNA-seq file per (case, role); role = tumour | normal.
+cohort:
+  # LAML has no solid primary; its primary cancer sample is peripheral blood
+  tumour_sample_types: ["Primary Tumor", "Primary Blood Derived Cancer - Peripheral Blood"]
+  normal_sample_type: "Solid Tissue Normal"
+  # metastatic, recurrent and "additional new primary" samples are not used (D-01)
+  tie_break: [vial, sample_id, file_id]     # earliest vial, then barcode, then UUID
+
+tasks:
+  # D-02: per-cancer binary classifier, Solid Tissue Normal (0) vs primary tumour (1).
+  # A TCGA project is in scope iff it has >= min_normal_cases normal cases (>= 2 per outer
+  # test fold). Step 01 derives the list and writes results/data/task_scope.csv.
+  tumor_status:
+    min_normal_cases: 10
+  # D-03: pan-cancer multiclass classifier. Class = TCGA project of a primary tumour, or a
+  # single pooled "Normal" class for every Solid Tissue Normal sample.
+  cancer_type:
+    normal_label: Normal
+    min_class_cases: 30          # every class must have >= 30 cases (asserted, all 34 pass)
+
+# D-04: nested, case-grouped, label-stratified cross-validation.
+splits:
+  outer_folds: 5               # performance estimate: every sample is tested exactly once
+  inner_folds: 3               # hyper-parameter tuning, inside each outer-train set only
+  # inner folds actually used for tuning: all 3 for the small per-cancer cohorts; for the
+  # pan-cancer task (~7,800 outer-train samples) inner fold 0 only, a single 2/3 : 1/3
+  # train / validation split (~2,600 validation samples), to keep the run tractable
+  inner_folds_used: {tumor_status: 3, cancer_type: 1}
+  seed: 20261010
+
+# D-06: genome scope and AS event handling (same rules as survival_prediction D-050..D-054).
+features:
+  chromosomes: [chr1, chr2, chr3, chr4, chr5, chr6, chr7, chr8, chr9, chr10, chr11, chr12,
+                chr13, chr14, chr15, chr16, chr17, chr18, chr19, chr20, chr21, chr22, chrX]
+  host_biotypes: [protein_coding, lncRNA]
+  terminal:                    # AFE / ALE
+    structural_zero_tolerance: 1.0e-6
+    require_annotated_terminal: true
+  int16_scale: 1000            # rMATS PSI and HIT index are exactly 3-decimal: stored int16 x 1000
+
+# D-07: fold-level preprocessing, fitted on training samples only.
+preprocess:
+  min_observed_frac: 0.50      # AS: value observed (not blank) in >= 50 % of training samples
+  gex_min_log2cpm: 1.0         # GEX: "expressed" = log2(CPM + 1) >= 1, i.e. CPM >= 1
+  gex_min_expressed_frac: 0.10 #      expressed in >= 10 % of training samples
+  clip_z: 10.0                 # standardised values clipped to +-10
+
+# D-08: model and training.
+model:
+  max_epochs: {tumor_status: 300, cancer_type: 100}
+  patience: {tumor_status: 20, cancer_type: 12}   # epochs without improvement in validation balanced log loss
+  device: cpu                  # deterministic; small MLPs are not faster on MPS
+
+# D-09: hyper-parameter search (Optuna TPE), objective = mean inner-fold balanced log loss.
+tuning:
+  n_trials: {tumor_status: 30, cancer_type: 20}
+  pruner_startup_trials: 6     # MedianPruner: a trial is pruned after any inner fold once
+                               # its running mean is worse than the median of earlier trials
+  search_space:
+    n_features: [500, 1000, 2000, 4000]
+    selection: [variance, anova]
+    n_layers: [1, 3]
+    width: [64, 1024]          # log-uniform
+    dropout: [0.0, 0.6]
+    input_dropout: [0.0, 0.5]
+    lr: [1.0e-4, 3.0e-3]       # log-uniform
+    weight_decay: [1.0e-6, 1.0e-2]   # log-uniform
+    batch_size: {tumor_status: [32, 64, 128, 256], cancer_type: [128, 256, 512]}
+
+# D-10: SHAP (DeepExplainer) on EVERY held-out (outer-test) sample of every outer-fold model.
+# tumor_status explains the tumour log-odds; cancer_type explains, for each sample, the
+# centred logit of its TRUE class (z_k - mean_j z_j, invariant to the softmax shift).
+shap:
+  background_size: 100         # random outer-train samples (seeded)
+  top_k_report: 30

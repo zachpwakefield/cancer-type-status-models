@@ -1,0 +1,82 @@
+{
+  "gencode_v45_gtf": {
+    "bytes": 49770653,
+    "path": "/Users/zacharywakefield/Desktop/annotation_cache/gencode.v45.annotation.gtf.gz",
+    "sha256": "56a166e4a43c934a1910c0d09dec786ac048862fc65130731d41f3c7f451ae68"
+  },
+  "tcga.annotation.gdc_genes_v36": {
+    "bytes": 803372,
+    "path": "/Users/zacharywakefield/Desktop/cancer_7_16_2026/data/intermediate/gdc_tpm/genes.csv.gz",
+    "sha256": "89e6962a9f20f4e55ad641c1fe19a79fed10eb2fd011b647dc46821f52abd4f7"
+  },
+  "tcga.annotation.gene_biotypes_v45": {
+    "bytes": 514555,
+    "path": "/Users/zacharywakefield/Desktop/cancer_7_16_2026/data/reference/gene_annotation/gencode_v45_gene_biotype.csv.gz",
+    "sha256": "4be10859686d6c8b28f2145f2171cf028f01ecff059e78b868db8d31ddf5d47d"
+  },
+  "tcga.annotation.hitindex_metaexons": {
+    "bytes": 39597294,
+    "path": "/Users/zacharywakefield/Desktop/cancer_7_16_2026/data/reference/gene_annotation/hg38_gen_meta",
+    "sha256": "3f3a2c8f792cf1bc304b5f11833d8a9294793b95069e66019d4229f7fc9397fd"
+  },
+  "tcga.clinical": {
+    "bytes": 3023037,
+    "path": "/Users/zacharywakefield/Desktop/cancer_7_16_2026/data/raw/clinical/clinical_data_expanded_surv_gdc_clinical.csv",
+    "sha256": "af75fc914bc6fe670b5829dabb2547cf8ddb21088a3d72836290cd40414bae48"
+  },
+  "tcga.gdc_tpm_matrix": {
+    "bytes": 2246361248,
+    "path": "/Users/zacharywakefield/Desktop/cancer_7_16_2026/data/intermediate/gdc_tpm/tpm.float32.npy",
+    "sha256": "e1dc7489e62648643a815ef9cfff350967eccc0fff68853fcbc61c253b89a20a"
+  },
+  "tcga.gdc_tpm_samples": {
+    "bytes": 1111071,
+    "path": "/Users/zacharywakefield/Desktop/cancer_7_16_2026/data/intermediate/gdc_tpm/samples.csv.gz",
+    "sha256": "f771452b3e8545388f00d27a1e9a8f1610b060d637ceec07d8be78caf7469834"
+  },
+  "tcga.molecular.a3ss": {
+    "bytes": 575681048,
+    "path": "/Users/zacharywakefield/Desktop/cancer_7_16_2026/data/raw/molecular/a3ss.csv",
+    "sha256": "04ee6ea8c5eac97917bbea3a66afda9701e8203eb745b69ad26bb1a058f87b10"
+  },
+  "tcga.molecular.a5ss": {
+    "bytes": 373320165,
+    "path": "/Users/zacharywakefield/Desktop/cancer_7_16_2026/data/raw/molecular/a5ss.csv",
+    "sha256": "6c15762c6905ae0d706dc4126b265b16dcb80ff4a7ee4df8e1e5370ce747b9a3"
+  },
+  "tcga.molecular.afe": {
+    "bytes": 2296146623,
+    "path": "/Users/zacharywakefield/Desktop/cancer_7_16_2026/data/raw/molecular/afe.csv",
+    "sha256": "48f6571cdd51185f71b3bfe48d899072b3663f938fc3d9fb65015b6c5f4aeb37"
+  },
+  "tcga.molecular.ale": {
+    "bytes": 2003626977,
+    "path": "/Users/zacharywakefield/Desktop/cancer_7_16_2026/data/raw/molecular/ale.csv",
+    "sha256": "18f470482cef9e99d4bd67eb32634ccf206e16b974ef0cbb1f37d7c0d7137312"
+  },
+  "tcga.molecular.gex": {
+    "bytes": 5050156185,
+    "path": "/Users/zacharywakefield/Desktop/cancer_7_16_2026/data/raw/molecular/gex.csv",
+    "sha256": "52f019c590f416cffc2895e96fbf0b8ce15be0bb2976d7119eac0d19c5a059b5"
+  },
+  "tcga.molecular.hit": {
+    "bytes": 8076838218,
+    "path": "/Users/zacharywakefield/Desktop/cancer_7_16_2026/data/raw/molecular/hit.csv",
+    "sha256": "9608c26fcbdd48e948f2f46f87e137b85149f00f04b3101f40dd001009662a69"
+  },
+  "tcga.molecular.mxe": {
+    "bytes": 1424740396,
+    "path": "/Users/zacharywakefield/Desktop/cancer_7_16_2026/data/raw/molecular/mxe.csv",
+    "sha256": "2301719d47f8a089acca9ca229bdb4296f2ba78546f5ddd7ad38f454e09d0f5f"
+  },
+  "tcga.molecular.ri": {
+    "bytes": 351196257,
+    "path": "/Users/zacharywakefield/Desktop/cancer_7_16_2026/data/raw/molecular/ri.csv",
+    "sha256": "517be75de37666b1bca68d1cbfb4726ddf4368b5ebbe05847603ce5b799e6f64"
+  },
+  "tcga.molecular.se": {
+    "bytes": 6624918799,
+    "path": "/Users/zacharywakefield/Desktop/cancer_7_16_2026/data/raw/molecular/se.csv",
+    "sha256": "e4f68e6f0abad1dd68b27210c68e6187ca2d188f9444fc8102195cb820df5909"
+  }
+}

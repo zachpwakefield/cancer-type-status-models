@@ -1,0 +1,246 @@
+"""Step 06: cross-job summary tables, figures and results/RESULTS.md.
+
+Reads results/<task>/<view>/<cohort>/metrics.json (+ local SHAP arrays for the figures).
+Writes results/summary/*.csv and *.png, per-job figures, results/RESULTS.md, and the results
+block of README.md (between the RESULTS markers). Safe to run while jobs are still running:
+missing jobs are reported as such.
+"""
+from __future__ import annotations
+
+import json
+import re
+
+import numpy as np
+import pandas as pd
+from _common import REPO, log
+
+from ctsm.config import PAN, load_config
+from ctsm.explain import class_importance_matrix, load_folds
+from ctsm.plots import VIEW_NAMES, beeswarm, dot_metrics, heatmap
+
+N_BEESWARM = 15
+
+
+def collect(cfg) -> tuple[pd.DataFrame, pd.DataFrame]:
+    ts, ct = [], []
+    for p in sorted(cfg.results_dir.glob("*/*/*/metrics.json")):
+        m = json.loads(p.read_text())
+        row = {"view": m["view"], "cohort": m["cohort"], **m["pooled_oof"],
+               **{f"{k}_lo": v[0] for k, v in m["bootstrap_95ci"].items()},
+               **{f"{k}_hi": v[1] for k, v in m["bootstrap_95ci"].items()},
+               **{f"fold_mean_{k}": v for k, v in m["per_fold_mean"].items()},
+               **{f"fold_sd_{k}": v for k, v in m["per_fold_sd"].items()}}
+        (ts if m["task"] == "tumor_status" else ct).append(row)
+    return pd.DataFrame(ts), pd.DataFrame(ct)
+
+
+def view_order(cfg, df: pd.DataFrame) -> list[str]:
+    return [v for v in cfg.views if v in set(df["view"])]
+
+
+def fmt_ci(v, lo, hi, nd=3) -> str:
+    if v is None or (isinstance(v, float) and np.isnan(v)):
+        return "–"
+    return f"{v:.{nd}f} ({lo:.{nd}f}–{hi:.{nd}f})" if lo is not None and not pd.isna(lo) else f"{v:.{nd}f}"
+
+
+def per_job_figures(cfg, task: str, view: str, cohort: str) -> None:
+    rdir, out = cfg.run_dir(task, view, cohort), cfg.result_dir(task, view, cohort)
+    tab = pd.read_parquet(cfg.data_dir / "tasks" / f"{task}__{cohort}.parquet")
+    folds = load_folds(rdir, tab["y"].to_numpy(), cfg.study["splits"]["outer_folds"])
+    feats = pd.read_csv(out / "shap_top_features.csv")
+    vname = VIEW_NAMES[view]
+    if task == "tumor_status":
+        top = feats.head(N_BEESWARM)
+        shs, vals = [], []
+        for fid in top["feature_id"]:
+            s, v = [], []
+            for f in folds:
+                j = f["index"].get(fid)
+                if j is not None:
+                    s.append(f["shap"][:, j])
+                    v.append(f["X"][:, j])
+            shs.append(np.concatenate(s))
+            vals.append(np.concatenate(v))
+        labels = [f"{lab}  ({n}/5)" for lab, n in zip(top["label"], top["n_folds_selected"])]
+        beeswarm(shs, vals, labels, f"{cohort} · {vname} · tumour vs normal: top {len(top)} features by mean |SHAP|",
+                 "SHAP value (impact on tumour log-odds; > 0 pushes towards tumour)", out / "shap_beeswarm.png")
+        return
+    classes = json.loads((out / "metrics.json").read_text())["classes"]
+    imp = class_importance_matrix(folds, classes)
+    lab = pd.read_csv(out / "shap_top_features_by_class.csv")[["feature_id", "label"]].drop_duplicates("feature_id")
+    lab = lab.set_index("feature_id")["label"]
+    rows = []
+    for c in classes:                                     # top 2 per class, ordered by class
+        for fid in imp[c].sort_values(ascending=False).index[:2]:
+            if fid not in rows:
+                rows.append(fid)
+    mat = imp.loc[rows].copy()
+    mat.index = [lab.get(f, f) for f in rows]
+    heatmap(mat, f"PANCAN · {vname} · mean |SHAP| of each class's top-2 features (rows) across classes",
+            out / "shap_class_heatmap.png", vmin=0, fmt=None, cbar_label="mean |SHAP| (centred logit)",
+            cell=0.26, xrot=90)
+    cm = pd.read_csv(out / "confusion_matrix.csv", index_col=0)
+    cmn = cm.div(cm.sum(axis=1).replace(0, np.nan), axis=0)
+    heatmap(cmn, f"PANCAN · {vname} · confusion matrix (row-normalised, out-of-fold)", out / "confusion_matrix.png",
+            vmin=0, vmax=1, fmt=None, cbar_label="fraction of true class", cell=0.26, xrot=90)
+
+
+def top_genes(cfg, task: str, cohorts: list[str], k: int = 5) -> pd.DataFrame:
+    rows = []
+    for view in cfg.views:
+        for c in cohorts:
+            p = cfg.result_dir(task, view, c) / "shap_top_genes.csv"
+            if p.exists():
+                g = pd.read_csv(p).head(k)
+                rows.append({"cohort": c, "view": view, "top_genes": ", ".join(g["symbol"].astype(str))})
+    return pd.DataFrame(rows)
+
+
+def main() -> None:
+    cfg = load_config()
+    out = cfg.results_dir / "summary"
+    out.mkdir(parents=True, exist_ok=True)
+    ts, ct = collect(cfg)
+    scope = pd.read_csv(cfg.results_dir / "data" / "task_scope.csv")
+    cancers = list(scope.loc[scope.tumor_status_in_scope, "project"])
+    n_expected = len(cfg.views) * (len(cancers) + 1)
+    log(f"{len(ts) + len(ct)} of {n_expected} jobs have results")
+
+    md = ["# Results", "",
+          "Generated by `scripts/06_summarise_results.py`. All numbers are **out-of-fold**: each sample is "
+          "predicted by the outer-fold model that never saw it (or any sample of its case) during feature "
+          "selection, tuning or training. Brackets: 95 % case-level bootstrap CIs on the pooled "
+          "out-of-fold predictions.", ""]
+
+    # ---- task 1: tumour status -------------------------------------------------------------
+    if len(ts):
+        ts.to_csv(out / "tumor_status_metrics.csv", index=False)
+        views = view_order(cfg, ts)
+        names = [VIEW_NAMES[v] for v in views]
+        auc = ts.pivot(index="cohort", columns="view", values="auroc").reindex(index=cancers, columns=views)
+        bac = ts.pivot(index="cohort", columns="view", values="balanced_accuracy").reindex(index=cancers, columns=views)
+        auc.columns = bac.columns = names
+        heatmap(auc, "Tumour vs normal · pooled out-of-fold AUROC", out / "fig_tumor_status_auroc.png",
+                vmin=max(0.5, float(np.nanmin(auc.values)) - 0.01), vmax=1.0, cbar_label="AUROC")
+        heatmap(bac, "Tumour vs normal · balanced accuracy (threshold 0.5)", out / "fig_tumor_status_balanced_accuracy.png",
+                vmin=max(0.5, float(np.nanmin(bac.values)) - 0.01), vmax=1.0, cbar_label="balanced accuracy")
+        md += ["## Task 1 — tumour vs normal, per cancer", "",
+               "![AUROC](summary/fig_tumor_status_auroc.png)", "",
+               "![Balanced accuracy](summary/fig_tumor_status_balanced_accuracy.png)", "",
+               "### AUROC (95 % CI)", "", "| Cancer | n (normal) | " + " | ".join(names) + " |",
+               "|---|---|" + "---|" * len(names)]
+        for c in cancers:
+            r = scope.set_index("project").loc[c]
+            cells = []
+            for v in views:
+                x = ts[(ts.cohort == c) & (ts.view == v)]
+                cells.append(fmt_ci(x.auroc.iloc[0], x.auroc_lo.iloc[0], x.auroc_hi.iloc[0]) if len(x) else "–")
+            md.append(f"| {c} | {r.tumour_cases + r.normal_cases} ({r.normal_cases}) | " + " | ".join(cells) + " |")
+        md += ["", "### Balanced accuracy / specificity for normals (MCC)", "",
+               "| Cancer | " + " | ".join(names) + " |", "|---|" + "---|" * len(names)]
+        for c in cancers:
+            cells = []
+            for v in views:
+                x = ts[(ts.cohort == c) & (ts.view == v)]
+                cells.append(f"{x.balanced_accuracy.iloc[0]:.3f} / {x.specificity_normal.iloc[0]:.2f} "
+                             f"({x.mcc.iloc[0]:.2f})" if len(x) else "–")
+            md.append(f"| {c} | " + " | ".join(cells) + " |")
+        md += ["", "Mean over cancers:", "", "| Metric | " + " | ".join(names) + " |", "|---|" + "---|" * len(names)]
+        for m in ["auroc", "balanced_accuracy", "auprc_normal", "mcc"]:
+            piv = ts.pivot(index="cohort", columns="view", values=m)
+            md.append(f"| {m} | " + " | ".join(f"{piv[v].mean():.3f}" if v in piv else "–" for v in views) + " |")
+        md.append("")
+
+    # ---- task 2: cancer type -----------------------------------------------------------------
+    if len(ct):
+        ct.to_csv(out / "cancer_type_metrics.csv", index=False)
+        views = view_order(cfg, ct)
+        d = ct.set_index("view").loc[views]
+        d.index = [VIEW_NAMES[v] for v in views]
+        dot_metrics(d, ["accuracy", "balanced_accuracy", "macro_f1"], ["accuracy", "balanced accuracy", "macro F1"],
+                    "Cancer type (33 TCGA projects + Normal) · out-of-fold metrics with 95 % CI",
+                    out / "fig_cancer_type_metrics.png")
+        rec = {}
+        for v in views:
+            pc = pd.read_csv(cfg.result_dir("cancer_type", v, PAN) / "per_class_metrics.csv")
+            rec[VIEW_NAMES[v]] = pc.set_index("class")["recall"]
+        rec = pd.DataFrame(rec)
+        rec.to_csv(out / "cancer_type_recall_by_class.csv")
+        heatmap(rec, "Cancer type · per-class recall (out-of-fold)", out / "fig_cancer_type_recall.png",
+                vmin=0, vmax=1, fmt="{:.2f}", cbar_label="recall", cell=0.4)
+        md += ["## Task 2 — cancer type (33 TCGA projects + pooled Normal), pan-cancer", "",
+               "![Cancer type metrics](summary/fig_cancer_type_metrics.png)", "",
+               "| View | Accuracy | Balanced accuracy | Macro F1 | Macro AUROC (OvR) | Top-3 accuracy | Log loss |",
+               "|---|---|---|---|---|---|---|"]
+        for v in views:
+            r = ct[ct.view == v].iloc[0]
+            md.append(f"| {VIEW_NAMES[v]} | {fmt_ci(r.accuracy, r.accuracy_lo, r.accuracy_hi)} | "
+                      f"{fmt_ci(r.balanced_accuracy, r.balanced_accuracy_lo, r.balanced_accuracy_hi)} | "
+                      f"{fmt_ci(r.macro_f1, r.macro_f1_lo, r.macro_f1_hi)} | {r.macro_auroc_ovr:.3f} | "
+                      f"{r.top3_accuracy:.3f} | {r.log_loss:.3f} |")
+        md += ["", "![Per-class recall](summary/fig_cancer_type_recall.png)", ""]
+
+    # ---- interpretability -------------------------------------------------------------------
+    md += ["## Interpretability (SHAP)", "",
+           "Every outer-fold model is explained with `shap.DeepExplainer` on **all** of its held-out samples. "
+           "Per job folder (`results/<task>/<view>/<cohort>/`):", "",
+           "- `shap_top_features.csv`: top 200 features by mean |SHAP| pooled over folds (a feature a fold did "
+           "not select contributes 0 for that fold), with `n_folds_selected` and `direction_spearman` "
+           "(Spearman of feature value vs SHAP: > 0 means higher PSI / usage / expression pushes towards tumour);",
+           "- `shap_top_genes.csv`: the same importances summed per host gene;",
+           "- `shap_top_features_by_class.csv` (cancer type): top 30 features per class, explaining each "
+           "sample's own centred class logit, with a per-class direction;",
+           "- figures: `shap_beeswarm.png` (tumour status), `shap_class_heatmap.png` and "
+           "`confusion_matrix.png` (cancer type).", ""]
+    for task, cohorts in [("tumor_status", cancers), ("cancer_type", [PAN])]:
+        tg = top_genes(cfg, task, cohorts)
+        if len(tg):
+            tg.to_csv(out / f"{task}_top_genes.csv", index=False)
+            piv = tg.pivot(index="cohort", columns="view", values="top_genes").reindex(index=cohorts)
+            piv = piv[[v for v in cfg.views if v in piv.columns]]
+            md += [f"### Top 5 SHAP genes · {task}", "", "| Cohort | " + " | ".join(VIEW_NAMES[v] for v in piv.columns) + " |",
+                   "|---|" + "---|" * len(piv.columns)]
+            for c, r in piv.iterrows():
+                md.append(f"| {c} | " + " | ".join("–" if pd.isna(x) else x for x in r) + " |")
+            md.append("")
+
+    # ---- per-job figures and links -----------------------------------------------------------
+    done = [(t, v, c) for t, df in [("tumor_status", ts), ("cancer_type", ct)] if len(df)
+            for v, c in zip(df["view"], df["cohort"])]
+    for t, v, c in done:
+        try:
+            per_job_figures(cfg, t, v, c)
+        except FileNotFoundError as e:
+            log(f"skip figures for {t}/{v}/{c}: {e}")
+    md += ["## Per-job folders", "", "| Task | View | Cohort | Folder |", "|---|---|---|---|"]
+    md += [f"| {t} | {VIEW_NAMES[v]} | {c} | [{t}/{v}/{c}]({t}/{v}/{c}/) |" for t, v, c in sorted(done)]
+    (cfg.results_dir / "RESULTS.md").write_text("\n".join(md) + "\n")
+
+    # README block: headline tables only
+    readme = REPO / "README.md"
+    if readme.exists():
+        txt = readme.read_text()
+        block = ["<!-- RESULTS:START (generated by scripts/06_summarise_results.py) -->"]
+        if len(ct):
+            block += ["**Cancer type (34 classes), out-of-fold:**", "",
+                      "| View | Accuracy | Balanced accuracy | Macro F1 |", "|---|---|---|---|"]
+            for v in view_order(cfg, ct):
+                r = ct[ct.view == v].iloc[0]
+                block.append(f"| {VIEW_NAMES[v]} | {r.accuracy:.3f} | {r.balanced_accuracy:.3f} | {r.macro_f1:.3f} |")
+            block.append("")
+        if len(ts):
+            block += ["**Tumour vs normal, mean over the 15 cancers, out-of-fold:**", "",
+                      "| View | AUROC | Balanced accuracy | MCC |", "|---|---|---|---|"]
+            for v in view_order(cfg, ts):
+                x = ts[ts.view == v]
+                block.append(f"| {VIEW_NAMES[v]} | {x.auroc.mean():.3f} | {x.balanced_accuracy.mean():.3f} | {x.mcc.mean():.3f} |")
+            block.append("")
+        block.append("<!-- RESULTS:END -->")
+        txt = re.sub(r"<!-- RESULTS:START.*?<!-- RESULTS:END -->", "\n".join(block), txt, flags=re.S)
+        readme.write_text(txt)
+    log("summary written")
+
+
+if __name__ == "__main__":
+    main()

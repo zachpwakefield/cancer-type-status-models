@@ -1,0 +1,30 @@
+# Raw data sources. All are READ-ONLY and live outside this repository.
+# Step 00 records size + SHA-256 of every file listed here in results/data/source_manifest.json,
+# so any later change to a source is detectable. To run elsewhere, edit only this file.
+
+tcga_root: /Users/zacharywakefield/Desktop/cancer_7_16_2026
+
+tcga:
+  # One row per GDC RNA-seq FILE: File.ID (UUID), Case.ID, Sample.ID, Sample.Type, Project.ID
+  clinical: data/raw/clinical/clinical_data_expanded_surv_gdc_clinical.csv
+  # feature x sample CSVs; header = GDC BAM file UUID (= clinical File.ID); blank = missing
+  molecular:
+    se:   data/raw/molecular/se.csv      # rMATS skipped exon PSI (0-1, 3 dp)
+    mxe:  data/raw/molecular/mxe.csv     # rMATS mutually exclusive exons PSI
+    a3ss: data/raw/molecular/a3ss.csv    # rMATS alternative 3' splice site PSI
+    a5ss: data/raw/molecular/a5ss.csv    # rMATS alternative 5' splice site PSI
+    ri:   data/raw/molecular/ri.csv      # rMATS retained intron PSI
+    afe:  data/raw/molecular/afe.csv     # HITindex alternative first exon usage (sums to 1 per gene)
+    ale:  data/raw/molecular/ale.csv     # HITindex alternative last exon usage (sums to 1 per gene)
+    hit:  data/raw/molecular/hit.csv     # HITindex HIT index (-1..1, 3 dp), not PSI
+    gex:  data/raw/molecular/gex.csv     # log2(raw STAR gene count + 1), 57,656 genes, ALL sample types
+  annotation:
+    hitindex_metaexons: data/reference/gene_annotation/hg38_gen_meta
+    gene_biotypes_v45: data/reference/gene_annotation/gencode_v45_gene_biotype.csv.gz
+    gdc_genes_v36: data/intermediate/gdc_tpm/genes.csv.gz
+  # Used ONLY by the validation step to sanity-check the log2-CPM conversion of gex.csv
+  # against official GDC TPM (primary tumours only). Never a model input.
+  gdc_tpm_matrix: data/intermediate/gdc_tpm/tpm.float32.npy
+  gdc_tpm_samples: data/intermediate/gdc_tpm/samples.csv.gz
+
+gencode_v45_gtf: /Users/zacharywakefield/Desktop/annotation_cache/gencode.v45.annotation.gtf.gz

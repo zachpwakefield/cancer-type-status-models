@@ -1,0 +1,2 @@
+view,rows_raw,rows_in_scope,rows_kept,n_features,prefilter_PANCAN,prefilter_BLCA,prefilter_BRCA,prefilter_COAD,prefilter_ESCA,prefilter_HNSC,prefilter_KICH,prefilter_KIRC,prefilter_KIRP,prefilter_LIHC,prefilter_LUAD,prefilter_LUSC,prefilter_PRAD,prefilter_STAD,prefilter_THCA,prefilter_UCEC,missing_frac
+gex,57656,35493,23640,23640,20129,18601,18399,17599,19695,17680,17964,18415,18508,17227,18945,19156,17822,19204,17312,19239,0.0

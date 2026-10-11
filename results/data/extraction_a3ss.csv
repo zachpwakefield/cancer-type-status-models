@@ -1,0 +1,2 @@
+view,rows_raw,rows_in_scope,rows_terminal_annotated,structural_zeros_filled,rows_kept,n_features,prefilter_PANCAN,prefilter_BLCA,prefilter_BRCA,prefilter_COAD,prefilter_ESCA,prefilter_HNSC,prefilter_KICH,prefilter_KIRC,prefilter_KIRP,prefilter_LIHC,prefilter_LUAD,prefilter_LUSC,prefilter_PRAD,prefilter_STAD,prefilter_THCA,prefilter_UCEC,missing_frac
+a3ss,25506,25095,0,0,10856,10856,9479,9034,9328,9021,9973,9090,9143,9343,9071,8630,9278,9480,9198,9745,9213,8955,0.2187
