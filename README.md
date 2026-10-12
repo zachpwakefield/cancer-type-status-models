@@ -173,7 +173,8 @@ twelve strongest single events, hazard ratio per SD.
 
 The careful reading is in the narrative: the effect is modest, it halves once age, sex and stage
 enter, the events that clear FDR *inside* a cancer are 94% renal (though the set-level gradient
-holds without the kidney cohorts), and directions flip between cancers. Separating tumour from normal tissue and predicting outcome are distinct axes.
+holds without the kidney cohorts), and directions flip between cancers. Separating tumour from
+normal tissue and predicting outcome are distinct axes.
 [caption](results/figures/tumour_status/S8_survival.caption.md) ·
 [§8](results/TUMOUR_STATUS.md#8-do-these-events-carry-information-about-outcome)
 
