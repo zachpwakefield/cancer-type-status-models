@@ -1,0 +1,206 @@
+{
+  "baselines": {
+    "chance_balanced_accuracy": 0.3333333333333333,
+    "chance_macro_auroc": 0.5,
+    "chance_macro_f1": 0.3333333333333333,
+    "majority_accuracy": 0.7222222222222222,
+    "majority_balanced_accuracy": 0.3333333333333333,
+    "majority_class": "Classical",
+    "majority_macro_f1": 0.2795698924731183
+  },
+  "bootstrap_95ci": {
+    "accuracy": [
+      0.5225823045267489,
+      0.6152263374485597
+    ],
+    "balanced_accuracy": [
+      0.46738392518709093,
+      0.592778069515929
+    ],
+    "macro_auroc_ovr": [
+      0.6637196770922276,
+      0.7552639330163371
+    ],
+    "macro_f1": [
+      0.4275786464797985,
+      0.5137794157502411
+    ],
+    "n_resamples_used": 1000
+  },
+  "class_counts": {
+    "Classical": 351,
+    "Follicular": 100,
+    "Tall cell": 35
+  },
+  "classes": [
+    "Classical",
+    "Follicular",
+    "Tall cell"
+  ],
+  "cohort": "THCA",
+  "config": {
+    "model": {
+      "device": "cpu",
+      "max_epochs": {
+        "cancer_type": 100,
+        "subtype": 300,
+        "tumor_status": 300
+      },
+      "patience": {
+        "cancer_type": 12,
+        "subtype": 20,
+        "tumor_status": 20
+      }
+    },
+    "preprocess": {
+      "clip_z": 10.0,
+      "gex_min_expressed_frac": 0.1,
+      "gex_min_log2cpm": 1.0,
+      "min_observed_frac": 0.5
+    },
+    "shap": {
+      "background_size": 100,
+      "top_k_report": 30
+    },
+    "splits": {
+      "inner_folds": 3,
+      "inner_folds_used": {
+        "cancer_type": 1,
+        "subtype": 3,
+        "tumor_status": 3
+      },
+      "outer_folds": 5,
+      "seed": 20261010
+    },
+    "subtype_yaml_sha256": "7962b0d41ffb43f045b531543a6077d2e03ff1e4ce03ee56f37139159c3a39c0",
+    "tuning": {
+      "n_trials": {
+        "cancer_type": 20,
+        "subtype": 30,
+        "tumor_status": 30
+      },
+      "pruner_startup_trials": 6,
+      "search_space": {
+        "batch_size": {
+          "cancer_type": [
+            128,
+            256,
+            512
+          ],
+          "subtype": [
+            32,
+            64,
+            128,
+            256
+          ],
+          "tumor_status": [
+            32,
+            64,
+            128,
+            256
+          ]
+        },
+        "dropout": [
+          0.0,
+          0.6
+        ],
+        "input_dropout": [
+          0.0,
+          0.5
+        ],
+        "lr": [
+          0.0001,
+          0.003
+        ],
+        "n_features": [
+          500,
+          1000,
+          2000,
+          4000
+        ],
+        "n_layers": [
+          1,
+          3
+        ],
+        "selection": [
+          "variance",
+          "anova"
+        ],
+        "weight_decay": [
+          1e-06,
+          0.01
+        ],
+        "width": [
+          64,
+          1024
+        ]
+      }
+    }
+  },
+  "git_commit": "a890c55dc3e3809be96dc60e9ed4f9a672d26ef1+dirty",
+  "labels": {
+    "columns": [],
+    "concordance": "gdc_primary_diagnosis",
+    "label_set": "histology",
+    "label_type": "histology",
+    "project": "THCA",
+    "question": "papillary carcinoma variants, classical vs follicular vs tall cell",
+    "source": "cdr_histological_type",
+    "tier": "primary",
+    "version": "histology_v1"
+  },
+  "n_features_by_fold": [
+    500,
+    1000,
+    500,
+    500,
+    4000
+  ],
+  "packages": {
+    "numpy": "1.26.4",
+    "optuna": "4.6.0",
+    "pandas": "2.3.3",
+    "pyarrow": "23.0.1",
+    "python": "3.10.20",
+    "scipy": "1.15.3",
+    "shap": "0.48.0",
+    "sklearn": "1.7.2",
+    "torch": "2.2.2"
+  },
+  "per_fold_mean": {
+    "accuracy": 0.5677256469598149,
+    "balanced_accuracy": 0.5370974508323307,
+    "macro_auroc_ovr": 0.7335004869330495,
+    "macro_f1": 0.45833653617216585
+  },
+  "per_fold_sd": {
+    "accuracy": 0.10832683802855837,
+    "balanced_accuracy": 0.046832322573092874,
+    "macro_auroc_ovr": 0.03532512548170427,
+    "macro_f1": 0.05178711437008449
+  },
+  "pooled_oof": {
+    "accuracy": 0.5679012345679012,
+    "balanced_accuracy": 0.5280477547144213,
+    "log_loss": 0.915950767280343,
+    "macro_auroc_ovr": 0.7092589365436126,
+    "macro_f1": 0.47084069444906396,
+    "mcc": 0.2774554610958479,
+    "n": 486,
+    "n_classes": 3
+  },
+  "recall_by_class": {
+    "Classical": 0.5498575498575499,
+    "Follicular": 0.72,
+    "Tall cell": 0.3142857142857143
+  },
+  "selection_method_by_fold": [
+    "anova",
+    "variance",
+    "variance",
+    "variance",
+    "anova"
+  ],
+  "task": "subtype",
+  "view": "ale"
+}

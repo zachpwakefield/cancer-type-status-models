@@ -5,6 +5,7 @@ A later change to any source is then detectable. Dataless (iCloud-evicted) files
 from __future__ import annotations
 
 import os
+from pathlib import Path
 
 from _common import log
 
@@ -24,6 +25,8 @@ def main() -> None:
     cfg = load_config()
     paths = {f"tcga.{k}": cfg.tcga_path(*k.split(".")) for k, _ in walk(cfg.sources["tcga"])}
     paths["gencode_v45_gtf"] = cfg.gencode_gtf
+    # subtype label sources (docs/SUBTYPE_METHODS.md, D-30): absolute paths
+    paths.update({f"subtype_labels.{k}": Path(v) for k, v in cfg.sources.get("subtype_labels", {}).items()})
     out = {}
     for key, p in paths.items():
         st = os.stat(p)

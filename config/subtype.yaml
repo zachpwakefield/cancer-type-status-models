@@ -1,0 +1,532 @@
+# Within-cancer subtype task: label maps, scope and modelling settings.
+# Every choice is a decision in docs/SUBTYPE_METHODS.md (D-30 onwards). This file was written
+# before any subtype model was fitted; nothing about model performance may change it. A change
+# made after results were seen must be logged as a deviation in docs/SUBTYPE_METHODS.md.
+#
+# Structure
+#   label_sets.<name>      a family of labels; "task" names the results/<task>/ folder. Both sets
+#                          below are task "subtype": cohort names are unique across sets (asserted)
+#     sources              which label source gives the class, and which one must agree
+#     rules                minimum class size, minimum number of classes, separator of
+#                          multi-component values
+#     cancers.<PROJECT>    tier, the question, and for EACH source the raw values of every
+#                          class and every excluded raw value. The lists are exhaustive: a raw
+#                          value met in the cohort that is in neither list is an error (D-32).
+#   modelling              per-task settings that config/study.yaml keys by task (D-36)
+#   interpretation         thresholds of the interpretation layer, fixed in advance (D-41)
+#   literature_markers     what the literature predicts per cancer, to check, not assume (D-41)
+#
+# Label sources (ctsm/subtype.py, LABEL_SOURCES):
+#   cdr_histological_type   TCGA Clinical Data Resource (Liu et al. 2018, Cell 173:400),
+#                           Table S1, column histological_type, one row per patient
+#                           (path: config/sources.yaml subtype_labels.tcga_cdr)
+#   gdc_primary_diagnosis   GDC clinical, column primary_diagnosis of the patient's selected
+#                           primary-tumour RNA-seq file (ICD-O-3 morphology text)
+#   pancan_subtype          GDC PanImmune page, TCGASubtype.20170308.tsv: published subtype calls,
+#                           rows of sample type 01 (or patient barcodes) only (D-43)
+#   pancan_clinical         GDC PanCanAtlas page, clinical_PANCAN_patient_with_followup.tsv,
+#                           one row per patient (D-43)
+#   The two PanCanAtlas tables are fetched and MD5-checked by scripts/00b_fetch_gdc_labels.py into
+#   <data_dir>/external/gdc_pancanatlas/ (git-ignored); the loaders re-check them against its
+#   MANIFEST.json before reading.
+# Each cohort may name its own source and columns; several columns are joined into components
+# with the separator. `ignore` components are dropped (missing tests); `exclude` components
+# exclude the patient; the remaining components must all map to one class (D-32).
+
+label_sets:
+  histology:
+    task: subtype
+    version: histology_v1
+    label_type: histology      # D-30: morphology, assessed without the RNA
+    sources:
+      primary: cdr_histological_type        # D-30: the class comes from here
+      concordance: gdc_primary_diagnosis    # D-33: and this source must map to the same class
+    rules:
+      min_class_cases: 20      # D-34: >= 20 patients per class (>= 4 in every outer test fold)
+      min_classes: 2           # D-34: a cancer needs >= 2 classes that pass, else out of scope
+      component_separator: "|" # D-32: CDR multi-component values; every component must map
+                               #        to the same class, else the patient is excluded
+    cancers:
+      # ---------------------------------------------------------------- tier: primary
+      BRCA:
+        tier: primary
+        question: invasive ductal vs invasive lobular carcinoma (special types if >= 20)
+        classes:
+          Ductal:
+            cdr_histological_type: ["Infiltrating Ductal Carcinoma"]
+            gdc_primary_diagnosis: ["Infiltrating duct carcinoma, NOS"]
+          Lobular:
+            cdr_histological_type: ["Infiltrating Lobular Carcinoma"]
+            gdc_primary_diagnosis: ["Lobular carcinoma, NOS"]
+          Mucinous:
+            cdr_histological_type: ["Mucinous Carcinoma"]
+            gdc_primary_diagnosis: ["Mucinous adenocarcinoma"]
+          Metaplastic:
+            cdr_histological_type: ["Metaplastic Carcinoma"]
+            gdc_primary_diagnosis: ["Metaplastic carcinoma, NOS"]
+          Medullary:
+            cdr_histological_type: ["Medullary Carcinoma"]
+            gdc_primary_diagnosis: ["Medullary carcinoma, NOS"]
+        exclude:
+          cdr_histological_type: ["Other, specify", "Mixed Histology (please specify)",
+                                  "Infiltrating Carcinoma NOS", "[Not Available]"]
+          gdc_primary_diagnosis: ["Infiltrating duct and lobular carcinoma",
+                                  "Infiltrating duct mixed with other types of carcinoma",
+                                  "Infiltrating lobular mixed with other types of carcinoma",
+                                  "Intraductal papillary adenocarcinoma with invasion",
+                                  "Invasive micropapillary carcinoma",
+                                  "Paget disease and infiltrating duct carcinoma of breast",
+                                  "Pleomorphic carcinoma", "Papillary carcinoma, NOS",
+                                  "Basal cell carcinoma, NOS", "Tubular adenocarcinoma",
+                                  "Cribriform carcinoma, NOS", "Carcinoma, NOS",
+                                  "Secretory carcinoma of breast", "Apocrine adenocarcinoma",
+                                  "Large cell neuroendocrine carcinoma", "Adenoid cystic carcinoma",
+                                  "Phyllodes tumor, malignant"]
+      THCA:
+        tier: primary
+        question: papillary carcinoma variants, classical vs follicular vs tall cell
+        classes:
+          Classical:
+            cdr_histological_type: ["Thyroid Papillary Carcinoma - Classical/usual"]
+            gdc_primary_diagnosis: ["Papillary adenocarcinoma, NOS", "Papillary carcinoma, NOS"]
+          Follicular:
+            cdr_histological_type: ["Thyroid Papillary Carcinoma - Follicular (>= 99% follicular patterned)"]
+            gdc_primary_diagnosis: ["Papillary carcinoma, follicular variant"]
+          Tall cell:
+            cdr_histological_type: ["Thyroid Papillary Carcinoma - Tall Cell (>= 50% tall cell features)"]
+            # GDC renders TCGA's tall-cell category with this ICD-O-3 text (D-32)
+            gdc_primary_diagnosis: ["Papillary carcinoma, columnar cell"]
+        exclude:
+          cdr_histological_type: ["Other, specify"]
+          gdc_primary_diagnosis: ["Nonencapsulated sclerosing carcinoma", "Follicular adenocarcinoma, NOS",
+                                  "Follicular carcinoma, minimally invasive", "Oxyphilic adenocarcinoma",
+                                  "Carcinoma, NOS", "Papillary carcinoma, oxyphilic cell"]
+      UCEC:
+        tier: primary
+        question: endometrioid vs serous endometrial adenocarcinoma
+        classes:
+          Endometrioid:
+            cdr_histological_type: ["Endometrioid endometrial adenocarcinoma"]
+            gdc_primary_diagnosis: ["Endometrioid adenocarcinoma, NOS"]
+          Serous:
+            cdr_histological_type: ["Serous endometrial adenocarcinoma"]
+            gdc_primary_diagnosis: ["Serous cystadenocarcinoma, NOS", "Papillary serous cystadenocarcinoma",
+                                    "Serous surface papillary carcinoma"]
+        exclude:
+          cdr_histological_type: ["Mixed serous and endometrioid"]
+          gdc_primary_diagnosis: ["Adenocarcinoma with mixed subtypes"]
+      SARC:
+        tier: primary
+        question: soft-tissue sarcoma histotype (distinct lineages, TCGA 2017)
+        classes:
+          LMS:
+            cdr_histological_type: ["Leiomyosarcoma (LMS)"]
+            gdc_primary_diagnosis: ["Leiomyosarcoma, NOS", "Myxoid leiomyosarcoma"]
+          DDLPS:
+            cdr_histological_type: ["Dedifferentiated liposarcoma"]
+            gdc_primary_diagnosis: ["Dedifferentiated liposarcoma"]
+          UPS:      # 'MFH' was renamed undifferentiated pleomorphic sarcoma (WHO 2002): one class
+            cdr_histological_type: ["Undifferentiated Pleomorphic Sarcoma (UPS)",
+                                    "Pleomorphic 'MFH' / Undifferentiated pleomorphic sarcoma",
+                                    "Giant cell 'MFH' / Undifferentiated pleomorphic sarcoma with giant cells"]
+            gdc_primary_diagnosis: ["Undifferentiated sarcoma", "Malignant fibrous histiocytoma",
+                                    "Giant cell sarcoma"]
+          MFS:
+            cdr_histological_type: ["Myxofibrosarcoma"]
+            gdc_primary_diagnosis: ["Fibromyxosarcoma"]
+          MPNST:
+            cdr_histological_type: ["Malignant Peripheral Nerve Sheath Tumors (MPNST)"]
+            gdc_primary_diagnosis: ["Malignant peripheral nerve sheath tumor"]
+          Synovial:
+            cdr_histological_type: ["Synovial Sarcoma - Monophasic", "Synovial Sarcoma - Biphasic",
+                                    "Sarcoma; synovial; poorly differentiated"]
+            gdc_primary_diagnosis: ["Synovial sarcoma, spindle cell", "Synovial sarcoma, biphasic",
+                                    "Synovial sarcoma, NOS"]
+        exclude:
+          cdr_histological_type: ["Desmoid Tumor"]
+          gdc_primary_diagnosis: ["Liposarcoma, NOS", "Sarcoma, NOS", "Liposarcoma, well differentiated",
+                                  "Abdominal fibromatosis", "Pleomorphic liposarcoma", "Aggressive fibromatosis"]
+      TGCT:
+        tier: primary
+        question: pure seminoma vs non-seminoma without a seminoma component
+        classes:
+          Seminoma:
+            cdr_histological_type: ["Seminoma; NOS"]
+            gdc_primary_diagnosis: ["Seminoma, NOS"]
+          Non-seminoma:
+            cdr_histological_type: ["Non-Seminoma; Embryonal Carcinoma", "Non-Seminoma; Yolk Sac Tumor",
+                                    "Non-Seminoma; Teratoma (Mature)", "Non-Seminoma; Teratoma (Immature)",
+                                    "Non-Seminoma; Choriocarcinoma"]
+            gdc_primary_diagnosis: ["Embryonal carcinoma, NOS", "Yolk sac tumor", "Teratoma, benign",
+                                    "Teratoma, malignant, NOS", "Teratocarcinoma", "Mixed germ cell tumor"]
+        exclude:
+          # a component recorded as not available could be seminoma: the patient is excluded
+          cdr_histological_type: ["[Not Available]"]
+          gdc_primary_diagnosis: []
+      MESO:
+        tier: primary
+        question: epithelioid vs biphasic pleural mesothelioma
+        classes:
+          Epithelioid:
+            cdr_histological_type: ["Epithelioid mesothelioma"]
+            gdc_primary_diagnosis: ["Epithelioid mesothelioma, malignant"]
+          Biphasic:
+            cdr_histological_type: ["Biphasic mesothelioma"]
+            gdc_primary_diagnosis: ["Mesothelioma, biphasic, malignant"]
+          Sarcomatoid:
+            cdr_histological_type: ["Sarcomatoid mesothelioma"]
+            gdc_primary_diagnosis: []
+        exclude:
+          cdr_histological_type: ["Diffuse malignant mesothelioma - NOS"]
+          gdc_primary_diagnosis: ["Mesothelioma, malignant"]
+      STAD:
+        tier: primary
+        question: Lauren intestinal vs diffuse type; untyped adenocarcinoma NOS is excluded
+        classes:
+          Intestinal:   # TCGA's own form files mucinous, tubular and papillary under intestinal
+            cdr_histological_type: ["Stomach, Intestinal Adenocarcinoma, Not Otherwise Specified (NOS)",
+                                    "Stomach, Intestinal Adenocarcinoma, Tubular Type",
+                                    "Stomach, Intestinal Adenocarcinoma, Mucinous Type",
+                                    "Stomach, Intestinal Adenocarcinoma, Papillary Type"]
+            gdc_primary_diagnosis: ["Adenocarcinoma, intestinal type", "Tubular adenocarcinoma",
+                                    "Mucinous adenocarcinoma", "Papillary adenocarcinoma, NOS"]
+          Diffuse:      # Lauren's diffuse type includes signet-ring cell carcinoma
+            cdr_histological_type: ["Stomach, Adenocarcinoma, Diffuse Type",
+                                    "Stomach Adenocarcinoma, Signet Ring Type"]
+            gdc_primary_diagnosis: ["Carcinoma, diffuse type", "Signet ring cell carcinoma"]
+        exclude:
+          cdr_histological_type: ["Stomach, Adenocarcinoma, Not Otherwise Specified (NOS)", "[Not Available]"]
+          gdc_primary_diagnosis: ["Adenocarcinoma, NOS", "Adenocarcinoma with mixed subtypes"]
+      # ---------------------------------------------------------------- tier: weak label
+      LGG:
+        tier: weak_label
+        question: astrocytoma vs oligodendroglioma by histology (superseded by IDH and 1p/19q)
+        classes:
+          Astrocytoma:
+            cdr_histological_type: ["Astrocytoma"]
+            gdc_primary_diagnosis: ["Astrocytoma, NOS", "Astrocytoma, anaplastic"]
+          Oligodendroglioma:
+            cdr_histological_type: ["Oligodendroglioma"]
+            gdc_primary_diagnosis: ["Oligodendroglioma, NOS", "Oligodendroglioma, anaplastic"]
+        exclude:
+          # oligoastrocytoma is not a WHO 2016/2021 entity
+          cdr_histological_type: ["Oligoastrocytoma"]
+          gdc_primary_diagnosis: ["Mixed glioma"]
+      THYM:
+        tier: weak_label
+        question: WHO type A/AB vs type B1-B3 thymoma (an ordinal scheme, grouped)
+        classes:
+          A/AB:
+            cdr_histological_type: ["Thymoma; Type A", "Thymoma; Type AB"]
+            gdc_primary_diagnosis: ["Thymoma, type A, malignant", "Thymoma, type A, NOS",
+                                    "Thymoma, type AB, malignant", "Thymoma, type AB, NOS"]
+          B1-B3:
+            cdr_histological_type: ["Thymoma; Type B1", "Thymoma; Type B2", "Thymoma; Type B3"]
+            gdc_primary_diagnosis: ["Thymoma, type B1, malignant", "Thymoma, type B1, NOS",
+                                    "Thymoma, type B2, malignant", "Thymoma, type B2, NOS",
+                                    "Thymoma, type B3, malignant"]
+          Thymic carcinoma:
+            cdr_histological_type: ["Thymoma; Type C"]
+            gdc_primary_diagnosis: ["Thymic carcinoma, NOS"]
+        exclude:
+          cdr_histological_type: []
+          gdc_primary_diagnosis: []
+      # ---------------------------------------------------------------- tier: control
+      ESCA:
+        tier: control
+        question: squamous cell carcinoma vs adenocarcinoma (different epithelial lineages)
+        classes:
+          Squamous:
+            cdr_histological_type: ["Esophagus Squamous Cell Carcinoma"]
+            gdc_primary_diagnosis: ["Squamous cell carcinoma, NOS", "Squamous cell carcinoma, keratinizing, NOS",
+                                    "Basaloid squamous cell carcinoma"]
+          Adenocarcinoma:
+            cdr_histological_type: ["Esophagus Adenocarcinoma, NOS"]
+            gdc_primary_diagnosis: ["Adenocarcinoma, NOS", "Mucinous adenocarcinoma", "Tubular adenocarcinoma"]
+        exclude:
+          cdr_histological_type: []
+          gdc_primary_diagnosis: []
+      CESC:
+        tier: control
+        question: squamous cell carcinoma vs adenocarcinoma of the cervix
+        classes:
+          Squamous:
+            cdr_histological_type: ["Cervical Squamous Cell Carcinoma"]
+            gdc_primary_diagnosis: ["Squamous cell carcinoma, NOS",
+                                    "Squamous cell carcinoma, large cell, nonkeratinizing, NOS",
+                                    "Squamous cell carcinoma, keratinizing, NOS",
+                                    "Basaloid squamous cell carcinoma", "Papillary squamous cell carcinoma"]
+          Adenocarcinoma:
+            cdr_histological_type: ["Endocervical Type of Adenocarcinoma",
+                                    "Mucinous Adenocarcinoma of Endocervical Type",
+                                    "Endocervical Adenocarcinoma of the Usual Type",
+                                    "Endometrioid Adenocarcinoma of Endocervix"]
+            gdc_primary_diagnosis: ["Adenocarcinoma, endocervical type", "Mucinous adenocarcinoma, endocervical type",
+                                    "Adenocarcinoma, NOS", "Endometrioid adenocarcinoma, NOS",
+                                    "Mucinous adenocarcinoma"]
+        exclude:
+          cdr_histological_type: ["Adenosquamous"]
+          gdc_primary_diagnosis: ["Adenosquamous carcinoma"]
+      PCPG:
+        tier: control
+        question: adrenal pheochromocytoma vs extra-adrenal paraganglioma (a site label)
+        classes:
+          Pheochromocytoma:
+            cdr_histological_type: ["Pheochromocytoma"]
+            gdc_primary_diagnosis: ["Pheochromocytoma, NOS", "Pheochromocytoma, malignant"]
+          Paraganglioma:
+            cdr_histological_type: ["Paraganglioma", "Paraganglioma; Extra-adrenal Pheochromocytoma"]
+            gdc_primary_diagnosis: ["Extra-adrenal paraganglioma, NOS", "Extra-adrenal paraganglioma, malignant",
+                                    "Paraganglioma, NOS", "Paraganglioma, malignant", "Aortic body tumor"]
+        exclude:
+          cdr_histological_type: []
+          gdc_primary_diagnosis: []
+
+  # ==================================================================================
+  # D-43..D-45: published molecular subtypes and IHC/ISH status, added 2026-10-12 before any
+  # subtype model was fitted. label_type says how the label was made: "genomic" (DNA: mutation,
+  # copy number, methylation, fusion calls) and "IHC" (protein/ISH assays) are tests independent
+  # of the transcriptome; "expression-defined" labels were derived from mRNA expression, so a
+  # GEX model predicting them is close to circular and the question is how close the AS views get.
+  molecular:
+    task: subtype                # same task as histology; cohort names carry the label (D-43)
+    version: pancanatlas_v1
+    sources:
+      primary: pancan_subtype
+      concordance: null        # one source per cohort; no second source to agree with
+    rules:
+      min_class_cases: 20
+      min_classes: 2
+      component_separator: "|"
+    cancers:
+      # ---------------------------------------------------------------- genomic / IHC
+      LGG_IDH:
+        project: LGG
+        label_type: genomic
+        tier: primary
+        question: IDH-mutant 1p/19q-codeleted vs IDH-mutant non-codeleted vs IDH-wildtype
+        source: pancan_subtype
+        columns: [Subtype_Selected]
+        classes:   # Ceccarelli et al. 2016 Cell: pan-glioma DNA-methylation groups within IDH status
+          IDHmut-codel:
+            pancan_subtype: ["GBM_LGG.Codel"]
+          IDHmut-non-codel:
+            pancan_subtype: ["GBM_LGG.G-CIMP-high", "GBM_LGG.G-CIMP-low"]
+          IDHwt:
+            pancan_subtype: ["GBM_LGG.Mesenchymal-like", "GBM_LGG.Classic-like", "GBM_LGG.PA-like",
+                             "GBM_LGG.LGm6-GBM"]
+        exclude:
+          pancan_subtype: ["GBM_LGG.NA"]
+      UCEC_TCGA:
+        project: UCEC
+        label_type: genomic
+        tier: primary
+        question: POLE vs MSI vs copy-number-low vs copy-number-high (TCGA 2013)
+        source: pancan_subtype
+        columns: [Subtype_Selected]
+        classes:
+          POLE: {pancan_subtype: ["UCEC.POLE"]}
+          MSI: {pancan_subtype: ["UCEC.MSI"]}
+          CN-low: {pancan_subtype: ["UCEC.CN_LOW"]}
+          CN-high: {pancan_subtype: ["UCEC.CN_HIGH"]}
+        exclude: {pancan_subtype: []}
+      STAD_TCGA:
+        project: STAD
+        label_type: genomic
+        tier: primary
+        question: CIN vs MSI (HM-indel) vs genomically stable vs EBV (Liu et al. 2018 Cancer Cell)
+        source: pancan_subtype
+        columns: [Subtype_Selected]
+        classes:
+          CIN: {pancan_subtype: ["GI.CIN"]}
+          MSI: {pancan_subtype: ["GI.HM-indel"]}
+          GS: {pancan_subtype: ["GI.GS"]}
+          EBV: {pancan_subtype: ["GI.EBV"]}
+          HM-SNV: {pancan_subtype: ["GI.HM-SNV"]}
+        exclude: {pancan_subtype: []}
+      COAD_TCGA:
+        project: COAD
+        label_type: genomic
+        tier: primary
+        question: CIN vs MSI (HM-indel) vs genomically stable (Liu et al. 2018 Cancer Cell)
+        source: pancan_subtype
+        columns: [Subtype_Selected]
+        classes:
+          CIN: {pancan_subtype: ["GI.CIN"]}
+          MSI: {pancan_subtype: ["GI.HM-indel"]}
+          GS: {pancan_subtype: ["GI.GS"]}
+          HM-SNV: {pancan_subtype: ["GI.HM-SNV"]}
+        exclude: {pancan_subtype: []}
+      PRAD_ETS:
+        project: PRAD
+        label_type: genomic
+        tier: primary
+        question: ETS-fusion / SPOP class (TCGA 2015 Cell); fusion calls used RNA-seq and DNA
+        source: pancan_subtype
+        columns: [Subtype_Selected]
+        classes:
+          ERG: {pancan_subtype: ["PRAD.1-ERG"]}
+          ETV1: {pancan_subtype: ["PRAD.2-ETV1"]}
+          ETV4: {pancan_subtype: ["PRAD.3-ETV4"]}
+          FLI1: {pancan_subtype: ["PRAD.4-FLI1"]}
+          SPOP: {pancan_subtype: ["PRAD.5-SPOP"]}
+          FOXA1: {pancan_subtype: ["PRAD.6-FOXA1"]}
+          IDH1: {pancan_subtype: ["PRAD.7-IDH1"]}
+          Other: {pancan_subtype: ["PRAD.8-other"]}
+        exclude: {pancan_subtype: []}
+      BRCA_ER:
+        project: BRCA
+        label_type: IHC
+        tier: primary
+        question: oestrogen-receptor status by immunohistochemistry
+        source: pancan_clinical
+        columns: [breast_carcinoma_estrogen_receptor_status]
+        classes:
+          ER-negative: {pancan_clinical: ["Negative"]}
+          ER-positive: {pancan_clinical: ["Positive"]}
+        exclude:
+          pancan_clinical: ["[Not Evaluated]", "Indeterminate", "[Not Available]", "[Unknown]"]
+      HNSC_HPV:
+        project: HNSC
+        label_type: IHC
+        tier: primary
+        question: HPV status by p16 immunohistochemistry and/or in-situ hybridisation
+        source: pancan_clinical
+        columns: [hpv_status_by_p16_testing, hpv_status_by_ish_testing]
+        ignore: ["[Not Available]", "[Not Evaluated]", "[Unknown]"]   # a test not done
+        classes:   # every test done must agree; p16 and ISH disagreeing excludes the patient
+          HPV-negative: {pancan_clinical: ["Negative"]}
+          HPV-positive: {pancan_clinical: ["Positive"]}
+        exclude: {pancan_clinical: []}
+      # ---------------------------------------------------------------- expression-defined
+      BRCA_PAM50:
+        project: BRCA
+        label_type: expression-defined
+        tier: expression_defined
+        question: PAM50 intrinsic subtype (Parker et al. 2009 J Clin Oncol; TCGA 2012 Nature)
+        source: pancan_subtype
+        columns: [Subtype_Selected]
+        classes:
+          LumA: {pancan_subtype: ["BRCA.LumA"]}
+          LumB: {pancan_subtype: ["BRCA.LumB"]}
+          Her2: {pancan_subtype: ["BRCA.Her2"]}
+          Basal: {pancan_subtype: ["BRCA.Basal"]}
+          Normal-like: {pancan_subtype: ["BRCA.Normal"]}
+        exclude: {pancan_subtype: []}
+      HNSC_mRNA:
+        project: HNSC
+        label_type: expression-defined
+        tier: expression_defined
+        question: mRNA subtype atypical / basal / classical / mesenchymal (TCGA 2015 Nature)
+        source: pancan_subtype
+        columns: [Subtype_Selected]
+        classes:
+          Atypical: {pancan_subtype: ["HNSC.Atypical"]}
+          Basal: {pancan_subtype: ["HNSC.Basal"]}
+          Classical: {pancan_subtype: ["HNSC.Classical"]}
+          Mesenchymal: {pancan_subtype: ["HNSC.Mesenchymal"]}
+        exclude: {pancan_subtype: []}
+      PCPG_mRNA:
+        project: PCPG
+        label_type: expression-defined
+        tier: expression_defined
+        question: mRNA subtype kinase signalling / pseudohypoxia / Wnt-altered / cortical admixture
+        source: pancan_subtype
+        columns: [Subtype_Selected]
+        classes:   # Fishbein et al. 2017 Cancer Cell
+          Kinase signaling: {pancan_subtype: ["PCPG.Kinase signaling"]}
+          Pseudohypoxia: {pancan_subtype: ["PCPG.Pseudohypoxia"]}
+          Wnt-altered: {pancan_subtype: ["PCPG.Wnt-altered"]}
+          Cortical admixture: {pancan_subtype: ["PCPG.Cortical admixture"]}
+        exclude: {pancan_subtype: ["PCPG.NA"]}
+
+# D-36: settings that config/study.yaml keys by task, the same for both label sets. The subtype
+# cohorts (about 80-1,050 patients) are the size of the tumour-status cohorts, so they take the
+# tumour-status values. Run order (D-36): histology first, then the genomic/IHC cohorts, then the
+# expression-defined ones; which cohorts run depends on nothing but this list.
+modelling:
+  inner_folds_used: 3
+  max_epochs: 300
+  patience: 20
+  n_trials: 30
+  batch_size: [32, 64, 128, 256]
+  bootstrap_resamples: 1000
+
+# D-41: interpretation thresholds, fixed before any SHAP value was read.
+interpretation:
+  top_genes_overlap: 50          # top genes per (cancer, view) compared between AS and GEX
+  top_events_per_class: 5        # events per class and view carried into the single-event review
+  overlap_min_bp: 50             # the event's segment overlaps another gene's exon by >= 50 bp
+  overlap_tracking_rho: 0.5      # and |Spearman(event, that gene's log2 CPM)| >= 0.5 and exceeds
+                                 # |Spearman(event, host log2 CPM)|: the event is a readout of the
+                                 # other gene. Both as BIOLOGY_METHODS.md D-27 (amendment A-1)
+  marker_top_rank: 100           # a literature marker "shows up" if its gene ranks in the top 100
+
+# D-41: literature expectations, to check, not to assume. direction: the class in which the
+# gene's expression is expected to be HIGHER. Each entry names its source.
+literature_markers:
+  BRCA:
+    - {gene: CDH1, higher_in: Ductal, vs: Lobular, source: "Ciriello et al. 2015 Cell (E-cadherin loss defines ILC)"}
+  THCA:
+    - {gene: TPO, higher_in: Follicular, vs: Classical, source: "TCGA 2014 Cell (RAS-like tumours are more differentiated)"}
+    - {gene: SLC5A5, higher_in: Follicular, vs: Classical, source: "TCGA 2014 Cell; Durante et al. 2007 JCEM (BRAF V600E lowers iodide-handling genes)"}
+    - {gene: TG, higher_in: Follicular, vs: Classical, source: "TCGA 2014 Cell (thyroid differentiation score)"}
+    - {gene: TPO, higher_in: Classical, vs: Tall cell, source: "TCGA 2014 Cell (tall cell is BRAF-like, least differentiated)"}
+  UCEC:
+    - {gene: PGR, higher_in: Endometrioid, vs: Serous, source: "serous carcinoma is usually PR-low (TCGA 2013 Nature; standard IHC)"}
+    - {gene: ESR1, higher_in: Endometrioid, vs: Serous, source: "serous carcinoma is usually ER-low (standard IHC)"}
+    - {gene: CDKN2A, higher_in: Serous, vs: Endometrioid, source: "diffuse p16 in serous carcinoma (standard IHC)"}
+    - {gene: L1CAM, higher_in: Serous, vs: Endometrioid, source: "L1CAM is expressed in non-endometrioid carcinomas"}
+  SARC:
+    - {gene: MYOCD, higher_in: LMS, vs: UPS, source: "TCGA 2017 Cell (smooth-muscle programme of leiomyosarcoma)"}
+    - {gene: CNN1, higher_in: LMS, vs: UPS, source: "TCGA 2017 Cell (smooth-muscle programme)"}
+    - {gene: MDM2, higher_in: DDLPS, vs: UPS, source: "TCGA 2017 Cell (12q13-15 amplification in DDLPS)"}
+    - {gene: CDK4, higher_in: DDLPS, vs: UPS, source: "TCGA 2017 Cell (12q13-15 amplification in DDLPS)"}
+  TGCT:
+    - {gene: KIT, higher_in: Seminoma, vs: Non-seminoma, source: "Shen et al. 2018 Cell Rep (KIT in seminoma)"}
+    - {gene: SOX17, higher_in: Seminoma, vs: Non-seminoma, source: "SOX17 marks seminoma (de Jong et al. 2008 J Pathol)"}
+    - {gene: SOX2, higher_in: Non-seminoma, vs: Seminoma, source: "SOX2 marks embryonal carcinoma (de Jong et al. 2008 J Pathol)"}
+  MESO:
+    - {gene: MSLN, higher_in: Epithelioid, vs: Biphasic, source: "mesothelin is lost in sarcomatoid components; Hmeljak et al. 2018 Cancer Discov (epithelioid-sarcomatoid gradient)"}
+  STAD:
+    - {gene: CDX2, higher_in: Intestinal, vs: Diffuse, source: "intestinal differentiation of Lauren intestinal type"}
+    - {gene: CDH1, higher_in: Intestinal, vs: Diffuse, source: "TCGA 2014 Nature (CDH1 alterations in diffuse / GS tumours)"}
+  LGG:
+    - {gene: 1p/19q dosage, higher_in: Astrocytoma, vs: Oligodendroglioma, source: "1p/19q codeletion defines oligodendroglioma (WHO 2016; Brat et al. 2015 NEJM)"}
+  THYM:
+    - {gene: DNTT, higher_in: B1-B3, vs: A/AB, source: "B thymomas are cortical, thymocyte-rich (WHO); AB also carries lymphocyte-rich areas"}
+  ESCA:
+    - {gene: TP63, higher_in: Squamous, vs: Adenocarcinoma, source: "squamous lineage factor (TCGA 2017 Nature)"}
+    - {gene: KRT5, higher_in: Squamous, vs: Adenocarcinoma, source: "squamous keratin"}
+  CESC:
+    - {gene: TP63, higher_in: Squamous, vs: Adenocarcinoma, source: "squamous lineage factor (TCGA 2017 Nature)"}
+    - {gene: KRT5, higher_in: Squamous, vs: Adenocarcinoma, source: "squamous keratin"}
+  PCPG:
+    - {gene: PNMT, higher_in: Pheochromocytoma, vs: Paraganglioma, source: "adrenaline synthesis is adrenal-medullary"}
+    - {gene: CYP11B1, higher_in: Pheochromocytoma, vs: Paraganglioma, source: "adrenal-cortex admixture (Fishbein et al. 2017 Cancer Cell)"}
+  # molecular label set (D-45); keyed by cohort
+  LGG_IDH:
+    - {gene: 1p/19q dosage, higher_in: IDHmut-non-codel, vs: IDHmut-codel, source: "codeletion halves 1p and 19q (Brat et al. 2015 NEJM; Ceccarelli et al. 2016 Cell)"}
+  UCEC_TCGA:
+    - {gene: MLH1, higher_in: CN-low, vs: MSI, source: "MLH1 promoter methylation underlies most MSI endometrial cancers (TCGA 2013 Nature)"}
+  STAD_TCGA:
+    - {gene: MLH1, higher_in: CIN, vs: MSI, source: "MLH1 silencing in MSI gastric cancer (TCGA 2014 Nature)"}
+    - {gene: CD274, higher_in: EBV, vs: CIN, source: "PD-L1/2 over-expression in EBV-positive tumours (TCGA 2014 Nature)"}
+  COAD_TCGA:
+    - {gene: MLH1, higher_in: CIN, vs: MSI, source: "MLH1 silencing in sporadic MSI colorectal cancer"}
+  PRAD_ETS:
+    - {gene: ERG, higher_in: ERG, vs: Other, source: "TMPRSS2-ERG drives ERG over-expression (TCGA 2015 Cell)"}
+    - {gene: ETV1, higher_in: ETV1, vs: Other, source: "ETV1 fusions drive ETV1 over-expression (TCGA 2015 Cell)"}
+  BRCA_ER:
+    - {gene: ESR1, higher_in: ER-positive, vs: ER-negative, source: "the IHC measures the ESR1 product"}
+  HNSC_HPV:
+    - {gene: CDKN2A, higher_in: HPV-positive, vs: HPV-negative, source: "p16 is the IHC surrogate of HPV (E7 inactivates RB1)"}
+  BRCA_PAM50:
+    - {gene: ESR1, higher_in: LumA, vs: Basal, source: "Parker et al. 2009 J Clin Oncol"}
+    - {gene: ERBB2, higher_in: Her2, vs: LumA, source: "Parker et al. 2009 J Clin Oncol"}
+    - {gene: KRT5, higher_in: Basal, vs: LumA, source: "Parker et al. 2009 J Clin Oncol"}
+  HNSC_mRNA:
+    - {gene: CDKN2A, higher_in: Atypical, vs: Basal, source: "the atypical subtype is HPV-enriched (TCGA 2015 Nature)"}
+  PCPG_mRNA:
+    - {gene: CYP11B1, higher_in: Cortical admixture, vs: Kinase signaling, source: "Fishbein et al. 2017 Cancer Cell"}
+    - {gene: PNMT, higher_in: Kinase signaling, vs: Pseudohypoxia, source: "pseudohypoxic tumours are noradrenergic (Fishbein et al. 2017)"}

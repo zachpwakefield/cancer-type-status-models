@@ -1,0 +1,208 @@
+{
+  "baselines": {
+    "chance_balanced_accuracy": 0.3333333333333333,
+    "chance_macro_auroc": 0.5,
+    "chance_macro_f1": 0.3333333333333333,
+    "majority_accuracy": 0.6893617021276596,
+    "majority_balanced_accuracy": 0.3333333333333333,
+    "majority_class": "CIN",
+    "majority_macro_f1": 0.27204030226700254
+  },
+  "bootstrap_95ci": {
+    "accuracy": [
+      0.6936170212765957,
+      0.8042553191489362
+    ],
+    "balanced_accuracy": [
+      0.5678827541957097,
+      0.7017629193550526
+    ],
+    "macro_auroc_ovr": [
+      0.7318626050865653,
+      0.837471670703123
+    ],
+    "macro_f1": [
+      0.5478776206766136,
+      0.6826186509394124
+    ],
+    "n_resamples_used": 1000
+  },
+  "class_counts": {
+    "CIN": 162,
+    "GS": 33,
+    "MSI": 40
+  },
+  "classes": [
+    "CIN",
+    "MSI",
+    "GS"
+  ],
+  "cohort": "COAD_TCGA",
+  "config": {
+    "model": {
+      "device": "cpu",
+      "max_epochs": {
+        "cancer_type": 100,
+        "subtype": 300,
+        "tumor_status": 300
+      },
+      "patience": {
+        "cancer_type": 12,
+        "subtype": 20,
+        "tumor_status": 20
+      }
+    },
+    "preprocess": {
+      "clip_z": 10.0,
+      "gex_min_expressed_frac": 0.1,
+      "gex_min_log2cpm": 1.0,
+      "min_observed_frac": 0.5
+    },
+    "shap": {
+      "background_size": 100,
+      "top_k_report": 30
+    },
+    "splits": {
+      "inner_folds": 3,
+      "inner_folds_used": {
+        "cancer_type": 1,
+        "subtype": 3,
+        "tumor_status": 3
+      },
+      "outer_folds": 5,
+      "seed": 20261010
+    },
+    "subtype_yaml_sha256": "7962b0d41ffb43f045b531543a6077d2e03ff1e4ce03ee56f37139159c3a39c0",
+    "tuning": {
+      "n_trials": {
+        "cancer_type": 20,
+        "subtype": 30,
+        "tumor_status": 30
+      },
+      "pruner_startup_trials": 6,
+      "search_space": {
+        "batch_size": {
+          "cancer_type": [
+            128,
+            256,
+            512
+          ],
+          "subtype": [
+            32,
+            64,
+            128,
+            256
+          ],
+          "tumor_status": [
+            32,
+            64,
+            128,
+            256
+          ]
+        },
+        "dropout": [
+          0.0,
+          0.6
+        ],
+        "input_dropout": [
+          0.0,
+          0.5
+        ],
+        "lr": [
+          0.0001,
+          0.003
+        ],
+        "n_features": [
+          500,
+          1000,
+          2000,
+          4000
+        ],
+        "n_layers": [
+          1,
+          3
+        ],
+        "selection": [
+          "variance",
+          "anova"
+        ],
+        "weight_decay": [
+          1e-06,
+          0.01
+        ],
+        "width": [
+          64,
+          1024
+        ]
+      }
+    }
+  },
+  "git_commit": "a890c55dc3e3809be96dc60e9ed4f9a672d26ef1+dirty",
+  "labels": {
+    "columns": [
+      "Subtype_Selected"
+    ],
+    "concordance": null,
+    "label_set": "molecular",
+    "label_type": "genomic",
+    "project": "COAD",
+    "question": "CIN vs MSI (HM-indel) vs genomically stable (Liu et al. 2018 Cancer Cell)",
+    "source": "pancan_subtype",
+    "tier": "primary",
+    "version": "pancanatlas_v1"
+  },
+  "n_features_by_fold": [
+    2000,
+    1000,
+    500,
+    500,
+    1000
+  ],
+  "packages": {
+    "numpy": "1.26.4",
+    "optuna": "4.6.0",
+    "pandas": "2.3.3",
+    "pyarrow": "23.0.1",
+    "python": "3.10.20",
+    "scipy": "1.15.3",
+    "shap": "0.48.0",
+    "sklearn": "1.7.2",
+    "torch": "2.2.2"
+  },
+  "per_fold_mean": {
+    "accuracy": 0.7482616404563676,
+    "balanced_accuracy": 0.6501763409827925,
+    "macro_auroc_ovr": 0.8093803839391274,
+    "macro_f1": 0.6320396835240484
+  },
+  "per_fold_sd": {
+    "accuracy": 0.06865453372289332,
+    "balanced_accuracy": 0.04977303635673393,
+    "macro_auroc_ovr": 0.05638519957001066,
+    "macro_f1": 0.060776883008330784
+  },
+  "pooled_oof": {
+    "accuracy": 0.7489361702127659,
+    "balanced_accuracy": 0.6335858585858586,
+    "log_loss": 0.681109630244098,
+    "macro_auroc_ovr": 0.7884577283002469,
+    "macro_f1": 0.6170895970520058,
+    "mcc": 0.4777497401906859,
+    "n": 235,
+    "n_classes": 3
+  },
+  "recall_by_class": {
+    "CIN": 0.8333333333333334,
+    "GS": 0.24242424242424243,
+    "MSI": 0.825
+  },
+  "selection_method_by_fold": [
+    "anova",
+    "variance",
+    "anova",
+    "anova",
+    "variance"
+  ],
+  "task": "subtype",
+  "view": "hit"
+}

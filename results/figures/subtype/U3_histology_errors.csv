@@ -1,0 +1,121 @@
+histology_cohort,molecular_cohort,model,plotted,true_histology,called_histology,molecular_class,patients,share_of_row
+LGG,LGG_IDH,GEX,True,Astrocytoma,Astrocytoma,IDHmut-codel,0,0.0
+LGG,LGG_IDH,GEX,True,Astrocytoma,Astrocytoma,IDHmut-non-codel,113,0.6932515337423313
+LGG,LGG_IDH,GEX,True,Astrocytoma,Astrocytoma,IDHwt,50,0.3067484662576687
+LGG,LGG_IDH,GEX,True,Astrocytoma,Oligodendroglioma,IDHmut-codel,6,0.23076923076923078
+LGG,LGG_IDH,GEX,True,Astrocytoma,Oligodendroglioma,IDHmut-non-codel,13,0.5
+LGG,LGG_IDH,GEX,True,Astrocytoma,Oligodendroglioma,IDHwt,7,0.2692307692307692
+LGG,LGG_IDH,GEX,True,Oligodendroglioma,Oligodendroglioma,IDHmut-codel,126,0.8811188811188811
+LGG,LGG_IDH,GEX,True,Oligodendroglioma,Oligodendroglioma,IDHmut-non-codel,10,0.06993006993006994
+LGG,LGG_IDH,GEX,True,Oligodendroglioma,Oligodendroglioma,IDHwt,7,0.04895104895104895
+LGG,LGG_IDH,GEX,True,Oligodendroglioma,Astrocytoma,IDHmut-codel,2,0.046511627906976744
+LGG,LGG_IDH,GEX,True,Oligodendroglioma,Astrocytoma,IDHmut-non-codel,28,0.6511627906976745
+LGG,LGG_IDH,GEX,True,Oligodendroglioma,Astrocytoma,IDHwt,13,0.3023255813953488
+LGG,LGG_IDH,AS ensemble,False,Astrocytoma,Astrocytoma,IDHmut-codel,1,0.005747126436781609
+LGG,LGG_IDH,AS ensemble,False,Astrocytoma,Astrocytoma,IDHmut-non-codel,120,0.6896551724137931
+LGG,LGG_IDH,AS ensemble,False,Astrocytoma,Astrocytoma,IDHwt,53,0.3045977011494253
+LGG,LGG_IDH,AS ensemble,False,Astrocytoma,Oligodendroglioma,IDHmut-codel,5,0.3333333333333333
+LGG,LGG_IDH,AS ensemble,False,Astrocytoma,Oligodendroglioma,IDHmut-non-codel,6,0.4
+LGG,LGG_IDH,AS ensemble,False,Astrocytoma,Oligodendroglioma,IDHwt,4,0.26666666666666666
+LGG,LGG_IDH,AS ensemble,False,Oligodendroglioma,Oligodendroglioma,IDHmut-codel,127,0.900709219858156
+LGG,LGG_IDH,AS ensemble,False,Oligodendroglioma,Oligodendroglioma,IDHmut-non-codel,8,0.05673758865248227
+LGG,LGG_IDH,AS ensemble,False,Oligodendroglioma,Oligodendroglioma,IDHwt,6,0.0425531914893617
+LGG,LGG_IDH,AS ensemble,False,Oligodendroglioma,Astrocytoma,IDHmut-codel,1,0.022222222222222223
+LGG,LGG_IDH,AS ensemble,False,Oligodendroglioma,Astrocytoma,IDHmut-non-codel,30,0.6666666666666666
+LGG,LGG_IDH,AS ensemble,False,Oligodendroglioma,Astrocytoma,IDHwt,14,0.3111111111111111
+UCEC,UCEC_TCGA,GEX,True,Endometrioid,Endometrioid,POLE,19,0.2159090909090909
+UCEC,UCEC_TCGA,GEX,True,Endometrioid,Endometrioid,MSI,26,0.29545454545454547
+UCEC,UCEC_TCGA,GEX,True,Endometrioid,Endometrioid,CN-low,24,0.2727272727272727
+UCEC,UCEC_TCGA,GEX,True,Endometrioid,Endometrioid,CN-high,19,0.2159090909090909
+UCEC,UCEC_TCGA,GEX,True,Endometrioid,Serous,POLE,1,0.08333333333333333
+UCEC,UCEC_TCGA,GEX,True,Endometrioid,Serous,MSI,2,0.16666666666666666
+UCEC,UCEC_TCGA,GEX,True,Endometrioid,Serous,CN-low,0,0.0
+UCEC,UCEC_TCGA,GEX,True,Endometrioid,Serous,CN-high,9,0.75
+UCEC,UCEC_TCGA,GEX,True,Serous,Serous,POLE,1,0.020833333333333332
+UCEC,UCEC_TCGA,GEX,True,Serous,Serous,MSI,1,0.020833333333333332
+UCEC,UCEC_TCGA,GEX,True,Serous,Serous,CN-low,1,0.020833333333333332
+UCEC,UCEC_TCGA,GEX,True,Serous,Serous,CN-high,45,0.9375
+UCEC,UCEC_TCGA,GEX,True,Serous,Endometrioid,POLE,0,0.0
+UCEC,UCEC_TCGA,GEX,True,Serous,Endometrioid,MSI,1,0.2
+UCEC,UCEC_TCGA,GEX,True,Serous,Endometrioid,CN-low,1,0.2
+UCEC,UCEC_TCGA,GEX,True,Serous,Endometrioid,CN-high,3,0.6
+UCEC,UCEC_TCGA,AS ensemble,False,Endometrioid,Endometrioid,POLE,19,0.22093023255813954
+UCEC,UCEC_TCGA,AS ensemble,False,Endometrioid,Endometrioid,MSI,26,0.3023255813953488
+UCEC,UCEC_TCGA,AS ensemble,False,Endometrioid,Endometrioid,CN-low,24,0.27906976744186046
+UCEC,UCEC_TCGA,AS ensemble,False,Endometrioid,Endometrioid,CN-high,17,0.19767441860465115
+UCEC,UCEC_TCGA,AS ensemble,False,Endometrioid,Serous,POLE,1,0.07142857142857142
+UCEC,UCEC_TCGA,AS ensemble,False,Endometrioid,Serous,MSI,2,0.14285714285714285
+UCEC,UCEC_TCGA,AS ensemble,False,Endometrioid,Serous,CN-low,0,0.0
+UCEC,UCEC_TCGA,AS ensemble,False,Endometrioid,Serous,CN-high,11,0.7857142857142857
+UCEC,UCEC_TCGA,AS ensemble,False,Serous,Serous,POLE,1,0.022727272727272728
+UCEC,UCEC_TCGA,AS ensemble,False,Serous,Serous,MSI,0,0.0
+UCEC,UCEC_TCGA,AS ensemble,False,Serous,Serous,CN-low,1,0.022727272727272728
+UCEC,UCEC_TCGA,AS ensemble,False,Serous,Serous,CN-high,42,0.9545454545454546
+UCEC,UCEC_TCGA,AS ensemble,False,Serous,Endometrioid,POLE,0,0.0
+UCEC,UCEC_TCGA,AS ensemble,False,Serous,Endometrioid,MSI,2,0.2222222222222222
+UCEC,UCEC_TCGA,AS ensemble,False,Serous,Endometrioid,CN-low,1,0.1111111111111111
+UCEC,UCEC_TCGA,AS ensemble,False,Serous,Endometrioid,CN-high,6,0.6666666666666666
+STAD,STAD_TCGA,GEX,True,Intestinal,Intestinal,CIN,70,0.8045977011494253
+STAD,STAD_TCGA,GEX,True,Intestinal,Intestinal,MSI,10,0.11494252873563218
+STAD,STAD_TCGA,GEX,True,Intestinal,Intestinal,GS,5,0.05747126436781609
+STAD,STAD_TCGA,GEX,True,Intestinal,Intestinal,EBV,2,0.022988505747126436
+STAD,STAD_TCGA,GEX,True,Intestinal,Diffuse,CIN,25,0.49019607843137253
+STAD,STAD_TCGA,GEX,True,Intestinal,Diffuse,MSI,13,0.2549019607843137
+STAD,STAD_TCGA,GEX,True,Intestinal,Diffuse,GS,7,0.13725490196078433
+STAD,STAD_TCGA,GEX,True,Intestinal,Diffuse,EBV,6,0.11764705882352941
+STAD,STAD_TCGA,GEX,True,Diffuse,Diffuse,CIN,19,0.4418604651162791
+STAD,STAD_TCGA,GEX,True,Diffuse,Diffuse,MSI,3,0.06976744186046512
+STAD,STAD_TCGA,GEX,True,Diffuse,Diffuse,GS,17,0.3953488372093023
+STAD,STAD_TCGA,GEX,True,Diffuse,Diffuse,EBV,4,0.09302325581395349
+STAD,STAD_TCGA,GEX,True,Diffuse,Intestinal,CIN,12,0.5217391304347826
+STAD,STAD_TCGA,GEX,True,Diffuse,Intestinal,MSI,9,0.391304347826087
+STAD,STAD_TCGA,GEX,True,Diffuse,Intestinal,GS,0,0.0
+STAD,STAD_TCGA,GEX,True,Diffuse,Intestinal,EBV,2,0.08695652173913043
+STAD,STAD_TCGA,AS ensemble,False,Intestinal,Intestinal,CIN,75,0.7731958762886598
+STAD,STAD_TCGA,AS ensemble,False,Intestinal,Intestinal,MSI,16,0.16494845360824742
+STAD,STAD_TCGA,AS ensemble,False,Intestinal,Intestinal,GS,5,0.05154639175257732
+STAD,STAD_TCGA,AS ensemble,False,Intestinal,Intestinal,EBV,1,0.010309278350515464
+STAD,STAD_TCGA,AS ensemble,False,Intestinal,Diffuse,CIN,20,0.4878048780487805
+STAD,STAD_TCGA,AS ensemble,False,Intestinal,Diffuse,MSI,7,0.17073170731707318
+STAD,STAD_TCGA,AS ensemble,False,Intestinal,Diffuse,GS,7,0.17073170731707318
+STAD,STAD_TCGA,AS ensemble,False,Intestinal,Diffuse,EBV,7,0.17073170731707318
+STAD,STAD_TCGA,AS ensemble,False,Diffuse,Diffuse,CIN,15,0.38461538461538464
+STAD,STAD_TCGA,AS ensemble,False,Diffuse,Diffuse,MSI,3,0.07692307692307693
+STAD,STAD_TCGA,AS ensemble,False,Diffuse,Diffuse,GS,17,0.4358974358974359
+STAD,STAD_TCGA,AS ensemble,False,Diffuse,Diffuse,EBV,4,0.10256410256410256
+STAD,STAD_TCGA,AS ensemble,False,Diffuse,Intestinal,CIN,16,0.5925925925925926
+STAD,STAD_TCGA,AS ensemble,False,Diffuse,Intestinal,MSI,9,0.3333333333333333
+STAD,STAD_TCGA,AS ensemble,False,Diffuse,Intestinal,GS,0,0.0
+STAD,STAD_TCGA,AS ensemble,False,Diffuse,Intestinal,EBV,2,0.07407407407407407
+PCPG,PCPG_mRNA,GEX,True,Pheochromocytoma,Pheochromocytoma,Kinase signaling,65,0.48507462686567165
+PCPG,PCPG_mRNA,GEX,True,Pheochromocytoma,Pheochromocytoma,Pseudohypoxia,25,0.1865671641791045
+PCPG,PCPG_mRNA,GEX,True,Pheochromocytoma,Pheochromocytoma,Wnt-altered,22,0.16417910447761194
+PCPG,PCPG_mRNA,GEX,True,Pheochromocytoma,Pheochromocytoma,Cortical admixture,22,0.16417910447761194
+PCPG,PCPG_mRNA,GEX,True,Pheochromocytoma,Paraganglioma,Kinase signaling,0,0.0
+PCPG,PCPG_mRNA,GEX,True,Pheochromocytoma,Paraganglioma,Pseudohypoxia,11,1.0
+PCPG,PCPG_mRNA,GEX,True,Pheochromocytoma,Paraganglioma,Wnt-altered,0,0.0
+PCPG,PCPG_mRNA,GEX,True,Pheochromocytoma,Paraganglioma,Cortical admixture,0,0.0
+PCPG,PCPG_mRNA,GEX,True,Paraganglioma,Paraganglioma,Kinase signaling,1,0.045454545454545456
+PCPG,PCPG_mRNA,GEX,True,Paraganglioma,Paraganglioma,Pseudohypoxia,21,0.9545454545454546
+PCPG,PCPG_mRNA,GEX,True,Paraganglioma,Paraganglioma,Wnt-altered,0,0.0
+PCPG,PCPG_mRNA,GEX,True,Paraganglioma,Paraganglioma,Cortical admixture,0,0.0
+PCPG,PCPG_mRNA,GEX,True,Paraganglioma,Pheochromocytoma,Kinase signaling,1,0.2
+PCPG,PCPG_mRNA,GEX,True,Paraganglioma,Pheochromocytoma,Pseudohypoxia,4,0.8
+PCPG,PCPG_mRNA,GEX,True,Paraganglioma,Pheochromocytoma,Wnt-altered,0,0.0
+PCPG,PCPG_mRNA,GEX,True,Paraganglioma,Pheochromocytoma,Cortical admixture,0,0.0
+PCPG,PCPG_mRNA,AS ensemble,False,Pheochromocytoma,Pheochromocytoma,Kinase signaling,65,0.5284552845528455
+PCPG,PCPG_mRNA,AS ensemble,False,Pheochromocytoma,Pheochromocytoma,Pseudohypoxia,17,0.13821138211382114
+PCPG,PCPG_mRNA,AS ensemble,False,Pheochromocytoma,Pheochromocytoma,Wnt-altered,21,0.17073170731707318
+PCPG,PCPG_mRNA,AS ensemble,False,Pheochromocytoma,Pheochromocytoma,Cortical admixture,20,0.16260162601626016
+PCPG,PCPG_mRNA,AS ensemble,False,Pheochromocytoma,Paraganglioma,Kinase signaling,0,0.0
+PCPG,PCPG_mRNA,AS ensemble,False,Pheochromocytoma,Paraganglioma,Pseudohypoxia,19,0.8636363636363636
+PCPG,PCPG_mRNA,AS ensemble,False,Pheochromocytoma,Paraganglioma,Wnt-altered,1,0.045454545454545456
+PCPG,PCPG_mRNA,AS ensemble,False,Pheochromocytoma,Paraganglioma,Cortical admixture,2,0.09090909090909091
+PCPG,PCPG_mRNA,AS ensemble,False,Paraganglioma,Paraganglioma,Kinase signaling,0,0.0
+PCPG,PCPG_mRNA,AS ensemble,False,Paraganglioma,Paraganglioma,Pseudohypoxia,15,1.0
+PCPG,PCPG_mRNA,AS ensemble,False,Paraganglioma,Paraganglioma,Wnt-altered,0,0.0
+PCPG,PCPG_mRNA,AS ensemble,False,Paraganglioma,Paraganglioma,Cortical admixture,0,0.0
+PCPG,PCPG_mRNA,AS ensemble,False,Paraganglioma,Pheochromocytoma,Kinase signaling,2,0.16666666666666666
+PCPG,PCPG_mRNA,AS ensemble,False,Paraganglioma,Pheochromocytoma,Pseudohypoxia,10,0.8333333333333334
+PCPG,PCPG_mRNA,AS ensemble,False,Paraganglioma,Pheochromocytoma,Wnt-altered,0,0.0
+PCPG,PCPG_mRNA,AS ensemble,False,Paraganglioma,Pheochromocytoma,Cortical admixture,0,0.0

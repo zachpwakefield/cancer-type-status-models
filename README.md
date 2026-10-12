@@ -1,4 +1,4 @@
-# Cancer type and tumour status from TCGA RNA processing
+# Cancer type, tumour status and subtype from TCGA RNA processing
 
 These are deep-learning classifiers that predict, from a single TCGA RNA-seq sample:
 
@@ -6,6 +6,8 @@ These are deep-learning classifiers that predict, from a single TCGA RNA-seq sam
    separate binary model for each of 15 cancer types with ≥ 10 normal samples.
 2. **Cancer type, pan-cancer.** Which of the 33 TCGA cancer types is the sample from, or is it
    normal tissue? This is a 34-class model.
+3. **Subtype, within a cancer.** Which histological, molecular or IHC-defined subtype is a
+   primary tumour? This is a separate model for each of 22 subtype cohorts in 15 cancers.
 
 Each task is modelled **independently in each of nine modalities**:
 
@@ -26,9 +28,10 @@ patient-grouped cross-validation. It is explained with SHAP on held-out samples 
 
 ## Results
 
-The two tasks are separate questions with separate answers, so their results are posted
+The three tasks are separate questions with separate answers, so their results are posted
 separately: [tumour status](#tumour-status-tumour-vs-normal-tissue-within-a-cancer) first, then
-[cancer type](#cancer-type-34-classes-pan-cancer). Each part gives the models' performance, then
+[cancer type](#cancer-type-34-classes-pan-cancer), then
+[subtype](#subtype-within-a-cancer-22-cohorts-in-15-cancers). Each part gives the models' performance, then
 walks through what they learned, figure by figure. Full tables, CIs and the top SHAP features of
 every cohort and view are in [results/RESULTS.md](results/RESULTS.md); the methods of the
 interpretation layer are in [docs/BIOLOGY_METHODS.md](docs/BIOLOGY_METHODS.md) (D-13 to D-29).
@@ -334,6 +337,174 @@ expression in disguise (T5) — are in the two narratives, with the methods in
 
 Not shown here: per-class recall against expression (T2), in the write-up.
 
+## Subtype within a cancer: 22 cohorts in 15 cancers
+
+**Full write-up: [results/SUBTYPE.md](results/SUBTYPE.md)** (figures U1–U7) — *within a cancer,
+splicing recovers lineage and genome state about as well as expression, and loses where a subtype
+is a single gene switched on.* One model per (cohort, view) over 22 subtype cohorts from 15 TCGA
+projects:
+- 12 histology cohorts, 7 genomic or IHC, and 3 expression-defined;
+- 198 models over 7,552 patient–cohort pairs, one primary tumour per patient.
+
+Every label map, exclusion and minimum class size (20 patients) was fixed in
+[config/subtype.yaml](config/subtype.yaml) before the first model was fitted
+([docs/SUBTYPE_METHODS.md](docs/SUBTYPE_METHODS.md), D-30 to D-45).
+
+### Performance
+
+**Out-of-fold balanced accuracy, mean over the cohorts of each label family:**
+
+| View | Histology (12) | Genomic / IHC (7) | Expression-defined (3) |
+|---|---|---|---|
+| AFE | 0.765 | 0.759 | 0.721 |
+| ALE | 0.740 | 0.729 | 0.659 |
+| HIT | 0.760 | 0.800 | 0.751 |
+| SE | 0.802 | 0.821 | 0.794 |
+| A5SS | 0.778 | 0.741 | 0.693 |
+| A3SS | 0.753 | 0.747 | 0.710 |
+| MXE | 0.745 | 0.750 | 0.705 |
+| RI | 0.784 | 0.781 | 0.739 |
+| GEX | 0.836 | 0.882 | 0.897 |
+| AS ensemble (mean of 8) | 0.804 | 0.822 | 0.812 |
+| GEX + AS (1:1) | 0.834 | 0.883 | 0.909 |
+
+Expression-defined labels (PAM50, HNSC and PCPG mRNA classes) were computed from mRNA, so GEX is
+near-circular on them; for the splicing views they are a fair test. Per-cohort numbers with
+chance and majority baselines, CIs and fusion tests are in
+[SUBTYPE.md §2](results/SUBTYPE.md#2-how-well-each-modality-recovers-the-subtype) and
+`results/subtype/summary/`.
+
+<img src="results/figures/subtype/U1_performance.png" width="885" alt="U1: balanced accuracy per cohort for the eight splicing views, GEX, the AS ensemble and the fusion">
+
+**U1.** Out-of-fold balanced accuracy of every cohort, grouped by how its label was made. The
+grey bar spans the eight splicing views; the other marks are GEX (black), the AS ensemble (blue)
+and GEX + AS fused 1:1 (dark blue). The tick is chance.
+- **Close to expression.** Outside the expression-defined labels, the AS ensemble is within 0.03
+  of GEX in 11 of 19 cohorts. It is ahead in 4: LGG histology +0.026, CESC, STAD and ESCA.
+- **Well behind.** It falls more than 0.10 short in 3: PCPG site −0.17, PRAD ETS class −0.15 and
+  UCEC molecular class −0.12.
+- **Fusion.** Fixed fusion moves balanced accuracy by −0.04 to +0.04. Its CI clears zero only in
+  LGG and UCEC_TCGA, and neither McNemar test reaches p < 0.05.
+
+[caption](results/figures/subtype/U1_performance.caption.md) ·
+[§2](results/SUBTYPE.md#2-how-well-each-modality-recovers-the-subtype)
+
+### What the models learned, in figures
+
+Each figure has a caption file and a CSV of the plotted values next to it. Every biological
+statement in the write-up is marked as a result of this data or as context from the literature.
+
+#### 1. Splicing loses the small classes that one programme defines
+
+<img src="results/figures/subtype/U2_recall_by_class.png" width="900" alt="U2: recall of every class for GEX, the AS ensemble and the fusion">
+
+**U2.** Out-of-fold recall of every class for GEX, the AS ensemble and the fusion.
+- **Losses.** Splicing's five largest losses against expression are all in classes of fewer than
+  40 patients (GEX → AS ensemble):
+  - POLE-ultramutated endometrial cancer, 0.54 → 0.08;
+  - myxofibrosarcoma, 0.67 → 0.29;
+  - ETV1-fused prostate cancer, 0.93 → 0.57;
+  - paraganglioma, 0.83 → 0.57;
+  - tall-cell thyroid carcinoma, 0.71 → 0.51.
+- **Ensemble shrinkage.** In all five, at least one single splicing view does better than the
+  ensemble (tall cell: SE 0.77; the best view is picked after the fact). Averaging eight views that
+  are weak on a small class pulls its probability down.
+- **Gains.** The ensemble gains on large classes, such as copy-number-high endometrial cancer
+  (0.84 → 0.94).
+
+[caption](results/figures/subtype/U2_recall_by_class.caption.md) ·
+[§3](results/SUBTYPE.md#3-which-subtypes-splicing-loses)
+
+#### 2. A histology model's errors follow the molecular class
+
+<img src="results/figures/subtype/U3_histology_errors.png" width="816" alt="U3: true histology against the GEX model's call, broken down by the published molecular class">
+
+**U3.** Four histology cohorts with a published molecular class for the same patients. Counts
+only; no molecular label entered any histology model.
+- **Glioma.** The model calls 41 of 58 non-codeleted oligodendrogliomas astrocytoma, which is the
+  reclassification WHO made in 2016, and all 6 codeleted astrocytomas oligodendroglioma.
+- **Endometrial.** 9 of the 12 endometrioid tumours it calls serous are copy-number high, against
+  28 of 100 overall.
+- **PCPG.** Every adrenal tumour it calls extra-adrenal (11 of 11) is pseudohypoxic. Their PNMT,
+  the adrenal enzyme the pseudohypoxic tumours lack, is at a median of 1.6 log2 CPM, against 7.9
+  in the adrenal tumours called correctly.
+
+The "wrong" calls are mostly the patients whose histology and molecular state disagree.
+[caption](results/figures/subtype/U3_histology_errors.caption.md) ·
+[§4](results/SUBTYPE.md#4-when-a-histology-model-is-wrong-its-error-is-molecularly-coherent)
+
+#### 3. The literature's markers are in the data and the expression models, rarely in splicing
+
+<img src="results/figures/subtype/U4_literature_markers.png" width="900" alt="U4: AUROC of each literature marker and its rank in the GEX and splicing models">
+
+**U4.** The 40 gene markers below were fixed in advance with their sources; one row per marker.
+- **In the data.** 39 of 40 differ in the expected direction (p < 0.05); SLC5A5 in THCA does not.
+- **In the models.** 27 rank in the top 100 of their GEX model; only 8 have an event in a splicing
+  model's top 100. Among those 8 are CDH1's first exon in BRCA (rank 2), ERG's cassette exon in
+  PRAD (rank 2) and CDKN2A's p16 first exon in HPV-positive HNSC (rank 9).
+- **Glioma 1p/19q.** The 1p/19q arm dosage separates the classes in both glioma cohorts (AUROC
+  0.85 for 1p in histology, 0.996 against codeletion). The GEX model's top genes are enriched on
+  1p/19q for the molecular label (33 of 100, against 9.4 expected) but not for histology (7 of
+  100).
+
+[caption](results/figures/subtype/U4_literature_markers.caption.md) ·
+[§5](results/SUBTYPE.md#5-the-literatures-biology-in-the-data-and-in-the-models)
+
+<img src="results/figures/subtype/U5_as_vs_gex_genes.png" width="496" alt="U5: genes shared between each splicing model's top 50 and the GEX model's top 50">
+
+**U5.** How many genes a cohort's splicing and expression models share in their top 50.
+- **Overall.** The median is 1, and 55 of the 176 cohort × view pairs share none.
+- **Retained introns** overlap most. Where a gene is barely transcribed, its intron looks
+  retained: ESCA's RI model shares HNF1A, LGALS4, MYO7B and KIF12 with expression.
+- **MXE in sarcoma** shares the smooth-muscle machinery (ACTN1, TPM1, TPM2, PDLIM7, LDB3).
+- **Errors.** The two modalities still repeat most of each other's errors: the AS ensemble repeats
+  68% of expression's.
+
+[caption](results/figures/subtype/U5_as_vs_gex_genes.caption.md) ·
+[§6](results/SUBTYPE.md#6-splicing-and-expression-read-different-genes)
+
+#### 4. The strongest single events, audited for neighbouring genes
+
+<img src="results/figures/subtype/U6_event_audit.png" width="900" alt="U6: the strongest splicing event per cohort, its class medians and its neighbour-gene audit">
+
+**U6.** For each histology and genomic/IHC cohort, the one splicing event with the largest
+class-specific importance, with its median in each class. On the right is the D-27 audit: overlap
+with another gene's exon (most TCGA libraries are unstranded) and Spearman with that gene's and
+the host's expression.
+- **Readouts of a neighbour (4 of 19):** BRCA ZNF276 → FANCA, UCEC and UCEC_TCGA ERCC2 → KLC3,
+  and HNSC_HPV VRK2 → FANCL.
+- **Not cleared (2):** they overlap a gene the expression matrix does not hold.
+- **Across all top events:** 97 of 2,248 top-5 events track a neighbour, 62 of them in HIT.
+- **Named events that pass the audit** (SUBTYPE.md §7):
+  - the smooth-muscle mutually exclusive exons of ACTN1 and TPM1 in leiomyosarcoma;
+  - two frameshifting CDH1 exons whose lowest decile is skipped in lobular breast cancer;
+  - the p16INK4a first exon of CDKN2A in HPV-positive head-and-neck cancer.
+- **A named event that fails it:** the leiomyosarcoma "NDE1 promoter" is MYH11 read on the other
+  strand.
+
+[caption](results/figures/subtype/U6_event_audit.caption.md) ·
+[§7](results/SUBTYPE.md#7-the-strongest-single-events-and-which-of-them-measure-a-neighbouring-gene)
+
+#### 5. MSI leaves the same splicing marks in three cancers (exploratory)
+
+<img src="results/figures/subtype/U7_msi_events.png" width="656" alt="U7: AUROC of ten MSI events in endometrial, gastric and colon cancer">
+
+**U7.** Splicing events from the MSI top 5 of the UCEC, STAD or COAD models, measured as MSI
+against the rest in all three cancers, with no model involved. Ten events separate MSI in all
+three (AUROC ≥ 0.75 or ≤ 0.25 in each).
+- **Chosen independently:** 7 of the 10 were chosen by at least two of the three models. A 57-bp
+  CCNDBP1 exon was chosen by all three (AUROC 0.83, 0.93 and 0.97).
+- **Audit:** none overlaps another gene.
+- **Immune infiltrate:** none follows it. With PTPRC, CD8A and CIITA, |ρ| ≤ 0.37, and the
+  separation holds in the low-infiltrate half of each cohort.
+- **RPL22L1:** the RPL22L1 event fits the RPL22 frameshifts common in MSI. This is context; RPL22
+  mutation status was not tested.
+- **Status:** the analysis was added after the CCNDBP1 recurrence was noticed (amendment A-4), so
+  it is exploratory.
+
+[caption](results/figures/subtype/U7_msi_events.caption.md) ·
+[§8](results/SUBTYPE.md#8-msi-leaves-the-same-splicing-marks-in-three-cancers-exploratory)
+
 ## How the models are built
 
 ```
@@ -389,24 +560,29 @@ centred logit zₖ − z̄ of the sample's true class (see [docs/METHODS.md](doc
 
 ```
 config/       study.yaml (every rule and the search space), sources.yaml (raw data and reference paths),
-              biology.yaml (interpretation thresholds)
+              biology.yaml (interpretation thresholds), subtype.yaml (label maps, fixed before any fit)
 src/ctsm/     library
   cohort.py splits.py annotation.py extract.py matrix_io.py   data
   preprocess.py model.py pipeline.py metrics.py explain.py    modelling
   biology.py                                                  interpretation helpers (GOseq, protein mapping, ...)
+  subtype.py                                                  subtype labels, configuration and summaries
   figstyle.py plots.py                                        house figure style and phase-1 figures
 scripts/      00_register_sources → 01_build_cohort → 02_extract_matrices → 03_validate_data
               → 04_run_job (one job) / 05_run_all (all jobs, parallel) → 06_summarise_results
-              → 07_shap_importance → 08–19, 22 interpretation analyses (tables only)
+              → 07_shap_importance → 08–19, 22–25 interpretation analyses (tables only)
               → 20_figures_status / 21_figures_type (every figure)
+              subtype task: 00b_fetch_gdc_labels → 30_subtype_labels → 31_subtype_extract
+              → 32_subtype_run_job / 33_subtype_run_all → 34_subtype_summarise
+              → 35_subtype_interpret → 36_subtype_figures
               run_pipeline.sh
 tests/        unit tests (leakage guards, encodings, preprocessing, SHAP additivity, biology helpers)
-docs/         METHODS, DECISIONS, LEAKAGE_POLICY, BIOLOGY_METHODS, FIGURE_GUIDELINES
+docs/         METHODS, DECISIONS, LEAKAGE_POLICY, BIOLOGY_METHODS, SUBTYPE_METHODS, FIGURE_GUIDELINES
 results/      data/ (cohort, splits, extraction, validation summaries)
               tumor_status/<view>/<cancer>/, cancer_type/<view>/PANCAN/, summary/, RESULTS.md
-              biology/01_complementarity … 11_event_cards/ (tables)
-              figures/tumour_status/ (S1–S10), figures/cancer_type/ (T1–T9)
-              TUMOUR_STATUS.md, CANCER_TYPE.md
+              biology/01_complementarity … 14_survival_robustness/ (tables)
+              subtype/<view>/<cohort>/, subtype/{data,summary,interpret}/
+              figures/tumour_status/ (S1–S10), figures/cancer_type/ (T1–T9), figures/subtype/ (U1–U7)
+              TUMOUR_STATUS.md, CANCER_TYPE.md, SUBTYPE.md
 ```
 
 ## Reproducing
@@ -431,7 +607,13 @@ OMP_NUM_THREADS=1 python scripts/04_run_job.py tumor_status se BRCA
   predictions are written to the git-ignored `data.nosync/`.
 - **Provenance of the published results:** the 144 jobs were run on 2026-10-10/11 with the
   code of commit `b249c3c`. Each `metrics.json` records `git_commit: null` because the runs
-  finished before that first commit. Its `config` block records the exact settings.
+  finished before that first commit. Its `config` block records the exact settings. The 198
+  subtype jobs ran on 2026-10-12 from a working tree whose subtype code was not yet committed,
+  so their `git_commit` is the commit of the day plus `+dirty`; that code was committed
+  afterwards, with the results.
+- **Subtype labels:** the TCGA-CDR histology table (path in `config/sources.yaml`) and two
+  open-access GDC PanCanAtlas tables (published subtype calls and clinical fields), fetched and
+  MD5-checked by `scripts/00b_fetch_gdc_labels.py` into `data.nosync/`.
 - **Environment note:** set `OMP_NUM_THREADS` before Python starts. In this environment
   (torch 2.2.2 + conda-forge numpy, macOS), importing numpy before torch with multiple OpenMP
   threads segfaults; `scripts/_common.py` handles it.

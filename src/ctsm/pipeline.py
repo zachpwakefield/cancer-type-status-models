@@ -60,13 +60,18 @@ def load_job_data(cfg: Config, task: str, view: str, cohort: str):
     return tab, spl, X, feats
 
 
-def run_fold(cfg: Config, task: str, view: str, cohort: str, k: int, tab, spl, X, feats, fold_dir: Path, log) -> dict:
+def run_fold(cfg: Config, task: str, view: str, cohort: str, k: int, tab, spl, X, feats, fold_dir: Path, log,
+             fold_metrics=None) -> dict:
+    """`fold_metrics(y_test, proba)` -> {name: value} replaces the task's default per-fold test
+    metrics in done.json / folds.csv (used by the subtype task, ctsm/subtype.py)."""
     st, pp = cfg.study, cfg.study["preprocess"]
     space = st["tuning"]["search_space"]
     n_inner = st["splits"]["inner_folds_used"][task]
     y = tab["y"].to_numpy()
     C = int(y.max()) + 1
-    binary = task == "tumor_status"
+    # one-logit model iff two classes (model.train_model); tumor_status always has 2 classes and
+    # cancer_type 34, so this equals the former `task == "tumor_status"` for both existing tasks
+    binary = C == 2
     k_max = max(space["n_features"])
     seed = job_seed(st["splits"]["seed"], task, view, cohort, k)
     t0 = time.time()
@@ -150,7 +155,9 @@ def run_fold(cfg: Config, task: str, view: str, cohort: str, k: int, tab, spl, X
            "n_train": int(len(tr)), "n_test": int(len(te)), "n_shap_explained": int(len(te)),
            "shap_additivity_max_error": add_err, "seconds_tuning": round(t_tune, 1),
            "seconds_total": round(time.time() - t0, 1)}
-    if binary:
+    if fold_metrics is not None:
+        rec.update({f"test_{a}": b for a, b in fold_metrics(y[te], proba).items()})
+    elif binary:
         rec.update({f"test_{a}": b for a, b in binary_metrics(y[te], proba[:, 1]).items()
                     if a in ("auroc", "balanced_accuracy", "auprc_normal", "mcc")})
     else:

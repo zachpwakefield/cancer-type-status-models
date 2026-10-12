@@ -38,3 +38,9 @@ reference:
     reactome: c2.cp.reactome.v2026.1.Hs.symbols.gmt
     go_bp: c5.go.bp.v2026.1.Hs.symbols.gmt
   protein_dir: protein_annotation                   # GENCODE transcripts, exons, CDS (1-based), protein features
+
+# Subtype labels (docs/SUBTYPE_METHODS.md, D-30), read-only, hashed by step 00. The xlsx is read
+# with the standard library (ctsm/subtype.py: read_xlsx_sheet), sheet "TCGA-CDR".
+subtype_labels:
+  # TCGA Clinical Data Resource, Liu et al. 2018 Cell 173:400, Table S1 (one row per patient)
+  tcga_cdr: /Users/zacharywakefield/Desktop/SNHG17/hypothesis_20261010/downloads.nosync/tcga_cdr_liu2018/TCGA-CDR-SupplementalTableS1.xlsx

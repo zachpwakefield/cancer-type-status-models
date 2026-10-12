@@ -1,0 +1,211 @@
+{
+  "baselines": {
+    "chance_balanced_accuracy": 0.25,
+    "chance_macro_auroc": 0.5,
+    "chance_macro_f1": 0.25,
+    "majority_accuracy": 0.30935251798561153,
+    "majority_balanced_accuracy": 0.25,
+    "majority_class": "Basal",
+    "majority_macro_f1": 0.11813186813186813
+  },
+  "bootstrap_95ci": {
+    "accuracy": [
+      0.697841726618705,
+      0.7949640287769785
+    ],
+    "balanced_accuracy": [
+      0.6805801615864889,
+      0.7821528076205106
+    ],
+    "macro_auroc_ovr": [
+      0.8863111571829156,
+      0.9387013221393207
+    ],
+    "macro_f1": [
+      0.6793804255547223,
+      0.7829956623280804
+    ],
+    "n_resamples_used": 1000
+  },
+  "class_counts": {
+    "Atypical": 68,
+    "Basal": 86,
+    "Classical": 49,
+    "Mesenchymal": 75
+  },
+  "classes": [
+    "Atypical",
+    "Basal",
+    "Classical",
+    "Mesenchymal"
+  ],
+  "cohort": "HNSC_mRNA",
+  "config": {
+    "model": {
+      "device": "cpu",
+      "max_epochs": {
+        "cancer_type": 100,
+        "subtype": 300,
+        "tumor_status": 300
+      },
+      "patience": {
+        "cancer_type": 12,
+        "subtype": 20,
+        "tumor_status": 20
+      }
+    },
+    "preprocess": {
+      "clip_z": 10.0,
+      "gex_min_expressed_frac": 0.1,
+      "gex_min_log2cpm": 1.0,
+      "min_observed_frac": 0.5
+    },
+    "shap": {
+      "background_size": 100,
+      "top_k_report": 30
+    },
+    "splits": {
+      "inner_folds": 3,
+      "inner_folds_used": {
+        "cancer_type": 1,
+        "subtype": 3,
+        "tumor_status": 3
+      },
+      "outer_folds": 5,
+      "seed": 20261010
+    },
+    "subtype_yaml_sha256": "7962b0d41ffb43f045b531543a6077d2e03ff1e4ce03ee56f37139159c3a39c0",
+    "tuning": {
+      "n_trials": {
+        "cancer_type": 20,
+        "subtype": 30,
+        "tumor_status": 30
+      },
+      "pruner_startup_trials": 6,
+      "search_space": {
+        "batch_size": {
+          "cancer_type": [
+            128,
+            256,
+            512
+          ],
+          "subtype": [
+            32,
+            64,
+            128,
+            256
+          ],
+          "tumor_status": [
+            32,
+            64,
+            128,
+            256
+          ]
+        },
+        "dropout": [
+          0.0,
+          0.6
+        ],
+        "input_dropout": [
+          0.0,
+          0.5
+        ],
+        "lr": [
+          0.0001,
+          0.003
+        ],
+        "n_features": [
+          500,
+          1000,
+          2000,
+          4000
+        ],
+        "n_layers": [
+          1,
+          3
+        ],
+        "selection": [
+          "variance",
+          "anova"
+        ],
+        "weight_decay": [
+          1e-06,
+          0.01
+        ],
+        "width": [
+          64,
+          1024
+        ]
+      }
+    }
+  },
+  "git_commit": "a890c55dc3e3809be96dc60e9ed4f9a672d26ef1+dirty",
+  "labels": {
+    "columns": [
+      "Subtype_Selected"
+    ],
+    "concordance": null,
+    "label_set": "molecular",
+    "label_type": "expression-defined",
+    "project": "HNSC",
+    "question": "mRNA subtype atypical / basal / classical / mesenchymal (TCGA 2015 Nature)",
+    "source": "pancan_subtype",
+    "tier": "expression_defined",
+    "version": "pancanatlas_v1"
+  },
+  "n_features_by_fold": [
+    1000,
+    500,
+    1000,
+    4000,
+    1000
+  ],
+  "packages": {
+    "numpy": "1.26.4",
+    "optuna": "4.6.0",
+    "pandas": "2.3.3",
+    "pyarrow": "23.0.1",
+    "python": "3.10.20",
+    "scipy": "1.15.3",
+    "shap": "0.48.0",
+    "sklearn": "1.7.2",
+    "torch": "2.2.2"
+  },
+  "per_fold_mean": {
+    "accuracy": 0.7481168831168832,
+    "balanced_accuracy": 0.7382685574229692,
+    "macro_auroc_ovr": 0.9206202932236286,
+    "macro_f1": 0.7322823908666134
+  },
+  "per_fold_sd": {
+    "accuracy": 0.061921296190480875,
+    "balanced_accuracy": 0.05668814896823105,
+    "macro_auroc_ovr": 0.022389138244027464,
+    "macro_f1": 0.06635669767410389
+  },
+  "pooled_oof": {
+    "accuracy": 0.7482014388489209,
+    "balanced_accuracy": 0.7341630140428264,
+    "log_loss": 0.7077957883903286,
+    "macro_auroc_ovr": 0.9138475922684841,
+    "macro_f1": 0.7344981045094403,
+    "mcc": 0.6604966446371872,
+    "n": 278,
+    "n_classes": 4
+  },
+  "recall_by_class": {
+    "Atypical": 0.7941176470588235,
+    "Basal": 0.7906976744186046,
+    "Classical": 0.5918367346938775,
+    "Mesenchymal": 0.76
+  },
+  "selection_method_by_fold": [
+    "anova",
+    "anova",
+    "anova",
+    "variance",
+    "anova"
+  ],
+  "task": "subtype",
+  "view": "ri"
+}

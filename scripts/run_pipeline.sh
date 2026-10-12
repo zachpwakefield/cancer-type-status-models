@@ -39,3 +39,14 @@ run scripts/25_survival_robustness.py
 # figures, one script per narrative
 run scripts/20_figures_status.py
 run scripts/21_figures_type.py
+# subtype task (docs/SUBTYPE_METHODS.md): labels from the TCGA-CDR and two open-access GDC tables
+run scripts/00b_fetch_gdc_labels.py
+run scripts/30_subtype_labels.py
+"$PY" scripts/31_subtype_extract.py ri se mxe   > logs/31_extract_a.log 2>&1 & p1=$!
+"$PY" scripts/31_subtype_extract.py a5ss a3ss hit > logs/31_extract_b.log 2>&1 & p2=$!
+"$PY" scripts/31_subtype_extract.py gex afe ale  > logs/31_extract_c.log 2>&1 & p3=$!
+wait $p1 && wait $p2 && wait $p3
+run scripts/33_subtype_run_all.py --workers "${WORKERS:-6}"
+run scripts/34_subtype_summarise.py
+run scripts/35_subtype_interpret.py
+run scripts/36_subtype_figures.py

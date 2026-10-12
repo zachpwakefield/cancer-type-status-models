@@ -1,0 +1,154 @@
+histology_cohort,molecular_cohort,model,true_histology,predicted_histology,molecular_class,patients
+LGG,LGG_IDH,GEX,Oligodendroglioma,Oligodendroglioma,IDHmut-codel,126
+LGG,LGG_IDH,GEX,Astrocytoma,Astrocytoma,IDHmut-non-codel,113
+LGG,LGG_IDH,GEX,Astrocytoma,Astrocytoma,IDHwt,50
+LGG,LGG_IDH,GEX,Oligodendroglioma,Astrocytoma,IDHmut-non-codel,28
+LGG,LGG_IDH,GEX,Astrocytoma,Oligodendroglioma,IDHmut-non-codel,13
+LGG,LGG_IDH,GEX,Oligodendroglioma,Astrocytoma,IDHwt,13
+LGG,LGG_IDH,GEX,Oligodendroglioma,Oligodendroglioma,IDHmut-non-codel,10
+LGG,LGG_IDH,GEX,Astrocytoma,Oligodendroglioma,IDHwt,7
+LGG,LGG_IDH,GEX,Oligodendroglioma,Oligodendroglioma,IDHwt,7
+LGG,LGG_IDH,GEX,Astrocytoma,Oligodendroglioma,IDHmut-codel,6
+LGG,LGG_IDH,GEX,Oligodendroglioma,Astrocytoma,IDHmut-codel,2
+LGG,LGG_IDH,AS ensemble,Oligodendroglioma,Oligodendroglioma,IDHmut-codel,127
+LGG,LGG_IDH,AS ensemble,Astrocytoma,Astrocytoma,IDHmut-non-codel,120
+LGG,LGG_IDH,AS ensemble,Astrocytoma,Astrocytoma,IDHwt,53
+LGG,LGG_IDH,AS ensemble,Oligodendroglioma,Astrocytoma,IDHmut-non-codel,30
+LGG,LGG_IDH,AS ensemble,Oligodendroglioma,Astrocytoma,IDHwt,14
+LGG,LGG_IDH,AS ensemble,Oligodendroglioma,Oligodendroglioma,IDHmut-non-codel,8
+LGG,LGG_IDH,AS ensemble,Astrocytoma,Oligodendroglioma,IDHmut-non-codel,6
+LGG,LGG_IDH,AS ensemble,Oligodendroglioma,Oligodendroglioma,IDHwt,6
+LGG,LGG_IDH,AS ensemble,Astrocytoma,Oligodendroglioma,IDHmut-codel,5
+LGG,LGG_IDH,AS ensemble,Astrocytoma,Oligodendroglioma,IDHwt,4
+LGG,LGG_IDH,AS ensemble,Astrocytoma,Astrocytoma,IDHmut-codel,1
+LGG,LGG_IDH,AS ensemble,Oligodendroglioma,Astrocytoma,IDHmut-codel,1
+UCEC,UCEC_TCGA,GEX,Serous,Serous,CN-high,45
+UCEC,UCEC_TCGA,GEX,Endometrioid,Endometrioid,MSI,26
+UCEC,UCEC_TCGA,GEX,Endometrioid,Endometrioid,CN-low,24
+UCEC,UCEC_TCGA,GEX,Endometrioid,Endometrioid,CN-high,19
+UCEC,UCEC_TCGA,GEX,Endometrioid,Endometrioid,POLE,19
+UCEC,UCEC_TCGA,GEX,Endometrioid,Serous,CN-high,9
+UCEC,UCEC_TCGA,GEX,Serous,Endometrioid,CN-high,3
+UCEC,UCEC_TCGA,GEX,Endometrioid,Serous,MSI,2
+UCEC,UCEC_TCGA,GEX,Endometrioid,Serous,POLE,1
+UCEC,UCEC_TCGA,GEX,Serous,Endometrioid,CN-low,1
+UCEC,UCEC_TCGA,GEX,Serous,Endometrioid,MSI,1
+UCEC,UCEC_TCGA,GEX,Serous,Serous,CN-low,1
+UCEC,UCEC_TCGA,GEX,Serous,Serous,MSI,1
+UCEC,UCEC_TCGA,GEX,Serous,Serous,POLE,1
+UCEC,UCEC_TCGA,AS ensemble,Serous,Serous,CN-high,42
+UCEC,UCEC_TCGA,AS ensemble,Endometrioid,Endometrioid,MSI,26
+UCEC,UCEC_TCGA,AS ensemble,Endometrioid,Endometrioid,CN-low,24
+UCEC,UCEC_TCGA,AS ensemble,Endometrioid,Endometrioid,POLE,19
+UCEC,UCEC_TCGA,AS ensemble,Endometrioid,Endometrioid,CN-high,17
+UCEC,UCEC_TCGA,AS ensemble,Endometrioid,Serous,CN-high,11
+UCEC,UCEC_TCGA,AS ensemble,Serous,Endometrioid,CN-high,6
+UCEC,UCEC_TCGA,AS ensemble,Endometrioid,Serous,MSI,2
+UCEC,UCEC_TCGA,AS ensemble,Serous,Endometrioid,MSI,2
+UCEC,UCEC_TCGA,AS ensemble,Endometrioid,Serous,POLE,1
+UCEC,UCEC_TCGA,AS ensemble,Serous,Endometrioid,CN-low,1
+UCEC,UCEC_TCGA,AS ensemble,Serous,Serous,CN-low,1
+UCEC,UCEC_TCGA,AS ensemble,Serous,Serous,POLE,1
+STAD,STAD_TCGA,GEX,Intestinal,Intestinal,CIN,70
+STAD,STAD_TCGA,GEX,Intestinal,Diffuse,CIN,25
+STAD,STAD_TCGA,GEX,Diffuse,Diffuse,CIN,19
+STAD,STAD_TCGA,GEX,Diffuse,Diffuse,GS,17
+STAD,STAD_TCGA,GEX,Intestinal,Diffuse,MSI,13
+STAD,STAD_TCGA,GEX,Diffuse,Intestinal,CIN,12
+STAD,STAD_TCGA,GEX,Intestinal,Intestinal,MSI,10
+STAD,STAD_TCGA,GEX,Diffuse,Intestinal,MSI,9
+STAD,STAD_TCGA,GEX,Intestinal,Diffuse,GS,7
+STAD,STAD_TCGA,GEX,Intestinal,Diffuse,EBV,6
+STAD,STAD_TCGA,GEX,Intestinal,Intestinal,GS,5
+STAD,STAD_TCGA,GEX,Diffuse,Diffuse,EBV,4
+STAD,STAD_TCGA,GEX,Diffuse,Diffuse,MSI,3
+STAD,STAD_TCGA,GEX,Diffuse,Intestinal,EBV,2
+STAD,STAD_TCGA,GEX,Intestinal,Intestinal,EBV,2
+STAD,STAD_TCGA,AS ensemble,Intestinal,Intestinal,CIN,75
+STAD,STAD_TCGA,AS ensemble,Intestinal,Diffuse,CIN,20
+STAD,STAD_TCGA,AS ensemble,Diffuse,Diffuse,GS,17
+STAD,STAD_TCGA,AS ensemble,Diffuse,Intestinal,CIN,16
+STAD,STAD_TCGA,AS ensemble,Intestinal,Intestinal,MSI,16
+STAD,STAD_TCGA,AS ensemble,Diffuse,Diffuse,CIN,15
+STAD,STAD_TCGA,AS ensemble,Diffuse,Intestinal,MSI,9
+STAD,STAD_TCGA,AS ensemble,Intestinal,Diffuse,EBV,7
+STAD,STAD_TCGA,AS ensemble,Intestinal,Diffuse,GS,7
+STAD,STAD_TCGA,AS ensemble,Intestinal,Diffuse,MSI,7
+STAD,STAD_TCGA,AS ensemble,Intestinal,Intestinal,GS,5
+STAD,STAD_TCGA,AS ensemble,Diffuse,Diffuse,EBV,4
+STAD,STAD_TCGA,AS ensemble,Diffuse,Diffuse,MSI,3
+STAD,STAD_TCGA,AS ensemble,Diffuse,Intestinal,EBV,2
+STAD,STAD_TCGA,AS ensemble,Intestinal,Intestinal,EBV,1
+BRCA,BRCA_PAM50,GEX,Ductal,Ductal,LumA,284
+BRCA,BRCA_PAM50,GEX,Ductal,Ductal,LumB,170
+BRCA,BRCA_PAM50,GEX,Ductal,Ductal,Basal,159
+BRCA,BRCA_PAM50,GEX,Lobular,Lobular,LumA,138
+BRCA,BRCA_PAM50,GEX,Ductal,Ductal,Her2,66
+BRCA,BRCA_PAM50,GEX,Ductal,Lobular,LumA,50
+BRCA,BRCA_PAM50,GEX,Lobular,Ductal,LumA,23
+BRCA,BRCA_PAM50,GEX,Ductal,Ductal,Normal-like,17
+BRCA,BRCA_PAM50,GEX,Lobular,Lobular,Normal-like,11
+BRCA,BRCA_PAM50,GEX,Lobular,Ductal,LumB,7
+BRCA,BRCA_PAM50,GEX,Ductal,Lobular,LumB,6
+BRCA,BRCA_PAM50,GEX,Lobular,Lobular,LumB,4
+BRCA,BRCA_PAM50,GEX,Ductal,Lobular,Normal-like,4
+BRCA,BRCA_PAM50,GEX,Lobular,Ductal,Her2,3
+BRCA,BRCA_PAM50,GEX,Lobular,Ductal,Normal-like,3
+BRCA,BRCA_PAM50,GEX,Lobular,Ductal,Basal,2
+BRCA,BRCA_PAM50,GEX,Ductal,Lobular,Her2,2
+BRCA,BRCA_PAM50,GEX,Lobular,Lobular,Her2,2
+BRCA,BRCA_PAM50,GEX,Ductal,Lobular,Basal,1
+BRCA,BRCA_PAM50,AS ensemble,Ductal,Ductal,LumA,269
+BRCA,BRCA_PAM50,AS ensemble,Ductal,Ductal,LumB,172
+BRCA,BRCA_PAM50,AS ensemble,Ductal,Ductal,Basal,159
+BRCA,BRCA_PAM50,AS ensemble,Lobular,Lobular,LumA,132
+BRCA,BRCA_PAM50,AS ensemble,Ductal,Ductal,Her2,66
+BRCA,BRCA_PAM50,AS ensemble,Ductal,Lobular,LumA,65
+BRCA,BRCA_PAM50,AS ensemble,Lobular,Ductal,LumA,29
+BRCA,BRCA_PAM50,AS ensemble,Ductal,Ductal,Normal-like,12
+BRCA,BRCA_PAM50,AS ensemble,Lobular,Lobular,Normal-like,11
+BRCA,BRCA_PAM50,AS ensemble,Ductal,Lobular,Normal-like,9
+BRCA,BRCA_PAM50,AS ensemble,Lobular,Ductal,LumB,6
+BRCA,BRCA_PAM50,AS ensemble,Lobular,Lobular,LumB,5
+BRCA,BRCA_PAM50,AS ensemble,Ductal,Lobular,LumB,4
+BRCA,BRCA_PAM50,AS ensemble,Lobular,Ductal,Her2,3
+BRCA,BRCA_PAM50,AS ensemble,Lobular,Ductal,Normal-like,3
+BRCA,BRCA_PAM50,AS ensemble,Lobular,Ductal,Basal,2
+BRCA,BRCA_PAM50,AS ensemble,Ductal,Lobular,Her2,2
+BRCA,BRCA_PAM50,AS ensemble,Lobular,Lobular,Her2,2
+BRCA,BRCA_PAM50,AS ensemble,Ductal,Lobular,Basal,1
+BRCA,BRCA_ER,GEX,Ductal,Ductal,ER-positive,466
+BRCA,BRCA_ER,GEX,Ductal,Ductal,ER-negative,195
+BRCA,BRCA_ER,GEX,Lobular,Lobular,ER-positive,149
+BRCA,BRCA_ER,GEX,Ductal,Lobular,ER-positive,56
+BRCA,BRCA_ER,GEX,Lobular,Ductal,ER-positive,31
+BRCA,BRCA_ER,GEX,Ductal,Lobular,ER-negative,5
+BRCA,BRCA_ER,GEX,Lobular,Ductal,ER-negative,4
+BRCA,BRCA_ER,GEX,Lobular,Lobular,ER-negative,4
+BRCA,BRCA_ER,AS ensemble,Ductal,Ductal,ER-positive,449
+BRCA,BRCA_ER,AS ensemble,Ductal,Ductal,ER-negative,194
+BRCA,BRCA_ER,AS ensemble,Lobular,Lobular,ER-positive,143
+BRCA,BRCA_ER,AS ensemble,Ductal,Lobular,ER-positive,73
+BRCA,BRCA_ER,AS ensemble,Lobular,Ductal,ER-positive,37
+BRCA,BRCA_ER,AS ensemble,Ductal,Lobular,ER-negative,6
+BRCA,BRCA_ER,AS ensemble,Lobular,Ductal,ER-negative,5
+BRCA,BRCA_ER,AS ensemble,Lobular,Lobular,ER-negative,3
+PCPG,PCPG_mRNA,GEX,Pheochromocytoma,Pheochromocytoma,Kinase signaling,65
+PCPG,PCPG_mRNA,GEX,Pheochromocytoma,Pheochromocytoma,Pseudohypoxia,25
+PCPG,PCPG_mRNA,GEX,Pheochromocytoma,Pheochromocytoma,Cortical admixture,22
+PCPG,PCPG_mRNA,GEX,Pheochromocytoma,Pheochromocytoma,Wnt-altered,22
+PCPG,PCPG_mRNA,GEX,Paraganglioma,Paraganglioma,Pseudohypoxia,21
+PCPG,PCPG_mRNA,GEX,Pheochromocytoma,Paraganglioma,Pseudohypoxia,11
+PCPG,PCPG_mRNA,GEX,Paraganglioma,Pheochromocytoma,Pseudohypoxia,4
+PCPG,PCPG_mRNA,GEX,Paraganglioma,Paraganglioma,Kinase signaling,1
+PCPG,PCPG_mRNA,GEX,Paraganglioma,Pheochromocytoma,Kinase signaling,1
+PCPG,PCPG_mRNA,AS ensemble,Pheochromocytoma,Pheochromocytoma,Kinase signaling,65
+PCPG,PCPG_mRNA,AS ensemble,Pheochromocytoma,Pheochromocytoma,Wnt-altered,21
+PCPG,PCPG_mRNA,AS ensemble,Pheochromocytoma,Pheochromocytoma,Cortical admixture,20
+PCPG,PCPG_mRNA,AS ensemble,Pheochromocytoma,Paraganglioma,Pseudohypoxia,19
+PCPG,PCPG_mRNA,AS ensemble,Pheochromocytoma,Pheochromocytoma,Pseudohypoxia,17
+PCPG,PCPG_mRNA,AS ensemble,Paraganglioma,Paraganglioma,Pseudohypoxia,15
+PCPG,PCPG_mRNA,AS ensemble,Paraganglioma,Pheochromocytoma,Pseudohypoxia,10
+PCPG,PCPG_mRNA,AS ensemble,Paraganglioma,Pheochromocytoma,Kinase signaling,2
+PCPG,PCPG_mRNA,AS ensemble,Pheochromocytoma,Paraganglioma,Cortical admixture,2
+PCPG,PCPG_mRNA,AS ensemble,Pheochromocytoma,Paraganglioma,Wnt-altered,1

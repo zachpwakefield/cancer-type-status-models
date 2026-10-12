@@ -1,0 +1,209 @@
+{
+  "baselines": {
+    "chance_balanced_accuracy": 0.25,
+    "chance_macro_auroc": 0.5,
+    "chance_macro_f1": 0.25,
+    "majority_accuracy": 0.4434782608695652,
+    "majority_balanced_accuracy": 0.25,
+    "majority_class": "LMS",
+    "majority_macro_f1": 0.1536144578313253
+  },
+  "bootstrap_95ci": {
+    "accuracy": [
+      0.6869565217391305,
+      0.8
+    ],
+    "balanced_accuracy": [
+      0.6249307355599534,
+      0.7679995607424001
+    ],
+    "macro_auroc_ovr": [
+      0.8536633851570842,
+      0.9289427263174378
+    ],
+    "macro_f1": [
+      0.610110292891502,
+      0.7476718848269953
+    ],
+    "n_resamples_used": 1000
+  },
+  "class_counts": {
+    "DDLPS": 57,
+    "LMS": 102,
+    "MFS": 24,
+    "UPS": 47
+  },
+  "classes": [
+    "LMS",
+    "DDLPS",
+    "UPS",
+    "MFS"
+  ],
+  "cohort": "SARC",
+  "config": {
+    "model": {
+      "device": "cpu",
+      "max_epochs": {
+        "cancer_type": 100,
+        "subtype": 300,
+        "tumor_status": 300
+      },
+      "patience": {
+        "cancer_type": 12,
+        "subtype": 20,
+        "tumor_status": 20
+      }
+    },
+    "preprocess": {
+      "clip_z": 10.0,
+      "gex_min_expressed_frac": 0.1,
+      "gex_min_log2cpm": 1.0,
+      "min_observed_frac": 0.5
+    },
+    "shap": {
+      "background_size": 100,
+      "top_k_report": 30
+    },
+    "splits": {
+      "inner_folds": 3,
+      "inner_folds_used": {
+        "cancer_type": 1,
+        "subtype": 3,
+        "tumor_status": 3
+      },
+      "outer_folds": 5,
+      "seed": 20261010
+    },
+    "subtype_yaml_sha256": "b426d5b14eb1a38e6bd85ac5496272702e72adb18444ff78ea5fb1faaab612b6",
+    "tuning": {
+      "n_trials": {
+        "cancer_type": 20,
+        "subtype": 30,
+        "tumor_status": 30
+      },
+      "pruner_startup_trials": 6,
+      "search_space": {
+        "batch_size": {
+          "cancer_type": [
+            128,
+            256,
+            512
+          ],
+          "subtype": [
+            32,
+            64,
+            128,
+            256
+          ],
+          "tumor_status": [
+            32,
+            64,
+            128,
+            256
+          ]
+        },
+        "dropout": [
+          0.0,
+          0.6
+        ],
+        "input_dropout": [
+          0.0,
+          0.5
+        ],
+        "lr": [
+          0.0001,
+          0.003
+        ],
+        "n_features": [
+          500,
+          1000,
+          2000,
+          4000
+        ],
+        "n_layers": [
+          1,
+          3
+        ],
+        "selection": [
+          "variance",
+          "anova"
+        ],
+        "weight_decay": [
+          1e-06,
+          0.01
+        ],
+        "width": [
+          64,
+          1024
+        ]
+      }
+    }
+  },
+  "git_commit": "0d643d3edd9ab6ac1d8ba4d4047af3f31ac627c6+dirty",
+  "labels": {
+    "columns": [],
+    "concordance": "gdc_primary_diagnosis",
+    "label_set": "histology",
+    "label_type": "histology",
+    "project": "SARC",
+    "question": "soft-tissue sarcoma histotype (distinct lineages, TCGA 2017)",
+    "source": "cdr_histological_type",
+    "tier": "primary",
+    "version": "histology_v1"
+  },
+  "n_features_by_fold": [
+    2000,
+    1000,
+    4000,
+    2000,
+    2000
+  ],
+  "packages": {
+    "numpy": "1.26.4",
+    "optuna": "4.6.0",
+    "pandas": "2.3.3",
+    "pyarrow": "23.0.1",
+    "python": "3.10.20",
+    "scipy": "1.15.3",
+    "shap": "0.48.0",
+    "sklearn": "1.7.2",
+    "torch": "2.2.2"
+  },
+  "per_fold_mean": {
+    "accuracy": 0.7434782608695653,
+    "balanced_accuracy": 0.6872144522144523,
+    "macro_auroc_ovr": 0.8931157787776896,
+    "macro_f1": 0.6717388757826928
+  },
+  "per_fold_sd": {
+    "accuracy": 0.062251395927288504,
+    "balanced_accuracy": 0.06576143254542913,
+    "macro_auroc_ovr": 0.037051934650058134,
+    "macro_f1": 0.07034964176883736
+  },
+  "pooled_oof": {
+    "accuracy": 0.7434782608695653,
+    "balanced_accuracy": 0.6986590968974375,
+    "log_loss": 0.7209514002385424,
+    "macro_auroc_ovr": 0.8950085121313391,
+    "macro_f1": 0.6824421902188602,
+    "mcc": 0.6437499566741163,
+    "n": 230,
+    "n_classes": 4
+  },
+  "recall_by_class": {
+    "DDLPS": 0.7894736842105263,
+    "LMS": 0.803921568627451,
+    "MFS": 0.5416666666666666,
+    "UPS": 0.6595744680851063
+  },
+  "selection_method_by_fold": [
+    "anova",
+    "anova",
+    "anova",
+    "anova",
+    "anova"
+  ],
+  "task": "subtype",
+  "view": "se"
+}

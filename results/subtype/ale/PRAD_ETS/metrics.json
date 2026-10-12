@@ -1,0 +1,211 @@
+{
+  "baselines": {
+    "chance_balanced_accuracy": 0.25,
+    "chance_macro_auroc": 0.5,
+    "chance_macro_f1": 0.25,
+    "majority_accuracy": 0.5016501650165016,
+    "majority_balanced_accuracy": 0.25,
+    "majority_class": "ERG",
+    "majority_macro_f1": 0.16703296703296702
+  },
+  "bootstrap_95ci": {
+    "accuracy": [
+      0.5675742574257425,
+      0.66996699669967
+    ],
+    "balanced_accuracy": [
+      0.46786696751354134,
+      0.5954786749747693
+    ],
+    "macro_auroc_ovr": [
+      0.7461352108628084,
+      0.824791553162335
+    ],
+    "macro_f1": [
+      0.4652876963508009,
+      0.5807733943012328
+    ],
+    "n_resamples_used": 1000
+  },
+  "class_counts": {
+    "ERG": 152,
+    "ETV1": 28,
+    "Other": 86,
+    "SPOP": 37
+  },
+  "classes": [
+    "ERG",
+    "ETV1",
+    "SPOP",
+    "Other"
+  ],
+  "cohort": "PRAD_ETS",
+  "config": {
+    "model": {
+      "device": "cpu",
+      "max_epochs": {
+        "cancer_type": 100,
+        "subtype": 300,
+        "tumor_status": 300
+      },
+      "patience": {
+        "cancer_type": 12,
+        "subtype": 20,
+        "tumor_status": 20
+      }
+    },
+    "preprocess": {
+      "clip_z": 10.0,
+      "gex_min_expressed_frac": 0.1,
+      "gex_min_log2cpm": 1.0,
+      "min_observed_frac": 0.5
+    },
+    "shap": {
+      "background_size": 100,
+      "top_k_report": 30
+    },
+    "splits": {
+      "inner_folds": 3,
+      "inner_folds_used": {
+        "cancer_type": 1,
+        "subtype": 3,
+        "tumor_status": 3
+      },
+      "outer_folds": 5,
+      "seed": 20261010
+    },
+    "subtype_yaml_sha256": "7962b0d41ffb43f045b531543a6077d2e03ff1e4ce03ee56f37139159c3a39c0",
+    "tuning": {
+      "n_trials": {
+        "cancer_type": 20,
+        "subtype": 30,
+        "tumor_status": 30
+      },
+      "pruner_startup_trials": 6,
+      "search_space": {
+        "batch_size": {
+          "cancer_type": [
+            128,
+            256,
+            512
+          ],
+          "subtype": [
+            32,
+            64,
+            128,
+            256
+          ],
+          "tumor_status": [
+            32,
+            64,
+            128,
+            256
+          ]
+        },
+        "dropout": [
+          0.0,
+          0.6
+        ],
+        "input_dropout": [
+          0.0,
+          0.5
+        ],
+        "lr": [
+          0.0001,
+          0.003
+        ],
+        "n_features": [
+          500,
+          1000,
+          2000,
+          4000
+        ],
+        "n_layers": [
+          1,
+          3
+        ],
+        "selection": [
+          "variance",
+          "anova"
+        ],
+        "weight_decay": [
+          1e-06,
+          0.01
+        ],
+        "width": [
+          64,
+          1024
+        ]
+      }
+    }
+  },
+  "git_commit": "a890c55dc3e3809be96dc60e9ed4f9a672d26ef1+dirty",
+  "labels": {
+    "columns": [
+      "Subtype_Selected"
+    ],
+    "concordance": null,
+    "label_set": "molecular",
+    "label_type": "genomic",
+    "project": "PRAD",
+    "question": "ETS-fusion / SPOP class (TCGA 2015 Cell); fusion calls used RNA-seq and DNA",
+    "source": "pancan_subtype",
+    "tier": "primary",
+    "version": "pancanatlas_v1"
+  },
+  "n_features_by_fold": [
+    1000,
+    1000,
+    2000,
+    2000,
+    500
+  ],
+  "packages": {
+    "numpy": "1.26.4",
+    "optuna": "4.6.0",
+    "pandas": "2.3.3",
+    "pyarrow": "23.0.1",
+    "python": "3.10.20",
+    "scipy": "1.15.3",
+    "shap": "0.48.0",
+    "sklearn": "1.7.2",
+    "torch": "2.2.2"
+  },
+  "per_fold_mean": {
+    "accuracy": 0.6171584699453552,
+    "balanced_accuracy": 0.5202571532999164,
+    "macro_auroc_ovr": 0.7953519961160129,
+    "macro_f1": 0.5203109139539993
+  },
+  "per_fold_sd": {
+    "accuracy": 0.06228711242282422,
+    "balanced_accuracy": 0.07162257301860672,
+    "macro_auroc_ovr": 0.05217355586551532,
+    "macro_f1": 0.07354038449917227
+  },
+  "pooled_oof": {
+    "accuracy": 0.6171617161716172,
+    "balanced_accuracy": 0.5327407042905818,
+    "log_loss": 0.9950073811440165,
+    "macro_auroc_ovr": 0.7860355615702739,
+    "macro_f1": 0.525481116785215,
+    "mcc": 0.4286258068144962,
+    "n": 303,
+    "n_classes": 4
+  },
+  "recall_by_class": {
+    "ERG": 0.6776315789473685,
+    "ETV1": 0.25,
+    "Other": 0.6627906976744186,
+    "SPOP": 0.5405405405405406
+  },
+  "selection_method_by_fold": [
+    "anova",
+    "anova",
+    "variance",
+    "anova",
+    "anova"
+  ],
+  "task": "subtype",
+  "view": "ale"
+}

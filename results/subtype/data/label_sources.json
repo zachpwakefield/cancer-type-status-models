@@ -1,0 +1,18 @@
+{
+  "TCGASubtype.20170308.tsv": {
+    "file": "TCGASubtype.20170308.tsv",
+    "sha256": "1631cf7dd1324074957b42ee2ecd556b24d0977e5b2b2fb10c891c641994eb94"
+  },
+  "clinical_PANCAN_patient_with_followup.tsv": {
+    "file": "clinical_PANCAN_patient_with_followup.tsv",
+    "sha256": "a435418dfa8f488c75a5acc9247e70a2da06c86ac0e11cd1cc7a147cfc167816"
+  },
+  "gdc_clinical": {
+    "file": "clinical_data_expanded_surv_gdc_clinical.csv",
+    "sha256": "af75fc914bc6fe670b5829dabb2547cf8ddb21088a3d72836290cd40414bae48"
+  },
+  "tcga_cdr": {
+    "file": "TCGA-CDR-SupplementalTableS1.xlsx",
+    "sha256": "ea594c0fbb6731477c7ac511fab449ca9c38b0d42d269591ed9f5c4090e75a5a"
+  }
+}

@@ -1,0 +1,23 @@
+cohort,label_set,label_type,tier,project,question,source,concordance,primary_tumours,labelled,n_classes,classes,classes_below_minimum,in_scope
+BRCA,histology,histology,primary,BRCA,invasive ductal vs invasive lobular carcinoma (special types if >= 20),cdr_histological_type,gdc_primary_diagnosis,1073,952,2,Ductal 759; Lobular 193,Mucinous 17; Metaplastic 9; Medullary 5,True
+THCA,histology,histology,primary,THCA,"papillary carcinoma variants, classical vs follicular vs tall cell",cdr_histological_type,gdc_primary_diagnosis,503,486,3,Classical 351; Follicular 100; Tall cell 35,,True
+UCEC,histology,histology,primary,UCEC,endometrioid vs serous endometrial adenocarcinoma,cdr_histological_type,gdc_primary_diagnosis,178,162,2,Endometrioid 104; Serous 58,,True
+SARC,histology,histology,primary,SARC,"soft-tissue sarcoma histotype (distinct lineages, TCGA 2017)",cdr_histological_type,gdc_primary_diagnosis,256,230,4,LMS 102; DDLPS 57; UPS 47; MFS 24,MPNST 9; Synovial 10,True
+TGCT,histology,histology,primary,TGCT,pure seminoma vs non-seminoma without a seminoma component,cdr_histological_type,gdc_primary_diagnosis,134,114,2,Seminoma 64; Non-seminoma 50,,True
+MESO,histology,histology,primary,MESO,epithelioid vs biphasic pleural mesothelioma,cdr_histological_type,gdc_primary_diagnosis,85,76,2,Epithelioid 55; Biphasic 21,Sarcomatoid 1,True
+STAD,histology,histology,primary,STAD,Lauren intestinal vs diffuse type; untyped adenocarcinoma NOS is excluded,cdr_histological_type,gdc_primary_diagnosis,352,227,2,Intestinal 157; Diffuse 70,,True
+LGG,histology,histology,weak_label,LGG,astrocytoma vs oligodendroglioma by histology (superseded by IDH and 1p/19q),cdr_histological_type,gdc_primary_diagnosis,510,378,2,Astrocytoma 191; Oligodendroglioma 187,,True
+THYM,histology,histology,weak_label,THYM,"WHO type A/AB vs type B1-B3 thymoma (an ordinal scheme, grouped)",cdr_histological_type,gdc_primary_diagnosis,119,108,2,A/AB 51; B1-B3 57,Thymic carcinoma 11,True
+ESCA,histology,histology,control,ESCA,squamous cell carcinoma vs adenocarcinoma (different epithelial lineages),cdr_histological_type,gdc_primary_diagnosis,161,161,2,Squamous 80; Adenocarcinoma 81,,True
+CESC,histology,histology,control,CESC,squamous cell carcinoma vs adenocarcinoma of the cervix,cdr_histological_type,gdc_primary_diagnosis,291,285,2,Squamous 240; Adenocarcinoma 45,,True
+PCPG,histology,histology,control,PCPG,adrenal pheochromocytoma vs extra-adrenal paraganglioma (a site label),cdr_histological_type,gdc_primary_diagnosis,179,178,2,Pheochromocytoma 148; Paraganglioma 30,,True
+LGG_IDH,molecular,genomic,primary,LGG,IDH-mutant 1p/19q-codeleted vs IDH-mutant non-codeleted vs IDH-wildtype,pancan_subtype,,510,507,3,IDHmut-codel 171; IDHmut-non-codel 242; IDHwt 94,,True
+UCEC_TCGA,molecular,genomic,primary,UCEC,POLE vs MSI vs copy-number-low vs copy-number-high (TCGA 2013),pancan_subtype,,178,169,4,POLE 24; MSI 34; CN-low 28; CN-high 83,,True
+STAD_TCGA,molecular,genomic,primary,STAD,CIN vs MSI (HM-indel) vs genomically stable vs EBV (Liu et al. 2018 Cancer Cell),pancan_subtype,,352,320,4,CIN 196; MSI 55; GS 43; EBV 26,HM-SNV 7,True
+COAD_TCGA,molecular,genomic,primary,COAD,CIN vs MSI (HM-indel) vs genomically stable (Liu et al. 2018 Cancer Cell),pancan_subtype,,263,235,3,CIN 162; MSI 40; GS 33,HM-SNV 2,True
+PRAD_ETS,molecular,genomic,primary,PRAD,ETS-fusion / SPOP class (TCGA 2015 Cell); fusion calls used RNA-seq and DNA,pancan_subtype,,497,303,4,ERG 152; ETV1 28; SPOP 37; Other 86,ETV4 14; FLI1 4; FOXA1 9; IDH1 3,True
+BRCA_ER,molecular,IHC,primary,BRCA,oestrogen-receptor status by immunohistochemistry,pancan_clinical,,1073,1025,2,ER-negative 235; ER-positive 790,,True
+HNSC_HPV,molecular,IHC,primary,HNSC,HPV status by p16 immunohistochemistry and/or in-situ hybridisation,pancan_clinical,,501,112,2,HPV-negative 79; HPV-positive 33,,True
+BRCA_PAM50,molecular,expression-defined,expression_defined,BRCA,PAM50 intrinsic subtype (Parker et al. 2009 J Clin Oncol; TCGA 2012 Nature),pancan_subtype,,1073,1073,5,LumA 558; LumB 212; Her2 77; Basal 187; Normal-like 39,,True
+HNSC_mRNA,molecular,expression-defined,expression_defined,HNSC,mRNA subtype atypical / basal / classical / mesenchymal (TCGA 2015 Nature),pancan_subtype,,501,278,4,Atypical 68; Basal 86; Classical 49; Mesenchymal 75,,True
+PCPG_mRNA,molecular,expression-defined,expression_defined,PCPG,mRNA subtype kinase signalling / pseudohypoxia / Wnt-altered / cortical admixture,pancan_subtype,,179,173,4,Kinase signaling 68; Pseudohypoxia 61; Wnt-altered 22; Cortical admixture 22,,True

@@ -1,0 +1,203 @@
+{
+  "baselines": {
+    "chance_balanced_accuracy": 0.5,
+    "chance_macro_auroc": 0.5,
+    "chance_macro_f1": 0.5,
+    "majority_accuracy": 0.5614035087719298,
+    "majority_balanced_accuracy": 0.5,
+    "majority_class": "Seminoma",
+    "majority_macro_f1": 0.3595505617977528
+  },
+  "bootstrap_95ci": {
+    "accuracy": [
+      1.0,
+      1.0
+    ],
+    "balanced_accuracy": [
+      1.0,
+      1.0
+    ],
+    "macro_auroc_ovr": [
+      0.9999999999999999,
+      1.0
+    ],
+    "macro_f1": [
+      1.0,
+      1.0
+    ],
+    "n_resamples_used": 1000
+  },
+  "class_counts": {
+    "Non-seminoma": 50,
+    "Seminoma": 64
+  },
+  "classes": [
+    "Seminoma",
+    "Non-seminoma"
+  ],
+  "cohort": "TGCT",
+  "config": {
+    "model": {
+      "device": "cpu",
+      "max_epochs": {
+        "cancer_type": 100,
+        "subtype": 300,
+        "tumor_status": 300
+      },
+      "patience": {
+        "cancer_type": 12,
+        "subtype": 20,
+        "tumor_status": 20
+      }
+    },
+    "preprocess": {
+      "clip_z": 10.0,
+      "gex_min_expressed_frac": 0.1,
+      "gex_min_log2cpm": 1.0,
+      "min_observed_frac": 0.5
+    },
+    "shap": {
+      "background_size": 100,
+      "top_k_report": 30
+    },
+    "splits": {
+      "inner_folds": 3,
+      "inner_folds_used": {
+        "cancer_type": 1,
+        "subtype": 3,
+        "tumor_status": 3
+      },
+      "outer_folds": 5,
+      "seed": 20261010
+    },
+    "subtype_yaml_sha256": "7962b0d41ffb43f045b531543a6077d2e03ff1e4ce03ee56f37139159c3a39c0",
+    "tuning": {
+      "n_trials": {
+        "cancer_type": 20,
+        "subtype": 30,
+        "tumor_status": 30
+      },
+      "pruner_startup_trials": 6,
+      "search_space": {
+        "batch_size": {
+          "cancer_type": [
+            128,
+            256,
+            512
+          ],
+          "subtype": [
+            32,
+            64,
+            128,
+            256
+          ],
+          "tumor_status": [
+            32,
+            64,
+            128,
+            256
+          ]
+        },
+        "dropout": [
+          0.0,
+          0.6
+        ],
+        "input_dropout": [
+          0.0,
+          0.5
+        ],
+        "lr": [
+          0.0001,
+          0.003
+        ],
+        "n_features": [
+          500,
+          1000,
+          2000,
+          4000
+        ],
+        "n_layers": [
+          1,
+          3
+        ],
+        "selection": [
+          "variance",
+          "anova"
+        ],
+        "weight_decay": [
+          1e-06,
+          0.01
+        ],
+        "width": [
+          64,
+          1024
+        ]
+      }
+    }
+  },
+  "git_commit": "a890c55dc3e3809be96dc60e9ed4f9a672d26ef1+dirty",
+  "labels": {
+    "columns": [],
+    "concordance": "gdc_primary_diagnosis",
+    "label_set": "histology",
+    "label_type": "histology",
+    "project": "TGCT",
+    "question": "pure seminoma vs non-seminoma without a seminoma component",
+    "source": "cdr_histological_type",
+    "tier": "primary",
+    "version": "histology_v1"
+  },
+  "n_features_by_fold": [
+    500,
+    500,
+    2000,
+    500,
+    500
+  ],
+  "packages": {
+    "numpy": "1.26.4",
+    "optuna": "4.6.0",
+    "pandas": "2.3.3",
+    "pyarrow": "23.0.1",
+    "python": "3.10.20",
+    "scipy": "1.15.3",
+    "shap": "0.48.0",
+    "sklearn": "1.7.2",
+    "torch": "2.2.2"
+  },
+  "per_fold_mean": {
+    "accuracy": 1.0,
+    "balanced_accuracy": 1.0,
+    "macro_auroc_ovr": 1.0,
+    "macro_f1": 1.0
+  },
+  "per_fold_sd": {
+    "accuracy": 0.0,
+    "balanced_accuracy": 0.0,
+    "macro_auroc_ovr": 0.0,
+    "macro_f1": 0.0
+  },
+  "pooled_oof": {
+    "accuracy": 1.0,
+    "balanced_accuracy": 1.0,
+    "log_loss": 0.0005883916277662496,
+    "macro_auroc_ovr": 1.0,
+    "macro_f1": 1.0,
+    "mcc": 1.0,
+    "n": 114,
+    "n_classes": 2
+  },
+  "recall_by_class": {
+    "Non-seminoma": 1.0,
+    "Seminoma": 1.0
+  },
+  "selection_method_by_fold": [
+    "anova",
+    "variance",
+    "variance",
+    "anova",
+    "variance"
+  ],
+  "task": "subtype",
+  "view": "hit"
+}

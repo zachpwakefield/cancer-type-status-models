@@ -1,0 +1,211 @@
+{
+  "baselines": {
+    "chance_balanced_accuracy": 0.25,
+    "chance_macro_auroc": 0.5,
+    "chance_macro_f1": 0.25,
+    "majority_accuracy": 0.3930635838150289,
+    "majority_balanced_accuracy": 0.25,
+    "majority_class": "Kinase signaling",
+    "majority_macro_f1": 0.14107883817427386
+  },
+  "bootstrap_95ci": {
+    "accuracy": [
+      0.7976878612716763,
+      0.8959537572254336
+    ],
+    "balanced_accuracy": [
+      0.7390738683830789,
+      0.8802947891660579
+    ],
+    "macro_auroc_ovr": [
+      0.9355014547587308,
+      0.9812114692887359
+    ],
+    "macro_f1": [
+      0.7337096370229803,
+      0.8650261062506429
+    ],
+    "n_resamples_used": 1000
+  },
+  "class_counts": {
+    "Cortical admixture": 22,
+    "Kinase signaling": 68,
+    "Pseudohypoxia": 61,
+    "Wnt-altered": 22
+  },
+  "classes": [
+    "Kinase signaling",
+    "Pseudohypoxia",
+    "Wnt-altered",
+    "Cortical admixture"
+  ],
+  "cohort": "PCPG_mRNA",
+  "config": {
+    "model": {
+      "device": "cpu",
+      "max_epochs": {
+        "cancer_type": 100,
+        "subtype": 300,
+        "tumor_status": 300
+      },
+      "patience": {
+        "cancer_type": 12,
+        "subtype": 20,
+        "tumor_status": 20
+      }
+    },
+    "preprocess": {
+      "clip_z": 10.0,
+      "gex_min_expressed_frac": 0.1,
+      "gex_min_log2cpm": 1.0,
+      "min_observed_frac": 0.5
+    },
+    "shap": {
+      "background_size": 100,
+      "top_k_report": 30
+    },
+    "splits": {
+      "inner_folds": 3,
+      "inner_folds_used": {
+        "cancer_type": 1,
+        "subtype": 3,
+        "tumor_status": 3
+      },
+      "outer_folds": 5,
+      "seed": 20261010
+    },
+    "subtype_yaml_sha256": "7962b0d41ffb43f045b531543a6077d2e03ff1e4ce03ee56f37139159c3a39c0",
+    "tuning": {
+      "n_trials": {
+        "cancer_type": 20,
+        "subtype": 30,
+        "tumor_status": 30
+      },
+      "pruner_startup_trials": 6,
+      "search_space": {
+        "batch_size": {
+          "cancer_type": [
+            128,
+            256,
+            512
+          ],
+          "subtype": [
+            32,
+            64,
+            128,
+            256
+          ],
+          "tumor_status": [
+            32,
+            64,
+            128,
+            256
+          ]
+        },
+        "dropout": [
+          0.0,
+          0.6
+        ],
+        "input_dropout": [
+          0.0,
+          0.5
+        ],
+        "lr": [
+          0.0001,
+          0.003
+        ],
+        "n_features": [
+          500,
+          1000,
+          2000,
+          4000
+        ],
+        "n_layers": [
+          1,
+          3
+        ],
+        "selection": [
+          "variance",
+          "anova"
+        ],
+        "weight_decay": [
+          1e-06,
+          0.01
+        ],
+        "width": [
+          64,
+          1024
+        ]
+      }
+    }
+  },
+  "git_commit": "a890c55dc3e3809be96dc60e9ed4f9a672d26ef1+dirty",
+  "labels": {
+    "columns": [
+      "Subtype_Selected"
+    ],
+    "concordance": null,
+    "label_set": "molecular",
+    "label_type": "expression-defined",
+    "project": "PCPG",
+    "question": "mRNA subtype kinase signalling / pseudohypoxia / Wnt-altered / cortical admixture",
+    "source": "pancan_subtype",
+    "tier": "expression_defined",
+    "version": "pancanatlas_v1"
+  },
+  "n_features_by_fold": [
+    500,
+    500,
+    2000,
+    1000,
+    1000
+  ],
+  "packages": {
+    "numpy": "1.26.4",
+    "optuna": "4.6.0",
+    "pandas": "2.3.3",
+    "pyarrow": "23.0.1",
+    "python": "3.10.20",
+    "scipy": "1.15.3",
+    "shap": "0.48.0",
+    "sklearn": "1.7.2",
+    "torch": "2.2.2"
+  },
+  "per_fold_mean": {
+    "accuracy": 0.8495798319327731,
+    "balanced_accuracy": 0.8200548552754435,
+    "macro_auroc_ovr": 0.9608227738674465,
+    "macro_f1": 0.8006845077392745
+  },
+  "per_fold_sd": {
+    "accuracy": 0.03794561984832145,
+    "balanced_accuracy": 0.06547315757516807,
+    "macro_auroc_ovr": 0.027298380250988186,
+    "macro_f1": 0.061176840182716866
+  },
+  "pooled_oof": {
+    "accuracy": 0.8497109826589595,
+    "balanced_accuracy": 0.8164778206364514,
+    "log_loss": 0.43333441053206384,
+    "macro_auroc_ovr": 0.961407651475134,
+    "macro_f1": 0.8052663044204147,
+    "mcc": 0.784533932519116,
+    "n": 173,
+    "n_classes": 4
+  },
+  "recall_by_class": {
+    "Cortical admixture": 0.7272727272727273,
+    "Kinase signaling": 0.8970588235294118,
+    "Pseudohypoxia": 0.8688524590163934,
+    "Wnt-altered": 0.7727272727272727
+  },
+  "selection_method_by_fold": [
+    "anova",
+    "anova",
+    "anova",
+    "anova",
+    "anova"
+  ],
+  "task": "subtype",
+  "view": "se"
+}

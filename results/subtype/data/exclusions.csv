@@ -1,0 +1,63 @@
+cohort,reason,patients
+BRCA,class below minimum size,29
+BRCA,concordance source: excluded value,16
+BRCA,excluded value,74
+BRCA,mapped,952
+BRCA,sources disagree,2
+BRCA_ER,excluded value,48
+BRCA_ER,mapped,1025
+BRCA_PAM50,mapped,1073
+CESC,excluded value,5
+CESC,mapped,285
+CESC,sources disagree,1
+COAD_TCGA,class below minimum size,2
+COAD_TCGA,mapped,235
+COAD_TCGA,not in source,26
+ESCA,mapped,161
+HNSC_HPV,components map to different classes,1
+HNSC_HPV,mapped,112
+HNSC_HPV,no informative value,388
+HNSC_mRNA,mapped,278
+HNSC_mRNA,not in source,223
+LGG,concordance source: excluded value,3
+LGG,excluded value,129
+LGG,mapped,378
+LGG_IDH,excluded value,3
+LGG_IDH,mapped,507
+MESO,concordance source: excluded value,1
+MESO,excluded value,5
+MESO,mapped,76
+MESO,sources disagree,3
+PCPG,mapped,178
+PCPG,sources disagree,1
+PCPG_mRNA,mapped,173
+PCPG_mRNA,not in source,6
+PRAD_ETS,class below minimum size,30
+PRAD_ETS,mapped,303
+PRAD_ETS,not in source,164
+SARC,class below minimum size,19
+SARC,concordance source: excluded value,4
+SARC,excluded value,2
+SARC,mapped,230
+SARC,sources disagree,1
+STAD,concordance source: excluded value,4
+STAD,excluded value,120
+STAD,mapped,227
+STAD,sources disagree,1
+STAD_TCGA,class below minimum size,7
+STAD_TCGA,mapped,320
+STAD_TCGA,not in source,25
+TGCT,components map to different classes,17
+TGCT,excluded value,3
+TGCT,mapped,114
+THCA,concordance source: excluded value,3
+THCA,excluded value,9
+THCA,mapped,486
+THCA,sources disagree,5
+THYM,class below minimum size,11
+THYM,mapped,108
+UCEC,excluded value,13
+UCEC,mapped,162
+UCEC,sources disagree,3
+UCEC_TCGA,mapped,169
+UCEC_TCGA,not in source,9

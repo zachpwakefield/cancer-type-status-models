@@ -1,0 +1,589 @@
+cohort,label_set,label_type,tier,project,model,true,predicted,patients
+BRCA,histology,histology,primary,BRCA,GEX,Ductal,Ductal,696
+BRCA,histology,histology,primary,BRCA,GEX,Ductal,Lobular,63
+BRCA,histology,histology,primary,BRCA,GEX,Lobular,Ductal,38
+BRCA,histology,histology,primary,BRCA,GEX,Lobular,Lobular,155
+BRCA,histology,histology,primary,BRCA,AS ensemble,Ductal,Ductal,678
+BRCA,histology,histology,primary,BRCA,AS ensemble,Ductal,Lobular,81
+BRCA,histology,histology,primary,BRCA,AS ensemble,Lobular,Ductal,43
+BRCA,histology,histology,primary,BRCA,AS ensemble,Lobular,Lobular,150
+BRCA,histology,histology,primary,BRCA,GEX + AS,Ductal,Ductal,697
+BRCA,histology,histology,primary,BRCA,GEX + AS,Ductal,Lobular,62
+BRCA,histology,histology,primary,BRCA,GEX + AS,Lobular,Ductal,36
+BRCA,histology,histology,primary,BRCA,GEX + AS,Lobular,Lobular,157
+THCA,histology,histology,primary,THCA,GEX,Classical,Classical,198
+THCA,histology,histology,primary,THCA,GEX,Classical,Follicular,71
+THCA,histology,histology,primary,THCA,GEX,Classical,Tall cell,82
+THCA,histology,histology,primary,THCA,GEX,Follicular,Classical,19
+THCA,histology,histology,primary,THCA,GEX,Follicular,Follicular,78
+THCA,histology,histology,primary,THCA,GEX,Follicular,Tall cell,3
+THCA,histology,histology,primary,THCA,GEX,Tall cell,Classical,10
+THCA,histology,histology,primary,THCA,GEX,Tall cell,Follicular,0
+THCA,histology,histology,primary,THCA,GEX,Tall cell,Tall cell,25
+THCA,histology,histology,primary,THCA,AS ensemble,Classical,Classical,230
+THCA,histology,histology,primary,THCA,AS ensemble,Classical,Follicular,64
+THCA,histology,histology,primary,THCA,AS ensemble,Classical,Tall cell,57
+THCA,histology,histology,primary,THCA,AS ensemble,Follicular,Classical,17
+THCA,histology,histology,primary,THCA,AS ensemble,Follicular,Follicular,81
+THCA,histology,histology,primary,THCA,AS ensemble,Follicular,Tall cell,2
+THCA,histology,histology,primary,THCA,AS ensemble,Tall cell,Classical,17
+THCA,histology,histology,primary,THCA,AS ensemble,Tall cell,Follicular,0
+THCA,histology,histology,primary,THCA,AS ensemble,Tall cell,Tall cell,18
+THCA,histology,histology,primary,THCA,GEX + AS,Classical,Classical,221
+THCA,histology,histology,primary,THCA,GEX + AS,Classical,Follicular,63
+THCA,histology,histology,primary,THCA,GEX + AS,Classical,Tall cell,67
+THCA,histology,histology,primary,THCA,GEX + AS,Follicular,Classical,18
+THCA,histology,histology,primary,THCA,GEX + AS,Follicular,Follicular,80
+THCA,histology,histology,primary,THCA,GEX + AS,Follicular,Tall cell,2
+THCA,histology,histology,primary,THCA,GEX + AS,Tall cell,Classical,11
+THCA,histology,histology,primary,THCA,GEX + AS,Tall cell,Follicular,0
+THCA,histology,histology,primary,THCA,GEX + AS,Tall cell,Tall cell,24
+UCEC,histology,histology,primary,UCEC,GEX,Endometrioid,Endometrioid,92
+UCEC,histology,histology,primary,UCEC,GEX,Endometrioid,Serous,12
+UCEC,histology,histology,primary,UCEC,GEX,Serous,Endometrioid,5
+UCEC,histology,histology,primary,UCEC,GEX,Serous,Serous,53
+UCEC,histology,histology,primary,UCEC,AS ensemble,Endometrioid,Endometrioid,90
+UCEC,histology,histology,primary,UCEC,AS ensemble,Endometrioid,Serous,14
+UCEC,histology,histology,primary,UCEC,AS ensemble,Serous,Endometrioid,9
+UCEC,histology,histology,primary,UCEC,AS ensemble,Serous,Serous,49
+UCEC,histology,histology,primary,UCEC,GEX + AS,Endometrioid,Endometrioid,93
+UCEC,histology,histology,primary,UCEC,GEX + AS,Endometrioid,Serous,11
+UCEC,histology,histology,primary,UCEC,GEX + AS,Serous,Endometrioid,4
+UCEC,histology,histology,primary,UCEC,GEX + AS,Serous,Serous,54
+SARC,histology,histology,primary,SARC,GEX,LMS,LMS,85
+SARC,histology,histology,primary,SARC,GEX,LMS,DDLPS,3
+SARC,histology,histology,primary,SARC,GEX,LMS,UPS,11
+SARC,histology,histology,primary,SARC,GEX,LMS,MFS,3
+SARC,histology,histology,primary,SARC,GEX,DDLPS,LMS,0
+SARC,histology,histology,primary,SARC,GEX,DDLPS,DDLPS,49
+SARC,histology,histology,primary,SARC,GEX,DDLPS,UPS,2
+SARC,histology,histology,primary,SARC,GEX,DDLPS,MFS,6
+SARC,histology,histology,primary,SARC,GEX,UPS,LMS,4
+SARC,histology,histology,primary,SARC,GEX,UPS,DDLPS,1
+SARC,histology,histology,primary,SARC,GEX,UPS,UPS,30
+SARC,histology,histology,primary,SARC,GEX,UPS,MFS,12
+SARC,histology,histology,primary,SARC,GEX,MFS,LMS,0
+SARC,histology,histology,primary,SARC,GEX,MFS,DDLPS,3
+SARC,histology,histology,primary,SARC,GEX,MFS,UPS,5
+SARC,histology,histology,primary,SARC,GEX,MFS,MFS,16
+SARC,histology,histology,primary,SARC,AS ensemble,LMS,LMS,82
+SARC,histology,histology,primary,SARC,AS ensemble,LMS,DDLPS,7
+SARC,histology,histology,primary,SARC,AS ensemble,LMS,UPS,13
+SARC,histology,histology,primary,SARC,AS ensemble,LMS,MFS,0
+SARC,histology,histology,primary,SARC,AS ensemble,DDLPS,LMS,3
+SARC,histology,histology,primary,SARC,AS ensemble,DDLPS,DDLPS,47
+SARC,histology,histology,primary,SARC,AS ensemble,DDLPS,UPS,2
+SARC,histology,histology,primary,SARC,AS ensemble,DDLPS,MFS,5
+SARC,histology,histology,primary,SARC,AS ensemble,UPS,LMS,0
+SARC,histology,histology,primary,SARC,AS ensemble,UPS,DDLPS,5
+SARC,histology,histology,primary,SARC,AS ensemble,UPS,UPS,34
+SARC,histology,histology,primary,SARC,AS ensemble,UPS,MFS,8
+SARC,histology,histology,primary,SARC,AS ensemble,MFS,LMS,0
+SARC,histology,histology,primary,SARC,AS ensemble,MFS,DDLPS,5
+SARC,histology,histology,primary,SARC,AS ensemble,MFS,UPS,12
+SARC,histology,histology,primary,SARC,AS ensemble,MFS,MFS,7
+SARC,histology,histology,primary,SARC,GEX + AS,LMS,LMS,87
+SARC,histology,histology,primary,SARC,GEX + AS,LMS,DDLPS,3
+SARC,histology,histology,primary,SARC,GEX + AS,LMS,UPS,11
+SARC,histology,histology,primary,SARC,GEX + AS,LMS,MFS,1
+SARC,histology,histology,primary,SARC,GEX + AS,DDLPS,LMS,0
+SARC,histology,histology,primary,SARC,GEX + AS,DDLPS,DDLPS,50
+SARC,histology,histology,primary,SARC,GEX + AS,DDLPS,UPS,2
+SARC,histology,histology,primary,SARC,GEX + AS,DDLPS,MFS,5
+SARC,histology,histology,primary,SARC,GEX + AS,UPS,LMS,3
+SARC,histology,histology,primary,SARC,GEX + AS,UPS,DDLPS,3
+SARC,histology,histology,primary,SARC,GEX + AS,UPS,UPS,32
+SARC,histology,histology,primary,SARC,GEX + AS,UPS,MFS,9
+SARC,histology,histology,primary,SARC,GEX + AS,MFS,LMS,0
+SARC,histology,histology,primary,SARC,GEX + AS,MFS,DDLPS,4
+SARC,histology,histology,primary,SARC,GEX + AS,MFS,UPS,7
+SARC,histology,histology,primary,SARC,GEX + AS,MFS,MFS,13
+TGCT,histology,histology,primary,TGCT,GEX,Seminoma,Seminoma,64
+TGCT,histology,histology,primary,TGCT,GEX,Seminoma,Non-seminoma,0
+TGCT,histology,histology,primary,TGCT,GEX,Non-seminoma,Seminoma,0
+TGCT,histology,histology,primary,TGCT,GEX,Non-seminoma,Non-seminoma,50
+TGCT,histology,histology,primary,TGCT,AS ensemble,Seminoma,Seminoma,64
+TGCT,histology,histology,primary,TGCT,AS ensemble,Seminoma,Non-seminoma,0
+TGCT,histology,histology,primary,TGCT,AS ensemble,Non-seminoma,Seminoma,0
+TGCT,histology,histology,primary,TGCT,AS ensemble,Non-seminoma,Non-seminoma,50
+TGCT,histology,histology,primary,TGCT,GEX + AS,Seminoma,Seminoma,64
+TGCT,histology,histology,primary,TGCT,GEX + AS,Seminoma,Non-seminoma,0
+TGCT,histology,histology,primary,TGCT,GEX + AS,Non-seminoma,Seminoma,0
+TGCT,histology,histology,primary,TGCT,GEX + AS,Non-seminoma,Non-seminoma,50
+MESO,histology,histology,primary,MESO,GEX,Epithelioid,Epithelioid,42
+MESO,histology,histology,primary,MESO,GEX,Epithelioid,Biphasic,13
+MESO,histology,histology,primary,MESO,GEX,Biphasic,Epithelioid,4
+MESO,histology,histology,primary,MESO,GEX,Biphasic,Biphasic,17
+MESO,histology,histology,primary,MESO,AS ensemble,Epithelioid,Epithelioid,39
+MESO,histology,histology,primary,MESO,AS ensemble,Epithelioid,Biphasic,16
+MESO,histology,histology,primary,MESO,AS ensemble,Biphasic,Epithelioid,4
+MESO,histology,histology,primary,MESO,AS ensemble,Biphasic,Biphasic,17
+MESO,histology,histology,primary,MESO,GEX + AS,Epithelioid,Epithelioid,40
+MESO,histology,histology,primary,MESO,GEX + AS,Epithelioid,Biphasic,15
+MESO,histology,histology,primary,MESO,GEX + AS,Biphasic,Epithelioid,5
+MESO,histology,histology,primary,MESO,GEX + AS,Biphasic,Biphasic,16
+STAD,histology,histology,primary,STAD,GEX,Intestinal,Intestinal,100
+STAD,histology,histology,primary,STAD,GEX,Intestinal,Diffuse,57
+STAD,histology,histology,primary,STAD,GEX,Diffuse,Intestinal,24
+STAD,histology,histology,primary,STAD,GEX,Diffuse,Diffuse,46
+STAD,histology,histology,primary,STAD,AS ensemble,Intestinal,Intestinal,111
+STAD,histology,histology,primary,STAD,AS ensemble,Intestinal,Diffuse,46
+STAD,histology,histology,primary,STAD,AS ensemble,Diffuse,Intestinal,28
+STAD,histology,histology,primary,STAD,AS ensemble,Diffuse,Diffuse,42
+STAD,histology,histology,primary,STAD,GEX + AS,Intestinal,Intestinal,107
+STAD,histology,histology,primary,STAD,GEX + AS,Intestinal,Diffuse,50
+STAD,histology,histology,primary,STAD,GEX + AS,Diffuse,Intestinal,28
+STAD,histology,histology,primary,STAD,GEX + AS,Diffuse,Diffuse,42
+LGG,histology,histology,weak_label,LGG,GEX,Astrocytoma,Astrocytoma,164
+LGG,histology,histology,weak_label,LGG,GEX,Astrocytoma,Oligodendroglioma,27
+LGG,histology,histology,weak_label,LGG,GEX,Oligodendroglioma,Astrocytoma,44
+LGG,histology,histology,weak_label,LGG,GEX,Oligodendroglioma,Oligodendroglioma,143
+LGG,histology,histology,weak_label,LGG,AS ensemble,Astrocytoma,Astrocytoma,176
+LGG,histology,histology,weak_label,LGG,AS ensemble,Astrocytoma,Oligodendroglioma,15
+LGG,histology,histology,weak_label,LGG,AS ensemble,Oligodendroglioma,Astrocytoma,46
+LGG,histology,histology,weak_label,LGG,AS ensemble,Oligodendroglioma,Oligodendroglioma,141
+LGG,histology,histology,weak_label,LGG,GEX + AS,Astrocytoma,Astrocytoma,177
+LGG,histology,histology,weak_label,LGG,GEX + AS,Astrocytoma,Oligodendroglioma,14
+LGG,histology,histology,weak_label,LGG,GEX + AS,Oligodendroglioma,Astrocytoma,48
+LGG,histology,histology,weak_label,LGG,GEX + AS,Oligodendroglioma,Oligodendroglioma,139
+THYM,histology,histology,weak_label,THYM,GEX,A/AB,A/AB,42
+THYM,histology,histology,weak_label,THYM,GEX,A/AB,B1-B3,9
+THYM,histology,histology,weak_label,THYM,GEX,B1-B3,A/AB,13
+THYM,histology,histology,weak_label,THYM,GEX,B1-B3,B1-B3,44
+THYM,histology,histology,weak_label,THYM,AS ensemble,A/AB,A/AB,36
+THYM,histology,histology,weak_label,THYM,AS ensemble,A/AB,B1-B3,15
+THYM,histology,histology,weak_label,THYM,AS ensemble,B1-B3,A/AB,12
+THYM,histology,histology,weak_label,THYM,AS ensemble,B1-B3,B1-B3,45
+THYM,histology,histology,weak_label,THYM,GEX + AS,A/AB,A/AB,40
+THYM,histology,histology,weak_label,THYM,GEX + AS,A/AB,B1-B3,11
+THYM,histology,histology,weak_label,THYM,GEX + AS,B1-B3,A/AB,11
+THYM,histology,histology,weak_label,THYM,GEX + AS,B1-B3,B1-B3,46
+ESCA,histology,histology,control,ESCA,GEX,Squamous,Squamous,80
+ESCA,histology,histology,control,ESCA,GEX,Squamous,Adenocarcinoma,0
+ESCA,histology,histology,control,ESCA,GEX,Adenocarcinoma,Squamous,2
+ESCA,histology,histology,control,ESCA,GEX,Adenocarcinoma,Adenocarcinoma,79
+ESCA,histology,histology,control,ESCA,AS ensemble,Squamous,Squamous,80
+ESCA,histology,histology,control,ESCA,AS ensemble,Squamous,Adenocarcinoma,0
+ESCA,histology,histology,control,ESCA,AS ensemble,Adenocarcinoma,Squamous,1
+ESCA,histology,histology,control,ESCA,AS ensemble,Adenocarcinoma,Adenocarcinoma,80
+ESCA,histology,histology,control,ESCA,GEX + AS,Squamous,Squamous,80
+ESCA,histology,histology,control,ESCA,GEX + AS,Squamous,Adenocarcinoma,0
+ESCA,histology,histology,control,ESCA,GEX + AS,Adenocarcinoma,Squamous,2
+ESCA,histology,histology,control,ESCA,GEX + AS,Adenocarcinoma,Adenocarcinoma,79
+CESC,histology,histology,control,CESC,GEX,Squamous,Squamous,230
+CESC,histology,histology,control,CESC,GEX,Squamous,Adenocarcinoma,10
+CESC,histology,histology,control,CESC,GEX,Adenocarcinoma,Squamous,5
+CESC,histology,histology,control,CESC,GEX,Adenocarcinoma,Adenocarcinoma,40
+CESC,histology,histology,control,CESC,AS ensemble,Squamous,Squamous,230
+CESC,histology,histology,control,CESC,AS ensemble,Squamous,Adenocarcinoma,10
+CESC,histology,histology,control,CESC,AS ensemble,Adenocarcinoma,Squamous,4
+CESC,histology,histology,control,CESC,AS ensemble,Adenocarcinoma,Adenocarcinoma,41
+CESC,histology,histology,control,CESC,GEX + AS,Squamous,Squamous,229
+CESC,histology,histology,control,CESC,GEX + AS,Squamous,Adenocarcinoma,11
+CESC,histology,histology,control,CESC,GEX + AS,Adenocarcinoma,Squamous,5
+CESC,histology,histology,control,CESC,GEX + AS,Adenocarcinoma,Adenocarcinoma,40
+PCPG,histology,histology,control,PCPG,GEX,Pheochromocytoma,Pheochromocytoma,137
+PCPG,histology,histology,control,PCPG,GEX,Pheochromocytoma,Paraganglioma,11
+PCPG,histology,histology,control,PCPG,GEX,Paraganglioma,Pheochromocytoma,5
+PCPG,histology,histology,control,PCPG,GEX,Paraganglioma,Paraganglioma,25
+PCPG,histology,histology,control,PCPG,AS ensemble,Pheochromocytoma,Pheochromocytoma,125
+PCPG,histology,histology,control,PCPG,AS ensemble,Pheochromocytoma,Paraganglioma,23
+PCPG,histology,histology,control,PCPG,AS ensemble,Paraganglioma,Pheochromocytoma,13
+PCPG,histology,histology,control,PCPG,AS ensemble,Paraganglioma,Paraganglioma,17
+PCPG,histology,histology,control,PCPG,GEX + AS,Pheochromocytoma,Pheochromocytoma,135
+PCPG,histology,histology,control,PCPG,GEX + AS,Pheochromocytoma,Paraganglioma,13
+PCPG,histology,histology,control,PCPG,GEX + AS,Paraganglioma,Pheochromocytoma,6
+PCPG,histology,histology,control,PCPG,GEX + AS,Paraganglioma,Paraganglioma,24
+LGG_IDH,molecular,genomic,primary,LGG,GEX,IDHmut-codel,IDHmut-codel,168
+LGG_IDH,molecular,genomic,primary,LGG,GEX,IDHmut-codel,IDHmut-non-codel,3
+LGG_IDH,molecular,genomic,primary,LGG,GEX,IDHmut-codel,IDHwt,0
+LGG_IDH,molecular,genomic,primary,LGG,GEX,IDHmut-non-codel,IDHmut-codel,1
+LGG_IDH,molecular,genomic,primary,LGG,GEX,IDHmut-non-codel,IDHmut-non-codel,238
+LGG_IDH,molecular,genomic,primary,LGG,GEX,IDHmut-non-codel,IDHwt,3
+LGG_IDH,molecular,genomic,primary,LGG,GEX,IDHwt,IDHmut-codel,0
+LGG_IDH,molecular,genomic,primary,LGG,GEX,IDHwt,IDHmut-non-codel,1
+LGG_IDH,molecular,genomic,primary,LGG,GEX,IDHwt,IDHwt,93
+LGG_IDH,molecular,genomic,primary,LGG,AS ensemble,IDHmut-codel,IDHmut-codel,169
+LGG_IDH,molecular,genomic,primary,LGG,AS ensemble,IDHmut-codel,IDHmut-non-codel,1
+LGG_IDH,molecular,genomic,primary,LGG,AS ensemble,IDHmut-codel,IDHwt,1
+LGG_IDH,molecular,genomic,primary,LGG,AS ensemble,IDHmut-non-codel,IDHmut-codel,3
+LGG_IDH,molecular,genomic,primary,LGG,AS ensemble,IDHmut-non-codel,IDHmut-non-codel,235
+LGG_IDH,molecular,genomic,primary,LGG,AS ensemble,IDHmut-non-codel,IDHwt,4
+LGG_IDH,molecular,genomic,primary,LGG,AS ensemble,IDHwt,IDHmut-codel,0
+LGG_IDH,molecular,genomic,primary,LGG,AS ensemble,IDHwt,IDHmut-non-codel,4
+LGG_IDH,molecular,genomic,primary,LGG,AS ensemble,IDHwt,IDHwt,90
+LGG_IDH,molecular,genomic,primary,LGG,GEX + AS,IDHmut-codel,IDHmut-codel,168
+LGG_IDH,molecular,genomic,primary,LGG,GEX + AS,IDHmut-codel,IDHmut-non-codel,3
+LGG_IDH,molecular,genomic,primary,LGG,GEX + AS,IDHmut-codel,IDHwt,0
+LGG_IDH,molecular,genomic,primary,LGG,GEX + AS,IDHmut-non-codel,IDHmut-codel,1
+LGG_IDH,molecular,genomic,primary,LGG,GEX + AS,IDHmut-non-codel,IDHmut-non-codel,238
+LGG_IDH,molecular,genomic,primary,LGG,GEX + AS,IDHmut-non-codel,IDHwt,3
+LGG_IDH,molecular,genomic,primary,LGG,GEX + AS,IDHwt,IDHmut-codel,0
+LGG_IDH,molecular,genomic,primary,LGG,GEX + AS,IDHwt,IDHmut-non-codel,2
+LGG_IDH,molecular,genomic,primary,LGG,GEX + AS,IDHwt,IDHwt,92
+UCEC_TCGA,molecular,genomic,primary,UCEC,GEX,POLE,POLE,13
+UCEC_TCGA,molecular,genomic,primary,UCEC,GEX,POLE,MSI,8
+UCEC_TCGA,molecular,genomic,primary,UCEC,GEX,POLE,CN-low,2
+UCEC_TCGA,molecular,genomic,primary,UCEC,GEX,POLE,CN-high,1
+UCEC_TCGA,molecular,genomic,primary,UCEC,GEX,MSI,POLE,6
+UCEC_TCGA,molecular,genomic,primary,UCEC,GEX,MSI,MSI,22
+UCEC_TCGA,molecular,genomic,primary,UCEC,GEX,MSI,CN-low,4
+UCEC_TCGA,molecular,genomic,primary,UCEC,GEX,MSI,CN-high,2
+UCEC_TCGA,molecular,genomic,primary,UCEC,GEX,CN-low,POLE,5
+UCEC_TCGA,molecular,genomic,primary,UCEC,GEX,CN-low,MSI,2
+UCEC_TCGA,molecular,genomic,primary,UCEC,GEX,CN-low,CN-low,19
+UCEC_TCGA,molecular,genomic,primary,UCEC,GEX,CN-low,CN-high,2
+UCEC_TCGA,molecular,genomic,primary,UCEC,GEX,CN-high,POLE,1
+UCEC_TCGA,molecular,genomic,primary,UCEC,GEX,CN-high,MSI,0
+UCEC_TCGA,molecular,genomic,primary,UCEC,GEX,CN-high,CN-low,12
+UCEC_TCGA,molecular,genomic,primary,UCEC,GEX,CN-high,CN-high,70
+UCEC_TCGA,molecular,genomic,primary,UCEC,AS ensemble,POLE,POLE,2
+UCEC_TCGA,molecular,genomic,primary,UCEC,AS ensemble,POLE,MSI,12
+UCEC_TCGA,molecular,genomic,primary,UCEC,AS ensemble,POLE,CN-low,6
+UCEC_TCGA,molecular,genomic,primary,UCEC,AS ensemble,POLE,CN-high,4
+UCEC_TCGA,molecular,genomic,primary,UCEC,AS ensemble,MSI,POLE,4
+UCEC_TCGA,molecular,genomic,primary,UCEC,AS ensemble,MSI,MSI,22
+UCEC_TCGA,molecular,genomic,primary,UCEC,AS ensemble,MSI,CN-low,3
+UCEC_TCGA,molecular,genomic,primary,UCEC,AS ensemble,MSI,CN-high,5
+UCEC_TCGA,molecular,genomic,primary,UCEC,AS ensemble,CN-low,POLE,2
+UCEC_TCGA,molecular,genomic,primary,UCEC,AS ensemble,CN-low,MSI,7
+UCEC_TCGA,molecular,genomic,primary,UCEC,AS ensemble,CN-low,CN-low,16
+UCEC_TCGA,molecular,genomic,primary,UCEC,AS ensemble,CN-low,CN-high,3
+UCEC_TCGA,molecular,genomic,primary,UCEC,AS ensemble,CN-high,POLE,2
+UCEC_TCGA,molecular,genomic,primary,UCEC,AS ensemble,CN-high,MSI,1
+UCEC_TCGA,molecular,genomic,primary,UCEC,AS ensemble,CN-high,CN-low,2
+UCEC_TCGA,molecular,genomic,primary,UCEC,AS ensemble,CN-high,CN-high,78
+UCEC_TCGA,molecular,genomic,primary,UCEC,GEX + AS,POLE,POLE,14
+UCEC_TCGA,molecular,genomic,primary,UCEC,GEX + AS,POLE,MSI,7
+UCEC_TCGA,molecular,genomic,primary,UCEC,GEX + AS,POLE,CN-low,2
+UCEC_TCGA,molecular,genomic,primary,UCEC,GEX + AS,POLE,CN-high,1
+UCEC_TCGA,molecular,genomic,primary,UCEC,GEX + AS,MSI,POLE,5
+UCEC_TCGA,molecular,genomic,primary,UCEC,GEX + AS,MSI,MSI,23
+UCEC_TCGA,molecular,genomic,primary,UCEC,GEX + AS,MSI,CN-low,4
+UCEC_TCGA,molecular,genomic,primary,UCEC,GEX + AS,MSI,CN-high,2
+UCEC_TCGA,molecular,genomic,primary,UCEC,GEX + AS,CN-low,POLE,4
+UCEC_TCGA,molecular,genomic,primary,UCEC,GEX + AS,CN-low,MSI,2
+UCEC_TCGA,molecular,genomic,primary,UCEC,GEX + AS,CN-low,CN-low,20
+UCEC_TCGA,molecular,genomic,primary,UCEC,GEX + AS,CN-low,CN-high,2
+UCEC_TCGA,molecular,genomic,primary,UCEC,GEX + AS,CN-high,POLE,0
+UCEC_TCGA,molecular,genomic,primary,UCEC,GEX + AS,CN-high,MSI,1
+UCEC_TCGA,molecular,genomic,primary,UCEC,GEX + AS,CN-high,CN-low,9
+UCEC_TCGA,molecular,genomic,primary,UCEC,GEX + AS,CN-high,CN-high,73
+STAD_TCGA,molecular,genomic,primary,STAD,GEX,CIN,CIN,169
+STAD_TCGA,molecular,genomic,primary,STAD,GEX,CIN,MSI,4
+STAD_TCGA,molecular,genomic,primary,STAD,GEX,CIN,GS,23
+STAD_TCGA,molecular,genomic,primary,STAD,GEX,CIN,EBV,0
+STAD_TCGA,molecular,genomic,primary,STAD,GEX,MSI,CIN,4
+STAD_TCGA,molecular,genomic,primary,STAD,GEX,MSI,MSI,50
+STAD_TCGA,molecular,genomic,primary,STAD,GEX,MSI,GS,1
+STAD_TCGA,molecular,genomic,primary,STAD,GEX,MSI,EBV,0
+STAD_TCGA,molecular,genomic,primary,STAD,GEX,GS,CIN,7
+STAD_TCGA,molecular,genomic,primary,STAD,GEX,GS,MSI,3
+STAD_TCGA,molecular,genomic,primary,STAD,GEX,GS,GS,32
+STAD_TCGA,molecular,genomic,primary,STAD,GEX,GS,EBV,1
+STAD_TCGA,molecular,genomic,primary,STAD,GEX,EBV,CIN,0
+STAD_TCGA,molecular,genomic,primary,STAD,GEX,EBV,MSI,0
+STAD_TCGA,molecular,genomic,primary,STAD,GEX,EBV,GS,0
+STAD_TCGA,molecular,genomic,primary,STAD,GEX,EBV,EBV,26
+STAD_TCGA,molecular,genomic,primary,STAD,AS ensemble,CIN,CIN,165
+STAD_TCGA,molecular,genomic,primary,STAD,AS ensemble,CIN,MSI,6
+STAD_TCGA,molecular,genomic,primary,STAD,AS ensemble,CIN,GS,24
+STAD_TCGA,molecular,genomic,primary,STAD,AS ensemble,CIN,EBV,1
+STAD_TCGA,molecular,genomic,primary,STAD,AS ensemble,MSI,CIN,3
+STAD_TCGA,molecular,genomic,primary,STAD,AS ensemble,MSI,MSI,52
+STAD_TCGA,molecular,genomic,primary,STAD,AS ensemble,MSI,GS,0
+STAD_TCGA,molecular,genomic,primary,STAD,AS ensemble,MSI,EBV,0
+STAD_TCGA,molecular,genomic,primary,STAD,AS ensemble,GS,CIN,10
+STAD_TCGA,molecular,genomic,primary,STAD,AS ensemble,GS,MSI,1
+STAD_TCGA,molecular,genomic,primary,STAD,AS ensemble,GS,GS,31
+STAD_TCGA,molecular,genomic,primary,STAD,AS ensemble,GS,EBV,1
+STAD_TCGA,molecular,genomic,primary,STAD,AS ensemble,EBV,CIN,0
+STAD_TCGA,molecular,genomic,primary,STAD,AS ensemble,EBV,MSI,0
+STAD_TCGA,molecular,genomic,primary,STAD,AS ensemble,EBV,GS,0
+STAD_TCGA,molecular,genomic,primary,STAD,AS ensemble,EBV,EBV,26
+STAD_TCGA,molecular,genomic,primary,STAD,GEX + AS,CIN,CIN,168
+STAD_TCGA,molecular,genomic,primary,STAD,GEX + AS,CIN,MSI,2
+STAD_TCGA,molecular,genomic,primary,STAD,GEX + AS,CIN,GS,25
+STAD_TCGA,molecular,genomic,primary,STAD,GEX + AS,CIN,EBV,1
+STAD_TCGA,molecular,genomic,primary,STAD,GEX + AS,MSI,CIN,4
+STAD_TCGA,molecular,genomic,primary,STAD,GEX + AS,MSI,MSI,50
+STAD_TCGA,molecular,genomic,primary,STAD,GEX + AS,MSI,GS,1
+STAD_TCGA,molecular,genomic,primary,STAD,GEX + AS,MSI,EBV,0
+STAD_TCGA,molecular,genomic,primary,STAD,GEX + AS,GS,CIN,7
+STAD_TCGA,molecular,genomic,primary,STAD,GEX + AS,GS,MSI,3
+STAD_TCGA,molecular,genomic,primary,STAD,GEX + AS,GS,GS,32
+STAD_TCGA,molecular,genomic,primary,STAD,GEX + AS,GS,EBV,1
+STAD_TCGA,molecular,genomic,primary,STAD,GEX + AS,EBV,CIN,0
+STAD_TCGA,molecular,genomic,primary,STAD,GEX + AS,EBV,MSI,0
+STAD_TCGA,molecular,genomic,primary,STAD,GEX + AS,EBV,GS,0
+STAD_TCGA,molecular,genomic,primary,STAD,GEX + AS,EBV,EBV,26
+COAD_TCGA,molecular,genomic,primary,COAD,GEX,CIN,CIN,134
+COAD_TCGA,molecular,genomic,primary,COAD,GEX,CIN,MSI,5
+COAD_TCGA,molecular,genomic,primary,COAD,GEX,CIN,GS,23
+COAD_TCGA,molecular,genomic,primary,COAD,GEX,MSI,CIN,0
+COAD_TCGA,molecular,genomic,primary,COAD,GEX,MSI,MSI,38
+COAD_TCGA,molecular,genomic,primary,COAD,GEX,MSI,GS,2
+COAD_TCGA,molecular,genomic,primary,COAD,GEX,GS,CIN,8
+COAD_TCGA,molecular,genomic,primary,COAD,GEX,GS,MSI,1
+COAD_TCGA,molecular,genomic,primary,COAD,GEX,GS,GS,24
+COAD_TCGA,molecular,genomic,primary,COAD,AS ensemble,CIN,CIN,137
+COAD_TCGA,molecular,genomic,primary,COAD,AS ensemble,CIN,MSI,3
+COAD_TCGA,molecular,genomic,primary,COAD,AS ensemble,CIN,GS,22
+COAD_TCGA,molecular,genomic,primary,COAD,AS ensemble,MSI,CIN,2
+COAD_TCGA,molecular,genomic,primary,COAD,AS ensemble,MSI,MSI,37
+COAD_TCGA,molecular,genomic,primary,COAD,AS ensemble,MSI,GS,1
+COAD_TCGA,molecular,genomic,primary,COAD,AS ensemble,GS,CIN,12
+COAD_TCGA,molecular,genomic,primary,COAD,AS ensemble,GS,MSI,3
+COAD_TCGA,molecular,genomic,primary,COAD,AS ensemble,GS,GS,18
+COAD_TCGA,molecular,genomic,primary,COAD,GEX + AS,CIN,CIN,138
+COAD_TCGA,molecular,genomic,primary,COAD,GEX + AS,CIN,MSI,3
+COAD_TCGA,molecular,genomic,primary,COAD,GEX + AS,CIN,GS,21
+COAD_TCGA,molecular,genomic,primary,COAD,GEX + AS,MSI,CIN,0
+COAD_TCGA,molecular,genomic,primary,COAD,GEX + AS,MSI,MSI,38
+COAD_TCGA,molecular,genomic,primary,COAD,GEX + AS,MSI,GS,2
+COAD_TCGA,molecular,genomic,primary,COAD,GEX + AS,GS,CIN,10
+COAD_TCGA,molecular,genomic,primary,COAD,GEX + AS,GS,MSI,2
+COAD_TCGA,molecular,genomic,primary,COAD,GEX + AS,GS,GS,21
+PRAD_ETS,molecular,genomic,primary,PRAD,GEX,ERG,ERG,147
+PRAD_ETS,molecular,genomic,primary,PRAD,GEX,ERG,ETV1,1
+PRAD_ETS,molecular,genomic,primary,PRAD,GEX,ERG,SPOP,0
+PRAD_ETS,molecular,genomic,primary,PRAD,GEX,ERG,Other,4
+PRAD_ETS,molecular,genomic,primary,PRAD,GEX,ETV1,ERG,0
+PRAD_ETS,molecular,genomic,primary,PRAD,GEX,ETV1,ETV1,26
+PRAD_ETS,molecular,genomic,primary,PRAD,GEX,ETV1,SPOP,0
+PRAD_ETS,molecular,genomic,primary,PRAD,GEX,ETV1,Other,2
+PRAD_ETS,molecular,genomic,primary,PRAD,GEX,SPOP,ERG,0
+PRAD_ETS,molecular,genomic,primary,PRAD,GEX,SPOP,ETV1,1
+PRAD_ETS,molecular,genomic,primary,PRAD,GEX,SPOP,SPOP,32
+PRAD_ETS,molecular,genomic,primary,PRAD,GEX,SPOP,Other,4
+PRAD_ETS,molecular,genomic,primary,PRAD,GEX,Other,ERG,0
+PRAD_ETS,molecular,genomic,primary,PRAD,GEX,Other,ETV1,2
+PRAD_ETS,molecular,genomic,primary,PRAD,GEX,Other,SPOP,5
+PRAD_ETS,molecular,genomic,primary,PRAD,GEX,Other,Other,79
+PRAD_ETS,molecular,genomic,primary,PRAD,AS ensemble,ERG,ERG,140
+PRAD_ETS,molecular,genomic,primary,PRAD,AS ensemble,ERG,ETV1,1
+PRAD_ETS,molecular,genomic,primary,PRAD,AS ensemble,ERG,SPOP,0
+PRAD_ETS,molecular,genomic,primary,PRAD,AS ensemble,ERG,Other,11
+PRAD_ETS,molecular,genomic,primary,PRAD,AS ensemble,ETV1,ERG,6
+PRAD_ETS,molecular,genomic,primary,PRAD,AS ensemble,ETV1,ETV1,16
+PRAD_ETS,molecular,genomic,primary,PRAD,AS ensemble,ETV1,SPOP,1
+PRAD_ETS,molecular,genomic,primary,PRAD,AS ensemble,ETV1,Other,5
+PRAD_ETS,molecular,genomic,primary,PRAD,AS ensemble,SPOP,ERG,0
+PRAD_ETS,molecular,genomic,primary,PRAD,AS ensemble,SPOP,ETV1,0
+PRAD_ETS,molecular,genomic,primary,PRAD,AS ensemble,SPOP,SPOP,28
+PRAD_ETS,molecular,genomic,primary,PRAD,AS ensemble,SPOP,Other,9
+PRAD_ETS,molecular,genomic,primary,PRAD,AS ensemble,Other,ERG,6
+PRAD_ETS,molecular,genomic,primary,PRAD,AS ensemble,Other,ETV1,1
+PRAD_ETS,molecular,genomic,primary,PRAD,AS ensemble,Other,SPOP,6
+PRAD_ETS,molecular,genomic,primary,PRAD,AS ensemble,Other,Other,73
+PRAD_ETS,molecular,genomic,primary,PRAD,GEX + AS,ERG,ERG,148
+PRAD_ETS,molecular,genomic,primary,PRAD,GEX + AS,ERG,ETV1,1
+PRAD_ETS,molecular,genomic,primary,PRAD,GEX + AS,ERG,SPOP,0
+PRAD_ETS,molecular,genomic,primary,PRAD,GEX + AS,ERG,Other,3
+PRAD_ETS,molecular,genomic,primary,PRAD,GEX + AS,ETV1,ERG,0
+PRAD_ETS,molecular,genomic,primary,PRAD,GEX + AS,ETV1,ETV1,26
+PRAD_ETS,molecular,genomic,primary,PRAD,GEX + AS,ETV1,SPOP,0
+PRAD_ETS,molecular,genomic,primary,PRAD,GEX + AS,ETV1,Other,2
+PRAD_ETS,molecular,genomic,primary,PRAD,GEX + AS,SPOP,ERG,0
+PRAD_ETS,molecular,genomic,primary,PRAD,GEX + AS,SPOP,ETV1,0
+PRAD_ETS,molecular,genomic,primary,PRAD,GEX + AS,SPOP,SPOP,33
+PRAD_ETS,molecular,genomic,primary,PRAD,GEX + AS,SPOP,Other,4
+PRAD_ETS,molecular,genomic,primary,PRAD,GEX + AS,Other,ERG,1
+PRAD_ETS,molecular,genomic,primary,PRAD,GEX + AS,Other,ETV1,2
+PRAD_ETS,molecular,genomic,primary,PRAD,GEX + AS,Other,SPOP,4
+PRAD_ETS,molecular,genomic,primary,PRAD,GEX + AS,Other,Other,79
+BRCA_ER,molecular,IHC,primary,BRCA,GEX,ER-negative,ER-negative,220
+BRCA_ER,molecular,IHC,primary,BRCA,GEX,ER-negative,ER-positive,15
+BRCA_ER,molecular,IHC,primary,BRCA,GEX,ER-positive,ER-negative,51
+BRCA_ER,molecular,IHC,primary,BRCA,GEX,ER-positive,ER-positive,739
+BRCA_ER,molecular,IHC,primary,BRCA,AS ensemble,ER-negative,ER-negative,212
+BRCA_ER,molecular,IHC,primary,BRCA,AS ensemble,ER-negative,ER-positive,23
+BRCA_ER,molecular,IHC,primary,BRCA,AS ensemble,ER-positive,ER-negative,37
+BRCA_ER,molecular,IHC,primary,BRCA,AS ensemble,ER-positive,ER-positive,753
+BRCA_ER,molecular,IHC,primary,BRCA,GEX + AS,ER-negative,ER-negative,217
+BRCA_ER,molecular,IHC,primary,BRCA,GEX + AS,ER-negative,ER-positive,18
+BRCA_ER,molecular,IHC,primary,BRCA,GEX + AS,ER-positive,ER-negative,45
+BRCA_ER,molecular,IHC,primary,BRCA,GEX + AS,ER-positive,ER-positive,745
+HNSC_HPV,molecular,IHC,primary,HNSC,GEX,HPV-negative,HPV-negative,77
+HNSC_HPV,molecular,IHC,primary,HNSC,GEX,HPV-negative,HPV-positive,2
+HNSC_HPV,molecular,IHC,primary,HNSC,GEX,HPV-positive,HPV-negative,3
+HNSC_HPV,molecular,IHC,primary,HNSC,GEX,HPV-positive,HPV-positive,30
+HNSC_HPV,molecular,IHC,primary,HNSC,AS ensemble,HPV-negative,HPV-negative,73
+HNSC_HPV,molecular,IHC,primary,HNSC,AS ensemble,HPV-negative,HPV-positive,6
+HNSC_HPV,molecular,IHC,primary,HNSC,AS ensemble,HPV-positive,HPV-negative,6
+HNSC_HPV,molecular,IHC,primary,HNSC,AS ensemble,HPV-positive,HPV-positive,27
+HNSC_HPV,molecular,IHC,primary,HNSC,GEX + AS,HPV-negative,HPV-negative,76
+HNSC_HPV,molecular,IHC,primary,HNSC,GEX + AS,HPV-negative,HPV-positive,3
+HNSC_HPV,molecular,IHC,primary,HNSC,GEX + AS,HPV-positive,HPV-negative,3
+HNSC_HPV,molecular,IHC,primary,HNSC,GEX + AS,HPV-positive,HPV-positive,30
+BRCA_PAM50,molecular,expression-defined,expression_defined,BRCA,GEX,LumA,LumA,482
+BRCA_PAM50,molecular,expression-defined,expression_defined,BRCA,GEX,LumA,LumB,53
+BRCA_PAM50,molecular,expression-defined,expression_defined,BRCA,GEX,LumA,Her2,7
+BRCA_PAM50,molecular,expression-defined,expression_defined,BRCA,GEX,LumA,Basal,0
+BRCA_PAM50,molecular,expression-defined,expression_defined,BRCA,GEX,LumA,Normal-like,16
+BRCA_PAM50,molecular,expression-defined,expression_defined,BRCA,GEX,LumB,LumA,15
+BRCA_PAM50,molecular,expression-defined,expression_defined,BRCA,GEX,LumB,LumB,191
+BRCA_PAM50,molecular,expression-defined,expression_defined,BRCA,GEX,LumB,Her2,5
+BRCA_PAM50,molecular,expression-defined,expression_defined,BRCA,GEX,LumB,Basal,1
+BRCA_PAM50,molecular,expression-defined,expression_defined,BRCA,GEX,LumB,Normal-like,0
+BRCA_PAM50,molecular,expression-defined,expression_defined,BRCA,GEX,Her2,LumA,1
+BRCA_PAM50,molecular,expression-defined,expression_defined,BRCA,GEX,Her2,LumB,8
+BRCA_PAM50,molecular,expression-defined,expression_defined,BRCA,GEX,Her2,Her2,66
+BRCA_PAM50,molecular,expression-defined,expression_defined,BRCA,GEX,Her2,Basal,1
+BRCA_PAM50,molecular,expression-defined,expression_defined,BRCA,GEX,Her2,Normal-like,1
+BRCA_PAM50,molecular,expression-defined,expression_defined,BRCA,GEX,Basal,LumA,0
+BRCA_PAM50,molecular,expression-defined,expression_defined,BRCA,GEX,Basal,LumB,0
+BRCA_PAM50,molecular,expression-defined,expression_defined,BRCA,GEX,Basal,Her2,3
+BRCA_PAM50,molecular,expression-defined,expression_defined,BRCA,GEX,Basal,Basal,181
+BRCA_PAM50,molecular,expression-defined,expression_defined,BRCA,GEX,Basal,Normal-like,3
+BRCA_PAM50,molecular,expression-defined,expression_defined,BRCA,GEX,Normal-like,LumA,3
+BRCA_PAM50,molecular,expression-defined,expression_defined,BRCA,GEX,Normal-like,LumB,1
+BRCA_PAM50,molecular,expression-defined,expression_defined,BRCA,GEX,Normal-like,Her2,2
+BRCA_PAM50,molecular,expression-defined,expression_defined,BRCA,GEX,Normal-like,Basal,5
+BRCA_PAM50,molecular,expression-defined,expression_defined,BRCA,GEX,Normal-like,Normal-like,28
+BRCA_PAM50,molecular,expression-defined,expression_defined,BRCA,AS ensemble,LumA,LumA,453
+BRCA_PAM50,molecular,expression-defined,expression_defined,BRCA,AS ensemble,LumA,LumB,75
+BRCA_PAM50,molecular,expression-defined,expression_defined,BRCA,AS ensemble,LumA,Her2,12
+BRCA_PAM50,molecular,expression-defined,expression_defined,BRCA,AS ensemble,LumA,Basal,1
+BRCA_PAM50,molecular,expression-defined,expression_defined,BRCA,AS ensemble,LumA,Normal-like,17
+BRCA_PAM50,molecular,expression-defined,expression_defined,BRCA,AS ensemble,LumB,LumA,36
+BRCA_PAM50,molecular,expression-defined,expression_defined,BRCA,AS ensemble,LumB,LumB,162
+BRCA_PAM50,molecular,expression-defined,expression_defined,BRCA,AS ensemble,LumB,Her2,13
+BRCA_PAM50,molecular,expression-defined,expression_defined,BRCA,AS ensemble,LumB,Basal,1
+BRCA_PAM50,molecular,expression-defined,expression_defined,BRCA,AS ensemble,LumB,Normal-like,0
+BRCA_PAM50,molecular,expression-defined,expression_defined,BRCA,AS ensemble,Her2,LumA,4
+BRCA_PAM50,molecular,expression-defined,expression_defined,BRCA,AS ensemble,Her2,LumB,10
+BRCA_PAM50,molecular,expression-defined,expression_defined,BRCA,AS ensemble,Her2,Her2,61
+BRCA_PAM50,molecular,expression-defined,expression_defined,BRCA,AS ensemble,Her2,Basal,1
+BRCA_PAM50,molecular,expression-defined,expression_defined,BRCA,AS ensemble,Her2,Normal-like,1
+BRCA_PAM50,molecular,expression-defined,expression_defined,BRCA,AS ensemble,Basal,LumA,0
+BRCA_PAM50,molecular,expression-defined,expression_defined,BRCA,AS ensemble,Basal,LumB,1
+BRCA_PAM50,molecular,expression-defined,expression_defined,BRCA,AS ensemble,Basal,Her2,1
+BRCA_PAM50,molecular,expression-defined,expression_defined,BRCA,AS ensemble,Basal,Basal,183
+BRCA_PAM50,molecular,expression-defined,expression_defined,BRCA,AS ensemble,Basal,Normal-like,2
+BRCA_PAM50,molecular,expression-defined,expression_defined,BRCA,AS ensemble,Normal-like,LumA,4
+BRCA_PAM50,molecular,expression-defined,expression_defined,BRCA,AS ensemble,Normal-like,LumB,1
+BRCA_PAM50,molecular,expression-defined,expression_defined,BRCA,AS ensemble,Normal-like,Her2,3
+BRCA_PAM50,molecular,expression-defined,expression_defined,BRCA,AS ensemble,Normal-like,Basal,2
+BRCA_PAM50,molecular,expression-defined,expression_defined,BRCA,AS ensemble,Normal-like,Normal-like,29
+BRCA_PAM50,molecular,expression-defined,expression_defined,BRCA,GEX + AS,LumA,LumA,487
+BRCA_PAM50,molecular,expression-defined,expression_defined,BRCA,GEX + AS,LumA,LumB,50
+BRCA_PAM50,molecular,expression-defined,expression_defined,BRCA,GEX + AS,LumA,Her2,6
+BRCA_PAM50,molecular,expression-defined,expression_defined,BRCA,GEX + AS,LumA,Basal,0
+BRCA_PAM50,molecular,expression-defined,expression_defined,BRCA,GEX + AS,LumA,Normal-like,15
+BRCA_PAM50,molecular,expression-defined,expression_defined,BRCA,GEX + AS,LumB,LumA,16
+BRCA_PAM50,molecular,expression-defined,expression_defined,BRCA,GEX + AS,LumB,LumB,189
+BRCA_PAM50,molecular,expression-defined,expression_defined,BRCA,GEX + AS,LumB,Her2,6
+BRCA_PAM50,molecular,expression-defined,expression_defined,BRCA,GEX + AS,LumB,Basal,1
+BRCA_PAM50,molecular,expression-defined,expression_defined,BRCA,GEX + AS,LumB,Normal-like,0
+BRCA_PAM50,molecular,expression-defined,expression_defined,BRCA,GEX + AS,Her2,LumA,2
+BRCA_PAM50,molecular,expression-defined,expression_defined,BRCA,GEX + AS,Her2,LumB,8
+BRCA_PAM50,molecular,expression-defined,expression_defined,BRCA,GEX + AS,Her2,Her2,66
+BRCA_PAM50,molecular,expression-defined,expression_defined,BRCA,GEX + AS,Her2,Basal,0
+BRCA_PAM50,molecular,expression-defined,expression_defined,BRCA,GEX + AS,Her2,Normal-like,1
+BRCA_PAM50,molecular,expression-defined,expression_defined,BRCA,GEX + AS,Basal,LumA,0
+BRCA_PAM50,molecular,expression-defined,expression_defined,BRCA,GEX + AS,Basal,LumB,0
+BRCA_PAM50,molecular,expression-defined,expression_defined,BRCA,GEX + AS,Basal,Her2,3
+BRCA_PAM50,molecular,expression-defined,expression_defined,BRCA,GEX + AS,Basal,Basal,181
+BRCA_PAM50,molecular,expression-defined,expression_defined,BRCA,GEX + AS,Basal,Normal-like,3
+BRCA_PAM50,molecular,expression-defined,expression_defined,BRCA,GEX + AS,Normal-like,LumA,2
+BRCA_PAM50,molecular,expression-defined,expression_defined,BRCA,GEX + AS,Normal-like,LumB,1
+BRCA_PAM50,molecular,expression-defined,expression_defined,BRCA,GEX + AS,Normal-like,Her2,2
+BRCA_PAM50,molecular,expression-defined,expression_defined,BRCA,GEX + AS,Normal-like,Basal,2
+BRCA_PAM50,molecular,expression-defined,expression_defined,BRCA,GEX + AS,Normal-like,Normal-like,32
+HNSC_mRNA,molecular,expression-defined,expression_defined,HNSC,GEX,Atypical,Atypical,62
+HNSC_mRNA,molecular,expression-defined,expression_defined,HNSC,GEX,Atypical,Basal,3
+HNSC_mRNA,molecular,expression-defined,expression_defined,HNSC,GEX,Atypical,Classical,3
+HNSC_mRNA,molecular,expression-defined,expression_defined,HNSC,GEX,Atypical,Mesenchymal,0
+HNSC_mRNA,molecular,expression-defined,expression_defined,HNSC,GEX,Basal,Atypical,1
+HNSC_mRNA,molecular,expression-defined,expression_defined,HNSC,GEX,Basal,Basal,81
+HNSC_mRNA,molecular,expression-defined,expression_defined,HNSC,GEX,Basal,Classical,2
+HNSC_mRNA,molecular,expression-defined,expression_defined,HNSC,GEX,Basal,Mesenchymal,2
+HNSC_mRNA,molecular,expression-defined,expression_defined,HNSC,GEX,Classical,Atypical,4
+HNSC_mRNA,molecular,expression-defined,expression_defined,HNSC,GEX,Classical,Basal,2
+HNSC_mRNA,molecular,expression-defined,expression_defined,HNSC,GEX,Classical,Classical,40
+HNSC_mRNA,molecular,expression-defined,expression_defined,HNSC,GEX,Classical,Mesenchymal,3
+HNSC_mRNA,molecular,expression-defined,expression_defined,HNSC,GEX,Mesenchymal,Atypical,2
+HNSC_mRNA,molecular,expression-defined,expression_defined,HNSC,GEX,Mesenchymal,Basal,2
+HNSC_mRNA,molecular,expression-defined,expression_defined,HNSC,GEX,Mesenchymal,Classical,3
+HNSC_mRNA,molecular,expression-defined,expression_defined,HNSC,GEX,Mesenchymal,Mesenchymal,68
+HNSC_mRNA,molecular,expression-defined,expression_defined,HNSC,AS ensemble,Atypical,Atypical,56
+HNSC_mRNA,molecular,expression-defined,expression_defined,HNSC,AS ensemble,Atypical,Basal,4
+HNSC_mRNA,molecular,expression-defined,expression_defined,HNSC,AS ensemble,Atypical,Classical,6
+HNSC_mRNA,molecular,expression-defined,expression_defined,HNSC,AS ensemble,Atypical,Mesenchymal,2
+HNSC_mRNA,molecular,expression-defined,expression_defined,HNSC,AS ensemble,Basal,Atypical,1
+HNSC_mRNA,molecular,expression-defined,expression_defined,HNSC,AS ensemble,Basal,Basal,80
+HNSC_mRNA,molecular,expression-defined,expression_defined,HNSC,AS ensemble,Basal,Classical,0
+HNSC_mRNA,molecular,expression-defined,expression_defined,HNSC,AS ensemble,Basal,Mesenchymal,5
+HNSC_mRNA,molecular,expression-defined,expression_defined,HNSC,AS ensemble,Classical,Atypical,10
+HNSC_mRNA,molecular,expression-defined,expression_defined,HNSC,AS ensemble,Classical,Basal,4
+HNSC_mRNA,molecular,expression-defined,expression_defined,HNSC,AS ensemble,Classical,Classical,32
+HNSC_mRNA,molecular,expression-defined,expression_defined,HNSC,AS ensemble,Classical,Mesenchymal,3
+HNSC_mRNA,molecular,expression-defined,expression_defined,HNSC,AS ensemble,Mesenchymal,Atypical,5
+HNSC_mRNA,molecular,expression-defined,expression_defined,HNSC,AS ensemble,Mesenchymal,Basal,7
+HNSC_mRNA,molecular,expression-defined,expression_defined,HNSC,AS ensemble,Mesenchymal,Classical,4
+HNSC_mRNA,molecular,expression-defined,expression_defined,HNSC,AS ensemble,Mesenchymal,Mesenchymal,59
+HNSC_mRNA,molecular,expression-defined,expression_defined,HNSC,GEX + AS,Atypical,Atypical,62
+HNSC_mRNA,molecular,expression-defined,expression_defined,HNSC,GEX + AS,Atypical,Basal,3
+HNSC_mRNA,molecular,expression-defined,expression_defined,HNSC,GEX + AS,Atypical,Classical,3
+HNSC_mRNA,molecular,expression-defined,expression_defined,HNSC,GEX + AS,Atypical,Mesenchymal,0
+HNSC_mRNA,molecular,expression-defined,expression_defined,HNSC,GEX + AS,Basal,Atypical,0
+HNSC_mRNA,molecular,expression-defined,expression_defined,HNSC,GEX + AS,Basal,Basal,83
+HNSC_mRNA,molecular,expression-defined,expression_defined,HNSC,GEX + AS,Basal,Classical,0
+HNSC_mRNA,molecular,expression-defined,expression_defined,HNSC,GEX + AS,Basal,Mesenchymal,3
+HNSC_mRNA,molecular,expression-defined,expression_defined,HNSC,GEX + AS,Classical,Atypical,3
+HNSC_mRNA,molecular,expression-defined,expression_defined,HNSC,GEX + AS,Classical,Basal,3
+HNSC_mRNA,molecular,expression-defined,expression_defined,HNSC,GEX + AS,Classical,Classical,40
+HNSC_mRNA,molecular,expression-defined,expression_defined,HNSC,GEX + AS,Classical,Mesenchymal,3
+HNSC_mRNA,molecular,expression-defined,expression_defined,HNSC,GEX + AS,Mesenchymal,Atypical,2
+HNSC_mRNA,molecular,expression-defined,expression_defined,HNSC,GEX + AS,Mesenchymal,Basal,1
+HNSC_mRNA,molecular,expression-defined,expression_defined,HNSC,GEX + AS,Mesenchymal,Classical,3
+HNSC_mRNA,molecular,expression-defined,expression_defined,HNSC,GEX + AS,Mesenchymal,Mesenchymal,69
+PCPG_mRNA,molecular,expression-defined,expression_defined,PCPG,GEX,Kinase signaling,Kinase signaling,66
+PCPG_mRNA,molecular,expression-defined,expression_defined,PCPG,GEX,Kinase signaling,Pseudohypoxia,1
+PCPG_mRNA,molecular,expression-defined,expression_defined,PCPG,GEX,Kinase signaling,Wnt-altered,0
+PCPG_mRNA,molecular,expression-defined,expression_defined,PCPG,GEX,Kinase signaling,Cortical admixture,1
+PCPG_mRNA,molecular,expression-defined,expression_defined,PCPG,GEX,Pseudohypoxia,Kinase signaling,1
+PCPG_mRNA,molecular,expression-defined,expression_defined,PCPG,GEX,Pseudohypoxia,Pseudohypoxia,58
+PCPG_mRNA,molecular,expression-defined,expression_defined,PCPG,GEX,Pseudohypoxia,Wnt-altered,2
+PCPG_mRNA,molecular,expression-defined,expression_defined,PCPG,GEX,Pseudohypoxia,Cortical admixture,0
+PCPG_mRNA,molecular,expression-defined,expression_defined,PCPG,GEX,Wnt-altered,Kinase signaling,0
+PCPG_mRNA,molecular,expression-defined,expression_defined,PCPG,GEX,Wnt-altered,Pseudohypoxia,1
+PCPG_mRNA,molecular,expression-defined,expression_defined,PCPG,GEX,Wnt-altered,Wnt-altered,21
+PCPG_mRNA,molecular,expression-defined,expression_defined,PCPG,GEX,Wnt-altered,Cortical admixture,0
+PCPG_mRNA,molecular,expression-defined,expression_defined,PCPG,GEX,Cortical admixture,Kinase signaling,2
+PCPG_mRNA,molecular,expression-defined,expression_defined,PCPG,GEX,Cortical admixture,Pseudohypoxia,0
+PCPG_mRNA,molecular,expression-defined,expression_defined,PCPG,GEX,Cortical admixture,Wnt-altered,1
+PCPG_mRNA,molecular,expression-defined,expression_defined,PCPG,GEX,Cortical admixture,Cortical admixture,19
+PCPG_mRNA,molecular,expression-defined,expression_defined,PCPG,AS ensemble,Kinase signaling,Kinase signaling,64
+PCPG_mRNA,molecular,expression-defined,expression_defined,PCPG,AS ensemble,Kinase signaling,Pseudohypoxia,1
+PCPG_mRNA,molecular,expression-defined,expression_defined,PCPG,AS ensemble,Kinase signaling,Wnt-altered,1
+PCPG_mRNA,molecular,expression-defined,expression_defined,PCPG,AS ensemble,Kinase signaling,Cortical admixture,2
+PCPG_mRNA,molecular,expression-defined,expression_defined,PCPG,AS ensemble,Pseudohypoxia,Kinase signaling,2
+PCPG_mRNA,molecular,expression-defined,expression_defined,PCPG,AS ensemble,Pseudohypoxia,Pseudohypoxia,54
+PCPG_mRNA,molecular,expression-defined,expression_defined,PCPG,AS ensemble,Pseudohypoxia,Wnt-altered,2
+PCPG_mRNA,molecular,expression-defined,expression_defined,PCPG,AS ensemble,Pseudohypoxia,Cortical admixture,3
+PCPG_mRNA,molecular,expression-defined,expression_defined,PCPG,AS ensemble,Wnt-altered,Kinase signaling,3
+PCPG_mRNA,molecular,expression-defined,expression_defined,PCPG,AS ensemble,Wnt-altered,Pseudohypoxia,3
+PCPG_mRNA,molecular,expression-defined,expression_defined,PCPG,AS ensemble,Wnt-altered,Wnt-altered,16
+PCPG_mRNA,molecular,expression-defined,expression_defined,PCPG,AS ensemble,Wnt-altered,Cortical admixture,0
+PCPG_mRNA,molecular,expression-defined,expression_defined,PCPG,AS ensemble,Cortical admixture,Kinase signaling,3
+PCPG_mRNA,molecular,expression-defined,expression_defined,PCPG,AS ensemble,Cortical admixture,Pseudohypoxia,2
+PCPG_mRNA,molecular,expression-defined,expression_defined,PCPG,AS ensemble,Cortical admixture,Wnt-altered,1
+PCPG_mRNA,molecular,expression-defined,expression_defined,PCPG,AS ensemble,Cortical admixture,Cortical admixture,16
+PCPG_mRNA,molecular,expression-defined,expression_defined,PCPG,GEX + AS,Kinase signaling,Kinase signaling,67
+PCPG_mRNA,molecular,expression-defined,expression_defined,PCPG,GEX + AS,Kinase signaling,Pseudohypoxia,0
+PCPG_mRNA,molecular,expression-defined,expression_defined,PCPG,GEX + AS,Kinase signaling,Wnt-altered,0
+PCPG_mRNA,molecular,expression-defined,expression_defined,PCPG,GEX + AS,Kinase signaling,Cortical admixture,1
+PCPG_mRNA,molecular,expression-defined,expression_defined,PCPG,GEX + AS,Pseudohypoxia,Kinase signaling,1
+PCPG_mRNA,molecular,expression-defined,expression_defined,PCPG,GEX + AS,Pseudohypoxia,Pseudohypoxia,59
+PCPG_mRNA,molecular,expression-defined,expression_defined,PCPG,GEX + AS,Pseudohypoxia,Wnt-altered,1
+PCPG_mRNA,molecular,expression-defined,expression_defined,PCPG,GEX + AS,Pseudohypoxia,Cortical admixture,0
+PCPG_mRNA,molecular,expression-defined,expression_defined,PCPG,GEX + AS,Wnt-altered,Kinase signaling,0
+PCPG_mRNA,molecular,expression-defined,expression_defined,PCPG,GEX + AS,Wnt-altered,Pseudohypoxia,1
+PCPG_mRNA,molecular,expression-defined,expression_defined,PCPG,GEX + AS,Wnt-altered,Wnt-altered,21
+PCPG_mRNA,molecular,expression-defined,expression_defined,PCPG,GEX + AS,Wnt-altered,Cortical admixture,0
+PCPG_mRNA,molecular,expression-defined,expression_defined,PCPG,GEX + AS,Cortical admixture,Kinase signaling,2
+PCPG_mRNA,molecular,expression-defined,expression_defined,PCPG,GEX + AS,Cortical admixture,Pseudohypoxia,0
+PCPG_mRNA,molecular,expression-defined,expression_defined,PCPG,GEX + AS,Cortical admixture,Wnt-altered,1
+PCPG_mRNA,molecular,expression-defined,expression_defined,PCPG,GEX + AS,Cortical admixture,Cortical admixture,19

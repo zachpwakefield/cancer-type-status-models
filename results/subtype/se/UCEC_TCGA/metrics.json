@@ -1,0 +1,211 @@
+{
+  "baselines": {
+    "chance_balanced_accuracy": 0.25,
+    "chance_macro_auroc": 0.5,
+    "chance_macro_f1": 0.25,
+    "majority_accuracy": 0.4911242603550296,
+    "majority_balanced_accuracy": 0.25,
+    "majority_class": "CN-high",
+    "majority_macro_f1": 0.16468253968253968
+  },
+  "bootstrap_95ci": {
+    "accuracy": [
+      0.5857988165680473,
+      0.7218934911242604
+    ],
+    "balanced_accuracy": [
+      0.4729072350646156,
+      0.6275231916299254
+    ],
+    "macro_auroc_ovr": [
+      0.7819688202739694,
+      0.8733172784653794
+    ],
+    "macro_f1": [
+      0.45794982452298044,
+      0.6121003612203049
+    ],
+    "n_resamples_used": 1000
+  },
+  "class_counts": {
+    "CN-high": 83,
+    "CN-low": 28,
+    "MSI": 34,
+    "POLE": 24
+  },
+  "classes": [
+    "POLE",
+    "MSI",
+    "CN-low",
+    "CN-high"
+  ],
+  "cohort": "UCEC_TCGA",
+  "config": {
+    "model": {
+      "device": "cpu",
+      "max_epochs": {
+        "cancer_type": 100,
+        "subtype": 300,
+        "tumor_status": 300
+      },
+      "patience": {
+        "cancer_type": 12,
+        "subtype": 20,
+        "tumor_status": 20
+      }
+    },
+    "preprocess": {
+      "clip_z": 10.0,
+      "gex_min_expressed_frac": 0.1,
+      "gex_min_log2cpm": 1.0,
+      "min_observed_frac": 0.5
+    },
+    "shap": {
+      "background_size": 100,
+      "top_k_report": 30
+    },
+    "splits": {
+      "inner_folds": 3,
+      "inner_folds_used": {
+        "cancer_type": 1,
+        "subtype": 3,
+        "tumor_status": 3
+      },
+      "outer_folds": 5,
+      "seed": 20261010
+    },
+    "subtype_yaml_sha256": "7962b0d41ffb43f045b531543a6077d2e03ff1e4ce03ee56f37139159c3a39c0",
+    "tuning": {
+      "n_trials": {
+        "cancer_type": 20,
+        "subtype": 30,
+        "tumor_status": 30
+      },
+      "pruner_startup_trials": 6,
+      "search_space": {
+        "batch_size": {
+          "cancer_type": [
+            128,
+            256,
+            512
+          ],
+          "subtype": [
+            32,
+            64,
+            128,
+            256
+          ],
+          "tumor_status": [
+            32,
+            64,
+            128,
+            256
+          ]
+        },
+        "dropout": [
+          0.0,
+          0.6
+        ],
+        "input_dropout": [
+          0.0,
+          0.5
+        ],
+        "lr": [
+          0.0001,
+          0.003
+        ],
+        "n_features": [
+          500,
+          1000,
+          2000,
+          4000
+        ],
+        "n_layers": [
+          1,
+          3
+        ],
+        "selection": [
+          "variance",
+          "anova"
+        ],
+        "weight_decay": [
+          1e-06,
+          0.01
+        ],
+        "width": [
+          64,
+          1024
+        ]
+      }
+    }
+  },
+  "git_commit": "a890c55dc3e3809be96dc60e9ed4f9a672d26ef1+dirty",
+  "labels": {
+    "columns": [
+      "Subtype_Selected"
+    ],
+    "concordance": null,
+    "label_set": "molecular",
+    "label_type": "genomic",
+    "project": "UCEC",
+    "question": "POLE vs MSI vs copy-number-low vs copy-number-high (TCGA 2013)",
+    "source": "pancan_subtype",
+    "tier": "primary",
+    "version": "pancanatlas_v1"
+  },
+  "n_features_by_fold": [
+    1000,
+    500,
+    1000,
+    1000,
+    1000
+  ],
+  "packages": {
+    "numpy": "1.26.4",
+    "optuna": "4.6.0",
+    "pandas": "2.3.3",
+    "pyarrow": "23.0.1",
+    "python": "3.10.20",
+    "scipy": "1.15.3",
+    "shap": "0.48.0",
+    "sklearn": "1.7.2",
+    "torch": "2.2.2"
+  },
+  "per_fold_mean": {
+    "accuracy": 0.6575757575757576,
+    "balanced_accuracy": 0.5728604467427997,
+    "macro_auroc_ovr": 0.8625174582928423,
+    "macro_f1": 0.5270552969461574
+  },
+  "per_fold_sd": {
+    "accuracy": 0.08979561709431648,
+    "balanced_accuracy": 0.12043649785398043,
+    "macro_auroc_ovr": 0.055681298124932346,
+    "macro_f1": 0.12509145782293696
+  },
+  "pooled_oof": {
+    "accuracy": 0.6568047337278107,
+    "balanced_accuracy": 0.551267042961763,
+    "log_loss": 0.9164151116896821,
+    "macro_auroc_ovr": 0.8298466920501671,
+    "macro_f1": 0.5391726878079726,
+    "mcc": 0.5012418786856272,
+    "n": 169,
+    "n_classes": 4
+  },
+  "recall_by_class": {
+    "CN-high": 0.8433734939759037,
+    "CN-low": 0.5357142857142857,
+    "MSI": 0.6176470588235294,
+    "POLE": 0.20833333333333334
+  },
+  "selection_method_by_fold": [
+    "anova",
+    "anova",
+    "anova",
+    "anova",
+    "anova"
+  ],
+  "task": "subtype",
+  "view": "se"
+}

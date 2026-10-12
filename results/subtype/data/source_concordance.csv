@@ -1,0 +1,84 @@
+cohort,class_cdr,class_gdc,patients
+BRCA,(no class),(no class),62
+BRCA,(no class),Ductal,2
+BRCA,(no class),Lobular,4
+BRCA,(no class),Metaplastic,5
+BRCA,(no class),Mucinous,1
+BRCA,Ductal,(no class),10
+BRCA,Ductal,Ductal,759
+BRCA,Lobular,(no class),4
+BRCA,Lobular,Ductal,2
+BRCA,Lobular,Lobular,193
+BRCA,Medullary,Medullary,5
+BRCA,Metaplastic,Metaplastic,9
+BRCA,Mucinous,(no class),2
+BRCA,Mucinous,Mucinous,15
+THCA,(no class),(no class),6
+THCA,(no class),Classical,1
+THCA,(no class),Follicular,1
+THCA,(no class),Tall cell,1
+THCA,Classical,(no class),2
+THCA,Classical,Classical,351
+THCA,Classical,Follicular,4
+THCA,Follicular,(no class),1
+THCA,Follicular,Follicular,100
+THCA,Tall cell,Classical,1
+THCA,Tall cell,Tall cell,35
+UCEC,(no class),(no class),1
+UCEC,(no class),Endometrioid,3
+UCEC,(no class),Serous,9
+UCEC,Endometrioid,Endometrioid,104
+UCEC,Endometrioid,Serous,1
+UCEC,Serous,Endometrioid,2
+UCEC,Serous,Serous,58
+SARC,(no class),(no class),2
+SARC,DDLPS,(no class),1
+SARC,DDLPS,DDLPS,57
+SARC,LMS,(no class),1
+SARC,LMS,LMS,102
+SARC,MFS,MFS,24
+SARC,MFS,UPS,1
+SARC,MPNST,MPNST,9
+SARC,Synovial,Synovial,10
+SARC,UPS,(no class),2
+SARC,UPS,UPS,47
+TGCT,(no class),Non-seminoma,18
+TGCT,(no class),Seminoma,2
+TGCT,Non-seminoma,Non-seminoma,50
+TGCT,Seminoma,Seminoma,64
+MESO,(no class),(no class),4
+MESO,(no class),Epithelioid,1
+MESO,Biphasic,Biphasic,21
+MESO,Biphasic,Epithelioid,2
+MESO,Epithelioid,Biphasic,1
+MESO,Epithelioid,Epithelioid,55
+MESO,Sarcomatoid,(no class),1
+STAD,(no class),(no class),113
+STAD,(no class),Diffuse,2
+STAD,(no class),Intestinal,5
+STAD,Diffuse,(no class),1
+STAD,Diffuse,Diffuse,70
+STAD,Diffuse,Intestinal,1
+STAD,Intestinal,(no class),3
+STAD,Intestinal,Intestinal,157
+LGG,(no class),(no class),127
+LGG,(no class),Astrocytoma,1
+LGG,(no class),Oligodendroglioma,1
+LGG,Astrocytoma,(no class),1
+LGG,Astrocytoma,Astrocytoma,191
+LGG,Oligodendroglioma,(no class),2
+LGG,Oligodendroglioma,Oligodendroglioma,187
+THYM,A/AB,A/AB,51
+THYM,B1-B3,B1-B3,57
+THYM,Thymic carcinoma,Thymic carcinoma,11
+ESCA,Adenocarcinoma,Adenocarcinoma,81
+ESCA,Squamous,Squamous,80
+CESC,(no class),(no class),3
+CESC,(no class),Adenocarcinoma,1
+CESC,(no class),Squamous,1
+CESC,Adenocarcinoma,Adenocarcinoma,45
+CESC,Squamous,Adenocarcinoma,1
+CESC,Squamous,Squamous,240
+PCPG,Paraganglioma,Paraganglioma,30
+PCPG,Paraganglioma,Pheochromocytoma,1
+PCPG,Pheochromocytoma,Pheochromocytoma,148

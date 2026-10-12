@@ -1,0 +1,5 @@
+true,POLE,MSI,CN-low,CN-high
+POLE,5,9,4,6
+MSI,4,15,7,8
+CN-low,5,7,11,5
+CN-high,3,4,8,68

@@ -1,0 +1,206 @@
+{
+  "baselines": {
+    "chance_balanced_accuracy": 0.5,
+    "chance_macro_auroc": 0.5,
+    "chance_macro_f1": 0.5,
+    "majority_accuracy": 0.7053571428571429,
+    "majority_balanced_accuracy": 0.5,
+    "majority_class": "HPV-negative",
+    "majority_macro_f1": 0.41361256544502617
+  },
+  "bootstrap_95ci": {
+    "accuracy": [
+      0.8571428571428571,
+      0.9553571428571429
+    ],
+    "balanced_accuracy": [
+      0.8187357954545454,
+      0.9535274254169602
+    ],
+    "macro_auroc_ovr": [
+      0.8816311492636828,
+      0.9927762377801143
+    ],
+    "macro_f1": [
+      0.8197569297288041,
+      0.9499259323179589
+    ],
+    "n_resamples_used": 1000
+  },
+  "class_counts": {
+    "HPV-negative": 79,
+    "HPV-positive": 33
+  },
+  "classes": [
+    "HPV-negative",
+    "HPV-positive"
+  ],
+  "cohort": "HNSC_HPV",
+  "config": {
+    "model": {
+      "device": "cpu",
+      "max_epochs": {
+        "cancer_type": 100,
+        "subtype": 300,
+        "tumor_status": 300
+      },
+      "patience": {
+        "cancer_type": 12,
+        "subtype": 20,
+        "tumor_status": 20
+      }
+    },
+    "preprocess": {
+      "clip_z": 10.0,
+      "gex_min_expressed_frac": 0.1,
+      "gex_min_log2cpm": 1.0,
+      "min_observed_frac": 0.5
+    },
+    "shap": {
+      "background_size": 100,
+      "top_k_report": 30
+    },
+    "splits": {
+      "inner_folds": 3,
+      "inner_folds_used": {
+        "cancer_type": 1,
+        "subtype": 3,
+        "tumor_status": 3
+      },
+      "outer_folds": 5,
+      "seed": 20261010
+    },
+    "subtype_yaml_sha256": "7962b0d41ffb43f045b531543a6077d2e03ff1e4ce03ee56f37139159c3a39c0",
+    "tuning": {
+      "n_trials": {
+        "cancer_type": 20,
+        "subtype": 30,
+        "tumor_status": 30
+      },
+      "pruner_startup_trials": 6,
+      "search_space": {
+        "batch_size": {
+          "cancer_type": [
+            128,
+            256,
+            512
+          ],
+          "subtype": [
+            32,
+            64,
+            128,
+            256
+          ],
+          "tumor_status": [
+            32,
+            64,
+            128,
+            256
+          ]
+        },
+        "dropout": [
+          0.0,
+          0.6
+        ],
+        "input_dropout": [
+          0.0,
+          0.5
+        ],
+        "lr": [
+          0.0001,
+          0.003
+        ],
+        "n_features": [
+          500,
+          1000,
+          2000,
+          4000
+        ],
+        "n_layers": [
+          1,
+          3
+        ],
+        "selection": [
+          "variance",
+          "anova"
+        ],
+        "weight_decay": [
+          1e-06,
+          0.01
+        ],
+        "width": [
+          64,
+          1024
+        ]
+      }
+    }
+  },
+  "git_commit": "a890c55dc3e3809be96dc60e9ed4f9a672d26ef1+dirty",
+  "labels": {
+    "columns": [
+      "hpv_status_by_p16_testing",
+      "hpv_status_by_ish_testing"
+    ],
+    "concordance": null,
+    "label_set": "molecular",
+    "label_type": "IHC",
+    "project": "HNSC",
+    "question": "HPV status by p16 immunohistochemistry and/or in-situ hybridisation",
+    "source": "pancan_clinical",
+    "tier": "primary",
+    "version": "pancanatlas_v1"
+  },
+  "n_features_by_fold": [
+    4000,
+    4000,
+    2000,
+    4000,
+    1000
+  ],
+  "packages": {
+    "numpy": "1.26.4",
+    "optuna": "4.6.0",
+    "pandas": "2.3.3",
+    "pyarrow": "23.0.1",
+    "python": "3.10.20",
+    "scipy": "1.15.3",
+    "shap": "0.48.0",
+    "sklearn": "1.7.2",
+    "torch": "2.2.2"
+  },
+  "per_fold_mean": {
+    "accuracy": 0.9106719367588934,
+    "balanced_accuracy": 0.8936414565826329,
+    "macro_auroc_ovr": 0.9582212885154062,
+    "macro_f1": 0.8924112978524743
+  },
+  "per_fold_sd": {
+    "accuracy": 0.06431887938911615,
+    "balanced_accuracy": 0.09067173239232794,
+    "macro_auroc_ovr": 0.07280979731509624,
+    "macro_f1": 0.08163549275407561
+  },
+  "pooled_oof": {
+    "accuracy": 0.9107142857142857,
+    "balanced_accuracy": 0.8925968546221711,
+    "log_loss": 0.24027420799401128,
+    "macro_auroc_ovr": 0.9478327579593403,
+    "macro_f1": 0.8925968546221711,
+    "mcc": 0.7851937092443422,
+    "n": 112,
+    "n_classes": 2
+  },
+  "recall_by_class": {
+    "HPV-negative": 0.9367088607594937,
+    "HPV-positive": 0.8484848484848485
+  },
+  "selection_method_by_fold": [
+    "variance",
+    "anova",
+    "anova",
+    "variance",
+    "variance"
+  ],
+  "task": "subtype",
+  "view": "ri"
+}

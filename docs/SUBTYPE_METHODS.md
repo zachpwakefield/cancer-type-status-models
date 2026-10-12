@@ -1,0 +1,377 @@
+# Subtype task: methods and decisions
+
+The third task of the repository: **within one cancer, which subtype is a primary tumour?** It is
+modelled, like the other two, independently in each of the nine views (AFE, ALE, HIT, SE, A5SS,
+A3SS, MXE, RI, GEX). Decisions are numbered from D-30 (D-01..D-12 are in
+[DECISIONS.md](DECISIONS.md), D-13..D-29 in [BIOLOGY_METHODS.md](BIOLOGY_METHODS.md)). Values live
+in [config/subtype.yaml](../config/subtype.yaml); this file explains them.
+
+**Order of work.** Every label map, scope rule, threshold and literature expectation below was
+written into `config/subtype.yaml` before the first subtype model was fitted. The molecular and
+IHC label set (D-43..D-45) was added on 2026-10-12, also before any model was fitted. Nothing
+about model performance has changed any of them; the one amendment made after a model number
+was printed is logged under [Amendments and deviations](#amendments-and-deviations) with its
+reason.
+
+| Step | Script | What it does |
+|---|---|---|
+| 30 | `scripts/30_subtype_labels.py` | labels, task tables, nested splits, label accounting |
+| 31 | `scripts/31_subtype_extract.py` | matrices for the subtype cohorts, pre-filter recomputed per cohort |
+| 32 | `scripts/32_subtype_run_job.py` | one (view, cohort) job: nested CV, tuning, refit, SHAP |
+| 33 | `scripts/33_subtype_run_all.py` | every job, 6 single-threaded workers |
+| 34 | `scripts/34_subtype_summarise.py` | performance tables, baselines, AS ensemble and fusion, McNemar |
+| 35 | `scripts/35_subtype_interpret.py` | SHAP by class, AS vs GEX genes, literature markers, event audit, cross-family, shared-class and MSI-confound tables |
+| 36 | `scripts/36_subtype_figures.py` | figures U1-U7 |
+
+Library: [`src/ctsm/subtype.py`](../src/ctsm/subtype.py). Tests: `tests/test_subtype.py`.
+
+---
+
+### D-30 The question and the label families · `label_sets` · `ctsm/subtype.py`
+- **Question:** within one TCGA project, which subtype is a primary tumour? One model per
+  (cohort, view); a cohort is one project and one label family.
+- **Two label families**, kept apart throughout because they test different things:
+  - *Histology* (`label_set: histology`): the pathologist's morphological type, assessed without
+    the RNA. It is the only label family for the cancers with no published molecular subtype
+    (SARC, TGCT, MESO, THYM, CESC).
+  - *Molecular and IHC* (`label_set: molecular`, D-43..D-45): published subtype calls and
+    immunohistochemistry/ISH status. Each carries a `label_type` saying how it was made
+    (D-44), because a label derived from mRNA expression is a different test from one derived
+    from DNA or protein.
+- **Histology sources:** the class comes from the TCGA Clinical Data Resource (TCGA-CDR; Liu et
+  al. 2018, *Cell* 173:400), Table S1, column `histological_type`, one row per patient. The GDC
+  clinical table's `primary_diagnosis` (ICD-O-3 text of the patient's selected primary-tumour
+  file) must map to the same class (D-33).
+- **The CDR file** is registered in `config/sources.yaml` (`subtype_labels.tcga_cdr`), hashed by
+  step 00, and read with the standard library (`read_xlsx_sheet`: an xlsx is a zip of XML; shared
+  strings are resolved, `#N/A` cells kept as text) because no environment here has openpyxl.
+  The parser reproduces an independently parsed copy of the sheet cell for cell (11,160 × 33,
+  0 mismatches, checked once by hand on 2026-10-12).
+- **Leakage rule R6 holds:** labels come only from clinical and published annotation tables,
+  never from a molecular value of this repository's matrices.
+- **Extensibility:** a further label family is a new `label_sets` entry plus a loader in
+  `LABEL_SOURCES`; the modelling code does not change.
+
+### D-31 Unit: one primary tumour per patient · `ctsm/subtype.py: label_cohort`
+- The samples are the primary tumours of the D-01 cohort for the project: exactly one RNA-seq
+  file per patient (D-01's tie-break), asserted. Normals, metastases, recurrences and additional
+  primaries are never used.
+- Every label is patient-level in its source and is attached to that patient's selected primary
+  tumour. For the PanCanAtlas subtype table, rows of other sample types are dropped first (D-43).
+
+### D-32 Label maps: exhaustive, with explicit exclusions · `classes`, `exclude`, `ignore`
+- **Exhaustive.** For each cohort and source, every raw value met in the cohort is listed either
+  under a class or as excluded. An unlisted value stops step 30 with an error, so a typo in the
+  map cannot silently drop or relabel patients. `results/subtype/data/label_accounting.csv`
+  lists every raw value with its patients, class and how many were labelled.
+- **Excluded categories** are those that do not name one subtype: NOS, "Other, specify",
+  "Mixed Histology", "Not Available", mixed serous-endometrioid, adenosquamous, untyped
+  adenocarcinoma. They never appear in a task table (tested).
+- **Multi-component values** (TGCT and THYM in the CDR, and joined columns, D-44) are split at
+  `|`. Components listed in `ignore` (a test not done) are dropped; any `exclude` component
+  excludes the patient; the remaining components must all map to one class, otherwise the
+  patient is excluded as mixed.
+- **Choices inside the maps**, each with its reason:
+  - *SARC:* "Pleomorphic 'MFH'", "Undifferentiated Pleomorphic Sarcoma (UPS)" and the giant-cell
+    MFH are one class, UPS: MFH was renamed UPS in the WHO 2002 classification. Desmoid tumour
+    is excluded: it is an intermediate-grade fibromatosis, not a sarcoma.
+  - *STAD (Lauren):* signet-ring cell carcinoma joins the diffuse type, as in Lauren's
+    definition; mucinous, tubular and papillary adenocarcinoma join the intestinal type because
+    TCGA's own form files them under "Intestinal Adenocarcinoma". "Adenocarcinoma, NOS" is not
+    Lauren-typed and is excluded, never merged into intestinal.
+  - *THCA:* GDC renders TCGA's tall-cell category as "Papillary carcinoma, columnar cell"; the
+    35 concordant patients confirm the mapping is one-to-one.
+  - *TGCT:* seminoma = every component seminoma; non-seminoma = every component non-seminomatous.
+    Mixed tumours with a seminoma component are excluded (17): clinically they are managed as
+    non-seminomas, but the sampled piece of an RNA-seq aliquot could be either. A component
+    recorded as "[Not Available]" excludes the patient, because it could be seminoma.
+  - *THYM:* the WHO types are grouped A/AB against B1-B3; a value within one group (e.g.
+    B2|B3) keeps its group. Thymic carcinoma (type C) is its own candidate class (D-34).
+  - *LGG:* oligoastrocytoma is excluded: it is not an entity in WHO 2016/2021.
+  - *BRCA:* the special types (mucinous, metaplastic, medullary) are candidate classes; mixed
+    ductal-lobular and other mixed types are excluded.
+  - *MESO:* sarcomatoid is a candidate class (1 patient); "Diffuse malignant mesothelioma - NOS"
+    is excluded.
+
+### D-33 Histology: two sources must agree · `sources.concordance`
+- A histology label is kept only if the GDC `primary_diagnosis` maps to the same class as the
+  CDR `histological_type`. Disagreements and GDC values outside the map exclude the patient.
+- **Agreement:** of the 3,433 patients with a class in both sources, 3,416 agree (99.5%); per
+  cohort in `results/subtype/data/source_concordance.csv`. The rule removes 17 discordant
+  patients and 31 whose GDC value is excluded.
+- **Why:** the two fields are entered separately; agreement removes transcription errors and
+  the mixed tumours that one field records as mixed and the other as pure.
+
+### D-34 Minimum class size · `rules`
+- **≥ 20 patients per class, ≥ 2 classes per cohort.** With 5 outer folds a class of 20 puts
+  about 4 patients in every test fold and about 5 in every inner-validation fold — the least at
+  which a class's inner-fold loss is not decided by one or two patients, and at which its pooled
+  recall has a 95% interval narrower than about ±0.2.
+- A class below the minimum is **dropped, not merged**: its patients leave the cohort. The only
+  merges are the biological groupings fixed in D-32 and D-44 (THYM A/AB and B1-B3; LGG_IDH).
+- **What the rule removed:** BRCA mucinous (17), metaplastic (9), medullary (5); SARC MPNST (9),
+  synovial (10); MESO sarcomatoid (1); THYM thymic carcinoma (11); STAD_TCGA HM-SNV (7);
+  COAD_TCGA HM-SNV (2); PRAD_ETS ETV4 (14), FOXA1 (9), FLI1 (4), IDH1 (3). The threshold was 20
+  before these counts were tabulated against it; at 15, BRCA mucinous (17) would have entered.
+
+### D-35 Histology cohorts in scope, and why the others are not · `cancers`
+Twelve projects, in three tiers. Counts are patients after D-32..D-34
+(`results/subtype/data/cohort_scope.csv`).
+
+**Primary: histology that names a biologically distinct entity.**
+
+| Cohort | Classes (patients) | Why it is a fair question |
+|---|---|---|
+| BRCA | ductal 759, lobular 193 | Invasive lobular carcinoma is defined by E-cadherin loss and discohesive growth; CDH1 is mutated in most ILC (Ciriello et al. 2015, *Cell* 163:506). |
+| THCA | classical 351, follicular 100, tall cell 35 | The follicular variant is RAS-like; classical and tall-cell tumours are BRAF-like and less differentiated (TCGA 2014, *Cell* 159:676). Tall cell vs classical is expected to be hard: both are BRAF-like. |
+| UCEC | endometrioid 104, serous 58 | Serous carcinomas fall almost entirely into the copy-number-high, TP53-mutant group (TCGA 2013, *Nature* 497:67). |
+| SARC | LMS 102, DDLPS 57, UPS 47, MFS 24 | Distinct lineages; DDLPS carries 12q13-15 (MDM2/CDK4) amplification; UPS and myxofibrosarcoma are genomically similar and form a spectrum (TCGA 2017, *Cell* 171:950). UPS vs MFS is expected to be hard. |
+| TGCT | seminoma 64, non-seminoma 50 | Developmentally distinct germ-cell tumours: seminoma retains a primordial-germ-cell programme (KIT, SOX17), embryonal carcinoma a pluripotent one (SOX2) (Shen et al. 2018, *Cell Rep* 23:3392). |
+| MESO | epithelioid 55, biphasic 21 | Biphasic tumours carry a sarcomatoid component; TCGA describes an epithelioid-to-sarcomatoid gradient (Hmeljak et al. 2018, *Cancer Discov* 8:1548). |
+| STAD | intestinal 157, diffuse 70 | Lauren types; diffuse tumours are enriched in the genomically stable group with CDH1 and RHOA alterations (TCGA 2014, *Nature* 513:202). |
+
+**Weak label: kept, and flagged as weak wherever it is reported.**
+
+| Cohort | Classes | Why it is weak |
+|---|---|---|
+| LGG | astrocytoma 191, oligodendroglioma 187 | Histological typing of diffuse glioma is poorly reproducible between pathologists, and since WHO 2016 the types are defined by IDH mutation and 1p/19q codeletion, not by morphology (Louis et al. 2016, *Acta Neuropathol* 131:803; TCGA, Brat et al. 2015, *NEJM* 372:2481). In this cohort only 128 of 186 histological oligodendrogliomas are IDH-mutant codeleted and 6 of 189 astrocytomas are (`label_crosstab.csv`). The molecular question is asked directly in LGG_IDH (D-44). |
+| THYM | A/AB 51, B1-B3 57 | The WHO scheme is ordinal (A, AB, B1, B2, B3) and the cohort is small. A/AB against B1-B3 follows the medullary/cortical divide and the GTF2I mutation, which is frequent in A and AB and rare in B thymomas (Petrini et al. 2014, *Nat Genet* 46:844); but AB thymomas contain lymphocyte-rich B-like areas, so the groups overlap by construction. |
+
+**Controls: near-trivial contrasts, to show the pipeline finds what it should.**
+
+| Cohort | Classes | What it controls for |
+|---|---|---|
+| ESCA | squamous 80, adenocarcinoma 81 | Two epithelial lineages: squamous oesophageal cancer resembles head-and-neck squamous cancer, adenocarcinoma resembles CIN gastric cancer (TCGA 2017, *Nature* 541:169). |
+| CESC | squamous 240, adenocarcinoma 45 | The same lineage contrast in the cervix (TCGA 2017, *Nature* 543:378). |
+| PCPG | pheochromocytoma 148, paraganglioma 30 | A site label (adrenal vs extra-adrenal), not a morphological one. Adrenaline synthesis (PNMT) is adrenal-medullary, and adrenal tumours carry admixed adrenal cortex, which TCGA saw as a "cortical admixture" expression subtype (Fishbein et al. 2017, *Cancer Cell* 31:181). It tests whether a model reads the tumour or its surroundings. |
+
+**Not in scope, and why.**
+- *No second class of ≥ 20 in the histology field:* ACC, BLCA, CHOL, DLBC, GBM, HNSC, KICH,
+  KIRC, KIRP, LIHC, LUSC, OV, PAAD (the second class is "Other subtype"), PRAD, READ, UCS
+  (heterologous 19, homologous 13).
+- *LUAD:* the histology field is a single class; the GDC growth patterns are mostly "NOS" or
+  "mixed subtypes".
+- *UVM:* the Callender cell type is a graded mixture (37 of 78 are mixed spindle-epithelioid),
+  pure epithelioid is 13, and the molecular axis that matters (monosomy 3/BAP1) is not local.
+- *COAD mucinous vs conventional:* the label is a threshold (≥ 50% extracellular mucin) with a
+  residual comparator, and its known molecular correlate (MSI) is asked directly in COAD_TCGA.
+- *LAML FAB morphology:* superseded by the WHO genetic classification; the three classes ≥ 20
+  (M1, M2, M4) are adjacent maturation stages.
+- *LGG grade (G2/G3):* an ordinal grade, poorly reproducible, and since WHO 2021 assigned within
+  a molecular type.
+- *SKCM:* 88 primary tumours and no histology field.
+
+### D-36 Validation and model settings · `modelling` · `ctsm/subtype.py: subtype_config`
+- The D-04..D-10 machinery is used unchanged, through `pipeline.run_fold`: 5 outer folds
+  (`StratifiedGroupKFold`, groups = patient, strata = label), 3 inner folds inside each
+  outer-train set, Optuna TPE with median pruning on the mean inner-validation balanced log
+  loss, fold-level preprocessing (D-07), class-balanced MLP (D-08), refit on outer-train for the
+  median best epoch, SHAP on every held-out patient.
+- **Settings:** the tumour-status values, because the cohorts (76-1,073 patients) are the size
+  of the tumour-status cohorts: 3 inner folds used, 30 trials, at most 300 epochs, patience 20,
+  batch size {32, 64, 128, 256}.
+- **Seeds** derive from `splits.seed` and ("subtype", cohort), so all nine views of a cohort see
+  the same folds; the subtype splits are independent of the tumour-status splits.
+- **Folds:** `StratifiedGroupKFold` with shuffling is greedy, so the smallest class can be thin
+  in one test fold (2 patients in the worst case: MESO, UCEC_TCGA, COAD_TCGA;
+  `split_summary.csv`). All metrics are pooled over the out-of-fold predictions, which every
+  patient contributes exactly once.
+- **Configuration isolation:** `config/study.yaml` is not modified. `subtype_config()` deep-copies
+  the study block and adds the `subtype` entries, and writes under `<data_dir>/subtype/`, so the
+  two existing tasks run with exactly the configuration and the files they were run with.
+- **Code change to the shared pipeline, behaviour-preserving:** `run_fold` decided "one-logit
+  model" by `task == "tumor_status"`; it now decides by `C == 2` (identical for the two existing
+  tasks, which always have 2 and 34 classes) and accepts an optional `fold_metrics` hook for the
+  per-fold test metrics. A re-run of an existing tumour-status fold with the changed code
+  reproduces its stored predictions and SHAP values bit for bit (end of this file).
+- **Run order,** fixed in advance: histology cohorts, then the genomic/IHC cohorts, then the
+  expression-defined ones; within a group, the largest first. 6 workers at most on the shared
+  machine, `OMP_NUM_THREADS=1`.
+
+### D-37 Feature universe: a dedicated extraction with the pre-filter recomputed · `scripts/31`
+- **Question asked:** does any cohort-level feature pre-filter see the subtype labels?
+- **Answer:** the only cohort-level step is the D-07 extraction pre-filter. It keeps a feature if
+  its support (observed count for AS, CPM ≥ 1 count for GEX) reaches ⌈fraction × the smallest
+  inner-train set of the cohort⌉ and it is non-constant over the cohort. It reads values and
+  cohort membership, never a label: it is label-blind.
+- **But the existing store is the wrong one.** Its per-cohort columns were computed for the
+  tumour-status and pan-cancer cohorts. A subtype cohort is a different sample set (BRCA subtype
+  ⊂ BRCA tumour-status; LGG, SARC, TGCT, THYM, MESO, CESC and PCPG are not tumour-status cohorts
+  at all), and its training sets are smaller, so those columns are not guaranteed
+  supersets of what a subtype fold could select. Using them would not leak, but it would restrict
+  the feature universe in a way the LEAKAGE_POLICY proof does not cover.
+- **So step 31 re-extracts** the raw tables over the 4,618 patients of the subtype cohorts, with
+  one pre-filter column per subtype cohort computed from that cohort's own splits. The proof of
+  LEAKAGE_POLICY.md then applies verbatim: every training set S of a subtype fold is a subset of
+  the cohort C, support and range are monotone, so no feature a fold could keep is dropped.
+- **Cohort membership** is "has an admissible label". That uses the labels only to decide who is
+  in the cohort, which is the cohort's definition; every training and test set is inside it, and
+  no class information about a held-out patient enters any fitted quantity. Stratification of
+  the folds uses the labels of all cohort patients, as in D-04.
+- **Independence of cohorts:** a job loads only its own cohort's pre-filter column, so adding or
+  removing a cohort changes no other cohort's features or values.
+- **Values are identical** to step 02's for the same sample and feature (per-sample operations
+  only; GEX library size over all 57,656 genes). Checked on 300 × 300 random sample-feature
+  pairs of RI, GEX, A3SS and A5SS: equal to the last bit, NaN pattern included. The subtype
+  store has 1,712 genes and 125-509 events per view that only the subtype cohorts' pre-filters
+  admit (e.g. testis- and thymus-expressed genes).
+
+### D-38 SHAP: what is explained · `ctsm/subtype.py: summarise_shap`
+- **Two classes:** the model's single logit, the log-odds of the second class in YAML order
+  (e.g. lobular in BRCA; each `metrics.json` lists the classes in order).
+  `shap_top_features.csv` reports `direction_towards_<second class>`.
+- **More than two:** each held-out patient's centred true-class logit zₖ − z̄ (as D-10 for
+  cancer type); no pooled direction is reported.
+- **By class** (`shap_top_features_by_class.csv`, top 30 per class): mean |SHAP| over the
+  patients of that class; `direction_spearman` > 0 always means a higher value raises the
+  evidence for that class (for the first of two classes the sign of the log-odds is flipped).
+- Additivity is asserted per fold (≤ 1e-3), as D-10.
+
+### D-39 Metrics, uncertainty and baselines · `ctsm/subtype.py: subtype_metrics, bootstrap, baselines`
+- **Pooled out-of-fold:** balanced accuracy (mean per-class recall), macro F1 over all classes,
+  macro one-vs-rest AUROC (the AUROC itself for two classes), accuracy, MCC, log loss and
+  per-class recall, precision and F1; confusion matrix.
+- **95% CIs:** 1,000 patient-level bootstrap resamples (percentile); a resample missing a class
+  is skipped and the number used is recorded.
+- **Baselines, per cohort:** chance balanced accuracy 1/C, chance macro AUROC 0.5, chance macro
+  F1 1/C (guessing each class at its prevalence); the majority-class predictor's accuracy,
+  balanced accuracy (1/C) and macro F1.
+
+### D-40 AS ensemble, fusion and tests · `scripts/34`
+- As D-14/D-23, per cohort, from out-of-fold probabilities only:
+  - **AS ensemble:** the mean of the 8 splicing views' class probabilities;
+  - **GEX + AS (1:1):** 0.5 × GEX + 0.5 × AS ensemble. The weights were fixed before any result.
+  No learned stacking is reported as a headline.
+- **Tests against GEX:** exact McNemar on paired per-patient correctness (argmax); and, because
+  McNemar weighs classes by their size, a paired patient-bootstrap 95% CI of the difference in
+  balanced accuracy (1,000 resamples).
+- **FDR family:** BH across the cohorts of the subtype task, separately for each comparison (AS
+  ensemble vs GEX; GEX + AS vs GEX). Figures show raw p; q is in the CSVs with its family named.
+
+### D-41 Interpretation, fixed before any SHAP value was read · `interpretation`, `literature_markers` · `scripts/35`
+- **Top features per class and view:** `shap_top_features_by_class.csv` of each job; a gene's
+  importance is its best event (`biology.gene_ranking`).
+- **Do splicing and expression read the same genes?** For each cohort and AS view, the top 50
+  genes of the AS model against the top 50 of the GEX model, within the genes both could select;
+  overlap against its hypergeometric expectation.
+- **Literature markers** (`literature_markers`, with sources): for each, (i) is the expression
+  difference between the two named classes in the expected direction (AUROC of the gene's log2
+  CPM, Mann-Whitney p) — a property of the data, no model involved; (ii) does the gene rank in
+  the GEX model's top 100 for either class; (iii) does any event of the gene rank in an AS
+  model's top 100. LGG's "1p/19q dosage" is, per patient, the median over the genes of 1p (and
+  separately 19q) of the gene's log2 CPM minus its median over the cohort; codeletion predicts it
+  is lower in codeleted tumours. Arms are split at the hg38 centromeres (chr1 123.4 Mb, chr19
+  26.2 Mb).
+- **Single events: the neighbour-gene audit** (as D-27). Before an event is named as a splicing
+  finding, its segment (SE/AFE/ALE/HIT: the exon; MXE: both exons; RI: the intron; A3SS/A5SS:
+  the extension) is intersected with every exon of every other GENCODE v45 gene (≥ 50 bp), and
+  classed antisense, same-strand, readthrough or none. An overlapping event *tracks* the other
+  gene if |ρ(event, other gene's log2 CPM)| ≥ 0.5 and exceeds |ρ(event, host log2 CPM)|, over
+  the cohort's patients. A tracking event is reported as a readout of the other gene, not as a
+  splicing choice of its host. The audit is reported for every named event, whatever it finds.
+- **Which events are named:** the audit covers the top 5 events per class and AS view of every
+  cohort. The figure of single events (U6) shows, for each histology and genomic/IHC cohort, the
+  one AS event with the largest class-specific mean |SHAP| across the 8 views; the rule uses the
+  importance only, never the audit's outcome. Any other event named in the text comes from the
+  audit table and is given with its audit status; the table also holds each literature marker's
+  best event (A-2).
+- **Cross-family errors** (descriptive): where a histology cohort has a molecular counterpart in
+  the same project (LGG and LGG_IDH, UCEC and UCEC_TCGA, STAD and STAD_TCGA, BRCA and BRCA_PAM50
+  / BRCA_ER, PCPG and PCPG_mRNA), the histology models' out-of-fold calls (GEX, AS ensemble) are
+  cross-tabulated against the molecular class of the same patients: are the "errors" of a
+  histology model molecularly coherent? Counts only; no test.
+
+### D-42 What is published · D-12
+- **Committed:** `config/subtype.yaml`, code, this file, `results/subtype/` (per job: metrics,
+  folds, per-class metrics, confusion matrix, SHAP summaries; per task: label counts, scope,
+  concordance, cross-tabulations, extraction summaries, performance and interpretation tables),
+  `results/figures/subtype/` and `results/SUBTYPE.md`.
+- **Local only** (`<data_dir>/subtype/`): the per-patient label table, task tables, splits,
+  matrices, models, SHAP arrays and per-patient predictions, and the PanCanAtlas tables
+  (`<data_dir>/external/`). Committed outputs hold counts and aggregates only.
+
+### D-43 Molecular and IHC label sources · `pancan_subtype`, `pancan_clinical`
+- **Files** (open access, GDC publication pages; fetched 2026-10-12 and MD5-checked by
+  `scripts/00b_fetch_gdc_labels.py` into `<data_dir>/external/gdc_pancanatlas/`, with a
+  `MANIFEST.json` that the loaders re-check before reading):
+
+  | File | URL | Bytes | MD5 |
+  |---|---|---|---|
+  | `TCGASubtype.20170308.tsv` (PanImmune page) | https://api.gdc.cancer.gov/data/0f31b768-7f67-4fc4-abc3-06ac5bd90bf0 | 603,836 | d0a6054b799a8a61488636ad400c3af9 |
+  | `clinical_PANCAN_patient_with_followup.tsv` (PanCanAtlas page) | https://api.gdc.cancer.gov/data/0fc78496-818b-4896-bd83-52db1f533c5c | 18,633,685 | ffcb35edda305dd8d615497f9214eb92 |
+
+- **Handling:** downloaded data are untrusted: read with pandas only (`dtype=str`; the clinical
+  table with `encoding="latin-1"`), nothing in that directory is executed, per-patient rows are
+  never committed.
+- **Sample types:** `pan.samplesID` holds patient barcodes (12 characters) for some cancers and
+  sample or aliquot barcodes for others. Only patient rows and primary-tumour rows (sample type
+  01; 03 for LAML) of the cohort's cancer type (`AML` = LAML, `OVCA` = OV) are used. This
+  matters: 114 BRCA rows are solid-tissue normals, all but one called "BRCA.Normal", and 266
+  SKCM rows are metastases. A patient with two usable rows that disagree is left unlabelled
+  (none occurred).
+- **Published labels were assigned once over the whole TCGA cohort** (clusterings and centroid
+  calls fitted on all patients, including those that land in our test folds). That is a property
+  of the label, not leakage in this pipeline: our feature selection, tuning and training still
+  see training folds only, and the labels are targets, not inputs.
+
+### D-44 Molecular and IHC cohorts · `label_sets.molecular`
+`label_type` says how each label was made. **Genomic** (DNA: mutation, copy number,
+methylation, fusion) and **IHC** (protein or in-situ hybridisation) labels are tests of the
+transcriptome that do not depend on it. **Expression-defined** labels were derived from mRNA
+expression: a GEX model predicting them is close to circular, and the question there is how
+close the splicing views get.
+
+| Cohort | Type | Column | Classes (patients) | Notes |
+|---|---|---|---|---|
+| LGG_IDH | genomic | `Subtype_Selected` | IDHmut-codel 171, IDHmut-non-codel 242, IDHwt 94 | Ceccarelli et al. 2016 (*Cell* 164:550) groups merged to IDH/codel status: Codel; G-CIMP-high + G-CIMP-low; Mesenchymal-like + Classic-like + PA-like + LGm6-GBM. |
+| UCEC_TCGA | genomic | `Subtype_Selected` | POLE 24, MSI 34, CN-low 28, CN-high 83 | TCGA 2013. |
+| STAD_TCGA | genomic | `Subtype_Selected` | CIN 196, MSI 55, GS 43, EBV 26 | Liu et al. 2018 (*Cancer Cell* 33:721); HM-indel = MSI. EBV was called from viral sequence reads; GS is the remainder. |
+| COAD_TCGA | genomic | `Subtype_Selected` | CIN 162, MSI 40, GS 33 | As STAD. |
+| PRAD_ETS | genomic | `Subtype_Selected` | ERG 152, ETV1 28, SPOP 37, Other 86 | TCGA 2015 (*Cell* 163:1011). Fusion calls used RNA-seq reads as well as DNA, and an ETS fusion raises the partner's expression; "Other" is a residual class. |
+| BRCA_ER | IHC | `breast_carcinoma_estrogen_receptor_status` | ER-negative 235, ER-positive 790 | Indeterminate and not evaluated excluded. The assay measures the ESR1 product, so ESR1 expression is expected to separate it. |
+| HNSC_HPV | IHC | `hpv_status_by_p16_testing` + `hpv_status_by_ish_testing` | HPV-negative 79, HPV-positive 33 | A test not done is ignored; every test done must agree (1 discordant excluded); 388 patients have neither test. HPV-positive tumours are mostly oropharyngeal, so site is confounded with the label. |
+| BRCA_PAM50 | expression-defined | `Subtype_Selected` | LumA 558, LumB 212, Her2 77, Basal 187, Normal-like 39 | Parker et al. 2009 (*J Clin Oncol* 27:1160); TCGA 2012 (*Nature* 490:61). Normal-like largely reflects normal-tissue admixture. |
+| HNSC_mRNA | expression-defined | `Subtype_Selected` | atypical 68, basal 86, classical 49, mesenchymal 75 | TCGA 2015 (*Nature* 517:576). |
+| PCPG_mRNA | expression-defined | `Subtype_Selected` | kinase signalling 68, pseudohypoxia 61, Wnt-altered 22, cortical admixture 22 | Fishbein et al. 2017. |
+
+- **Column choice:** `Subtype_Selected` throughout, except where it does not hold the label
+  wanted: for LGG it mixes IDH/codel status with methylation clusters, so the classes are merged
+  to IDH/codel (above); BRCA ER and HNSC HPV come from the clinical table.
+- **Not run, and why:** expression-defined subtypes of LUSC, LUAD, KIRC, OV, BLCA, THCA, LAML and
+  UCS (three expression-defined cohorts answer the question "how close does splicing get";
+  more would repeat it); integrative clusters of KIRP, LIHC, LUAD and ACC (mixed label types);
+  GBM (methylation subgroups of 97 IDH-wildtype tumours); ESCA (the GI.ESCC/GI.CIN split is the
+  histology contrast again); SKCM (61 primary tumours, one class ≥ 20); KICH eosinophilic (19).
+- **Cross-family tables** (`label_crosstab.csv`, patients labelled in both, no model involved)
+  show how the label families relate: e.g. 48 of 53 UCEC serous tumours are CN-high; every
+  paraganglioma is pseudohypoxic or kinase-signalling and every cortical-admixture tumour is a
+  pheochromocytoma.
+
+### D-45 Literature markers of the molecular cohorts · `literature_markers`
+- As D-41, keyed by cohort: MLH1 lower in MSI (UCEC, STAD, COAD), CD274 higher in EBV gastric
+  cancer, ERG and ETV1 higher in their fusion classes, ESR1 in ER-positive, CDKN2A (p16) in
+  HPV-positive, ESR1/ERBB2/KRT5 for the PAM50 classes, CYP11B1 for cortical admixture and PNMT
+  against pseudohypoxia, 1p/19q dosage for codeletion. Several are near-tautological (ESR1 for
+  ER IHC, CDKN2A for p16, ERG for ERG fusions) and are there as positive controls of the check.
+
+---
+
+## Amendments and deviations
+
+| # | When | What | Why | Informed by results? |
+|---|---|---|---|---|
+| A-1 | 2026-10-12, after the pilot's first fold metric was printed in a log, before any SHAP value or event was read | Event audit: overlap ≥ 50 bp and tracking = \|ρ\| ≥ 0.5 and > \|ρ_host\| (was: any overlap, \|ρ\| ≥ 0.4) | To use the same definition as BIOLOGY_METHODS.md D-27, written in parallel the same day | No: it concerns the event audit only and was set from D-27 |
+| A-2 | 2026-10-12, after the BRCA, THCA and SARC importance tables had been read | Event audit also covers each literature marker's best event: in the AS view where the marker gene ranks best (step 3), the gene's event with the largest importance over the patients of the class the literature expects it higher in (`selected_by` = "literature marker") | The rule "audit every named event" (D-41) would otherwise not cover marker events outside a class's top 5, such as CDH1's in BRCA, which the text names | It widens the audit; it changes no model, label, threshold or ranking, and the audit's result cannot change which events are audited |
+| A-3 | 2026-10-12, after the histology cohorts' cross-tabulations were read | Figures renumbered to follow the order of `results/SUBTYPE.md` (histology errors U6 → U3, AS vs GEX genes U3 → U5, single events U5 → U6) and the cross-family figure widened from LGG to the four histology cohorts with a molecular counterpart (LGG, UCEC, STAD, PCPG) | Presentation; all four tables were pre-specified in D-41 | Presentation only |
+| A-4 | 2026-10-12, after the event audit of the genomic cohorts had been read | Two descriptive steps added to `scripts/35`: `error_markers` (the literature markers' median expression in each true × called cell, cells under 5 patients left blank) and `shared_classes` (every audited top event of a class defined the same way in several cohorts — MSI, CIN, GS, squamous, adenocarcinoma — measured as that class against the rest in every cohort with the class; BH across the cross-cohort tests); figure U7. Then `msi_confounds`: each audited MSI top event's Spearman with PTPRC, CD8A, CIITA and MLH1 expression, and its MSI-vs-rest AUROC within the half of the cohort with the lower PTPRC (added after U7 was drawn, to ask whether the MSI events read immune infiltrate) | The same CCNDBP1 exon appeared in the MSI top 5 of three cohorts' models; the step asks the question for every event of every shared class, not only the one noticed | Yes: **exploratory**, motivated by an observation. The cross-cohort test is a replication of events chosen in another cohort, never in the cohort that chose them; no model, label or threshold changed |
+
+## Verification that the existing tasks are unchanged
+- `tests/test_subtype.py::TestExistingTasksUnchanged` rebuilds every existing task table from
+  `samples.parquet` and compares it with the stored one, and checks that `subtype_config()`
+  leaves `config/study.yaml`'s study block untouched.
+- The 25 pre-existing tests pass unchanged.
+- One existing fold (`tumor_status/ri/KICH`, outer fold 0) was re-run on 2026-10-12 with the
+  changed `pipeline.run_fold`, into a scratch directory, and compared with its stored outputs:
+  probabilities, logits, SHAP values, standardised inputs, expected values, row and feature
+  order are bit-identical, and so are the chosen trial, inner loss, refit epochs, selected K and
+  method, test AUROC, balanced accuracy, MCC and additivity error.

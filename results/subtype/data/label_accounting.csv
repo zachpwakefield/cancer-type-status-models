@@ -1,0 +1,282 @@
+cohort,source,raw_value,class,patients,labelled
+BRCA,cdr_histological_type,Infiltrating Carcinoma NOS,,1,0
+BRCA,cdr_histological_type,Infiltrating Ductal Carcinoma,Ductal,769,759
+BRCA,cdr_histological_type,Infiltrating Lobular Carcinoma,Lobular,199,193
+BRCA,cdr_histological_type,Medullary Carcinoma,Medullary,5,0
+BRCA,cdr_histological_type,Metaplastic Carcinoma,Metaplastic,9,0
+BRCA,cdr_histological_type,Mixed Histology (please specify),,29,0
+BRCA,cdr_histological_type,Mucinous Carcinoma,Mucinous,17,0
+BRCA,cdr_histological_type,"Other, specify",,43,0
+BRCA,cdr_histological_type,[Not Available],,1,0
+BRCA,gdc_primary_diagnosis,Adenoid cystic carcinoma,,1,0
+BRCA,gdc_primary_diagnosis,Apocrine adenocarcinoma,,1,0
+BRCA,gdc_primary_diagnosis,"Basal cell carcinoma, NOS",,1,0
+BRCA,gdc_primary_diagnosis,"Carcinoma, NOS",,1,0
+BRCA,gdc_primary_diagnosis,"Cribriform carcinoma, NOS",,1,0
+BRCA,gdc_primary_diagnosis,Infiltrating duct and lobular carcinoma,,28,0
+BRCA,gdc_primary_diagnosis,"Infiltrating duct carcinoma, NOS",Ductal,763,759
+BRCA,gdc_primary_diagnosis,Infiltrating duct mixed with other types of carcinoma,,18,0
+BRCA,gdc_primary_diagnosis,Infiltrating lobular mixed with other types of carcinoma,,6,0
+BRCA,gdc_primary_diagnosis,Intraductal papillary adenocarcinoma with invasion,,5,0
+BRCA,gdc_primary_diagnosis,Invasive micropapillary carcinoma,,4,0
+BRCA,gdc_primary_diagnosis,Large cell neuroendocrine carcinoma,,1,0
+BRCA,gdc_primary_diagnosis,"Lobular carcinoma, NOS",Lobular,197,193
+BRCA,gdc_primary_diagnosis,"Medullary carcinoma, NOS",Medullary,5,0
+BRCA,gdc_primary_diagnosis,"Metaplastic carcinoma, NOS",Metaplastic,14,0
+BRCA,gdc_primary_diagnosis,Mucinous adenocarcinoma,Mucinous,16,0
+BRCA,gdc_primary_diagnosis,Paget disease and infiltrating duct carcinoma of breast,,3,0
+BRCA,gdc_primary_diagnosis,"Papillary carcinoma, NOS",,2,0
+BRCA,gdc_primary_diagnosis,"Phyllodes tumor, malignant",,1,0
+BRCA,gdc_primary_diagnosis,Pleomorphic carcinoma,,3,0
+BRCA,gdc_primary_diagnosis,Secretory carcinoma of breast,,1,0
+BRCA,gdc_primary_diagnosis,Tubular adenocarcinoma,,1,0
+THCA,cdr_histological_type,"Other, specify",,9,0
+THCA,cdr_histological_type,Thyroid Papillary Carcinoma - Classical/usual,Classical,357,351
+THCA,cdr_histological_type,Thyroid Papillary Carcinoma - Follicular (>= 99% follicular patterned),Follicular,101,100
+THCA,cdr_histological_type,Thyroid Papillary Carcinoma - Tall Cell (>= 50% tall cell features),Tall cell,36,35
+THCA,gdc_primary_diagnosis,"Carcinoma, NOS",,1,0
+THCA,gdc_primary_diagnosis,"Follicular adenocarcinoma, NOS",,1,0
+THCA,gdc_primary_diagnosis,"Follicular carcinoma, minimally invasive",,1,0
+THCA,gdc_primary_diagnosis,Nonencapsulated sclerosing carcinoma,,4,0
+THCA,gdc_primary_diagnosis,Oxyphilic adenocarcinoma,,1,0
+THCA,gdc_primary_diagnosis,"Papillary adenocarcinoma, NOS",Classical,352,350
+THCA,gdc_primary_diagnosis,"Papillary carcinoma, NOS",Classical,1,1
+THCA,gdc_primary_diagnosis,"Papillary carcinoma, columnar cell",Tall cell,36,35
+THCA,gdc_primary_diagnosis,"Papillary carcinoma, follicular variant",Follicular,105,100
+THCA,gdc_primary_diagnosis,"Papillary carcinoma, oxyphilic cell",,1,0
+UCEC,cdr_histological_type,Endometrioid endometrial adenocarcinoma,Endometrioid,105,104
+UCEC,cdr_histological_type,Mixed serous and endometrioid,,13,0
+UCEC,cdr_histological_type,Serous endometrial adenocarcinoma,Serous,60,58
+UCEC,gdc_primary_diagnosis,Adenocarcinoma with mixed subtypes,,1,0
+UCEC,gdc_primary_diagnosis,"Endometrioid adenocarcinoma, NOS",Endometrioid,109,104
+UCEC,gdc_primary_diagnosis,Papillary serous cystadenocarcinoma,Serous,2,2
+UCEC,gdc_primary_diagnosis,"Serous cystadenocarcinoma, NOS",Serous,64,54
+UCEC,gdc_primary_diagnosis,Serous surface papillary carcinoma,Serous,2,2
+SARC,cdr_histological_type,Dedifferentiated liposarcoma,DDLPS,58,57
+SARC,cdr_histological_type,Desmoid Tumor,,2,0
+SARC,cdr_histological_type,Giant cell 'MFH' / Undifferentiated pleomorphic sarcoma with giant cells,UPS,1,1
+SARC,cdr_histological_type,Leiomyosarcoma (LMS),LMS,103,102
+SARC,cdr_histological_type,Malignant Peripheral Nerve Sheath Tumors (MPNST),MPNST,9,0
+SARC,cdr_histological_type,Myxofibrosarcoma,MFS,25,24
+SARC,cdr_histological_type,Pleomorphic 'MFH' / Undifferentiated pleomorphic sarcoma,UPS,29,28
+SARC,cdr_histological_type,Sarcoma; synovial; poorly differentiated,Synovial,2,0
+SARC,cdr_histological_type,Synovial Sarcoma - Biphasic,Synovial,2,0
+SARC,cdr_histological_type,Synovial Sarcoma - Monophasic,Synovial,6,0
+SARC,cdr_histological_type,Undifferentiated Pleomorphic Sarcoma (UPS),UPS,19,18
+SARC,gdc_primary_diagnosis,Abdominal fibromatosis,,1,0
+SARC,gdc_primary_diagnosis,Aggressive fibromatosis,,1,0
+SARC,gdc_primary_diagnosis,Dedifferentiated liposarcoma,DDLPS,57,57
+SARC,gdc_primary_diagnosis,Fibromyxosarcoma,MFS,24,24
+SARC,gdc_primary_diagnosis,Giant cell sarcoma,UPS,2,2
+SARC,gdc_primary_diagnosis,"Leiomyosarcoma, NOS",LMS,99,99
+SARC,gdc_primary_diagnosis,"Liposarcoma, NOS",,1,0
+SARC,gdc_primary_diagnosis,"Liposarcoma, well differentiated",,1,0
+SARC,gdc_primary_diagnosis,Malignant fibrous histiocytoma,UPS,14,13
+SARC,gdc_primary_diagnosis,Malignant peripheral nerve sheath tumor,MPNST,9,0
+SARC,gdc_primary_diagnosis,Myxoid leiomyosarcoma,LMS,3,3
+SARC,gdc_primary_diagnosis,Pleomorphic liposarcoma,,1,0
+SARC,gdc_primary_diagnosis,"Sarcoma, NOS",,1,0
+SARC,gdc_primary_diagnosis,"Synovial sarcoma, NOS",Synovial,2,0
+SARC,gdc_primary_diagnosis,"Synovial sarcoma, biphasic",Synovial,2,0
+SARC,gdc_primary_diagnosis,"Synovial sarcoma, spindle cell",Synovial,6,0
+SARC,gdc_primary_diagnosis,Undifferentiated sarcoma,UPS,32,32
+TGCT,cdr_histological_type,Non-Seminoma; Choriocarcinoma|Non-Seminoma; Embryonal Carcinoma|Non-Seminoma; Yolk Sac Tumor|Non-Seminoma; Teratoma (Mature)|Non-Seminoma; Teratoma (Immature),Non-seminoma,1,1
+TGCT,cdr_histological_type,Non-Seminoma; Embryonal Carcinoma,Non-seminoma,15,15
+TGCT,cdr_histological_type,Non-Seminoma; Embryonal Carcinoma|Non-Seminoma; Teratoma (Mature),Non-seminoma,1,1
+TGCT,cdr_histological_type,Non-Seminoma; Embryonal Carcinoma|Non-Seminoma; Teratoma (Mature)|Non-Seminoma; Choriocarcinoma|Non-Seminoma; Yolk Sac Tumor|Seminoma; NOS,,1,0
+TGCT,cdr_histological_type,Non-Seminoma; Embryonal Carcinoma|Non-Seminoma; Teratoma (Mature)|Non-Seminoma; Teratoma (Immature)|Non-Seminoma; Yolk Sac Tumor,Non-seminoma,1,1
+TGCT,cdr_histological_type,Non-Seminoma; Embryonal Carcinoma|Non-Seminoma; Yolk Sac Tumor,Non-seminoma,6,6
+TGCT,cdr_histological_type,Non-Seminoma; Embryonal Carcinoma|Non-Seminoma; Yolk Sac Tumor|Non-Seminoma; Choriocarcinoma,Non-seminoma,1,1
+TGCT,cdr_histological_type,Non-Seminoma; Embryonal Carcinoma|Non-Seminoma; Yolk Sac Tumor|Non-Seminoma; Teratoma (Immature),Non-seminoma,1,1
+TGCT,cdr_histological_type,Non-Seminoma; Embryonal Carcinoma|Non-Seminoma; Yolk Sac Tumor|Non-Seminoma; Teratoma (Mature),Non-seminoma,1,1
+TGCT,cdr_histological_type,Non-Seminoma; Embryonal Carcinoma|Non-Seminoma; Yolk Sac Tumor|Non-Seminoma; Teratoma (Mature)|Non-Seminoma; Teratoma (Immature)|Seminoma; NOS,,1,0
+TGCT,cdr_histological_type,Non-Seminoma; Embryonal Carcinoma|Seminoma; NOS,,2,0
+TGCT,cdr_histological_type,Non-Seminoma; Embryonal Carcinoma|[Not Available],,1,0
+TGCT,cdr_histological_type,Non-Seminoma; Embryonal Carcinoma|[Not Available]|[Not Available]|[Not Available],,1,0
+TGCT,cdr_histological_type,Non-Seminoma; Teratoma (Immature),Non-seminoma,1,1
+TGCT,cdr_histological_type,Non-Seminoma; Teratoma (Immature)|Non-Seminoma; Teratoma (Mature)|Non-Seminoma; Yolk Sac Tumor,Non-seminoma,1,1
+TGCT,cdr_histological_type,Non-Seminoma; Teratoma (Immature)|Non-Seminoma; Yolk Sac Tumor,Non-seminoma,1,1
+TGCT,cdr_histological_type,Non-Seminoma; Teratoma (Immature)|Non-Seminoma; Yolk Sac Tumor|Non-Seminoma; Embryonal Carcinoma,Non-seminoma,1,1
+TGCT,cdr_histological_type,Non-Seminoma; Teratoma (Immature)|Non-Seminoma; Yolk Sac Tumor|Non-Seminoma; Embryonal Carcinoma|Non-Seminoma; Teratoma (Mature),Non-seminoma,1,1
+TGCT,cdr_histological_type,Non-Seminoma; Teratoma (Mature),Non-seminoma,2,2
+TGCT,cdr_histological_type,Non-Seminoma; Teratoma (Mature)|Non-Seminoma; Embryonal Carcinoma|Non-Seminoma; Teratoma (Immature)|Non-Seminoma; Yolk Sac Tumor,Non-seminoma,1,1
+TGCT,cdr_histological_type,Non-Seminoma; Teratoma (Mature)|Non-Seminoma; Teratoma (Immature)|Non-Seminoma; Embryonal Carcinoma,Non-seminoma,1,1
+TGCT,cdr_histological_type,Non-Seminoma; Teratoma (Mature)|Non-Seminoma; Teratoma (Immature)|Non-Seminoma; Embryonal Carcinoma|Non-Seminoma; Yolk Sac Tumor,Non-seminoma,4,4
+TGCT,cdr_histological_type,Non-Seminoma; Teratoma (Mature)|Non-Seminoma; Teratoma (Immature)|Non-Seminoma; Yolk Sac Tumor|Non-Seminoma; Embryonal Carcinoma|Non-Seminoma; Choriocarcinoma,Non-seminoma,1,1
+TGCT,cdr_histological_type,Non-Seminoma; Teratoma (Mature)|Non-Seminoma; Teratoma (Immature)|Non-Seminoma; Yolk Sac Tumor|Non-Seminoma; Embryonal Carcinoma|Seminoma; NOS,,2,0
+TGCT,cdr_histological_type,Non-Seminoma; Teratoma (Mature)|Non-Seminoma; Yolk Sac Tumor,Non-seminoma,2,2
+TGCT,cdr_histological_type,Non-Seminoma; Teratoma (Mature)|Seminoma; NOS|Non-Seminoma; Embryonal Carcinoma|Non-Seminoma; Yolk Sac Tumor,,2,0
+TGCT,cdr_histological_type,Non-Seminoma; Teratoma (Mature)|[Not Available]|Non-Seminoma; Embryonal Carcinoma|Non-Seminoma; Yolk Sac Tumor,,1,0
+TGCT,cdr_histological_type,Non-Seminoma; Yolk Sac Tumor,Non-seminoma,3,3
+TGCT,cdr_histological_type,Non-Seminoma; Yolk Sac Tumor|Non-Seminoma; Embryonal Carcinoma,Non-seminoma,2,2
+TGCT,cdr_histological_type,Non-Seminoma; Yolk Sac Tumor|Non-Seminoma; Embryonal Carcinoma|Non-Seminoma; Teratoma (Mature)|Non-Seminoma; Teratoma (Immature),Non-seminoma,1,1
+TGCT,cdr_histological_type,Non-Seminoma; Yolk Sac Tumor|Non-Seminoma; Embryonal Carcinoma|Non-Seminoma; Teratoma (Mature)|Seminoma; NOS,,1,0
+TGCT,cdr_histological_type,Non-Seminoma; Yolk Sac Tumor|Non-Seminoma; Teratoma (Mature),Non-seminoma,1,1
+TGCT,cdr_histological_type,Seminoma; NOS,Seminoma,64,64
+TGCT,cdr_histological_type,Seminoma; NOS|Non-Seminoma; Choriocarcinoma,,1,0
+TGCT,cdr_histological_type,Seminoma; NOS|Non-Seminoma; Embryonal Carcinoma,,1,0
+TGCT,cdr_histological_type,Seminoma; NOS|Non-Seminoma; Teratoma (Mature),,1,0
+TGCT,cdr_histological_type,Seminoma; NOS|Non-Seminoma; Teratoma (Mature)|Non-Seminoma; Embryonal Carcinoma,,1,0
+TGCT,cdr_histological_type,Seminoma; NOS|Non-Seminoma; Teratoma (Mature)|Non-Seminoma; Embryonal Carcinoma|Non-Seminoma; Yolk Sac Tumor,,1,0
+TGCT,cdr_histological_type,Seminoma; NOS|Non-Seminoma; Teratoma (Mature)|Non-Seminoma; Teratoma (Immature)|Non-Seminoma; Yolk Sac Tumor,,1,0
+TGCT,cdr_histological_type,Seminoma; NOS|Non-Seminoma; Yolk Sac Tumor|Non-Seminoma; Embryonal Carcinoma|Non-Seminoma; Teratoma (Immature),,1,0
+TGCT,cdr_histological_type,Seminoma; NOS|Non-Seminoma; Yolk Sac Tumor|Non-Seminoma; Teratoma (Mature)|Non-Seminoma; Teratoma (Immature),,1,0
+TGCT,gdc_primary_diagnosis,"Embryonal carcinoma, NOS",Non-seminoma,27,23
+TGCT,gdc_primary_diagnosis,Mixed germ cell tumor,Non-seminoma,27,13
+TGCT,gdc_primary_diagnosis,"Seminoma, NOS",Seminoma,66,64
+TGCT,gdc_primary_diagnosis,Teratocarcinoma,Non-seminoma,2,2
+TGCT,gdc_primary_diagnosis,"Teratoma, benign",Non-seminoma,5,5
+TGCT,gdc_primary_diagnosis,"Teratoma, malignant, NOS",Non-seminoma,3,3
+TGCT,gdc_primary_diagnosis,Yolk sac tumor,Non-seminoma,4,4
+MESO,cdr_histological_type,Biphasic mesothelioma,Biphasic,23,21
+MESO,cdr_histological_type,Diffuse malignant mesothelioma - NOS,,5,0
+MESO,cdr_histological_type,Epithelioid mesothelioma,Epithelioid,56,55
+MESO,cdr_histological_type,Sarcomatoid mesothelioma,Sarcomatoid,1,0
+MESO,gdc_primary_diagnosis,"Epithelioid mesothelioma, malignant",Epithelioid,58,55
+MESO,gdc_primary_diagnosis,"Mesothelioma, biphasic, malignant",Biphasic,22,21
+MESO,gdc_primary_diagnosis,"Mesothelioma, malignant",,5,0
+STAD,cdr_histological_type,"Stomach Adenocarcinoma, Signet Ring Type",Diffuse,11,11
+STAD,cdr_histological_type,"Stomach, Adenocarcinoma, Diffuse Type",Diffuse,61,59
+STAD,cdr_histological_type,"Stomach, Adenocarcinoma, Not Otherwise Specified (NOS)",,119,0
+STAD,cdr_histological_type,"Stomach, Intestinal Adenocarcinoma, Mucinous Type",Intestinal,19,19
+STAD,cdr_histological_type,"Stomach, Intestinal Adenocarcinoma, Not Otherwise Specified (NOS)",Intestinal,69,66
+STAD,cdr_histological_type,"Stomach, Intestinal Adenocarcinoma, Papillary Type",Intestinal,5,5
+STAD,cdr_histological_type,"Stomach, Intestinal Adenocarcinoma, Tubular Type",Intestinal,67,67
+STAD,cdr_histological_type,[Not Available],,1,0
+STAD,gdc_primary_diagnosis,Adenocarcinoma with mixed subtypes,,1,0
+STAD,gdc_primary_diagnosis,"Adenocarcinoma, NOS",,116,0
+STAD,gdc_primary_diagnosis,"Adenocarcinoma, intestinal type",Intestinal,75,69
+STAD,gdc_primary_diagnosis,"Carcinoma, diffuse type",Diffuse,59,58
+STAD,gdc_primary_diagnosis,Mucinous adenocarcinoma,Intestinal,19,19
+STAD,gdc_primary_diagnosis,"Papillary adenocarcinoma, NOS",Intestinal,5,5
+STAD,gdc_primary_diagnosis,Signet ring cell carcinoma,Diffuse,13,12
+STAD,gdc_primary_diagnosis,Tubular adenocarcinoma,Intestinal,64,64
+LGG,cdr_histological_type,Astrocytoma,Astrocytoma,192,191
+LGG,cdr_histological_type,Oligoastrocytoma,,129,0
+LGG,cdr_histological_type,Oligodendroglioma,Oligodendroglioma,189,187
+LGG,gdc_primary_diagnosis,"Astrocytoma, NOS",Astrocytoma,64,63
+LGG,gdc_primary_diagnosis,"Astrocytoma, anaplastic",Astrocytoma,128,128
+LGG,gdc_primary_diagnosis,Mixed glioma,,130,0
+LGG,gdc_primary_diagnosis,"Oligodendroglioma, NOS",Oligodendroglioma,110,109
+LGG,gdc_primary_diagnosis,"Oligodendroglioma, anaplastic",Oligodendroglioma,78,78
+THYM,cdr_histological_type,Thymoma; Type A,A/AB,15,15
+THYM,cdr_histological_type,Thymoma; Type AB,A/AB,34,34
+THYM,cdr_histological_type,Thymoma; Type A|Thymoma; Type AB,A/AB,2,2
+THYM,cdr_histological_type,Thymoma; Type B1,B1-B3,14,14
+THYM,cdr_histological_type,Thymoma; Type B1|Thymoma; Type B2,B1-B3,1,1
+THYM,cdr_histological_type,Thymoma; Type B2,B1-B3,28,28
+THYM,cdr_histological_type,Thymoma; Type B2|Thymoma; Type B3,B1-B3,3,3
+THYM,cdr_histological_type,Thymoma; Type B3,B1-B3,11,11
+THYM,cdr_histological_type,Thymoma; Type C,Thymic carcinoma,11,0
+THYM,gdc_primary_diagnosis,"Thymic carcinoma, NOS",Thymic carcinoma,11,0
+THYM,gdc_primary_diagnosis,"Thymoma, type A, NOS",A/AB,3,3
+THYM,gdc_primary_diagnosis,"Thymoma, type A, malignant",A/AB,14,14
+THYM,gdc_primary_diagnosis,"Thymoma, type AB, NOS",A/AB,8,8
+THYM,gdc_primary_diagnosis,"Thymoma, type AB, malignant",A/AB,26,26
+THYM,gdc_primary_diagnosis,"Thymoma, type B1, NOS",B1-B3,3,3
+THYM,gdc_primary_diagnosis,"Thymoma, type B1, malignant",B1-B3,11,11
+THYM,gdc_primary_diagnosis,"Thymoma, type B2, NOS",B1-B3,5,5
+THYM,gdc_primary_diagnosis,"Thymoma, type B2, malignant",B1-B3,26,26
+THYM,gdc_primary_diagnosis,"Thymoma, type B3, malignant",B1-B3,12,12
+ESCA,cdr_histological_type,"Esophagus Adenocarcinoma, NOS",Adenocarcinoma,81,81
+ESCA,cdr_histological_type,Esophagus Squamous Cell Carcinoma,Squamous,80,80
+ESCA,gdc_primary_diagnosis,"Adenocarcinoma, NOS",Adenocarcinoma,79,79
+ESCA,gdc_primary_diagnosis,Basaloid squamous cell carcinoma,Squamous,1,1
+ESCA,gdc_primary_diagnosis,Mucinous adenocarcinoma,Adenocarcinoma,1,1
+ESCA,gdc_primary_diagnosis,"Squamous cell carcinoma, NOS",Squamous,75,75
+ESCA,gdc_primary_diagnosis,"Squamous cell carcinoma, keratinizing, NOS",Squamous,4,4
+ESCA,gdc_primary_diagnosis,Tubular adenocarcinoma,Adenocarcinoma,1,1
+CESC,cdr_histological_type,Adenosquamous,,5,0
+CESC,cdr_histological_type,Cervical Squamous Cell Carcinoma,Squamous,241,240
+CESC,cdr_histological_type,Endocervical Adenocarcinoma of the Usual Type,Adenocarcinoma,5,5
+CESC,cdr_histological_type,Endocervical Type of Adenocarcinoma,Adenocarcinoma,20,20
+CESC,cdr_histological_type,Endometrioid Adenocarcinoma of Endocervix,Adenocarcinoma,3,3
+CESC,cdr_histological_type,Mucinous Adenocarcinoma of Endocervical Type,Adenocarcinoma,17,17
+CESC,gdc_primary_diagnosis,"Adenocarcinoma, NOS",Adenocarcinoma,8,6
+CESC,gdc_primary_diagnosis,"Adenocarcinoma, endocervical type",Adenocarcinoma,19,19
+CESC,gdc_primary_diagnosis,Adenosquamous carcinoma,,3,0
+CESC,gdc_primary_diagnosis,Basaloid squamous cell carcinoma,Squamous,1,1
+CESC,gdc_primary_diagnosis,"Endometrioid adenocarcinoma, NOS",Adenocarcinoma,3,3
+CESC,gdc_primary_diagnosis,Mucinous adenocarcinoma,Adenocarcinoma,1,1
+CESC,gdc_primary_diagnosis,"Mucinous adenocarcinoma, endocervical type",Adenocarcinoma,16,16
+CESC,gdc_primary_diagnosis,Papillary squamous cell carcinoma,Squamous,1,1
+CESC,gdc_primary_diagnosis,"Squamous cell carcinoma, NOS",Squamous,170,169
+CESC,gdc_primary_diagnosis,"Squamous cell carcinoma, keratinizing, NOS",Squamous,26,26
+CESC,gdc_primary_diagnosis,"Squamous cell carcinoma, large cell, nonkeratinizing, NOS",Squamous,43,43
+PCPG,cdr_histological_type,Paraganglioma,Paraganglioma,18,17
+PCPG,cdr_histological_type,Paraganglioma; Extra-adrenal Pheochromocytoma,Paraganglioma,13,13
+PCPG,cdr_histological_type,Pheochromocytoma,Pheochromocytoma,148,148
+PCPG,gdc_primary_diagnosis,Aortic body tumor,Paraganglioma,1,1
+PCPG,gdc_primary_diagnosis,"Extra-adrenal paraganglioma, NOS",Paraganglioma,18,18
+PCPG,gdc_primary_diagnosis,"Extra-adrenal paraganglioma, malignant",Paraganglioma,6,6
+PCPG,gdc_primary_diagnosis,"Paraganglioma, NOS",Paraganglioma,3,3
+PCPG,gdc_primary_diagnosis,"Paraganglioma, malignant",Paraganglioma,2,2
+PCPG,gdc_primary_diagnosis,"Pheochromocytoma, NOS",Pheochromocytoma,110,110
+PCPG,gdc_primary_diagnosis,"Pheochromocytoma, malignant",Pheochromocytoma,39,38
+LGG_IDH,pancan_subtype,GBM_LGG.Classic-like,IDHwt,23,23
+LGG_IDH,pancan_subtype,GBM_LGG.Codel,IDHmut-codel,171,171
+LGG_IDH,pancan_subtype,GBM_LGG.G-CIMP-high,IDHmut-non-codel,232,232
+LGG_IDH,pancan_subtype,GBM_LGG.G-CIMP-low,IDHmut-non-codel,10,10
+LGG_IDH,pancan_subtype,GBM_LGG.Mesenchymal-like,IDHwt,45,45
+LGG_IDH,pancan_subtype,GBM_LGG.NA,,3,0
+LGG_IDH,pancan_subtype,GBM_LGG.PA-like,IDHwt,26,26
+UCEC_TCGA,pancan_subtype,<missing>,,9,0
+UCEC_TCGA,pancan_subtype,UCEC.CN_HIGH,CN-high,83,83
+UCEC_TCGA,pancan_subtype,UCEC.CN_LOW,CN-low,28,28
+UCEC_TCGA,pancan_subtype,UCEC.MSI,MSI,34,34
+UCEC_TCGA,pancan_subtype,UCEC.POLE,POLE,24,24
+STAD_TCGA,pancan_subtype,<missing>,,25,0
+STAD_TCGA,pancan_subtype,GI.CIN,CIN,196,196
+STAD_TCGA,pancan_subtype,GI.EBV,EBV,26,26
+STAD_TCGA,pancan_subtype,GI.GS,GS,43,43
+STAD_TCGA,pancan_subtype,GI.HM-SNV,HM-SNV,7,0
+STAD_TCGA,pancan_subtype,GI.HM-indel,MSI,55,55
+COAD_TCGA,pancan_subtype,<missing>,,26,0
+COAD_TCGA,pancan_subtype,GI.CIN,CIN,162,162
+COAD_TCGA,pancan_subtype,GI.GS,GS,33,33
+COAD_TCGA,pancan_subtype,GI.HM-SNV,HM-SNV,2,0
+COAD_TCGA,pancan_subtype,GI.HM-indel,MSI,40,40
+PRAD_ETS,pancan_subtype,<missing>,,164,0
+PRAD_ETS,pancan_subtype,PRAD.1-ERG,ERG,152,152
+PRAD_ETS,pancan_subtype,PRAD.2-ETV1,ETV1,28,28
+PRAD_ETS,pancan_subtype,PRAD.3-ETV4,ETV4,14,0
+PRAD_ETS,pancan_subtype,PRAD.4-FLI1,FLI1,4,0
+PRAD_ETS,pancan_subtype,PRAD.5-SPOP,SPOP,37,37
+PRAD_ETS,pancan_subtype,PRAD.6-FOXA1,FOXA1,9,0
+PRAD_ETS,pancan_subtype,PRAD.7-IDH1,IDH1,3,0
+PRAD_ETS,pancan_subtype,PRAD.8-other,Other,86,86
+BRCA_ER,pancan_clinical,Indeterminate,,2,0
+BRCA_ER,pancan_clinical,Negative,ER-negative,235,235
+BRCA_ER,pancan_clinical,Positive,ER-positive,790,790
+BRCA_ER,pancan_clinical,[Not Evaluated],,46,0
+HNSC_HPV,pancan_clinical,Negative|Negative,HPV-negative,56,56
+HNSC_HPV,pancan_clinical,Negative|[Not Available],HPV-negative,6,6
+HNSC_HPV,pancan_clinical,Negative|[Not Evaluated],HPV-negative,10,10
+HNSC_HPV,pancan_clinical,Positive|Negative,,1,0
+HNSC_HPV,pancan_clinical,Positive|Positive,HPV-positive,16,16
+HNSC_HPV,pancan_clinical,Positive|[Not Available],HPV-positive,3,3
+HNSC_HPV,pancan_clinical,Positive|[Not Evaluated],HPV-positive,11,11
+HNSC_HPV,pancan_clinical,[Not Available]|Negative,HPV-negative,1,1
+HNSC_HPV,pancan_clinical,[Not Available]|Positive,HPV-positive,2,2
+HNSC_HPV,pancan_clinical,[Not Available]|[Not Available],,277,0
+HNSC_HPV,pancan_clinical,[Not Available]|[Not Evaluated],,1,0
+HNSC_HPV,pancan_clinical,[Not Evaluated]|Negative,HPV-negative,6,6
+HNSC_HPV,pancan_clinical,[Not Evaluated]|Positive,HPV-positive,1,1
+HNSC_HPV,pancan_clinical,[Not Evaluated]|[Not Evaluated],,101,0
+HNSC_HPV,pancan_clinical,[Not Evaluated]|[Unknown],,1,0
+HNSC_HPV,pancan_clinical,[Unknown]|[Unknown],,8,0
+BRCA_PAM50,pancan_subtype,BRCA.Basal,Basal,187,187
+BRCA_PAM50,pancan_subtype,BRCA.Her2,Her2,77,77
+BRCA_PAM50,pancan_subtype,BRCA.LumA,LumA,558,558
+BRCA_PAM50,pancan_subtype,BRCA.LumB,LumB,212,212
+BRCA_PAM50,pancan_subtype,BRCA.Normal,Normal-like,39,39
+HNSC_mRNA,pancan_subtype,<missing>,,223,0
+HNSC_mRNA,pancan_subtype,HNSC.Atypical,Atypical,68,68
+HNSC_mRNA,pancan_subtype,HNSC.Basal,Basal,86,86
+HNSC_mRNA,pancan_subtype,HNSC.Classical,Classical,49,49
+HNSC_mRNA,pancan_subtype,HNSC.Mesenchymal,Mesenchymal,75,75
+PCPG_mRNA,pancan_subtype,<missing>,,6,0
+PCPG_mRNA,pancan_subtype,PCPG.Cortical admixture,Cortical admixture,22,22
+PCPG_mRNA,pancan_subtype,PCPG.Kinase signaling,Kinase signaling,68,68
+PCPG_mRNA,pancan_subtype,PCPG.Pseudohypoxia,Pseudohypoxia,61,61
+PCPG_mRNA,pancan_subtype,PCPG.Wnt-altered,Wnt-altered,22,22

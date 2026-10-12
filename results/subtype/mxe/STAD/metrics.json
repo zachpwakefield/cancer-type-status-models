@@ -1,0 +1,203 @@
+{
+  "baselines": {
+    "chance_balanced_accuracy": 0.5,
+    "chance_macro_auroc": 0.5,
+    "chance_macro_f1": 0.5,
+    "majority_accuracy": 0.6916299559471366,
+    "majority_balanced_accuracy": 0.5,
+    "majority_class": "Intestinal",
+    "majority_macro_f1": 0.4088541666666667
+  },
+  "bootstrap_95ci": {
+    "accuracy": [
+      0.6034140969162995,
+      0.7312775330396476
+    ],
+    "balanced_accuracy": [
+      0.5538456947714805,
+      0.693233902462462
+    ],
+    "macro_auroc_ovr": [
+      0.5892330518374161,
+      0.7573003999474587
+    ],
+    "macro_f1": [
+      0.5514489403933381,
+      0.6870267137780839
+    ],
+    "n_resamples_used": 1000
+  },
+  "class_counts": {
+    "Diffuse": 70,
+    "Intestinal": 157
+  },
+  "classes": [
+    "Intestinal",
+    "Diffuse"
+  ],
+  "cohort": "STAD",
+  "config": {
+    "model": {
+      "device": "cpu",
+      "max_epochs": {
+        "cancer_type": 100,
+        "subtype": 300,
+        "tumor_status": 300
+      },
+      "patience": {
+        "cancer_type": 12,
+        "subtype": 20,
+        "tumor_status": 20
+      }
+    },
+    "preprocess": {
+      "clip_z": 10.0,
+      "gex_min_expressed_frac": 0.1,
+      "gex_min_log2cpm": 1.0,
+      "min_observed_frac": 0.5
+    },
+    "shap": {
+      "background_size": 100,
+      "top_k_report": 30
+    },
+    "splits": {
+      "inner_folds": 3,
+      "inner_folds_used": {
+        "cancer_type": 1,
+        "subtype": 3,
+        "tumor_status": 3
+      },
+      "outer_folds": 5,
+      "seed": 20261010
+    },
+    "subtype_yaml_sha256": "7962b0d41ffb43f045b531543a6077d2e03ff1e4ce03ee56f37139159c3a39c0",
+    "tuning": {
+      "n_trials": {
+        "cancer_type": 20,
+        "subtype": 30,
+        "tumor_status": 30
+      },
+      "pruner_startup_trials": 6,
+      "search_space": {
+        "batch_size": {
+          "cancer_type": [
+            128,
+            256,
+            512
+          ],
+          "subtype": [
+            32,
+            64,
+            128,
+            256
+          ],
+          "tumor_status": [
+            32,
+            64,
+            128,
+            256
+          ]
+        },
+        "dropout": [
+          0.0,
+          0.6
+        ],
+        "input_dropout": [
+          0.0,
+          0.5
+        ],
+        "lr": [
+          0.0001,
+          0.003
+        ],
+        "n_features": [
+          500,
+          1000,
+          2000,
+          4000
+        ],
+        "n_layers": [
+          1,
+          3
+        ],
+        "selection": [
+          "variance",
+          "anova"
+        ],
+        "weight_decay": [
+          1e-06,
+          0.01
+        ],
+        "width": [
+          64,
+          1024
+        ]
+      }
+    }
+  },
+  "git_commit": "a890c55dc3e3809be96dc60e9ed4f9a672d26ef1+dirty",
+  "labels": {
+    "columns": [],
+    "concordance": "gdc_primary_diagnosis",
+    "label_set": "histology",
+    "label_type": "histology",
+    "project": "STAD",
+    "question": "Lauren intestinal vs diffuse type; untyped adenocarcinoma NOS is excluded",
+    "source": "cdr_histological_type",
+    "tier": "primary",
+    "version": "histology_v1"
+  },
+  "n_features_by_fold": [
+    500,
+    3098,
+    3088,
+    3099,
+    3066
+  ],
+  "packages": {
+    "numpy": "1.26.4",
+    "optuna": "4.6.0",
+    "pandas": "2.3.3",
+    "pyarrow": "23.0.1",
+    "python": "3.10.20",
+    "scipy": "1.15.3",
+    "shap": "0.48.0",
+    "sklearn": "1.7.2",
+    "torch": "2.2.2"
+  },
+  "per_fold_mean": {
+    "accuracy": 0.6694685990338163,
+    "balanced_accuracy": 0.6159791354354047,
+    "macro_auroc_ovr": 0.6792271873734721,
+    "macro_f1": 0.6044669946295707
+  },
+  "per_fold_sd": {
+    "accuracy": 0.07262976156941772,
+    "balanced_accuracy": 0.06464923681960508,
+    "macro_auroc_ovr": 0.061926977843998116,
+    "macro_f1": 0.04971650880465474
+  },
+  "pooled_oof": {
+    "accuracy": 0.6696035242290749,
+    "balanced_accuracy": 0.6226114649681529,
+    "log_loss": 0.6130502271246537,
+    "macro_auroc_ovr": 0.6751592356687897,
+    "macro_f1": 0.6200200870438567,
+    "mcc": 0.24077284121818182,
+    "n": 227,
+    "n_classes": 2
+  },
+  "recall_by_class": {
+    "Diffuse": 0.5,
+    "Intestinal": 0.7452229299363057
+  },
+  "selection_method_by_fold": [
+    "anova",
+    "anova",
+    "variance",
+    "anova",
+    "variance"
+  ],
+  "task": "subtype",
+  "view": "mxe"
+}

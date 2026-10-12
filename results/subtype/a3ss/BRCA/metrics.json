@@ -1,0 +1,203 @@
+{
+  "baselines": {
+    "chance_balanced_accuracy": 0.5,
+    "chance_macro_auroc": 0.5,
+    "chance_macro_f1": 0.5,
+    "majority_accuracy": 0.7972689075630253,
+    "majority_balanced_accuracy": 0.5,
+    "majority_class": "Ductal",
+    "majority_macro_f1": 0.4436002337814144
+  },
+  "bootstrap_95ci": {
+    "accuracy": [
+      0.812998949579832,
+      0.8602941176470589
+    ],
+    "balanced_accuracy": [
+      0.7791021865769886,
+      0.8421575090968741
+    ],
+    "macro_auroc_ovr": [
+      0.8569402442695402,
+      0.9140497395417928
+    ],
+    "macro_f1": [
+      0.7433967454066506,
+      0.8042046106773206
+    ],
+    "n_resamples_used": 1000
+  },
+  "class_counts": {
+    "Ductal": 759,
+    "Lobular": 193
+  },
+  "classes": [
+    "Ductal",
+    "Lobular"
+  ],
+  "cohort": "BRCA",
+  "config": {
+    "model": {
+      "device": "cpu",
+      "max_epochs": {
+        "cancer_type": 100,
+        "subtype": 300,
+        "tumor_status": 300
+      },
+      "patience": {
+        "cancer_type": 12,
+        "subtype": 20,
+        "tumor_status": 20
+      }
+    },
+    "preprocess": {
+      "clip_z": 10.0,
+      "gex_min_expressed_frac": 0.1,
+      "gex_min_log2cpm": 1.0,
+      "min_observed_frac": 0.5
+    },
+    "shap": {
+      "background_size": 100,
+      "top_k_report": 30
+    },
+    "splits": {
+      "inner_folds": 3,
+      "inner_folds_used": {
+        "cancer_type": 1,
+        "subtype": 3,
+        "tumor_status": 3
+      },
+      "outer_folds": 5,
+      "seed": 20261010
+    },
+    "subtype_yaml_sha256": "7962b0d41ffb43f045b531543a6077d2e03ff1e4ce03ee56f37139159c3a39c0",
+    "tuning": {
+      "n_trials": {
+        "cancer_type": 20,
+        "subtype": 30,
+        "tumor_status": 30
+      },
+      "pruner_startup_trials": 6,
+      "search_space": {
+        "batch_size": {
+          "cancer_type": [
+            128,
+            256,
+            512
+          ],
+          "subtype": [
+            32,
+            64,
+            128,
+            256
+          ],
+          "tumor_status": [
+            32,
+            64,
+            128,
+            256
+          ]
+        },
+        "dropout": [
+          0.0,
+          0.6
+        ],
+        "input_dropout": [
+          0.0,
+          0.5
+        ],
+        "lr": [
+          0.0001,
+          0.003
+        ],
+        "n_features": [
+          500,
+          1000,
+          2000,
+          4000
+        ],
+        "n_layers": [
+          1,
+          3
+        ],
+        "selection": [
+          "variance",
+          "anova"
+        ],
+        "weight_decay": [
+          1e-06,
+          0.01
+        ],
+        "width": [
+          64,
+          1024
+        ]
+      }
+    }
+  },
+  "git_commit": "a890c55dc3e3809be96dc60e9ed4f9a672d26ef1+dirty",
+  "labels": {
+    "columns": [],
+    "concordance": "gdc_primary_diagnosis",
+    "label_set": "histology",
+    "label_type": "histology",
+    "project": "BRCA",
+    "question": "invasive ductal vs invasive lobular carcinoma (special types if >= 20)",
+    "source": "cdr_histological_type",
+    "tier": "primary",
+    "version": "histology_v1"
+  },
+  "n_features_by_fold": [
+    500,
+    1000,
+    2000,
+    500,
+    500
+  ],
+  "packages": {
+    "numpy": "1.26.4",
+    "optuna": "4.6.0",
+    "pandas": "2.3.3",
+    "pyarrow": "23.0.1",
+    "python": "3.10.20",
+    "scipy": "1.15.3",
+    "shap": "0.48.0",
+    "sklearn": "1.7.2",
+    "torch": "2.2.2"
+  },
+  "per_fold_mean": {
+    "accuracy": 0.8361642325709562,
+    "balanced_accuracy": 0.8113127549945153,
+    "macro_auroc_ovr": 0.8881732550404781,
+    "macro_f1": 0.774273248372529
+  },
+  "per_fold_sd": {
+    "accuracy": 0.02693492178304829,
+    "balanced_accuracy": 0.026244477301465022,
+    "macro_auroc_ovr": 0.016335228382131996,
+    "macro_f1": 0.027325495971293374
+  },
+  "pooled_oof": {
+    "accuracy": 0.8361344537815126,
+    "balanced_accuracy": 0.8102971594749022,
+    "log_loss": 0.41501468768203525,
+    "macro_auroc_ovr": 0.8869387727238593,
+    "macro_f1": 0.7737146200541213,
+    "mcc": 0.5606487248846964,
+    "n": 952,
+    "n_classes": 2
+  },
+  "recall_by_class": {
+    "Ductal": 0.8537549407114624,
+    "Lobular": 0.7668393782383419
+  },
+  "selection_method_by_fold": [
+    "anova",
+    "anova",
+    "anova",
+    "anova",
+    "anova"
+  ],
+  "task": "subtype",
+  "view": "a3ss"
+}
