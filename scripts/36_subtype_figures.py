@@ -8,19 +8,20 @@ One question per figure, in the order the story is told in results/SUBTYPE.md:
     U5  do the splicing models and the expression model of a cohort read the same genes?
     U6  are the strongest splicing events splicing, or readouts of a neighbouring gene?
     U7  do the exons that mark MSI in one cancer mark it in the other two?
+    U8  do the splicing regulators the literature names differ between subtypes (D-46)?
+    U9  is the subtype signal tied to the tissue-source site (D-47)?
 
-Reads results/subtype/summary/ (step 34) and results/subtype/interpret/ (step 35). Every figure
+Reads results/subtype/summary/ (step 34), results/subtype/interpret/ (step 35),
+results/subtype/regulators/ (step 37) and results/subtype/site_probe/ (step 38). Every figure
 is SVG + PDF + 400-dpi PNG with `<stem>.csv` of the plotted values and `<stem>.caption.md`.
 Usage: python scripts/36_subtype_figures.py [U1 U3 ...]        (default: all)
 """
 from __future__ import annotations
 
-import textwrap
-
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-from _figbase import locus_label, run
+from _figbase import locus_label, run, tidy
 
 from ctsm.biology import bh
 from ctsm.figstyle import (ACCENT, ACCENT_DARK, DIVERGE, DOUBLE, GRID, INK, INK2, MUTED, SEQ, SINGLE, colourbar,
@@ -564,31 +565,180 @@ CCNDBP1's 57-bp exon is included at a median {cs} (MSI vs rest). All {len(nrep)}
 raw p < {max(nrep.p_mwu.max(), 1e-300):.1e}; BH q over every cross-cohort test of every shared class is in the CSV."""
 
 
-def tidy(caption: str, width: int = 116) -> str:
-    """Re-wrap every paragraph and bullet of a caption to the house limit (lines <= 120 characters)."""
-    out = []
-    for para in caption.strip().split("\n\n"):
-        lines = para.split("\n")
-        if para.startswith("**") and len(para) <= 120:
-            out.append(para)
-        elif lines[0].startswith("- "):
-            items, cur = [], []
-            for ln in lines:
-                if ln.startswith("- ") and cur:
-                    items.append(" ".join(cur))
-                    cur = []
-                cur.append(ln.strip())
-            items.append(" ".join(cur))
-            out.append("\n".join(textwrap.fill(it, width, subsequent_indent="  ", break_on_hyphens=False)
-                                  for it in items))
-        else:
-            out.append(textwrap.fill(" ".join(ln.strip() for ln in lines), width, break_on_hyphens=False))
-    return "\n\n".join(out)
+# ============================================================ U8 splicing regulators
+REG = SCFG.results_dir / TASK / "regulators"
+SITE = SCFG.results_dir / TASK / "site_probe"
 
+
+def U8() -> None:
+    q = pd.read_csv(REG / "predicted_factor_by_class.csv")
+    b = pd.read_csv(REG / "sarc_event_by_ptbp1_quintile.csv")
+    pr = pd.read_csv(REG / "predictions.csv").set_index("id")
+    fig = plt.figure(figsize=(DOUBLE, 3.0))
+    gs = fig.add_gridspec(2, 4, width_ratios=[1, 1, 1.05, 1.05], wspace=0.95, hspace=0.9)
+    rows = []
+    for j, rid in enumerate(["R1", "R2", "R3", "R4"]):
+        ax = fig.add_subplot(gs[j // 2, j % 2])
+        d = q[q.id == rid].reset_index(drop=True)
+        order = list(d.sort_values("predicted").index)              # "higher" first, then "lower"
+        d = d.loc[order].reset_index(drop=True)
+        for i, r in d.iterrows():
+            col = ACCENT if r.predicted == "lower" else INK
+            ax.plot([r.q25, r.q75], [i, i], color=col, linewidth=1.6, solid_capstyle="round", alpha=0.45)
+            ax.scatter(r["median"], i, s=14, color=col, linewidths=0.4, edgecolors="white", zorder=3)
+        ax.set_yticks(range(len(d)))
+        ax.set_yticklabels([f"{c} ({n})" for c, n in zip(d["class"], d["n"])], fontsize=5.6, color=INK)
+        ax.set_ylim(len(d) - 0.5, -0.7)
+        ax.tick_params(axis="y", length=0)
+        ax.spines["left"].set_visible(False)
+        ax.set_title(f"{d.cohort.iloc[0]} · {d.gene.iloc[0]}", fontsize=6.2, color=INK2, loc="left", pad=2)
+        ax.set_xlabel("log2 CPM", fontsize=6)
+        lo, hi = d.q25.min(), d.q75.max()
+        ax.set_xlim(lo - 0.15 * (hi - lo), hi + 0.15 * (hi - lo))
+        rows.append(d.assign(panel="a", auroc=pr.at[rid, "estimate"], p=pr.at[rid, "p"], q=pr.at[rid, "q"],
+                             verdict=pr.at[rid, "verdict"]))
+    for j, rid in enumerate(["R5", "R6"]):
+        ax = fig.add_subplot(gs[:, 2 + j])
+        d = b[b.id == rid]
+        for grp, col in [("LMS", ACCENT), ("other sarcomas", MUTED)]:
+            g = d[d.group == grp].sort_values("ptbp1_quintile")
+            x = g.ptbp1_quintile + (0.06 if grp == "LMS" else -0.06)
+            ax.vlines(x, g.q25_psi, g.q75_psi, color=col, linewidth=0.8, alpha=0.6)
+            ax.plot(x, g.median_psi, color=col, linewidth=1.0, marker="o", ms=2.8, mec="white", mew=0.3)
+            ax.text(5.3, g.median_psi.iloc[-1], grp.replace(" ", "\n"), fontsize=5.4, color=col, va="center",
+                    ha="left", linespacing=0.9)
+        ax.set_xticks(range(1, 6))
+        ax.set_xlim(0.6, 6.5)
+        ax.spines["bottom"].set_bounds(1, 5)
+        ax.set_ylim(-0.02, 1.02)
+        ax.set_xlabel("PTBP1 quintile", fontsize=6)
+        ax.set_ylabel("PSI" if j == 0 else "", fontsize=6)
+        ax.set_title(d.event_name.iloc[0].replace(" (MXE)", "").replace(" mutually exclusive exons", " MXE"),
+                     fontsize=6.2, color=INK2, loc="left", pad=2)
+        rows.append(d.assign(panel="b", rho_partial=pr.at[rid, "estimate"], p=pr.at[rid, "p"], q=pr.at[rid, "q"],
+                             verdict=pr.at[rid, "verdict"], lms_minus_rest_psi=pr.at[rid, "lms_minus_rest_psi"]))
+    fig.text(0.02, 0.99, "a", fontsize=8, fontweight="bold", va="top")
+    fig.text(0.535, 0.99, "b", fontsize=8, fontweight="bold", va="top")
+    data = pd.concat(rows, ignore_index=True)
+    data["q_family"] = "BH across R1-R6 (config/followup.yaml)"
+    save(fig, OUT, "U8_regulators", data=data, caption=CAPTIONS["U8"](pr, pd.read_csv(REG / "predictions_sensitivity.csv"),
+                                                                     pd.read_csv(REG / "factor_scan_summary.csv")))
+
+
+# ============================================================ U9 site probe
+def U9() -> None:
+    w = pd.read_csv(SITE / "site_probe_summary.csv")
+    per = pd.read_csv(SITE / "site_probe_by_cohort.csv").sort_values("drop_as_median").reset_index(drop=True)
+    tests = pd.read_csv(SITE / "site_probe_tests.csv")
+    conf = pd.read_csv(SITE / "site_class_confounding.csv")
+    fig, (ax, bx) = plt.subplots(1, 2, figsize=(DOUBLE * 0.86, 0.16 * len(per) + 0.9),
+                                 gridspec_kw={"width_ratios": [1.35, 1], "wspace": 0.45})
+    rows = []
+    for i, r in per.iterrows():
+        v = w[(w.cohort == r.cohort) & (w.view != "gex")]
+        ax.plot([v["drop"].min(), v["drop"].max()], [i, i], color=GRID, linewidth=1.6, solid_capstyle="round", zorder=1)
+        ax.scatter(v["drop"], [i] * len(v), s=6, color=MUTED, linewidths=0, zorder=2)
+        ax.scatter(r.drop_gex, i, s=15, color=INK, linewidths=0.4, edgecolors="white", zorder=4)
+        ax.scatter(r.drop_as_median, i, s=15, color=ACCENT, linewidths=0.4, edgecolors="white", zorder=5)
+        for _, x in w[w.cohort == r.cohort].iterrows():
+            rows.append({"panel": "a", "cohort": r.cohort, "view": x.view, "case_grouped": x["case-grouped"],
+                         "site_held_out": x["site-held-out"], "drop": x["drop"]})
+        rows.append({"panel": "a", "cohort": r.cohort, "view": "AS-view median", "drop": r.drop_as_median})
+    ax.axvline(0, color=INK2, linewidth=0.6, zorder=0)
+    ax.set_yticks(range(len(per)))
+    ax.set_yticklabels([f"{c} ({n}; {s} sites)" for c, n, s in zip(per.cohort, per.n, per.n_sites)], fontsize=5.6,
+                       color=INK)
+    ax.set_ylim(len(per) - 0.5, -0.6)
+    ax.tick_params(axis="y", length=0)
+    ax.spines["left"].set_visible(False)
+    ax.set_xlabel("loss of balanced accuracy when sites are held out")
+    from matplotlib.lines import Line2D
+    ax.legend(handles=[Line2D([], [], marker="o", ls="", color=MUTED, ms=2.4, label="single splicing view"),
+                       Line2D([], [], marker="o", ls="", color=INK, ms=3.6, label="GEX"),
+                       Line2D([], [], marker="o", ls="", color=ACCENT, ms=3.6, label="median of 8 splicing views")],
+              loc="lower left", bbox_to_anchor=(0, 1.0), ncol=3, fontsize=5.6, handletextpad=0.2, columnspacing=0.8)
+    for col, name, c in [("drop_gex", "GEX", INK), ("drop_as_median", "median of 8 splicing views", ACCENT)]:
+        bx.scatter(per.cramers_v_site_class, per[col], s=12, color=c, linewidths=0.4, edgecolors="white", zorder=3)
+        for _, r in per.iterrows():
+            rows.append({"panel": "b", "cohort": r.cohort, "view": name, "cramers_v_site_class": r.cramers_v_site_class,
+                         "drop": r[col]})
+    lab = per[per.drop_as_median >= 0.07]
+    for _, r in lab.iterrows():
+        crowded = ((lab.cramers_v_site_class - r.cramers_v_site_class).between(0.001, 0.12)
+                   & (lab.drop_as_median - r.drop_as_median).abs().lt(0.006)).any()
+        bx.text(r.cramers_v_site_class + (-0.012 if crowded else 0.012), r.drop_as_median, r.cohort, fontsize=5.2,
+                color=INK2, va="center", ha="right" if crowded else "left")
+    bx.axhline(0, color=INK2, linewidth=0.6, zorder=0)
+    bx.set_xlabel("site–class association (Cramér's V)")
+    bx.set_ylabel("loss of balanced accuracy")
+    ax.text(-0.42, 1.08, "a", transform=ax.transAxes, fontsize=8, fontweight="bold")
+    bx.text(-0.2, 1.08, "b", transform=bx.transAxes, fontsize=8, fontweight="bold")
+    data = pd.DataFrame(rows)
+    save(fig, OUT, "U9_site_probe", data=data, caption=CAPTIONS["U9"](per, tests, conf))
+
+
+def _cap_u8(pr, sens, scan):
+    r = pr
+    def a(i):
+        return f"AUROC {r.at[i, 'estimate']:.2f}, p = {fp(r.at[i, 'p'])}, q = {fp(r.at[i, 'q'])}"
+    s6 = sens[(sens.id == "R6") & sens.adjusted_for.str.contains("mean")].iloc[0]
+    s5 = sens[(sens.id == "R5") & sens.adjusted_for.str.contains("mean")].iloc[0]
+    return f"""**Do the splicing regulators the literature names differ between subtypes, and track the subtype's exons?**
+
+Six predictions fixed before the data were looked at by class (config/followup.yaml, D-46). a, a factor's log2 CPM
+in each class: dot = median, bar = interquartile range, patients in brackets; blue = the class predicted lower.
+AUROC = P(predicted-higher patient > predicted-lower patient), two-sided Mann–Whitney.
+
+- R1, ESRP1 lower in biphasic than epithelioid mesothelioma: {a('R1')}, not resolved (ESRP1 is barely expressed
+  in either class).
+- R2, ESRP2, same contrast: {a('R2')}.
+- R3, ESRP1 lower in the mesenchymal HNSC class than in the other three: {a('R3')}.
+- R4, PTBP1 lower in leiomyosarcoma (LMS) than in the other sarcomas: {a('R4')}.
+
+b, the event's PSI by PTBP1 quintile, the quintiles cut within LMS and within the other sarcomas separately (dot = median, bar =
+interquartile range, about 20–26 patients per point). Test: partial Spearman of PTBP1 with the PSI over all 230
+sarcomas, adjusting for class, stromal and immune scores; predicted sign = opposite to the LMS shift.
+
+- R5, ACTN1: LMS shift {signed(r.at['R5', 'lms_minus_rest_psi'], 2)}, ρ = {signed(r.at['R5', 'estimate'], 2)}, p = {fp(r.at['R5', 'p'])}
+  (within LMS alone ρ = {signed(r.at['R5', 'rho_within_lms'], 2)}). Agrees with Southby et al. 1999: PTB represses the
+  smooth-muscle exon.
+- R6, TPM1: LMS shift {signed(r.at['R6', 'lms_minus_rest_psi'], 2)}, ρ = {signed(r.at['R6', 'estimate'], 2)}, p = {fp(r.at['R6', 'p'])}.
+  It matches the pre-specified sign, but that sign misread the source (A-5): in TPM1, PTB and MBNL1 repress exon
+  3, the non-smooth-muscle exon (Gooding et al. 1998, 2013). So the data run against the published mechanism here.
+
+Sensitivity (A-6, exploratory): adding each sample's mean MXE PSI (D-24) leaves ρ at {signed(s5.rho_ptbp1, 2)} and
+{signed(s6.rho_ptbp1, 2)}; PTBP1 ranks {s5.rank_ptbp1_of} factors for ACTN1 and {s6.rank_ptbp1_of} for TPM1, where MBNL1
+leads ({s6.top_factors.split(';')[0].replace('-', MINUS)}). BH q over R1–R6 is in the CSV. The scan of all 70 factors in every
+cohort is `results/subtype/regulators/factor_by_class.csv`."""
+
+
+def _cap_u9(per, tests, conf):
+    p1 = tests[tests.id == "P1"].iloc[0]
+    p2 = tests[tests.id == "P2"].reset_index(drop=True)
+    from ctsm.biology import bh as _bh
+    q = _bh(tests["p"].to_numpy())
+    top = per.sort_values("drop_as_median", ascending=False).head(4)
+    ts = ", ".join(f"{r.cohort} {signed(r.drop_as_median)} (GEX {signed(r.drop_gex)})" for r in top.itertuples())
+    return f"""**Is the subtype signal tied to the tissue-source site that sent the sample?**
+
+The probe of D-20 on the subtype cohorts (D-47): one untuned classifier per cohort and view (top-2,000 variance,
+median impute, standardise, L2 logistic regression C = 0.05, balanced), cross-validated with patients grouped and
+again with tissue-source sites held out (5 folds, 3 seeds, pooled out-of-fold calls). a, the loss of balanced
+accuracy, grouped minus site-held-out, per cohort (patients; sites): grey = each splicing view, blue = their
+median, black = GEX. Ordered by the splicing median. SARC is not probed: myxofibrosarcoma comes from 4 sites (rule
+≥ 5). b, the loss against Cramér's V between site and class, computed from the labels alone.
+
+- P1, the splicing views lose more than GEX: in {int(p1.k)} of {int(p1.n)} cohorts (median difference
+  {signed(p1.estimate)}); sign test p = {fp(p1.p)}, q = {fp(q[0])} over D-47's three tests: not resolved.
+- P2, the loss rises with Cramér's V: Spearman ρ = {signed(p2.estimate[0], 2)} for GEX (p = {fp(p2.p[0])}) and
+  {signed(p2.estimate[1], 2)} for the splicing median (p = {fp(p2.p[1])}): not supported.
+
+Largest splicing losses: {ts}. The probe's accuracies are those of the untuned classifier, not of the subtype
+models; per view, scheme and seed in `results/subtype/site_probe/`."""
 
 CAPTIONS = {k: (lambda f: (lambda *a: tidy(f(*a))))(f) for k, f in
             {"U1": _cap_u1, "U2": _cap_u2, "U3": _cap_u3, "U4": _cap_u4, "U5": _cap_u5, "U6": _cap_u6,
-             "U7": _cap_u7}.items()}
+             "U7": _cap_u7, "U8": _cap_u8, "U9": _cap_u9}.items()}
 
 if __name__ == "__main__":
-    run({"U1": U1, "U2": U2, "U3": U3, "U4": U4, "U5": U5, "U6": U6, "U7": U7})
+    run({"U1": U1, "U2": U2, "U3": U3, "U4": U4, "U5": U5, "U6": U6, "U7": U7, "U8": U8, "U9": U9})

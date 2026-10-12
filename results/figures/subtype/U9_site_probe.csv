@@ -1,0 +1,1198 @@
+panel,cohort,view,case_grouped,site_held_out,drop,cramers_v_site_class
+a,LGG,"<bound method Series.view of cohort                LGG
+view                 a3ss
+case-grouped     0.811784
+site-held-out    0.827622
+drop            -0.015837
+Name: 72, dtype: object>",0.8117843043928662,0.8276217674123433,-0.015837463019477,
+a,LGG,"<bound method Series.view of cohort                LGG
+view                 a5ss
+case-grouped     0.791547
+site-held-out    0.795779
+drop            -0.004232
+Name: 73, dtype: object>",0.7915465091319728,0.7957788541404186,-0.0042323450084458,
+a,LGG,"<bound method Series.view of cohort                LGG
+view                  afe
+case-grouped     0.811822
+site-held-out    0.801108
+drop             0.010714
+Name: 74, dtype: object>",0.8118216348890818,0.8011077824751985,0.0107138524138832,
+a,LGG,"<bound method Series.view of cohort                LGG
+view                  ale
+case-grouped     0.792419
+site-held-out    0.788798
+drop             0.003621
+Name: 75, dtype: object>",0.7924191094810128,0.7887980513480976,0.0036210581329152,
+a,LGG,"<bound method Series.view of cohort                LGG
+view                  gex
+case-grouped     0.817818
+site-held-out    0.816927
+drop             0.000891
+Name: 76, dtype: object>",0.8178178458437159,0.8169265802465681,0.0008912655971478,
+a,LGG,"<bound method Series.view of cohort                LGG
+view                  hit
+case-grouped     0.803077
+site-held-out    0.804748
+drop            -0.001671
+Name: 77, dtype: object>",0.8030769661505724,0.8047475058562217,-0.0016705397056492,
+a,LGG,"<bound method Series.view of cohort                LGG
+view                  mxe
+case-grouped     0.798602
+site-held-out    0.807384
+drop            -0.008782
+Name: 78, dtype: object>",0.798601972916725,0.8073839721514497,-0.0087819992347247,
+a,LGG,"<bound method Series.view of cohort                LGG
+view                   ri
+case-grouped     0.815013
+site-held-out    0.810538
+drop             0.004475
+Name: 79, dtype: object>",0.8150133923155174,0.8105383990816698,0.0044749932338475,
+a,LGG,"<bound method Series.view of cohort                LGG
+view                   se
+case-grouped     0.800347
+site-held-out    0.800235
+drop             0.000112
+Name: 80, dtype: object>",0.8003471736148052,0.8002351821261584,0.0001119914886468,
+a,LGG,AS-view median,,,-0.0007792741085012,
+a,LGG_IDH,"<bound method Series.view of cohort            LGG_IDH
+view                 a3ss
+case-grouped     0.900202
+site-held-out     0.88152
+drop             0.018682
+Name: 81, dtype: object>",0.9002019813550574,0.8815197343141964,0.0186822470408609,
+a,LGG_IDH,"<bound method Series.view of cohort            LGG_IDH
+view                 a5ss
+case-grouped     0.914197
+site-held-out    0.919165
+drop            -0.004968
+Name: 82, dtype: object>",0.9141971709585134,0.9191650690853242,-0.0049678981268108,
+a,LGG_IDH,"<bound method Series.view of cohort            LGG_IDH
+view                  afe
+case-grouped     0.931486
+site-held-out    0.925957
+drop             0.005529
+Name: 83, dtype: object>",0.9314863544901888,0.9259574605192032,0.0055288939709856,
+a,LGG_IDH,"<bound method Series.view of cohort            LGG_IDH
+view                  ale
+case-grouped     0.891995
+site-held-out    0.899713
+drop            -0.007718
+Name: 84, dtype: object>",0.8919949891988305,0.8997129666477116,-0.0077179774488811,
+a,LGG_IDH,"<bound method Series.view of cohort            LGG_IDH
+view                  gex
+case-grouped     0.987422
+site-held-out    0.982499
+drop             0.004924
+Name: 85, dtype: object>",0.9874221532574378,0.9824986434983382,0.0049235097590996,
+a,LGG_IDH,"<bound method Series.view of cohort            LGG_IDH
+view                  hit
+case-grouped     0.926705
+site-held-out    0.910596
+drop              0.01611
+Name: 86, dtype: object>",0.9267054930633606,0.9105957718737248,0.0161097211896357,
+a,LGG_IDH,"<bound method Series.view of cohort            LGG_IDH
+view                  mxe
+case-grouped     0.929861
+site-held-out    0.921285
+drop             0.008576
+Name: 87, dtype: object>",0.9298608376113552,0.9212846279255048,0.0085762096858502,
+a,LGG_IDH,"<bound method Series.view of cohort            LGG_IDH
+view                   ri
+case-grouped      0.93592
+site-held-out    0.935651
+drop             0.000269
+Name: 88, dtype: object>",0.9359198212399882,0.935651320174039,0.0002685010659492,
+a,LGG_IDH,"<bound method Series.view of cohort            LGG_IDH
+view                   se
+case-grouped     0.905072
+site-held-out     0.91407
+drop            -0.008999
+Name: 89, dtype: object>",0.9050716195173082,0.914070175667108,-0.0089985561497998,
+a,LGG_IDH,AS-view median,,,0.0028986975184674,
+a,ESCA,"<bound method Series.view of cohort               ESCA
+view                 a3ss
+case-grouped      0.96695
+site-held-out    0.942001
+drop             0.024949
+Name: 45, dtype: object>",0.9669495884773665,0.9420010288065844,0.0249485596707819,
+a,ESCA,"<bound method Series.view of cohort               ESCA
+view                 a5ss
+case-grouped     0.981379
+site-held-out    0.948251
+drop             0.033128
+Name: 46, dtype: object>",0.9813786008230452,0.9482510288065844,0.0331275720164609,
+a,ESCA,"<bound method Series.view of cohort               ESCA
+view                  afe
+case-grouped     0.975283
+site-held-out    0.964943
+drop              0.01034
+Name: 47, dtype: object>",0.9752829218106996,0.96494341563786,0.0103395061728396,
+a,ESCA,"<bound method Series.view of cohort               ESCA
+view                  ale
+case-grouped     0.970988
+site-held-out    0.973148
+drop             -0.00216
+Name: 48, dtype: object>",0.9709876543209875,0.973148148148148,-0.0021604938271604,
+a,ESCA,"<bound method Series.view of cohort               ESCA
+view                  gex
+case-grouped     0.987654
+site-held-out    0.987654
+drop                  0.0
+Name: 49, dtype: object>",0.9876543209876544,0.9876543209876544,0.0,
+a,ESCA,"<bound method Series.view of cohort               ESCA
+view                  hit
+case-grouped     0.985597
+site-held-out    0.985597
+drop                  0.0
+Name: 50, dtype: object>",0.98559670781893,0.98559670781893,0.0,
+a,ESCA,"<bound method Series.view of cohort               ESCA
+view                  mxe
+case-grouped     0.966872
+site-held-out      0.9607
+drop             0.006173
+Name: 51, dtype: object>",0.9668724279835392,0.9606995884773664,0.0061728395061728,
+a,ESCA,"<bound method Series.view of cohort               ESCA
+view                   ri
+case-grouped      0.99177
+site-held-out    0.985571
+drop             0.006199
+Name: 52, dtype: object>",0.9917695473251028,0.985570987654321,0.0061985596707817,
+a,ESCA,"<bound method Series.view of cohort               ESCA
+view                   se
+case-grouped     0.979398
+site-held-out    0.977341
+drop             0.002058
+Name: 53, dtype: object>",0.979398148148148,0.977340534979424,0.0020576131687242,
+a,ESCA,AS-view median,,,0.0061856995884773,
+a,BRCA_ER,"<bound method Series.view of cohort            BRCA_ER
+view                 a3ss
+case-grouped     0.850359
+site-held-out    0.827013
+drop             0.023346
+Name: 9, dtype: object>",0.8503590986623575,0.8270131968758415,0.0233459017865159,
+a,BRCA_ER,"<bound method Series.view of cohort            BRCA_ER
+view                 a5ss
+case-grouped     0.848366
+site-held-out    0.837804
+drop             0.010562
+Name: 10, dtype: object>",0.8483661010862734,0.837804111679684,0.0105619894065893,
+a,BRCA_ER,"<bound method Series.view of cohort            BRCA_ER
+view                  afe
+case-grouped     0.874625
+site-held-out     0.87037
+drop             0.004255
+Name: 11, dtype: object>",0.8746251907711643,0.8703698716222282,0.004255319148936,
+a,BRCA_ER,"<bound method Series.view of cohort            BRCA_ER
+view                  ale
+case-grouped     0.851297
+site-held-out    0.857164
+drop            -0.005867
+Name: 12, dtype: object>",0.8512972439177663,0.8571640183140318,-0.0058667743962654,
+a,BRCA_ER,"<bound method Series.view of cohort            BRCA_ER
+view                  gex
+case-grouped     0.923467
+site-held-out    0.923947
+drop             -0.00048
+Name: 13, dtype: object>",0.9234670975850614,0.9239473920459648,-0.0004802944609032,
+a,BRCA_ER,"<bound method Series.view of cohort            BRCA_ER
+view                  hit
+case-grouped     0.846544
+site-held-out    0.852217
+drop            -0.005674
+Name: 14, dtype: object>",0.8465436753748093,0.8522174342400574,-0.005673758865248,
+a,BRCA_ER,"<bound method Series.view of cohort            BRCA_ER
+view                  mxe
+case-grouped     0.846638
+site-held-out    0.831726
+drop             0.014912
+Name: 15, dtype: object>",0.8466379387736781,0.8317263668192836,0.0149115719543945,
+a,BRCA_ER,"<bound method Series.view of cohort            BRCA_ER
+view                   ri
+case-grouped      0.88099
+site-held-out    0.874033
+drop             0.006958
+Name: 16, dtype: object>",0.8809902145614507,0.8740326779782746,0.0069575365831761,
+a,BRCA_ER,"<bound method Series.view of cohort            BRCA_ER
+view                   se
+case-grouped     0.861653
+site-held-out    0.845417
+drop             0.016236
+Name: 17, dtype: object>",0.8616527515935003,0.8454170033216627,0.0162357482718376,
+a,BRCA_ER,AS-view median,,,0.0087597629948827,
+a,BRCA_PAM50,"<bound method Series.view of cohort           BRCA_PAM50
+view                   a3ss
+case-grouped       0.543787
+site-held-out      0.526902
+drop               0.016885
+Name: 18, dtype: object>",0.543787044886182,0.5269018743294637,0.0168851705567183,
+a,BRCA_PAM50,"<bound method Series.view of cohort           BRCA_PAM50
+view                   a5ss
+case-grouped       0.541232
+site-held-out      0.547378
+drop              -0.006146
+Name: 19, dtype: object>",0.5412321687517706,0.5473780349867852,-0.0061458662350145,
+a,BRCA_PAM50,"<bound method Series.view of cohort           BRCA_PAM50
+view                    afe
+case-grouped       0.633967
+site-held-out      0.629641
+drop               0.004325
+Name: 20, dtype: object>",0.6339669321087816,0.6296414657071275,0.004325466401654,
+a,BRCA_PAM50,"<bound method Series.view of cohort           BRCA_PAM50
+view                    ale
+case-grouped       0.576321
+site-held-out      0.578654
+drop              -0.002334
+Name: 21, dtype: object>",0.5763207380854439,0.5786543245638874,-0.0023335864784435,
+a,BRCA_PAM50,"<bound method Series.view of cohort           BRCA_PAM50
+view                    gex
+case-grouped       0.837978
+site-held-out      0.834831
+drop               0.003147
+Name: 22, dtype: object>",0.837978335013887,0.8348311317503255,0.0031472032635614,
+a,BRCA_PAM50,"<bound method Series.view of cohort           BRCA_PAM50
+view                    hit
+case-grouped       0.614755
+site-held-out      0.588838
+drop               0.025916
+Name: 23, dtype: object>",0.6147545556625075,0.5888384142599888,0.0259161414025186,
+a,BRCA_PAM50,"<bound method Series.view of cohort           BRCA_PAM50
+view                    mxe
+case-grouped       0.564157
+site-held-out      0.545598
+drop                0.01856
+Name: 24, dtype: object>",0.5641574777821242,0.5455979762019646,0.0185595015801596,
+a,BRCA_PAM50,"<bound method Series.view of cohort           BRCA_PAM50
+view                     ri
+case-grouped       0.582234
+site-held-out       0.57716
+drop               0.005074
+Name: 25, dtype: object>",0.5822344223654596,0.5771604924803878,0.0050739298850718,
+a,BRCA_PAM50,"<bound method Series.view of cohort           BRCA_PAM50
+view                     se
+case-grouped       0.554938
+site-held-out      0.541959
+drop               0.012979
+Name: 26, dtype: object>",0.5549384281617283,0.5419593931462464,0.0129790350154819,
+a,BRCA_PAM50,AS-view median,,,0.0090264824502768,
+a,BRCA,"<bound method Series.view of cohort               BRCA
+view                 a3ss
+case-grouped     0.724622
+site-held-out    0.714829
+drop             0.009793
+Name: 0, dtype: object>",0.724621752555972,0.7148290747074256,0.0097926778485464,
+a,BRCA,"<bound method Series.view of cohort               BRCA
+view                 a5ss
+case-grouped     0.745419
+site-held-out    0.737208
+drop             0.008211
+Name: 1, dtype: object>",0.7454188198725257,0.7372076247949192,0.0082111950776064,
+a,BRCA,"<bound method Series.view of cohort               BRCA
+view                  afe
+case-grouped     0.775717
+site-held-out    0.761052
+drop             0.014666
+Name: 2, dtype: object>",0.7757172991459993,0.7610516063996577,0.0146656927463415,
+a,BRCA,"<bound method Series.view of cohort               BRCA
+view                  ale
+case-grouped     0.763129
+site-held-out    0.752532
+drop             0.010597
+Name: 3, dtype: object>",0.7631291513922737,0.7525320790695874,0.0105970723226862,
+a,BRCA,"<bound method Series.view of cohort               BRCA
+view                  gex
+case-grouped     0.866773
+site-held-out    0.864562
+drop             0.002211
+Name: 4, dtype: object>",0.8667731607582926,0.8645624981511443,0.0022106626071483,
+a,BRCA,"<bound method Series.view of cohort               BRCA
+view                  hit
+case-grouped     0.751772
+site-held-out    0.760378
+drop            -0.008606
+Name: 5, dtype: object>",0.7517720571336252,0.7603780540252719,-0.0086059968916467,
+a,BRCA,"<bound method Series.view of cohort               BRCA
+view                  mxe
+case-grouped     0.754259
+site-held-out    0.736519
+drop              0.01774
+Name: 6, dtype: object>",0.7542591947863405,0.7365192815744742,0.0177399132118663,
+a,BRCA,"<bound method Series.view of cohort               BRCA
+view                   ri
+case-grouped     0.799532
+site-held-out    0.777109
+drop             0.022423
+Name: 7, dtype: object>",0.7995316990586195,0.7771087764329486,0.0224229226256709,
+a,BRCA,"<bound method Series.view of cohort               BRCA
+view                   se
+case-grouped     0.741629
+site-held-out    0.720918
+drop             0.020711
+Name: 8, dtype: object>",0.7416289500092158,0.7209183522542387,0.020710597754977,
+a,BRCA,AS-view median,,,0.0126313825345139,
+a,UCEC_TCGA,"<bound method Series.view of cohort           UCEC_TCGA
+view                  a3ss
+case-grouped       0.36783
+site-held-out     0.376087
+drop             -0.008257
+Name: 180, dtype: object>",0.3678298628688423,0.3760873325233708,-0.0082574696545285,
+a,UCEC_TCGA,"<bound method Series.view of cohort           UCEC_TCGA
+view                  a5ss
+case-grouped      0.406349
+site-held-out     0.375346
+drop              0.031003
+Name: 181, dtype: object>",0.4063491360399582,0.3753459215011305,0.0310032145388276,
+a,UCEC_TCGA,"<bound method Series.view of cohort           UCEC_TCGA
+view                   afe
+case-grouped      0.396475
+site-held-out     0.392263
+drop              0.004212
+Name: 182, dtype: object>",0.3964749052231335,0.3922626781636349,0.0042122270594985,
+a,UCEC_TCGA,"<bound method Series.view of cohort           UCEC_TCGA
+view                   ale
+case-grouped      0.497293
+site-held-out      0.46519
+drop              0.032103
+Name: 183, dtype: object>",0.497292742398164,0.4651898912175312,0.0321028511806328,
+a,UCEC_TCGA,"<bound method Series.view of cohort           UCEC_TCGA
+view                   gex
+case-grouped      0.661809
+site-held-out     0.685684
+drop             -0.023875
+Name: 184, dtype: object>",0.6618093522549582,0.6856839121190644,-0.0238745598641062,
+a,UCEC_TCGA,"<bound method Series.view of cohort           UCEC_TCGA
+view                   hit
+case-grouped      0.426774
+site-held-out     0.401787
+drop              0.024987
+Name: 185, dtype: object>",0.4267739726412654,0.4017867689244372,0.0249872037168281,
+a,UCEC_TCGA,"<bound method Series.view of cohort           UCEC_TCGA
+view                   mxe
+case-grouped      0.416662
+site-held-out      0.43602
+drop             -0.019357
+Name: 186, dtype: object>",0.4166624481117748,0.4360196387792065,-0.0193571906674316,
+a,UCEC_TCGA,"<bound method Series.view of cohort           UCEC_TCGA
+view                    ri
+case-grouped      0.435857
+site-held-out     0.414424
+drop              0.021433
+Name: 187, dtype: object>",0.4358565213233887,0.4144238016491737,0.021432719674215,
+a,UCEC_TCGA,"<bound method Series.view of cohort           UCEC_TCGA
+view                    se
+case-grouped      0.345298
+site-held-out      0.35608
+drop             -0.010783
+Name: 188, dtype: object>",0.3452975065528219,0.3560801328563554,-0.0107826263035335,
+a,UCEC_TCGA,AS-view median,,,0.0128224733668568,
+a,STAD,"<bound method Series.view of cohort               STAD
+view                 a3ss
+case-grouped     0.577328
+site-held-out    0.586366
+drop            -0.009039
+Name: 126, dtype: object>",0.5773278738246891,0.5863663936912346,-0.0090385198665454,
+a,STAD,"<bound method Series.view of cohort               STAD
+view                 a5ss
+case-grouped     0.587655
+site-held-out    0.604322
+drop            -0.016667
+Name: 127, dtype: object>",0.5876554443433425,0.6043221110100091,-0.0166666666666666,
+a,STAD,"<bound method Series.view of cohort               STAD
+view                  afe
+case-grouped     0.622505
+site-held-out    0.602396
+drop             0.020109
+Name: 128, dtype: object>",0.6225053078556263,0.6023961176827419,0.0201091901728843,
+a,STAD,"<bound method Series.view of cohort               STAD
+view                  ale
+case-grouped     0.624143
+site-held-out    0.595769
+drop             0.028374
+Name: 129, dtype: object>",0.624143160448893,0.595768880800728,0.0283742796481649,
+a,STAD,"<bound method Series.view of cohort               STAD
+view                  gex
+case-grouped     0.638308
+site-held-out    0.619548
+drop             0.018759
+Name: 130, dtype: object>",0.6383075523202911,0.6195480740066728,0.0187594783136183,
+a,STAD,"<bound method Series.view of cohort               STAD
+view                  hit
+case-grouped     0.569836
+site-held-out    0.580133
+drop            -0.010297
+Name: 131, dtype: object>",0.5698362147406734,0.5801334546557477,-0.0102972399150743,
+a,STAD,"<bound method Series.view of cohort               STAD
+view                  mxe
+case-grouped     0.610889
+site-held-out    0.582545
+drop             0.028344
+Name: 132, dtype: object>",0.6108886866848651,0.582544737640279,0.028343949044586,
+a,STAD,"<bound method Series.view of cohort               STAD
+view                   ri
+case-grouped     0.591841
+site-held-out    0.579421
+drop              0.01242
+Name: 133, dtype: object>",0.591841067637246,0.5794206854716409,0.012420382165605,
+a,STAD,"<bound method Series.view of cohort               STAD
+view                   se
+case-grouped     0.602229
+site-held-out    0.580027
+drop             0.022202
+Name: 134, dtype: object>",0.6022292993630574,0.5800272975432211,0.0222020018198362,
+a,STAD,AS-view median,,,0.0162647861692447,
+a,PCPG_mRNA,"<bound method Series.view of cohort           PCPG_mRNA
+view                  a3ss
+case-grouped      0.505081
+site-held-out      0.50511
+drop             -0.000029
+Name: 108, dtype: object>",0.5050809444493147,0.5051101662721721,-2.9221822857361524e-05,
+a,PCPG_mRNA,"<bound method Series.view of cohort           PCPG_mRNA
+view                  a5ss
+case-grouped      0.514193
+site-held-out     0.497874
+drop              0.016319
+Name: 109, dtype: object>",0.5141926740890096,0.4978741123871306,0.0163185617018789,
+a,PCPG_mRNA,"<bound method Series.view of cohort           PCPG_mRNA
+view                   afe
+case-grouped      0.597531
+site-held-out     0.574377
+drop              0.023155
+Name: 110, dtype: object>",0.5975314865141287,0.5743768446275679,0.0231546418865608,
+a,PCPG_mRNA,"<bound method Series.view of cohort           PCPG_mRNA
+view                   ale
+case-grouped      0.541668
+site-held-out     0.537541
+drop              0.004128
+Name: 111, dtype: object>",0.5416684930305952,0.5375409105520003,0.0041275824785949,
+a,PCPG_mRNA,"<bound method Series.view of cohort           PCPG_mRNA
+view                   gex
+case-grouped      0.922367
+site-held-out     0.910117
+drop              0.012249
+Name: 112, dtype: object>",0.9223667484877708,0.910117325618772,0.0122494228689985,
+a,PCPG_mRNA,"<bound method Series.view of cohort           PCPG_mRNA
+view                   hit
+case-grouped      0.530769
+site-held-out     0.531824
+drop             -0.001056
+Name: 113, dtype: object>",0.5307687531048186,0.5318243914555391,-0.0010556383507204,
+a,PCPG_mRNA,"<bound method Series.view of cohort           PCPG_mRNA
+view                   mxe
+case-grouped      0.554692
+site-held-out      0.53458
+drop              0.020112
+Name: 114, dtype: object>",0.5546922942053124,0.5345803746237691,0.0201119195815433,
+a,PCPG_mRNA,"<bound method Series.view of cohort           PCPG_mRNA
+view                    ri
+case-grouped      0.595473
+site-held-out     0.546483
+drop               0.04899
+Name: 115, dtype: object>",0.595473174366617,0.5464827883463371,0.0489903860202798,
+a,PCPG_mRNA,"<bound method Series.view of cohort           PCPG_mRNA
+view                    se
+case-grouped      0.530047
+site-held-out     0.513038
+drop              0.017009
+Name: 116, dtype: object>",0.5300473393530288,0.513038412086146,0.0170089272668828,
+a,PCPG_mRNA,AS-view median,,,0.0166637444843809,
+a,PCPG,"<bound method Series.view of cohort               PCPG
+view                 a3ss
+case-grouped     0.538814
+site-held-out    0.518844
+drop              0.01997
+Name: 99, dtype: object>",0.5388138138138138,0.5188438438438439,0.0199699699699699,
+a,PCPG,"<bound method Series.view of cohort               PCPG
+view                 a5ss
+case-grouped     0.556532
+site-held-out    0.507658
+drop             0.048874
+Name: 100, dtype: object>",0.5565315315315315,0.5076576576576577,0.0488738738738737,
+a,PCPG,"<bound method Series.view of cohort               PCPG
+view                  afe
+case-grouped     0.553153
+site-held-out    0.543243
+drop              0.00991
+Name: 101, dtype: object>",0.5531531531531532,0.5432432432432432,0.0099099099099099,
+a,PCPG,"<bound method Series.view of cohort               PCPG
+view                  ale
+case-grouped     0.571922
+site-held-out    0.540991
+drop             0.030931
+Name: 102, dtype: object>",0.5719219219219219,0.540990990990991,0.0309309309309309,
+a,PCPG,"<bound method Series.view of cohort               PCPG
+view                  gex
+case-grouped     0.838589
+site-held-out    0.829655
+drop             0.008934
+Name: 103, dtype: object>",0.8385885885885885,0.8296546546546546,0.0089339339339339,
+a,PCPG,"<bound method Series.view of cohort               PCPG
+view                  hit
+case-grouped     0.532132
+site-held-out    0.511036
+drop             0.021096
+Name: 104, dtype: object>",0.5321321321321322,0.5110360360360361,0.021096096096096,
+a,PCPG,"<bound method Series.view of cohort               PCPG
+view                  mxe
+case-grouped     0.533183
+site-held-out    0.523198
+drop             0.009985
+Name: 105, dtype: object>",0.5331831831831831,0.5231981981981982,0.0099849849849849,
+a,PCPG,"<bound method Series.view of cohort               PCPG
+view                   ri
+case-grouped     0.594369
+site-held-out    0.546622
+drop             0.047748
+Name: 106, dtype: object>",0.5943693693693693,0.5466216216216216,0.0477477477477477,
+a,PCPG,"<bound method Series.view of cohort               PCPG
+view                   se
+case-grouped     0.510961
+site-held-out    0.518844
+drop            -0.007883
+Name: 107, dtype: object>",0.510960960960961,0.5188438438438439,-0.0078828828828828,
+a,PCPG,AS-view median,,,0.020533033033033,
+a,MESO,"<bound method Series.view of cohort               MESO
+view                 a3ss
+case-grouped      0.49697
+site-held-out    0.493939
+drop              0.00303
+Name: 90, dtype: object>",0.496969696969697,0.4939393939393939,0.003030303030303,
+a,MESO,"<bound method Series.view of cohort               MESO
+view                 a5ss
+case-grouped     0.527561
+site-held-out    0.491631
+drop             0.035931
+Name: 91, dtype: object>",0.5275613275613275,0.4916305916305916,0.0359307359307358,
+a,MESO,"<bound method Series.view of cohort               MESO
+view                  afe
+case-grouped     0.558874
+site-held-out    0.525974
+drop               0.0329
+Name: 92, dtype: object>",0.5588744588744589,0.5259740259740259,0.0329004329004329,
+a,MESO,"<bound method Series.view of cohort               MESO
+view                  ale
+case-grouped     0.523377
+site-held-out    0.503319
+drop             0.020058
+Name: 93, dtype: object>",0.5233766233766234,0.5033189033189033,0.0200577200577201,
+a,MESO,"<bound method Series.view of cohort               MESO
+view                  gex
+case-grouped     0.714141
+site-held-out    0.681241
+drop               0.0329
+Name: 94, dtype: object>",0.7141414141414142,0.6812409812409812,0.0329004329004329,
+a,MESO,"<bound method Series.view of cohort               MESO
+view                  hit
+case-grouped     0.541558
+site-held-out    0.520346
+drop             0.021212
+Name: 95, dtype: object>",0.5415584415584416,0.5203463203463203,0.0212121212121212,
+a,MESO,"<bound method Series.view of cohort               MESO
+view                  mxe
+case-grouped      0.51241
+site-held-out    0.503319
+drop             0.009091
+Name: 96, dtype: object>",0.5124098124098123,0.5033189033189033,0.009090909090909,
+a,MESO,"<bound method Series.view of cohort               MESO
+view                   ri
+case-grouped     0.551371
+site-held-out    0.498413
+drop             0.052958
+Name: 97, dtype: object>",0.5513708513708514,0.4984126984126984,0.0529581529581529,
+a,MESO,"<bound method Series.view of cohort               MESO
+view                   se
+case-grouped     0.514719
+site-held-out    0.532468
+drop            -0.017749
+Name: 98, dtype: object>",0.5147186147186147,0.5324675324675324,-0.0177489177489177,
+a,MESO,AS-view median,,,0.0206349206349206,
+a,UCEC,"<bound method Series.view of cohort               UCEC
+view                 a3ss
+case-grouped     0.694242
+site-held-out    0.695844
+drop            -0.001603
+Name: 171, dtype: object>",0.6942418213969939,0.6958443854995578,-0.0016025641025639,
+a,UCEC,"<bound method Series.view of cohort               UCEC
+view                 a5ss
+case-grouped     0.767739
+site-held-out    0.755913
+drop             0.011826
+Name: 172, dtype: object>",0.767738726790451,0.7559129089301503,0.0118258178603006,
+a,UCEC,"<bound method Series.view of cohort               UCEC
+view                  afe
+case-grouped     0.814379
+site-held-out    0.767683
+drop             0.046695
+Name: 173, dtype: object>",0.8143788682581786,0.767683465959328,0.0466954022988506,
+a,UCEC,"<bound method Series.view of cohort               UCEC
+view                  ale
+case-grouped     0.729609
+site-held-out    0.679432
+drop             0.050177
+Name: 174, dtype: object>",0.72960875331565,0.6794319186560566,0.0501768346595934,
+a,UCEC,"<bound method Series.view of cohort               UCEC
+view                  gex
+case-grouped     0.887434
+site-held-out    0.881963
+drop             0.005471
+Name: 175, dtype: object>",0.8874336870026526,0.8819628647214856,0.005470822281167,
+a,UCEC,"<bound method Series.view of cohort               UCEC
+view                  hit
+case-grouped     0.750774
+site-held-out    0.713031
+drop             0.037743
+Name: 176, dtype: object>",0.7507736516357205,0.7130305039787798,0.0377431476569407,
+a,UCEC,"<bound method Series.view of cohort               UCEC
+view                  mxe
+case-grouped     0.724248
+site-held-out    0.739887
+drop            -0.015639
+Name: 177, dtype: object>",0.7242484526967284,0.7398872679045093,-0.0156388152077808,
+a,UCEC,"<bound method Series.view of cohort               UCEC
+view                   ri
+case-grouped     0.767076
+site-held-out    0.729001
+drop             0.038075
+Name: 178, dtype: object>",0.7670755968169761,0.7290008841732979,0.0380747126436782,
+a,UCEC,"<bound method Series.view of cohort               UCEC
+view                   se
+case-grouped     0.710267
+site-held-out    0.726238
+drop             -0.01597
+Name: 179, dtype: object>",0.7102674624226349,0.7262378426171529,-0.0159703801945179,
+a,UCEC,AS-view median,,,0.0247844827586207,
+a,COAD_TCGA,"<bound method Series.view of cohort           COAD_TCGA
+view                  a3ss
+case-grouped      0.453473
+site-held-out      0.42798
+drop              0.025493
+Name: 36, dtype: object>",0.4534730016211497,0.42798042149894,0.0254925801222097,
+a,COAD_TCGA,"<bound method Series.view of cohort           COAD_TCGA
+view                  a5ss
+case-grouped       0.59224
+site-held-out     0.571062
+drop              0.021178
+Name: 37, dtype: object>",0.5922403042773413,0.5710624766180322,0.021177827659309,
+a,COAD_TCGA,"<bound method Series.view of cohort           COAD_TCGA
+view                   afe
+case-grouped      0.615251
+site-held-out     0.557074
+drop              0.058177
+Name: 38, dtype: object>",0.6152512782142412,0.5570738246664172,0.058177453547824,
+a,COAD_TCGA,"<bound method Series.view of cohort           COAD_TCGA
+view                   ale
+case-grouped      0.528317
+site-held-out     0.516589
+drop              0.011728
+Name: 39, dtype: object>",0.5283171218356403,0.516588726773912,0.0117283950617282,
+a,COAD_TCGA,"<bound method Series.view of cohort           COAD_TCGA
+view                   gex
+case-grouped      0.801219
+site-held-out     0.778863
+drop              0.022356
+Name: 40, dtype: object>",0.8012189799226835,0.7788627010849233,0.0223562788377602,
+a,COAD_TCGA,"<bound method Series.view of cohort           COAD_TCGA
+view                   hit
+case-grouped       0.48131
+site-held-out     0.487324
+drop             -0.006014
+Name: 41, dtype: object>",0.4813100137174211,0.4873238558423743,-0.0060138421249532,
+a,COAD_TCGA,"<bound method Series.view of cohort           COAD_TCGA
+view                   mxe
+case-grouped      0.631587
+site-held-out     0.606057
+drop               0.02553
+Name: 42, dtype: object>",0.6315874797356279,0.6060574884648958,0.025529991270732,
+a,COAD_TCGA,"<bound method Series.view of cohort           COAD_TCGA
+view                    ri
+case-grouped      0.615579
+site-held-out     0.586912
+drop              0.028666
+Name: 43, dtype: object>",0.6155786257638111,0.5869123332086296,0.0286662925551814,
+a,COAD_TCGA,"<bound method Series.view of cohort           COAD_TCGA
+view                    se
+case-grouped       0.52442
+site-held-out     0.492387
+drop              0.032033
+Name: 44, dtype: object>",0.5244201271979049,0.4923868312757202,0.0320332959221846,
+a,COAD_TCGA,AS-view median,,,0.0255112856964709,
+a,THYM,"<bound method Series.view of cohort               THYM
+view                 a3ss
+case-grouped     0.766426
+site-held-out    0.714998
+drop             0.051428
+Name: 162, dtype: object>",0.7664258685930513,0.7149982800137599,0.0514275885792914,
+a,THYM,"<bound method Series.view of cohort               THYM
+view                 a5ss
+case-grouped     0.746818
+site-held-out    0.745958
+drop              0.00086
+Name: 163, dtype: object>",0.7468180254557963,0.7459580323357414,0.0008599931200549,
+a,THYM,"<bound method Series.view of cohort               THYM
+view                  afe
+case-grouped     0.801342
+site-held-out    0.763502
+drop              0.03784
+Name: 164, dtype: object>",0.8013415892672858,0.7635018919848641,0.0378396972824217,
+a,THYM,"<bound method Series.view of cohort               THYM
+view                  ale
+case-grouped     0.778638
+site-held-out    0.748366
+drop             0.030272
+Name: 165, dtype: object>",0.7786377708978328,0.7483660130718954,0.0302717578259373,
+a,THYM,"<bound method Series.view of cohort               THYM
+view                  gex
+case-grouped     0.831957
+site-held-out    0.843653
+drop            -0.011696
+Name: 166, dtype: object>",0.8319573443412452,0.8436532507739938,-0.0116959064327485,
+a,THYM,"<bound method Series.view of cohort               THYM
+view                  hit
+case-grouped     0.814757
+site-held-out    0.779842
+drop             0.034916
+Name: 167, dtype: object>",0.8147574819401445,0.7798417612659098,0.0349157206742347,
+a,THYM,"<bound method Series.view of cohort               THYM
+view                  mxe
+case-grouped      0.76677
+site-held-out    0.746302
+drop             0.020468
+Name: 168, dtype: object>",0.7667698658410732,0.7463020295837633,0.0204678362573098,
+a,THYM,"<bound method Series.view of cohort               THYM
+view                   ri
+case-grouped     0.772102
+site-held-out    0.728758
+drop             0.043344
+Name: 169, dtype: object>",0.7721018231854145,0.7287581699346406,0.0433436532507739,
+a,THYM,"<bound method Series.view of cohort               THYM
+view                   se
+case-grouped     0.756966
+site-held-out    0.754386
+drop              0.00258
+Name: 170, dtype: object>",0.7569659442724458,0.7543859649122807,0.002579979360165,
+a,THYM,AS-view median,,,0.032593739250086,
+a,PRAD_ETS,"<bound method Series.view of cohort           PRAD_ETS
+view                 a3ss
+case-grouped     0.330122
+site-held-out     0.32337
+drop             0.006752
+Name: 117, dtype: object>",0.3301216389496683,0.3233698049334524,0.0067518340162159,
+a,PRAD_ETS,"<bound method Series.view of cohort           PRAD_ETS
+view                 a5ss
+case-grouped     0.427703
+site-held-out     0.39189
+drop             0.035812
+Name: 118, dtype: object>",0.4277028602304,0.391890464297135,0.0358123959332649,
+a,PRAD_ETS,"<bound method Series.view of cohort           PRAD_ETS
+view                  afe
+case-grouped     0.598901
+site-held-out    0.532343
+drop             0.066558
+Name: 119, dtype: object>",0.5989011557019513,0.53234284840007,0.0665583073018813,
+a,PRAD_ETS,"<bound method Series.view of cohort           PRAD_ETS
+view                  ale
+case-grouped     0.492504
+site-held-out    0.424737
+drop             0.067767
+Name: 120, dtype: object>",0.4925040445236284,0.424737450555994,0.0677665939676343,
+a,PRAD_ETS,"<bound method Series.view of cohort           PRAD_ETS
+view                  gex
+case-grouped     0.909936
+site-held-out    0.898744
+drop             0.011192
+Name: 121, dtype: object>",0.909936345026614,0.8987444451795737,0.0111918998470403,
+a,PRAD_ETS,"<bound method Series.view of cohort           PRAD_ETS
+view                  hit
+case-grouped     0.471274
+site-held-out    0.432061
+drop             0.039213
+Name: 122, dtype: object>",0.4712738890752967,0.4320605193845708,0.0392133696907259,
+a,PRAD_ETS,"<bound method Series.view of cohort           PRAD_ETS
+view                  mxe
+case-grouped     0.523784
+site-held-out    0.460382
+drop             0.063402
+Name: 123, dtype: object>",0.5237837778764951,0.460382128719032,0.0634016491574631,
+a,PRAD_ETS,"<bound method Series.view of cohort           PRAD_ETS
+view                   ri
+case-grouped     0.480854
+site-held-out    0.460131
+drop             0.020723
+Name: 124, dtype: object>",0.4808541328966666,0.4601314627706916,0.0207226701259749,
+a,PRAD_ETS,"<bound method Series.view of cohort           PRAD_ETS
+view                   se
+case-grouped     0.447964
+site-held-out    0.409693
+drop             0.038271
+Name: 125, dtype: object>",0.4479641218854804,0.4096928170520582,0.0382713048334222,
+a,PRAD_ETS,AS-view median,,,0.0387423372620741,
+a,STAD_TCGA,"<bound method Series.view of cohort           STAD_TCGA
+view                  a3ss
+case-grouped      0.496468
+site-held-out      0.47314
+drop              0.023327
+Name: 135, dtype: object>",0.4964677349228845,0.4731404669527593,0.0233272679701251,
+a,STAD_TCGA,"<bound method Series.view of cohort           STAD_TCGA
+view                  a5ss
+case-grouped      0.570638
+site-held-out     0.502814
+drop              0.067824
+Name: 136, dtype: object>",0.570637764782283,0.50281414322112,0.067823621561163,
+a,STAD_TCGA,"<bound method Series.view of cohort           STAD_TCGA
+view                   afe
+case-grouped      0.696382
+site-held-out     0.644481
+drop              0.051901
+Name: 137, dtype: object>",0.6963823413574244,0.6444813215577335,0.0519010197996908,
+a,STAD_TCGA,"<bound method Series.view of cohort           STAD_TCGA
+view                   ale
+case-grouped      0.630292
+site-held-out      0.57071
+drop              0.059582
+Name: 138, dtype: object>",0.6302919809979611,0.5707102421388136,0.0595817388591475,
+a,STAD_TCGA,"<bound method Series.view of cohort           STAD_TCGA
+view                   gex
+case-grouped      0.852007
+site-held-out     0.853757
+drop              -0.00175
+Name: 139, dtype: object>",0.8520068386762739,0.853756957328386,-0.001750118652112,
+a,STAD_TCGA,"<bound method Series.view of cohort           STAD_TCGA
+view                   hit
+case-grouped       0.62958
+site-held-out      0.55817
+drop              0.071411
+Name: 140, dtype: object>",0.6295801512994204,0.5581695574635774,0.0714105938358429,
+a,STAD_TCGA,"<bound method Series.view of cohort           STAD_TCGA
+view                   mxe
+case-grouped      0.580848
+site-held-out     0.541511
+drop              0.039336
+Name: 141, dtype: object>",0.5808476269024442,0.541511450896833,0.0393361760056112,
+a,STAD_TCGA,"<bound method Series.view of cohort           STAD_TCGA
+view                    ri
+case-grouped      0.696516
+site-held-out     0.676706
+drop               0.01981
+Name: 142, dtype: object>",0.696516094647324,0.6767057969715777,0.0198102976757462,
+a,STAD_TCGA,"<bound method Series.view of cohort           STAD_TCGA
+view                    se
+case-grouped      0.510539
+site-held-out     0.433614
+drop              0.076924
+Name: 143, dtype: object>",0.510538561659824,0.4336142677920087,0.0769242938678153,
+a,STAD_TCGA,AS-view median,,,0.0557413793294191,
+a,TGCT,"<bound method Series.view of cohort               TGCT
+view                 a3ss
+case-grouped          1.0
+site-held-out    0.933333
+drop             0.066667
+Name: 144, dtype: object>",1.0,0.9333333333333332,0.0666666666666667,
+a,TGCT,"<bound method Series.view of cohort               TGCT
+view                 a5ss
+case-grouped          1.0
+site-held-out    0.963333
+drop             0.036667
+Name: 145, dtype: object>",1.0,0.9633333333333332,0.0366666666666667,
+a,TGCT,"<bound method Series.view of cohort               TGCT
+view                  afe
+case-grouped          1.0
+site-held-out    0.902396
+drop             0.097604
+Name: 146, dtype: object>",1.0,0.9023958333333332,0.0976041666666667,
+a,TGCT,"<bound method Series.view of cohort               TGCT
+view                  ale
+case-grouped          1.0
+site-held-out    0.953333
+drop             0.046667
+Name: 147, dtype: object>",1.0,0.9533333333333333,0.0466666666666667,
+a,TGCT,"<bound method Series.view of cohort           TGCT
+view              gex
+case-grouped      1.0
+site-held-out     1.0
+drop              0.0
+Name: 148, dtype: object>",1.0,1.0,0.0,
+a,TGCT,"<bound method Series.view of cohort               TGCT
+view                  hit
+case-grouped          1.0
+site-held-out    0.883333
+drop             0.116667
+Name: 149, dtype: object>",1.0,0.8833333333333333,0.1166666666666667,
+a,TGCT,"<bound method Series.view of cohort               TGCT
+view                  mxe
+case-grouped          1.0
+site-held-out    0.963333
+drop             0.036667
+Name: 150, dtype: object>",1.0,0.9633333333333332,0.0366666666666667,
+a,TGCT,"<bound method Series.view of cohort               TGCT
+view                   ri
+case-grouped          1.0
+site-held-out    0.973333
+drop             0.026667
+Name: 151, dtype: object>",1.0,0.9733333333333332,0.0266666666666667,
+a,TGCT,"<bound method Series.view of cohort               TGCT
+view                   se
+case-grouped          1.0
+site-held-out    0.893333
+drop             0.106667
+Name: 152, dtype: object>",1.0,0.8933333333333334,0.1066666666666665,
+a,TGCT,AS-view median,,,0.0566666666666667,
+a,HNSC_mRNA,"<bound method Series.view of cohort           HNSC_mRNA
+view                  a3ss
+case-grouped      0.611426
+site-held-out     0.504396
+drop               0.10703
+Name: 63, dtype: object>",0.6114264077724113,0.5043963089111614,0.1070300988612499,
+a,HNSC_mRNA,"<bound method Series.view of cohort           HNSC_mRNA
+view                  a5ss
+case-grouped      0.653149
+site-held-out     0.592782
+drop              0.060367
+Name: 64, dtype: object>",0.6531492984790815,0.592782322231218,0.0603669762478635,
+a,HNSC_mRNA,"<bound method Series.view of cohort           HNSC_mRNA
+view                   afe
+case-grouped      0.723626
+site-held-out     0.622092
+drop              0.101534
+Name: 65, dtype: object>",0.7236260395631121,0.6220922167316539,0.1015338228314581,
+a,HNSC_mRNA,"<bound method Series.view of cohort           HNSC_mRNA
+view                   ale
+case-grouped      0.672734
+site-held-out      0.60501
+drop              0.067724
+Name: 66, dtype: object>",0.672734163432815,0.6050102444078406,0.0677239190249744,
+a,HNSC_mRNA,"<bound method Series.view of cohort           HNSC_mRNA
+view                   gex
+case-grouped      0.910287
+site-held-out     0.901901
+drop              0.008386
+Name: 67, dtype: object>",0.9102870062753784,0.9019010472406016,0.0083859590347767,
+a,HNSC_mRNA,"<bound method Series.view of cohort           HNSC_mRNA
+view                   hit
+case-grouped      0.692776
+site-held-out     0.609553
+drop              0.083223
+Name: 68, dtype: object>",0.6927759708534577,0.6095526892927713,0.0832232815606863,
+a,HNSC_mRNA,"<bound method Series.view of cohort           HNSC_mRNA
+view                   mxe
+case-grouped      0.663805
+site-held-out     0.609784
+drop              0.054021
+Name: 69, dtype: object>",0.6638049716010436,0.6097841384615862,0.0540208331394573,
+a,HNSC_mRNA,"<bound method Series.view of cohort           HNSC_mRNA
+view                    ri
+case-grouped      0.637029
+site-held-out     0.559644
+drop              0.077386
+Name: 70, dtype: object>",0.6370290519308499,0.5596435240762972,0.0773855278545526,
+a,HNSC_mRNA,"<bound method Series.view of cohort           HNSC_mRNA
+view                    se
+case-grouped      0.613053
+site-held-out     0.572439
+drop              0.040614
+Name: 71, dtype: object>",0.6130530894528354,0.5724387662041561,0.0406143232486793,
+a,HNSC_mRNA,AS-view median,,,0.0725547234397635,
+a,THCA,"<bound method Series.view of cohort               THCA
+view                 a3ss
+case-grouped     0.428012
+site-held-out     0.37835
+drop             0.049662
+Name: 153, dtype: object>",0.4280115769004657,0.3783498394609506,0.0496617374395151,
+a,THCA,"<bound method Series.view of cohort               THCA
+view                 a5ss
+case-grouped     0.422162
+site-held-out    0.368047
+drop             0.054115
+Name: 154, dtype: object>",0.422162076606521,0.3680468502690725,0.0541152263374484,
+a,THCA,"<bound method Series.view of cohort               THCA
+view                  afe
+case-grouped     0.489788
+site-held-out    0.406631
+drop             0.083157
+Name: 155, dtype: object>",0.4897883597883598,0.4066309410753856,0.0831574187129742,
+a,THCA,"<bound method Series.view of cohort               THCA
+view                  ale
+case-grouped     0.472502
+site-held-out    0.393301
+drop             0.079201
+Name: 156, dtype: object>",0.4725021480577036,0.3933012255234477,0.0792009225342558,
+a,THCA,"<bound method Series.view of cohort               THCA
+view                  gex
+case-grouped     0.583826
+site-held-out    0.467358
+drop             0.116468
+Name: 157, dtype: object>",0.5838262560484783,0.4673581151358929,0.1164681409125853,
+a,THCA,"<bound method Series.view of cohort               THCA
+view                  hit
+case-grouped     0.467235
+site-held-out    0.391871
+drop             0.075364
+Name: 158, dtype: object>",0.4672351105684438,0.3918708452041786,0.0753642653642652,
+a,THCA,"<bound method Series.view of cohort               THCA
+view                  mxe
+case-grouped     0.482338
+site-held-out    0.377113
+drop             0.105225
+Name: 159, dtype: object>",0.4823379912268801,0.3771125582236693,0.1052254330032107,
+a,THCA,"<bound method Series.view of cohort               THCA
+view                   ri
+case-grouped     0.466755
+site-held-out    0.371064
+drop             0.095692
+Name: 160, dtype: object>",0.4667553023108579,0.3710636277302943,0.0956916745805635,
+a,THCA,"<bound method Series.view of cohort               THCA
+view                   se
+case-grouped     0.440877
+site-held-out    0.387395
+drop             0.053482
+Name: 161, dtype: object>",0.4408768597657486,0.387394745172523,0.0534821145932256,
+a,THCA,AS-view median,,,0.0772825939492605,
+a,CESC,"<bound method Series.view of cohort               CESC
+view                 a3ss
+case-grouped      0.70463
+site-held-out    0.611343
+drop             0.093287
+Name: 27, dtype: object>",0.7046296296296296,0.6113425925925926,0.093287037037037,
+a,CESC,"<bound method Series.view of cohort               CESC
+view                 a5ss
+case-grouped     0.755324
+site-held-out    0.679398
+drop             0.075926
+Name: 28, dtype: object>",0.755324074074074,0.6793981481481483,0.0759259259259257,
+a,CESC,"<bound method Series.view of cohort               CESC
+view                  afe
+case-grouped     0.800926
+site-held-out    0.732176
+drop              0.06875
+Name: 29, dtype: object>",0.8009259259259259,0.732175925925926,0.0687499999999999,
+a,CESC,"<bound method Series.view of cohort               CESC
+view                  ale
+case-grouped     0.768981
+site-held-out    0.686343
+drop             0.082639
+Name: 30, dtype: object>",0.7689814814814815,0.6863425925925926,0.0826388888888889,
+a,CESC,"<bound method Series.view of cohort               CESC
+view                  gex
+case-grouped     0.911111
+site-held-out    0.911806
+drop            -0.000694
+Name: 31, dtype: object>",0.9111111111111112,0.9118055555555556,-0.0006944444444444,
+a,CESC,"<bound method Series.view of cohort               CESC
+view                  hit
+case-grouped     0.788426
+site-held-out    0.706713
+drop             0.081713
+Name: 32, dtype: object>",0.7884259259259259,0.706712962962963,0.0817129629629628,
+a,CESC,"<bound method Series.view of cohort               CESC
+view                  mxe
+case-grouped     0.784259
+site-held-out    0.726157
+drop             0.058102
+Name: 33, dtype: object>",0.7842592592592593,0.7261574074074074,0.0581018518518519,
+a,CESC,"<bound method Series.view of cohort               CESC
+view                   ri
+case-grouped     0.783796
+site-held-out    0.718981
+drop             0.064815
+Name: 34, dtype: object>",0.7837962962962962,0.7189814814814816,0.0648148148148146,
+a,CESC,"<bound method Series.view of cohort               CESC
+view                   se
+case-grouped     0.802546
+site-held-out    0.723843
+drop             0.078704
+Name: 35, dtype: object>",0.8025462962962964,0.7238425925925925,0.0787037037037038,
+a,CESC,AS-view median,,,0.0773148148148147,
+a,HNSC_HPV,"<bound method Series.view of cohort           HNSC_HPV
+view                 a3ss
+case-grouped     0.725547
+site-held-out    0.642181
+drop             0.083365
+Name: 54, dtype: object>",0.7255466052934407,0.6421813067382688,0.0833652985551719,
+a,HNSC_HPV,"<bound method Series.view of cohort           HNSC_HPV
+view                 a5ss
+case-grouped     0.763841
+site-held-out    0.652282
+drop             0.111559
+Name: 55, dtype: object>",0.763840941056131,0.6522823168392788,0.1115586242168521,
+a,HNSC_HPV,"<bound method Series.view of cohort           HNSC_HPV
+view                  afe
+case-grouped     0.818949
+site-held-out    0.729702
+drop             0.089247
+Name: 56, dtype: object>",0.8189489835059455,0.7297020841324638,0.0892468993734816,
+a,HNSC_HPV,"<bound method Series.view of cohort           HNSC_HPV
+view                  ale
+case-grouped     0.794528
+site-held-out    0.718322
+drop             0.076205
+Name: 57, dtype: object>",0.7945275540212249,0.7183224651579082,0.0762050888633166,
+a,HNSC_HPV,"<bound method Series.view of cohort           HNSC_HPV
+view                  gex
+case-grouped     0.939778
+site-held-out    0.925457
+drop              0.01432
+Name: 58, dtype: object>",0.9397775220560032,0.9254571026722924,0.0143204193837105,
+a,HNSC_HPV,"<bound method Series.view of cohort           HNSC_HPV
+view                  hit
+case-grouped     0.823999
+site-held-out    0.716724
+drop             0.107275
+Name: 59, dtype: object>",0.8239994885564506,0.7167242040659763,0.1072752844904743,
+a,HNSC_HPV,"<bound method Series.view of cohort           HNSC_HPV
+view                  mxe
+case-grouped     0.744023
+site-held-out    0.664429
+drop             0.079593
+Name: 60, dtype: object>",0.7440225035161744,0.6644291011379618,0.0795934023782125,
+a,HNSC_HPV,"<bound method Series.view of cohort           HNSC_HPV
+view                   ri
+case-grouped     0.824447
+site-held-out    0.682585
+drop             0.141862
+Name: 61, dtype: object>",0.8244470016621915,0.6825853471423091,0.1418616545198824,
+a,HNSC_HPV,"<bound method Series.view of cohort           HNSC_HPV
+view                   se
+case-grouped     0.821123
+site-held-out    0.696522
+drop               0.1246
+Name: 62, dtype: object>",0.821122618590973,0.6965221838639559,0.1246004347270171,
+a,HNSC_HPV,AS-view median,,,0.0982610919319779,
+b,LGG,GEX,,,0.0008912655971478,0.3398559969225153
+b,LGG_IDH,GEX,,,0.0049235097590996,0.2419959346146163
+b,ESCA,GEX,,,0.0,0.802147792657555
+b,BRCA_ER,GEX,,,-0.0004802944609032,0.2084998852258622
+b,BRCA_PAM50,GEX,,,0.0031472032635614,0.2251872957807547
+b,BRCA,GEX,,,0.0022106626071483,0.4101984284651258
+b,UCEC_TCGA,GEX,,,-0.0238745598641062,0.372439967064797
+b,STAD,GEX,,,0.0187594783136183,0.4195050257714432
+b,PCPG_mRNA,GEX,,,0.0122494228689985,0.2936417401139052
+b,PCPG,GEX,,,0.0089339339339339,0.4140852927515676
+b,MESO,GEX,,,0.0329004329004329,0.4462070116913398
+b,UCEC,GEX,,,0.005470822281167,0.5090052384715976
+b,COAD_TCGA,GEX,,,0.0223562788377602,0.2802242545398604
+b,THYM,GEX,,,-0.0116959064327485,0.4120315498930601
+b,PRAD_ETS,GEX,,,0.0111918998470403,0.2940185770997599
+b,STAD_TCGA,GEX,,,-0.001750118652112,0.2715803765576371
+b,TGCT,GEX,,,0.0,0.5584712720678365
+b,HNSC_mRNA,GEX,,,0.0083859590347767,0.259321073089398
+b,THCA,GEX,,,0.1164681409125853,0.3928709997136471
+b,CESC,GEX,,,-0.0006944444444444,0.3063145031764542
+b,HNSC_HPV,GEX,,,0.0143204193837105,0.4622305621639534
+b,LGG,median of 8 splicing views,,,-0.0007792741085012,0.3398559969225153
+b,LGG_IDH,median of 8 splicing views,,,0.0028986975184674,0.2419959346146163
+b,ESCA,median of 8 splicing views,,,0.0061856995884773,0.802147792657555
+b,BRCA_ER,median of 8 splicing views,,,0.0087597629948827,0.2084998852258622
+b,BRCA_PAM50,median of 8 splicing views,,,0.0090264824502768,0.2251872957807547
+b,BRCA,median of 8 splicing views,,,0.0126313825345139,0.4101984284651258
+b,UCEC_TCGA,median of 8 splicing views,,,0.0128224733668568,0.372439967064797
+b,STAD,median of 8 splicing views,,,0.0162647861692447,0.4195050257714432
+b,PCPG_mRNA,median of 8 splicing views,,,0.0166637444843809,0.2936417401139052
+b,PCPG,median of 8 splicing views,,,0.020533033033033,0.4140852927515676
+b,MESO,median of 8 splicing views,,,0.0206349206349206,0.4462070116913398
+b,UCEC,median of 8 splicing views,,,0.0247844827586207,0.5090052384715976
+b,COAD_TCGA,median of 8 splicing views,,,0.0255112856964709,0.2802242545398604
+b,THYM,median of 8 splicing views,,,0.032593739250086,0.4120315498930601
+b,PRAD_ETS,median of 8 splicing views,,,0.0387423372620741,0.2940185770997599
+b,STAD_TCGA,median of 8 splicing views,,,0.0557413793294191,0.2715803765576371
+b,TGCT,median of 8 splicing views,,,0.0566666666666667,0.5584712720678365
+b,HNSC_mRNA,median of 8 splicing views,,,0.0725547234397635,0.259321073089398
+b,THCA,median of 8 splicing views,,,0.0772825939492605,0.3928709997136471
+b,CESC,median of 8 splicing views,,,0.0773148148148147,0.3063145031764542
+b,HNSC_HPV,median of 8 splicing views,,,0.0982610919319779,0.4622305621639534

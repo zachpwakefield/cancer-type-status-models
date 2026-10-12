@@ -6,17 +6,22 @@ here is out-of-fold — each patient was scored by models that never saw it.
 
 The other two tasks ask whether a sample is tumour ([TUMOUR_STATUS.md](TUMOUR_STATUS.md)) and which
 tissue it came from ([CANCER_TYPE.md](CANCER_TYPE.md)). This one asks, inside one cancer, which
-kind of that cancer a tumour is — and whether splicing knows.
+kind of that cancer a tumour is — and whether splicing knows. How the three tasks' results relate
+is in [ACROSS_TASKS.md](ACROSS_TASKS.md).
 
-- **Methods and decisions:** [docs/SUBTYPE_METHODS.md](../docs/SUBTYPE_METHODS.md) (D-30 to D-45,
-  amendments A-1 to A-4). Every label map, cohort and threshold was fixed in
-  [config/subtype.yaml](../config/subtype.yaml) before the first model was fitted.
-- **Scripts:** `30`–`35` build the labels, matrices, models and tables; `36` draws these figures.
-- **Figures:** U1–U7 in [figures/subtype/](figures/subtype/). Each has a caption file stating the
+- **Methods and decisions:** [docs/SUBTYPE_METHODS.md](../docs/SUBTYPE_METHODS.md) (D-30 to D-47,
+  amendments A-1 to A-7). Every label map, cohort and threshold was fixed in
+  [config/subtype.yaml](../config/subtype.yaml) before the first model was fitted; the regulator
+  and site analyses of §9–§10 were fixed in [config/followup.yaml](../config/followup.yaml) before
+  they were run.
+- **Scripts:** `30`–`35` build the labels, matrices, models and tables; `37` and `38` the
+  regulator and site analyses; `36` draws these figures.
+- **Figures:** U1–U9 in [figures/subtype/](figures/subtype/). Each has a caption file stating the
   question, the method, n and the test, and a CSV of the plotted values.
 - **Tables:** `results/subtype/summary/` (performance, baselines, recall, fusion tests),
-  `results/subtype/interpret/` (markers, gene overlap, event audit, cross-family tables) and one
-  folder per (view, cohort) under `results/subtype/<view>/<cohort>/`.
+  `results/subtype/interpret/` (markers, gene overlap, event audit, cross-family tables),
+  `results/subtype/regulators/`, `results/subtype/site_probe/` and one folder per (view, cohort)
+  under `results/subtype/<view>/<cohort>/`.
 - **Statistics in figures:** raw p. Any q is in the CSV with its FDR family named.
 - **Result or context.** Each biological statement is marked as a *result* of this data or as
   *context* from the literature; the literature was never used to choose a feature, a model or an
@@ -53,6 +58,15 @@ CDH1 exons in their tail; HPV-positive head-and-neck tumours use the p16INK4a fi
 independently trained models, in three cancers, and nine more MSI events separate MSI from the
 rest in all three cancers, including those whose model did not pick them (§8).
 
+Two checks added afterwards, with predictions written down first, bound the claims. The splicing
+regulators the literature names behave as predicted in four of six tests (ESRP2 in biphasic
+mesothelioma, ESRP1 in mesenchymal head-and-neck cancer, PTBP1 and the ACTN1 smooth-muscle exon
+in leiomyosarcoma). The TPM1 exon goes against the published mechanism, and PTBP1 is one of
+several factors that move with the leiomyosarcoma pattern, not the only one (§9). And part of
+the splicing models' accuracy on HPV status, the HNSC expression classes, cervical histology and
+gastric molecular class is specific to the sites that sent the samples, where expression's is
+not (§10).
+
 The neighbour-gene audit keeps this honest. Of 2,248 top events, 97 follow an overlapping gene
 more than their own — 62 of them in HIT — and four of the nineteen strongest single events are
 such readouts; the leiomyosarcoma first exon that looks like an NDE1 promoter is MYH11
@@ -80,6 +94,13 @@ transcription read on the other strand (§7).
 7. **MSI leaves the same splicing marks in three cancers** (U7, exploratory): 10 events separate
    MSI from the rest in UCEC, STAD and COAD alike (AUROC ≥ 0.75 or ≤ 0.25 in all three), 7 of
    them chosen by at least two of the three models independently.
+8. **Regulators** (U8; R1–R6 fixed in advance): ESRP2 lower in biphasic mesothelioma (AUROC
+   0.82), ESRP1 lower in mesenchymal HNSC (0.76), PTBP1 lower in leiomyosarcoma (0.66) and moving
+   the ACTN1 smooth-muscle exon against the leiomyosarcoma pattern (partial ρ +0.43). ESRP1 in
+   mesothelioma is not resolved, and TPM1 runs against the published mechanism (A-5).
+9. **Site** (U9): holding tissue-source sites out costs GEX ≤ 0.035 in 20 of 21 cohorts, but the
+   splicing views 0.056–0.098 in HNSC_HPV, CESC, THCA, HNSC_mRNA, TGCT and STAD_TCGA. "Splicing
+   loses more than GEX in most cohorts" holds in 16 of 21 (q = 0.080): not resolved.
 
 ---
 
@@ -513,6 +534,94 @@ The ten U7 events do not follow the infiltrate:
 - **A3SS caveat.** Only the RPL22L1 event has a host-expression correlation large enough that it
   may partly encode expression rather than exon choice.
 
+## 9. Splicing regulators of the subtypes
+
+![U8](figures/subtype/U8_regulators.png)
+
+Six predictions were written into `config/followup.yaml` (D-46) before any splicing factor was
+looked at by subtype. Then all 70 factors of D-18 were scanned in every cohort
+(`results/subtype/regulators/`).
+
+**The predictions** (result; BH over R1–R6):
+- **ESRP2 is lower in biphasic mesothelioma** than in epithelioid (AUROC 0.82, q = 3.5e-5). ESRP1
+  is not (0.55, q = 0.52): it is barely expressed in either class (median 1.2 log2 CPM), so R1 is
+  not resolved. ESRP1 and ESRP2 drive the epithelial splicing programme and are lost in
+  epithelial–mesenchymal transition (Warzecha et al. 2009, 2010), and a biphasic tumour carries a
+  sarcomatoid component (context).
+- **ESRP1 is lower in the mesenchymal HNSC class** than in the other three (AUROC 0.76,
+  q = 1.6e-10).
+- **PTBP1 is lower in leiomyosarcoma** than in the other sarcomas (AUROC 0.66, q = 3.5e-5).
+- **PTBP1 and the ACTN1 smooth-muscle exon.** Adjusting for class, stromal and immune scores,
+  PTBP1 moves the ACTN1 event against the leiomyosarcoma direction (partial ρ +0.43 against a
+  leiomyosarcoma shift of −0.62; p = 1.4e-11). The same holds within leiomyosarcoma alone
+  (ρ +0.57). That is what PTB's repression of the α-actinin smooth-muscle exon predicts (Southby
+  et al. 1999).
+- **PTBP1 and TPM1 run against the published mechanism.** The TPM1 exon 2/3 event also moves
+  against the leiomyosarcoma direction as PTBP1 rises (ρ −0.22, shift +0.53; p = 7.1e-4). That
+  matches the sign written down in advance, but the sign was a misreading of the source (A-5). In
+  TPM1, PTB works with MBNL1 to *repress exon 3*, the non-smooth-muscle exon (Gooding et
+  al. 1994, 1998, 2013), so the mechanism predicts the opposite. MBNL1, not PTBP1, is the factor
+  that follows the TPM1 event most closely, and in the published direction (ρ +0.35).
+
+**How specific** (exploratory, A-6). The ACTN1 and TPM1 correlations survive adjustment for each
+sample's mean MXE PSI, the global axis of D-24 (ρ +0.43 and −0.22). But PTBP1 is not unique.
+- **ACTN1:** PTBP1 ranks 2nd of 70 factors, behind HNRNPC (+0.45). CSTF2 and HNRNPA2B1 follow,
+  and MBNL1 runs the other way.
+- **TPM1:** PTBP1 ranks 12th.
+
+Read together, the sarcoma result is a PTB–MBNL axis rather than PTBP1 alone. The ACTN1 half
+agrees with the literature and the TPM1 half is only half explained by it.
+
+**The scan** (result). How many factors differ between a cohort's classes (q < 0.05) varies from
+4 of 70 (PCPG) to 68 (BRCA_PAM50). The highest counts are in subtypes that differ in
+proliferation or lineage: PAM50, the HNSC expression classes, gastric molecular classes, sarcoma
+histology and glioma IDH status.
+- **RBM47** separates classes more than any other factor. It is higher in adenocarcinoma than in
+  squamous carcinoma of the oesophagus (AUROC 0.97) and cervix (0.89), in luminal A breast
+  tumours, and in cortical admixture in PCPG. Loss of RBM47 marks breast cancer progression
+  (Vanharanta et al. 2014; context).
+- **Three glioma factors are a gene-dosage result.** SRSF4, SRSF11 and PTBP2 are lowest in
+  codeleted tumours (median 5.9 against 6.7 log2 CPM for SRSF4), and all three sit on 1p. SRRM3
+  (chromosome 7) runs the other way, highest in codeleted tumours (5.8 against 3.0 in
+  IDH-wildtype).
+
+**Event association** (descriptive). The excess of factors tracking a cohort's top events, over
+background events, is largest where a whole lineage differs: TGCT (30 factors with excess ≥ 0.1),
+ESCA (13; RBM47 +0.66, QKI +0.59) and THYM (10). In sarcoma, RBM24, PTBP1, MBNL1 and PTBP2
+lead (+0.21 to +0.24). Unlike R5/R6, this association runs across classes. So a factor that
+differs between classes tracks every event that does: the excess measures how much a factor moves
+with the subtype, not that it regulates the subtype's exons.
+
+## 10. Is the subtype signal tied to the site that sent the sample?
+
+![U9](figures/subtype/U9_site_probe.png)
+
+In TCGA each tissue-source site sends one project, and within a project sites differ in which
+subtypes they send: Cramér's V between site and class is 0.21 (BRCA_ER) to 0.80 (ESCA). The probe
+of D-20 was rerun on 21 cohorts (D-47; SARC excluded because myxofibrosarcoma comes from 4 sites):
+one untuned classifier per view, cross-validated once with patients grouped and once with every
+test site unseen.
+
+- **Expression barely depends on site.** GEX loses ≤ 0.035 balanced accuracy in 20 of 21 cohorts;
+  the exception is THCA (0.116), where tall-cell tumours come from 5 sites.
+- **Splicing depends on it more, and in particular cohorts** (result): HNSC_HPV loses 0.098, CESC
+  0.077, THCA 0.077, HNSC_mRNA 0.073, TGCT 0.057 and STAD_TCGA 0.056 (median of the 8 views).
+  GEX loses −0.002 to 0.014 in the same cohorts, THCA apart.
+- **P1** (splicing loses more than GEX in most cohorts): 16 of 21, median difference +0.010, sign
+  test p = 0.027. Under the family rule decided after the p-values were seen (A-7), q = 0.080, so
+  it is not resolved.
+- **P2** (the loss grows with site–class association): ρ +0.12 (GEX) and +0.18 (splicing),
+  not supported. The cohorts that lose most are not the most site-confounded. ESCA, with the
+  strongest confounding (V = 0.80), loses almost nothing (0.006), because squamous and glandular
+  carcinoma differ in every view.
+
+**Reading.** Where the classes differ in lineage, splicing transfers across sites. Where they
+differ less sharply (HPV status, expression subtypes, gastric molecular class), part of the
+splicing models' accuracy is site-specific, plausibly how each site handles its samples
+(interpretation). It is not confined to the readouts most sensitive to handling: in HNSC_HPV, RI
+loses most (0.142) but SE and A5SS are close behind (0.125, 0.112). The probe's accuracies are
+those of a simple classifier, not of the subtype models (D-20).
+
 ## What would change the reading
 
 - **Mutation and copy-number calls joined to the events.** Three named results in §7–§8 rest on a
@@ -542,6 +651,14 @@ The ten U7 events do not follow the infiltrate:
   other fold seeds that changed the small-class ranking of GEX against the AS ensemble would change
   §3.
 
+- **A site-balanced cohort.** §10's site-specific share of the splicing accuracy would be
+  confirmed if a cohort sequenced at one centre, or with handling recorded, showed the same
+  losses; it would be refuted if HPV status or the HNSC classes were recovered as well across
+  sites once RNA quality (not recorded in TCGA) was matched.
+- **Perturbation of PTBP1 and MBNL1 in leiomyosarcoma cells.** §9's PTB–MBNL reading is
+  correlational. Knock-down data showing the ACTN1 and TPM1 events move with the factors, in
+  the directions seen here, would make it a mechanism; no movement would make it co-regulation.
+
 ## Limitations
 
 - **One resource, no external test.** Every cohort is a TCGA project, scored out-of-fold. There is
@@ -568,9 +685,12 @@ The ten U7 events do not follow the infiltrate:
   minority-class probabilities when most views are weak on that class (§3). Fusion is fixed at 1:1
   with no learned weights (D-40). The "best AS view" columns are picked after the fact, are
   descriptive only, and are not used in any test.
+- **Regulators are read from expression.** Factor activity is approximated by mRNA level; the
+  event association of §9 runs across classes, so it cannot separate regulation from co-variation
+  with the subtype. Only R5/R6 adjust for class.
 - **Exploratory additions.** The error-marker, shared-class and MSI-confound tables and U7 were
-  added after results had been read (A-4). They are descriptive, and none feeds a model. A-1 to A-3
-  changed presentation or widened an audit only.
+  added after results had been read (A-4), as were the R5/R6 sensitivity checks (A-6). They are
+  descriptive, and none feeds a model. A-1 to A-3 changed presentation or widened an audit only.
 
 ## References
 
@@ -590,6 +710,8 @@ Literature used as *context* (never to choose a feature, a model or an event):
 - Eisenhofer G et al. (2004) Distinct gene expression profiles in norepinephrine- and epinephrine-producing hereditary and sporadic pheochromocytomas: activation of hypoxia-driven angiogenic pathways in von Hippel-Lindau syndrome. *Endocr Relat Cancer* 11:897.
 - Fishbein L et al. (2017) Comprehensive molecular characterization of pheochromocytoma and paraganglioma. *Cancer Cell* 31:181.
 - Gooding C et al. (1994) Smooth muscle-specific switching of α-tropomyosin mutually exclusive exon selection by specific inhibition of the strong default exon. *EMBO J* 13:3861.
+- Gooding C, Roberts GC, Smith CW (1998) Role of an inhibitory pyrimidine element and polypyrimidine tract binding protein in repression of a regulated α-tropomyosin exon. *RNA* 4:85.
+- Gooding C et al. (2013) MBNL1 and PTB cooperate to repress splicing of Tpm1 exon 3. *Nucleic Acids Res* 41:4765.
 - Liu J et al. (2018) An integrated TCGA pan-cancer clinical data resource to drive high-quality survival outcome analytics. *Cell* 173:400.
 - Liu Y et al. (2018) Comparative molecular analysis of gastrointestinal adenocarcinomas. *Cancer Cell* 33:721.
 - Louis DN et al. (2016) The 2016 World Health Organization classification of tumors of the central nervous system. *Acta Neuropathol* 131:803.
@@ -597,8 +719,13 @@ Literature used as *context* (never to choose a feature, a model or an event):
 - O'Leary MN et al. (2013) The ribosomal protein Rpl22 controls ribosome composition by directly repressing expression of its own paralog, Rpl22l1. *PLoS Genet* 9:e1003708.
 - Parker JS et al. (2009) Supervised risk predictor of breast cancer based on intrinsic subtypes. *J Clin Oncol* 27:1160.
 - Southby J, Gooding C, Smith CWJ (1999) Polypyrimidine tract binding protein functions as a repressor to regulate alternative splicing of α-actinin mutually exclusive exons. *Mol Cell Biol* 19:2699.
+- Vanharanta S et al. (2014) Loss of the multifunctional RNA-binding protein RBM47 as a source of selectable metastatic traits in breast cancer. *eLife* 3:e02734.
+- Warzecha CC et al. (2009) ESRP1 and ESRP2 are epithelial cell-type-specific regulators of FGFR2 splicing. *Mol Cell* 33:591.
+- Warzecha CC et al. (2010) An ESRP-regulated splicing programme is abrogated during the epithelial–mesenchymal transition. *EMBO J* 29:3286.
 - Zhang Y et al. (2017) Ribosomal proteins Rpl22 and Rpl22l1 control morphogenesis by regulating pre-mRNA splicing. *Cell Rep* 18:545.
 
 The ten citations outside the TCGA marker papers were checked against PubMed, PMC or publisher
 records on 2026-10-12; two were corrected (the title of Eisenhofer 2004, and the year and journal
-of Gooding 1994).
+of Gooding 1994). The five added with §9 (Gooding 1998 and 2013, Vanharanta 2014, Warzecha 2009
+and 2010) were checked against the same kinds of record; re-reading the two Gooding abstracts is
+what exposed the R6 misreading (A-5).

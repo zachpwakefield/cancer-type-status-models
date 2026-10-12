@@ -169,3 +169,25 @@ No model was refitted: the audit changes how events are described, not what the 
 """
     paras = [" ".join(p.split()) for p in text.strip().split("\n\n")]
     return "\n\n".join(textwrap.fill(p, width=112, break_on_hyphens=False) for p in paras) + "\n"
+
+
+def tidy(caption: str, width: int = 116) -> str:
+    """Re-wrap every paragraph and bullet of a caption to the house limit (lines <= 120 characters)."""
+    out = []
+    for para in caption.strip().split("\n\n"):
+        lines = para.split("\n")
+        if para.startswith("**") and len(para) <= 120:
+            out.append(para)
+        elif lines[0].startswith("- "):
+            items, cur = [], []
+            for ln in lines:
+                if ln.startswith("- ") and cur:
+                    items.append(" ".join(cur))
+                    cur = []
+                cur.append(ln.strip())
+            items.append(" ".join(cur))
+            out.append("\n".join(textwrap.fill(it, width, subsequent_indent="  ", break_on_hyphens=False)
+                                  for it in items))
+        else:
+            out.append(textwrap.fill(" ".join(ln.strip() for ln in lines), width, break_on_hyphens=False))
+    return "\n\n".join(out)

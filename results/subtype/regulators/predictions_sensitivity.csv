@@ -1,0 +1,5 @@
+id,event_name,adjusted_for,rho_ptbp1,p_ptbp1,rank_ptbp1_of,top_factors
+R5,ACTN1 mutually exclusive exons (MXE),"class, stromal, immune",0.42651303509477034,1.3917737091651138e-11,2 of 70,HNRNPC +0.45; PTBP1 +0.43; CSTF2 +0.38; HNRNPA2B1 +0.37; U2AF2 +0.35
+R5,ACTN1 mutually exclusive exons (MXE),"class, stromal, immune, mean MXE PSI",0.4263769266617187,1.4149009193637819e-11,2 of 70,HNRNPC +0.45; PTBP1 +0.43; CSTF2 +0.39; HNRNPA2B1 +0.38; MBNL1 -0.34
+R6,TPM1 exons 2/3 (MXE),"class, stromal, immune",-0.22171718541568547,0.0007080740666433526,10 of 70,MBNL1 +0.35; MBNL2 +0.31; SRRM4 +0.27; NOVA2 +0.27; HNRNPC -0.25
+R6,TPM1 exons 2/3 (MXE),"class, stromal, immune, mean MXE PSI",-0.22227838612877532,0.0006857200612365519,12 of 70,MBNL1 +0.35; MBNL2 +0.30; NOVA2 +0.29; SRRM4 +0.27; HNRNPC -0.26

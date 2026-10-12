@@ -1,0 +1,4 @@
+id,claim,n,k,estimate,p
+P1,AS-median drop > GEX drop,21,16.0,0.010420719927365596,0.02660369873046875
+P2,drop rises with Cramer's V (GEX),21,,0.12016889233980947,0.6038655571803309
+P2,drop rises with Cramer's V (AS-view median),21,,0.1753246753246753,0.4471597167322825
