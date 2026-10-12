@@ -4,6 +4,7 @@
 #   msi_cis                                  docs/SUBTYPE_METHODS.md D-52 (added later the same day)
 #   msi_long_tracts                          docs/SUBTYPE_METHODS.md D-53 (after D-52's results)
 #   msi_a3ss_replication                     docs/SUBTYPE_METHODS.md D-54 (after D-53's results)
+#   msi_robustness                           docs/SUBTYPE_METHODS.md D-55 (after D-54's results)
 #
 # Written 2026-10-12, after every model of the three tasks had been fitted and summarised, and
 # before any analysis below was run. Nothing here refits a model or changes a label, a cohort, a
@@ -331,3 +332,41 @@ msi_a3ss_replication:                    # D-54 · scripts/42_msi_repeats.py --o
     - id: Q2
       claim: long runs - oriented delta > 0 (the repeat-bearing acceptor is used more in MSI)
       source: exploratory SE observation above; Zarnack et al. 2013 for a possible mechanism
+
+msi_robustness:                          # D-55 · scripts/43_msi_robustness.py
+  # Written 2026-10-12 after D-52..D-54 were read and reported, before anything below was computed.
+  # Asks whether the repeat score of D-52 (score_acc) is a tumour-intrinsic MSI effect or could come
+  # from the hospital that sent the sample, tumour composition, RNA handling or the feature filter.
+  # Seen: every D-52..D-54 table; U9 (splicing models lose accuracy at unseen hospitals in
+  # STAD_TCGA); label-only counts - MSI tumours from hospitals that also sent non-MSI tumours
+  # (UCEC 34/34, STAD 55/55, COAD 39/40); adjacent normals of MSI patients (UCEC 1, STAD 3, COAD 5).
+  # Not seen: any score by hospital, by composition, in normals or in the main matrix.
+  score: score_acc of msi_cis (sample_scores.parquet), groups as msi_cis (MSI vs rest)
+  covariates:
+    stromal: mean log2 CPM of biology.yaml stromal_genes
+    immune: mean log2 CPM of biology.yaml immune_genes
+    ri_mean: the sample's mean RI PSI over the cohort's pre-filtered RI events (an RNA-handling proxy)
+  fdr_family: S, the 7 tests S1-S4 in STAD_TCGA and COAD_TCGA (S3 pooled); UCEC_TCGA is reported
+              beside them but is not in the family, because D-52 did not resolve it there
+  predictions:
+    - id: S1
+      claim: within hospital, MSI tumours score lower than the rest - AUROC over MSI-rest pairs from
+             the same tissue-source site > 0.5
+      test: permutation of the MSI labels within site (10,000, seed 0); two-sided
+    - id: S2
+      claim: in OLS score ~ MSI + site (fixed effects) + stromal + immune + ri_mean, the MSI
+             coefficient is < 0
+      test: HC3 standard errors, two-sided t
+    - id: S3
+      claim: the tumour minus own-adjacent-normal score difference is lower for patients with an MSI
+             tumour than for the other patients with a normal (UCEC, STAD, COAD pooled)
+      test: Mann-Whitney; scores computed in the main matrix with each project's tumours and normals
+            ranked together (same construction as msi_cis, exons by the same rules)
+      why: MSI is somatic; a patient-, hospital- or handling-level cause would also mark the normal
+    - id: S4
+      claim: the score rebuilt in the main SE matrix (tumours only, its own feature filter, same rules)
+             is lower in MSI than in rest (AUROC > 0.5)
+      test: Mann-Whitney
+  exploratory: leave-one-site-out AUROC range; the MSI-patient normals' scores against the other
+               normals; AUROC within the lower-immune half; Spearman of the score with stromal,
+               immune and ri_mean within MSI and within rest

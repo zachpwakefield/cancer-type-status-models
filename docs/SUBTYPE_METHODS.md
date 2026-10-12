@@ -430,6 +430,17 @@ background-adjusted shift × (+1 distal, −1 proximal); negative means the acce
 run is used less in MSI. Q1: runs 10–19 at one acceptor (other ≤ 6), oriented shift < 0. Q2:
 runs ≥ 20, oriented shift > 0. Wilcoxon signed-rank per cohort, BH over 6 tests.
 
+### D-55 Is the MSI repeat score tumour-intrinsic? · `config/followup.yaml: msi_robustness` · `scripts/43`
+Added 2026-10-12 after D-52..D-54 were reported, before any of this was computed. U9 showed that
+splicing models lose accuracy at unseen hospitals, STAD_TCGA among them, so the repeat score is
+checked against the hospital, tumour composition, RNA handling and the feature filter. S1: within
+hospital (MSI–rest pairs from the same tissue-source site; permutation within site). S2: adjusted
+for site, stromal and immune expression and the sample's mean retained-intron PSI. S3: MSI is
+somatic, so the patient's own adjacent normal should not carry it; the tumour-minus-normal
+difference is compared between patients with and without an MSI tumour (9 against the others,
+three projects pooled, scores built in the main matrix). S4: the score rebuilt in the main matrix
+with its own feature filter. Family S: STAD and COAD (7 tests); UCEC reported alongside.
+
 ---
 
 ## Amendments and deviations
