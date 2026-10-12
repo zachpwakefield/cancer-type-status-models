@@ -16,7 +16,7 @@ from __future__ import annotations
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-from _figbase import AS_VIEWS, BIO, CANCERS, CFG, FIGURES, LOCAL, log, run, short
+from _figbase import AS_VIEWS, BIO, CANCERS, CFG, FIGURES, LOCAL, locus_label, log, run, short
 from matplotlib.lines import Line2D
 from scipy.cluster.hierarchy import leaves_list, linkage
 
@@ -166,10 +166,12 @@ def T4() -> None:
     fig, axes = plt.subplots(1, 2, figsize=(3.8, 2.0), sharey=True)
     y = np.arange(len(CFG.views))
     cols = [INK2 if v == "gex" else ACCENT for v in CFG.views]
-    axes[0].barh(y, coh[c_ts], color=cols, height=0.65)
+    # open = all genes, filled = the ribosomal-protein sensitivity, which was only run on the
+    # cancer-type AS views; the left panel and GEX have no filled bar rather than a zero one.
+    axes[0].barh(y, coh[c_ts], color="none", edgecolor=cols, linewidth=0.6, height=0.65)
     axes[0].set_xlabel("tumour vs normal:\nshare of 15 cancers")
     axes[1].barh(y, coh[c_ct], color="none", edgecolor=cols, linewidth=0.6, height=0.65, label="all genes")
-    axes[1].barh(y, coh[c_rp].fillna(0), color=ACCENT, height=0.65, label="ribosomal-protein\ngenes removed")
+    axes[1].barh(y, coh[c_rp], color=ACCENT, height=0.65, label="ribosomal-protein\ngenes removed")
     axes[1].set_xlabel("cancer type:\nshare of 34 classes")
     axes[1].legend(loc="lower left", bbox_to_anchor=(0, 1.0), ncol=2, handlelength=1.0, columnspacing=0.8)
     for ax in axes:
@@ -190,10 +192,11 @@ Left: the 15 tumour-vs-normal models. GEX reaches a pathway in 14 of 15 cancers;
 views in at most 4; RI in none. The tumour signal of splicing is mostly carried by genes that are not members of a
 common programme.
 
-Right: the 34 per-class explanations of the cancer-type models. Open bars use all genes. Many AS hits there came
+Open bars use all genes, in each view's colour. Right: the 34 per-class explanations of the cancer-type models. Many AS hits there came
 from alternative 5'/3' splice sites in cytosolic ribosomal-protein genes (RPS24, RPL13A, RPL3 and others), which are
 deeply covered and so measured precisely in every tissue. Filled bars repeat the tests with RPL*/RPS* genes removed
-from both ranking and universe. Most SE, MXE and A3SS classes keep enrichments. The remaining terms are lineage
+from both ranking and universe; that sensitivity test was run only on the cancer-type AS views, so GEX and the
+left panel have no filled bar. Most SE, MXE and A3SS classes keep enrichments. The remaining terms are lineage
 biology (synapse and cell projection in PCPG, smooth-muscle contraction in PRAD, RHO GTPase cycle in DLBC,
 extracellular matrix in THCA) and the splicing machinery's own transcripts (RNA splicing terms from A3SS in ACC,
 KICH, LUAD and UVM). Top terms per class: `cancer_type_top_terms_by_class.csv`.
@@ -266,7 +269,8 @@ def T6() -> None:
     order = sorted(range(len(dev)), key=lambda i: (pos[picks["class"].iloc[i]], -abs(own[i])))
     M = dev.iloc[order][col_order]
     cls = picks["class"].iloc[order].to_numpy()
-    lab = [f"{gene_label(s)} ({c})" for s, c in zip(picks["symbol"].iloc[order], cls)]
+    lab = [f"{locus_label(s, f)} ({c})"
+           for s, f, c in zip(picks["symbol"].iloc[order], picks.index[order], cls)]
     lim = 60
     fig, ax = plt.subplots(figsize=(DOUBLE * 0.72, 0.068 * len(M) + 0.9))
     im = ax.imshow(M.to_numpy(), cmap=DIVERGE, vmin=-lim, vmax=lim, aspect="auto")

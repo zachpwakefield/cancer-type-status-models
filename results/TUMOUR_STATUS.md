@@ -27,7 +27,8 @@ separately in [CANCER_TYPE.md](CANCER_TYPE.md).
    not form pathways at all.
 4. **The models' events sit in specific splicing-factor programmes.** They are enriched in the
    small regulons of PTBP1, RBM47, QKI and HNRNPU, and depleted from the large shared programme
-   of nuclear RNA-processing factors.
+   of nuclear RNA-processing factors. The events in those small regulons are also the ones most
+   often associated with survival (§8).
 5. **Different cancers rely on the same events.** 404 events rank in the top 100 of at least 4
    models, against 3 expected by chance.
 6. **The exons look tissue-regulated**: more often frame-preserving and disordered, less often
@@ -261,6 +262,14 @@ host-gene covariate and the test battery introduce no excess of their own. So th
 9% is real signal too: splicing events matched to the candidates on coverage and spread are
 themselves associated with outcome more often than chance, and the model's events are
 associated more often still.
+
+**The candidates inside a model-enriched regulon carry more of it.** A third cut of the same
+cells, and the one that ties this section to §4: candidates that sit in one of the six
+splicing-factor programmes the models are enriched for — PTBP1, RBM47, HNRNPU, HNRNPF, QKI,
+PRPF8 — reach Cox p < 0.05 in 13.3% of their pairs against 10.3% for the candidates that sit in
+none (934 against 10,762 pairs, OR 1.33, p = 0.005; `08_survival/regulon_vs_survival.csv`).
+Three independent ways of asking which candidates matter — how many models agree, whether the
+event recurs, whether it belongs to a coherent factor programme — pick out the same events.
 
 **Some single events do survive multiple testing, and they are almost all kidney.** Applying BH
 inside each cancer's own family of ~1,600 Cox tests (a different family from the one

@@ -161,7 +161,9 @@ def dossiers(cfg, cells: pd.DataFrame, sel: pd.DataFrame) -> tuple[pd.DataFrame,
     rows = []
     sub = cells[cells["role"].eq("candidate") & cells["endpoint"].eq("OS") & cells["arm"].eq("adjusted")
                 & cells["cox_ok"]].merge(d[["event_id", "in_specific_regulon", "n_factors"]], on="event_id")
-    for group, part in sub.groupby("in_specific_regulon"):
+    # in-regulon first, so the odds ratio reads "in a regulon against not", never its reciprocal
+    for group in (True, False):
+        part = sub[sub["in_specific_regulon"].eq(group)]
         k, n = int((part["cox_p"] < 0.05).sum()), len(part)
         rows.append({"set": "in a model-enriched regulon" if group else "not in one",
                      "cells": n, "hits": k, "rate": k / n})

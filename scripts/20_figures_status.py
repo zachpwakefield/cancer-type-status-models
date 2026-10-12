@@ -20,7 +20,7 @@ import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
 import numpy as np
 import pandas as pd
-from _figbase import AS_VIEWS, BIO, CANCERS, CFG, FIGURES, LOCAL, log, run, short
+from _figbase import AS_VIEWS, BIO, CANCERS, CFG, FIGURES, LOCAL, locus_label, log, run, short
 from matplotlib.lines import Line2D
 from scipy.stats import beta, binomtest
 
@@ -195,16 +195,6 @@ def plain_log(axis, ticks: list) -> None:
     axis.set_minor_locator(ticker.NullLocator())
 
 
-def locus_label(gene, event_id: str) -> str:
-    """Display name for an event's host gene: its HGNC symbol, or, for the few with no symbol,
-    the locus (`chr6:41.8 Mb`) rather than the Ensembl ID the house style keeps out of figures."""
-    name = gene_label(gene)
-    if name != "unnamed gene":
-        return name
-    m = re.search(r"(chr[\dXYM]+):(\d+)-", str(event_id))
-    return f"{m.group(1)}:{int(m.group(2)) / 1e6:.2f} Mb" if m else name
-
-
 def S8() -> None:
     d = BIO / "08_survival"
     enr = pd.read_csv(d / "survival_enrichment.csv")
@@ -267,10 +257,10 @@ def S8() -> None:
     ax.set_ylim(-0.7, len(sub) - 0.3)
     ax.set_xlabel("hazard ratio per SD (95% CI), overall survival")
     nulltxt = ("" if null is None else
-               f" The dashed line is the same pipeline run over outcomes shuffled between patients inside each "
-               f"cancer: {float(null['rate'].iloc[0]):.1%} ({int(null['hits_p05'].iloc[0]):,} of "
-               f"{int(null['cells'].iloc[0]):,} pairs), so both sets sit above what the gates and the test battery "
-               f"produce on their own.")
+               f"\n\nThe dashed line is the same pipeline run over outcomes shuffled between patients inside\n"
+               f"each cancer: {float(null['rate'].iloc[0]):.1%} ({int(null['hits_p05'].iloc[0]):,} of "
+               f"{int(null['cells'].iloc[0]):,} pairs), so both sets sit above what the gates, the host-gene\n"
+               f"covariate and the test battery produce on their own.")
     plotted = pd.concat([
         pd.DataFrame(rows).assign(panel="left"),
         sub.assign(panel="right")[["panel", "gene", "view", "event_id", "best_cohort", "hits", "cohorts_tested",
@@ -289,6 +279,10 @@ the three candidate sets are nested and ordered by how many models agree on the 
 background of the same arm, base / adjusted: every candidate 1.27 / 1.18, recurrent 1.56 / 1.28, top 10 for two or
 more cancers 1.62 / 1.21 (Fisher exact, every set q < 0.05). The rate rises along that order.{nulltxt}
 
+Candidates inside one of the six regulons the models are enriched for (S4) reach p < 0.05 in 13.3% of their pairs
+against 10.3% for the rest (OR 1.33, p = 0.005), so the three ways of ranking a candidate -- how many models agree,
+whether it recurs, whether it sits in a coherent factor programme -- pick out the same events.
+
 Right: the 12 candidate events associated in the most cancers, each in its strongest cancer: hazard ratio per SD
 of PSI (per SD of the HIT index for HIT events) with its 95% CI, and (cancers with p < 0.05 / cancers tested).
 Red: a higher value goes with worse survival.
@@ -296,9 +290,9 @@ Red: a higher value goes with worse survival.
 Nominal p values from observational cohorts. BH inside each cancer's own family of ~1,600 tests (`cox_q_cohort`)
 leaves 1.2% of candidate cells significant in the adjusted arm, no more than the background's 1.2%, and 94% of them
 are KIRC or KIRP: the set-level excess is a broad shift of small associations, not an excess of strong ones.
-`event_survival_cells.csv.gz` holds every statistic with both BH families (keyed by `event_index.csv`), `event_dossiers.csv` joins each event's recurrence, protein consequence, regulon
-membership and survival. PSI can reflect tumour purity or composition, so these are associations, not causes, and
-not therapeutic claims.
+`event_survival_cells.csv.gz` holds every statistic with both BH families (keyed by `event_index.csv`), and
+`event_dossiers.csv` joins each event's recurrence, protein consequence, regulon membership and survival. PSI can
+reflect tumour purity or composition, so these are associations, not causes, and not therapeutic claims.
 """)
 
 
@@ -406,7 +400,10 @@ def S5() -> None:
     im = ax.imshow(M.to_numpy(), cmap=DIVERGE, vmin=-lim, vmax=lim, aspect="auto")
     yy, xx = np.nonzero(top.to_numpy())
     ax.scatter(xx, yy, s=1.5, color=INK, linewidths=0)
-    labels = [f"{gene_label(s)} {VIEW_NAMES[v]} {short(r)}" for s, v, r in zip(show.symbol, show.view, show.region)]
+    # the region is in the label already, so an unnamed gene just drops the name rather than
+    # repeating the locus twice
+    labels = [f"{gene_label(s)} {VIEW_NAMES[v]} {short(r)}".replace("unnamed gene ", "")
+              for s, v, r in zip(show.symbol, show.view, show.region)]
     heat_axes(ax, labels, CANCERS, xrot=90, row_size=4.6, col_size=5.5)
     ax.xaxis.tick_top()
     ax.tick_params(axis="x", labelrotation=90)
