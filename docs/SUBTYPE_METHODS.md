@@ -2,7 +2,8 @@
 
 The third task of the repository: **within one cancer, which subtype is a primary tumour?** It is
 modelled, like the other two, independently in each of the nine views (AFE, ALE, HIT, SE, A5SS,
-A3SS, MXE, RI, GEX). Decisions are numbered from D-30 (D-01..D-12 are in
+A3SS, MXE, RI, GEX). Decisions are numbered from D-30 (D-48..D-51, which span the three tasks, are in
+[ACROSS_TASKS_METHODS.md](ACROSS_TASKS_METHODS.md); D-01..D-12 are in
 [DECISIONS.md](DECISIONS.md), D-13..D-29 in [BIOLOGY_METHODS.md](BIOLOGY_METHODS.md)). Values live
 in [config/subtype.yaml](../config/subtype.yaml); this file explains them.
 
@@ -21,7 +22,9 @@ reason.
 | 33 | `scripts/33_subtype_run_all.py` | every job, 6 single-threaded workers |
 | 34 | `scripts/34_subtype_summarise.py` | performance tables, baselines, AS ensemble and fusion, McNemar |
 | 35 | `scripts/35_subtype_interpret.py` | SHAP by class, AS vs GEX genes, literature markers, event audit, cross-family, shared-class and MSI-confound tables |
-| 36 | `scripts/36_subtype_figures.py` | figures U1-U7 |
+| 36 | `scripts/36_subtype_figures.py` | figures U1-U9 |
+| 37 | `scripts/37_subtype_regulators.py` | splicing-factor scan, event association and predictions R1-R6 (D-46) |
+| 38 | `scripts/38_subtype_site_probe.py` | patient-grouped vs site-held-out probe (D-47) |
 
 Library: [`src/ctsm/subtype.py`](../src/ctsm/subtype.py). Tests: `tests/test_subtype.py`.
 
@@ -353,6 +356,32 @@ close the splicing views get.
   HPV-positive, ESR1/ERBB2/KRT5 for the PAM50 classes, CYP11B1 for cortical admixture and PNMT
   against pseudohypoxia, 1p/19q dosage for codeletion. Several are near-tautological (ESR1 for
   ER IHC, CDKN2A for p16, ERG for ERG fusions) and are there as positive controls of the check.
+
+### D-46 Splicing regulators of the subtypes · `config/followup.yaml: subtype_regulators` · `scripts/37`
+Added 2026-10-12, after every subtype model was summarised and before any regulator was looked
+at by class. Three parts, all on the cohort's tumours, no model refitted:
+- **Scan.** Each of the 70 splicing factors of D-18 (log2 CPM), between the cohort's classes:
+  Mann–Whitney for two classes, Kruskal–Wallis for more; BH within the cohort. Effect: each
+  class's AUROC against the rest.
+- **Association** (as D-18). The top 50 events of the cohort's model in SE, A3SS, A5SS, MXE and
+  RI against 500 random measured events of the view: partial Spearman with every factor,
+  adjusting for the stromal and immune scores; excess = share of top events with |ρ| > 0.3 minus
+  the share among the background.
+- **Predictions** R1–R6, fixed in the config with their sources: ESRP1 and ESRP2 lower in
+  biphasic than epithelioid mesothelioma, ESRP1 lower in the mesenchymal HNSC class (Warzecha et
+  al. 2009, 2010); PTBP1 lower in leiomyosarcoma than in the other sarcomas, and, adjusting for
+  class and composition, PTBP1 moves the ACTN1 and TPM1 mutually exclusive exons against the
+  leiomyosarcoma direction (Southby et al. 1999; Gooding et al. 1998). BH over R1–R6.
+
+### D-47 Is the subtype signal a tissue-source-site signal? · `config/followup.yaml: subtype_site_probe` · `scripts/38`
+The site probe of D-20, applied to every subtype cohort: the same untuned pipeline
+cross-validated with patients grouped (5 folds) and with tissue-source sites held out (5 folds
+of sites), three seeds, all nine views. A cohort is probed only if every class comes from ≥ 5
+sites (SARC is not: myxofibrosarcoma comes from 4). The site–class confounding of each cohort
+is Cramér's V between TSS and class, from the labels alone. Predictions: P1, the AS views lose
+more than GEX when sites are held out in most cohorts (sign test), as they did between
+neighbouring projects in D-20; P2, the loss rises with Cramér's V (Spearman over cohorts).
+The probe is a diagnostic: it never touches a subtype model or its estimate.
 
 ---
 

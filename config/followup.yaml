@@ -1,0 +1,185 @@
+# Follow-up analyses, fixed before any of them was computed.
+#   subtype_regulators, subtype_site_probe   docs/SUBTYPE_METHODS.md D-46, D-47
+#   cross_task                               docs/ACROSS_TASKS_METHODS.md D-48..D-51
+#
+# Written 2026-10-12, after every model of the three tasks had been fitted and summarised, and
+# before any analysis below was run. Nothing here refits a model or changes a label, a cohort, a
+# feature or a threshold of the existing tasks: everything is computed from stored data, stored
+# out-of-fold predictions and stored held-out SHAP values.
+#
+# What had already been seen when this file was written (so it could have shaped a prediction):
+#   - the subtype results of results/SUBTYPE.md, including the leiomyosarcoma ACTN1/TPM1 events,
+#     their direction in LMS, and the cross-family tables (histology model vs molecular class);
+#   - the tumour-status regulator layer (BIOLOGY_METHODS D-18) and the pan-cancer site probe
+#     (D-20), whose splicing views lost more accuracy than GEX when sites were held out;
+#   - the cancer-type confusion tables at project level (e.g. ESCA <-> STAD, CESC <-> HNSC);
+#   - the number of tissue-source sites per subtype class (label-only; used for the site rule).
+# Not seen: splicing-factor expression by subtype class, any type or status probability broken
+# down by subtype, any site-held-out subtype accuracy, any subtype exon's protein annotation.
+#
+# A prediction is "supported" when the difference is in the stated direction with BH q < 0.05
+# in its family; "against" when it is in the opposite direction with q < 0.05; otherwise "not
+# resolved". All tests are two-sided; the stated direction is the claim being checked.
+
+subtype_regulators:                      # D-46 · scripts/37_subtype_regulators.py
+  factors: biology.yaml regulators.splicing_factors       # the same 70 factors as D-18
+  covariates: [stromal_genes, immune_genes]                # biology.yaml, as D-18
+  scan:
+    test_two_classes: mann_whitney
+    test_more_classes: kruskal
+    fdr_family: per cohort, over the factors measured in it
+    effect: AUROC of each class against the rest of the cohort
+  association:                           # as D-18, with subtype top events
+    top_events_per_view: 50              # overall importance of the cohort's model
+    views: [se, a3ss, a5ss, mxe, ri]
+    n_background_events: 500
+    rho: 0.3
+    min_finite: 0.7
+  predictions:
+    - id: R1
+      cohort: MESO
+      gene: ESRP1
+      higher_in: [Epithelioid]
+      lower_in: [Biphasic]
+      why: ESRP1/2 drive the epithelial splicing programme and are lost in EMT; biphasic
+           tumours carry a sarcomatoid (mesenchymal) component
+      source: Warzecha et al. 2009 Mol Cell 33:591; Warzecha et al. 2010 EMBO J 29:3286
+    - id: R2
+      cohort: MESO
+      gene: ESRP2
+      higher_in: [Epithelioid]
+      lower_in: [Biphasic]
+      source: as R1
+    - id: R3
+      cohort: HNSC_mRNA
+      gene: ESRP1
+      higher_in: [Atypical, Basal, Classical]
+      lower_in: [Mesenchymal]
+      why: the mesenchymal class is defined by EMT and stromal/immune genes
+      source: Warzecha et al. 2010; TCGA 2015 Nature 517:576
+    - id: R4
+      cohort: SARC
+      gene: PTBP1
+      higher_in: [DDLPS, UPS, MFS]
+      lower_in: [LMS]
+      why: PTBP1 represses the smooth-muscle exons of ACTN1 and TPM1
+      source: Southby et al. 1999 Mol Cell Biol 19:2699; Gooding et al. 1998 RNA 4:85
+    - id: R5
+      cohort: SARC
+      gene: PTBP1
+      event: "ENSG00000072110.15#chr14:68878457-68878523#-;68878988-68879069;68877081-68877240;68879961-68880108"
+      event_name: ACTN1 mutually exclusive exons (MXE)
+      claim: partial Spearman (PTBP1 log2 CPM, PSI), adjusting for class, stromal and immune
+             scores, has the sign opposite to the LMS-minus-rest median PSI difference
+      source: Southby et al. 1999
+    - id: R6
+      cohort: SARC
+      gene: PTBP1
+      event: "ENSG00000140416.23#chr15:63043705-63043831#+;63044026-63044152;63042757-63042943;63056984-63057118"
+      event_name: TPM1 exons 2/3 (MXE)
+      claim: as R5
+      source: Gooding et al. 1998
+  fdr_family_predictions: R1-R6 together
+
+subtype_site_probe:                      # D-47 · scripts/38_subtype_site_probe.py
+  pipeline: as BIOLOGY_METHODS D-20 (top-2,000 variance, median impute, standardise,
+            L2 logistic regression C = 0.05, balanced classes; multinomial for > 2 classes)
+  schemes: [case-grouped, site-held-out]   # StratifiedGroupKFold(5) by case / by TSS
+  seeds: [0, 1, 2]
+  views: all nine
+  metric: balanced accuracy of the pooled out-of-fold calls, mean over seeds
+  drop: case-grouped minus site-held-out
+  min_sites_per_class: 5                 # else the cohort is not probed (SARC: MFS has 4)
+  confounding: Cramer's V between TSS and class, from the task table (no model)
+  predictions:
+    - id: P1
+      claim: in most probed cohorts the median drop of the 8 AS views exceeds the GEX drop
+      test: sign test over cohorts
+      why: D-20 found the splicing views more site-sensitive than GEX for neighbouring projects
+    - id: P2
+      claim: across cohorts, the drop rises with Cramer's V (Spearman > 0), for GEX and for the
+             AS-view median separately
+      why: a model can only lean on site where class and site go together
+
+cross_task:                              # docs/ACROSS_TASKS_METHODS.md · scripts/40_cross_task.py
+  models: [GEX, AS ensemble, GEX + AS]   # out-of-fold; AS ensemble = mean of the 8 AS views;
+                                         # GEX + AS = 0.5 GEX + 0.5 AS ensemble (as D-23, D-40)
+  gene_overlap:                          # D-48
+    top_genes: 100                       # gene = its best feature (biology.gene_ranking)
+    status: overall importance of the cancer's tumour-status model
+    type: importance over the samples of the cancer's own class (cancer-type model)
+    subtype: overall importance of the cohort's model
+    universe: genes with a feature passing both tasks' pre-filters for that cancer / cohort
+    test: hypergeometric; BH over all (pair, cohort, view)
+    predictions:
+      - id: G1
+        claim: every task pair overlaps above chance (median fold enrichment > 1 over cohorts and views)
+      - id: G2
+        claim: for histology cohorts, subtype-type overlap exceeds subtype-status overlap
+               (paired Wilcoxon on Jaccard over cohort x view)
+        why: a histology class is a lineage, which the cancer-type models read; tumour status
+             reads tumour-versus-normal programmes
+  type_probability_by_subtype:           # D-49
+    measure: per patient, the sum of the type model's out-of-fold probabilities over the target classes
+    test: Mann-Whitney between the named subtype groups; effect AUROC; BH over predictions, per model
+    predictions:
+      - {id: T1, cohort: ESCA, targets: [HNSC, LUSC, CESC], higher_in: [Squamous], lower_in: [Adenocarcinoma],
+         source: "TCGA 2017 Nature 541:169"}
+      - {id: T2, cohort: ESCA, targets: [STAD], higher_in: [Adenocarcinoma], lower_in: [Squamous],
+         source: "TCGA 2017 Nature 541:169"}
+      - {id: T3, cohort: CESC, targets: [HNSC, LUSC], higher_in: [Squamous], lower_in: [Adenocarcinoma],
+         source: "TCGA 2017 Nature 543:378"}
+      - {id: T4, cohort: CESC, targets: [UCEC], higher_in: [Adenocarcinoma], lower_in: [Squamous],
+         source: "TCGA 2017 Nature 543:378 (endometrial-like cervical cancers)"}
+      - {id: T5, cohort: LGG_IDH, targets: [GBM], higher_in: [IDHwt], lower_in: [IDHmut-codel, IDHmut-non-codel],
+         source: "Brat et al. 2015 NEJM 372:2481; Ceccarelli et al. 2016 Cell 164:550"}
+      - {id: T6, cohort: BRCA_PAM50, targets: [OV], higher_in: [Basal], lower_in: [LumA, LumB, Her2, Normal-like],
+         source: "TCGA 2012 Nature 490:61"}
+      - {id: T7, cohort: UCEC_TCGA, targets: [OV, UCS], higher_in: [CN-high], lower_in: [POLE, MSI, CN-low],
+         source: "TCGA 2013 Nature 497:67"}
+      - {id: T8, cohort: UCEC, targets: [OV, UCS], higher_in: [Serous], lower_in: [Endometrioid],
+         source: "TCGA 2013 Nature 497:67"}
+      - {id: T9, cohort: MESO, targets: [SARC], higher_in: [Biphasic], lower_in: [Epithelioid],
+         source: "WHO definition (sarcomatoid component); Hmeljak et al. 2018 Cancer Discov 8:1548"}
+      - {id: T10, cohort: HNSC_HPV, targets: [CESC], higher_in: [HPV-positive], lower_in: [HPV-negative],
+         source: "Pyeon et al. 2007 Cancer Res 67:4605"}
+      - {id: T11, cohort: PCPG_mRNA, targets: [ACC], higher_in: [Cortical admixture],
+         lower_in: [Kinase signaling, Pseudohypoxia, Wnt-altered],
+         source: "Fishbein et al. 2017 Cancer Cell 31:181 (positive control: adrenal cortex in the sample)"}
+      - {id: T12, cohort: STAD_TCGA, targets: [ESCA], higher_in: [CIN], lower_in: [MSI, GS, EBV],
+         source: "TCGA 2017 Nature 541:169 (oesophageal adenocarcinoma resembles CIN gastric cancer)"}
+      - {id: T13, cohort: STAD, targets: [COAD, READ], higher_in: [Intestinal], lower_in: [Diffuse],
+         source: "Lauren 1965 Acta Pathol Microbiol Scand 64:31 (intestinal-type glands)"}
+    descriptive: mean probability of every type class within every subtype class; the share of
+                 each subtype class the type model calls another project, and which
+  status_probability_by_subtype:         # D-50
+    cohorts: subtype cohorts of the cancers with a tumour-status model
+    measure: out-of-fold P(tumour) of the primary tumour
+    test: Mann-Whitney between the named groups; BH over predictions, per model;
+          Kruskal-Wallis per cohort (descriptive, BH over cohorts)
+    predictions:
+      - {id: S1, cohort: BRCA_PAM50, lower_in: [Normal-like], higher_in: [LumA, LumB, Her2, Basal],
+         source: "Parker et al. 2009 J Clin Oncol 27:1160 (normal-like reflects normal-tissue content)"}
+      - {id: S2, cohort: THCA, lower_in: [Follicular], higher_in: [Classical],
+         source: "TCGA 2014 Cell 159:676 (RAS-like, follicular, most differentiated)"}
+      - {id: S3, cohort: THCA, lower_in: [Classical], higher_in: [Tall cell],
+         source: "TCGA 2014 Cell 159:676 (tall-cell-like cluster, lowest differentiation score)"}
+      - {id: S4, cohort: STAD, lower_in: [Diffuse], higher_in: [Intestinal],
+         source: "Lauren 1965 (diffuse type infiltrates as scattered cells in stroma)"}
+      - {id: S5, cohort: STAD_TCGA, lower_in: [GS], higher_in: [CIN, MSI, EBV],
+         source: "TCGA 2014 Nature 513:202 (GS enriched for diffuse histology)"}
+      - {id: S6, cohort: BRCA, lower_in: [Lobular], higher_in: [Ductal],
+         source: "histological definition (discohesive single-file infiltration)"}
+    composition: within the tumours of each such cancer, Spearman of P(tumour) with the stromal and
+                 the immune score (biology.yaml genes); predicted negative (C1)
+  exon_protein_character:                # D-51
+    sets: tumour status top SE exons and cancer-type top SE exons (as D-17), and the union of the
+          top 100 SE events of every subtype cohort's model (overall importance)
+    background: the same random 6,000 measured exons as D-17
+    metrics: as D-17 (length divisible by 3; exact GENCODE exon; coding; Pfam/CDD domain,
+             disordered region and TM helix among fully coding exons)
+    prediction:
+      - id: E1
+        claim: subtype top exons are, like the other two tasks', more often divisible by 3, less often
+               in a domain and more often in a disordered region than the background
+        source: "Buljan et al. 2012 Mol Cell 46:871; Ellis et al. 2012 Mol Cell 46:884"
