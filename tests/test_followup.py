@@ -146,3 +146,70 @@ class TestMsiRepeatHelpers(unittest.TestCase):
     def test_auroc_lower(self):
         a, p = self.m.auroc_lower(np.array([1.0, 2.0]), np.array([3.0, 4.0, 5.0]))
         self.assertEqual(a, 1.0)
+
+
+class TestRepeatDnaReads(unittest.TestCase):
+    """scripts/45 (D-56): the BAM reader decodes records, and a read's run is called only between
+    its exact flanks."""
+    @classmethod
+    def setUpClass(cls):
+        cls.m = load_script("45_repeat_dna_reads.py")
+
+    @staticmethod
+    def bam(path: Path, reads) -> None:
+        import gzip
+        import struct
+        code = {b: i for i, b in enumerate("=ACMGRSVTWYHKDBN")}
+        refs = [b"chr1\0", b"chr2\0"]
+        out = b"BAM\1" + struct.pack("<i", 0) + struct.pack("<i", len(refs))
+        for r in refs:
+            out += struct.pack("<i", len(r)) + r + struct.pack("<i", 1000)
+        for ref, pos, mapq, flag, seq in reads:
+            name = b"r\0"
+            packed = bytes((code[seq[i]] << 4) | (code[seq[i + 1]] if i + 1 < len(seq) else 0)
+                           for i in range(0, len(seq), 2))
+            cigar = struct.pack("<I", (len(seq) << 4) | 0)
+            body = (struct.pack("<iiBBHHHiiii", ref, pos, len(name), mapq, 0, 1, flag, len(seq), -1, -1, 0)
+                    + name + cigar + packed + bytes([30] * len(seq)))
+            out += struct.pack("<i", len(body)) + body
+        with gzip.open(path, "wb") as fh:                  # two members, as BGZF writes them
+            fh.write(out[:40])
+        with gzip.open(path, "ab") as fh:
+            fh.write(out[40:])
+
+    def test_reader_decodes_odd_length_reads_and_flags(self):
+        import tempfile
+        with tempfile.TemporaryDirectory() as d:
+            p = Path(d) / "x.bam"
+            self.bam(p, [(0, 5, 60, 0, "ACGTN"), (1, 7, 10, 0x400, "TTTTTTG")])
+            got = list(self.m.read_bam(p))
+        self.assertEqual(got, [("chr1", 5, 60, 0, "ACGTN"), ("chr2", 7, 10, 0x400, "TTTTTTG")])
+
+    def test_run_is_called_only_between_exact_flanks(self):
+        left, right = "CAGGCATC", "GAATCCAG"
+        f = self.m.run_length
+        self.assertEqual(f("AC" + left + "T" * 13 + right + "GG", left, "T", right), 13)
+        self.assertIsNone(f(left + "T" * 13 + "GAATCCAC", left, "T", right))          # flank mismatch
+        self.assertIsNone(f(left + "T" * 6 + "C" + "T" * 6 + right, left, "T", right))  # interrupted run
+        self.assertIsNone(f(left + right, left, "T", right))                            # no run base
+        self.assertIsNone(f(left + "T" * 13 + right[:5], left, "T", right))             # read ends in it
+        self.assertEqual(f(left + "A" + left + "T" * 9 + right, left, "T", right), 9)  # second copy
+
+    def test_genotype_filters_reads_and_contraction_is_stutter_corrected(self):
+        import tempfile
+        left, right = "CAGGCATC", "GAATCCAG"
+        L = pd.DataFrame({"chrom": ["chr1"], "start": [108], "end": [120], "left": [left], "base": ["T"],
+                          "right": [right]})
+        read = "GG" * 50 + left + "T" * 12 + right
+        with tempfile.TemporaryDirectory() as d:
+            p = Path(d) / "x.bam"
+            self.bam(p, [(0, 0, 60, 0, read), (0, 0, 5, 0, read), (0, 0, 60, 0x400, read),
+                         (0, 0, 60, 0, read.replace("T" * 12, "T" * 11))])
+            self.assertEqual(sorted(self.m.genotype_bam(p, L)[0]), [11, 12])
+        g = pd.DataFrame({"file_id": ["t", "n"], "case_id": ["a", "a"], "cohort": ["X", "X"],
+                          "group": ["MSI", "MSI"], "role": ["tumour", "normal"], "locus": [0, 0],
+                          "lengths": [[12] * 5 + [11] * 5, [12] * 9 + [11]]})
+        ct = self.m.contraction_table(g)
+        self.assertEqual(ct.germline_mode.iloc[0], 12)
+        self.assertAlmostEqual(ct.c.iloc[0], 0.5 - 0.1)
+        self.assertEqual(ct.reference.iloc[0], "own normal")

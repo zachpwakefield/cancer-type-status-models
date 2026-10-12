@@ -49,11 +49,18 @@ wait $p1 && wait $p2 && wait $p3
 run scripts/33_subtype_run_all.py --workers "${WORKERS:-6}"
 run scripts/34_subtype_summarise.py
 run scripts/35_subtype_interpret.py
-# splicing regulators, the site probe and the MSI repeats of the subtypes (D-46, D-47, D-52..D-54;
+# splicing regulators, the site probe and the MSI repeats of the subtypes (D-46, D-47, D-52..D-56;
 # config/followup.yaml)
 run scripts/37_subtype_regulators.py --workers "${WORKERS:-6}"
 run scripts/38_subtype_site_probe.py --workers "${WORKERS:-6}"
 run scripts/42_msi_repeats.py               # D-52..D-54; needs the GRCh38 FASTA (FASTA in the script)
+run scripts/43_msi_robustness.py            # D-55
+run scripts/44_repeat_dna.py --only loci    # D-56: loci and the BAM manifest; the slices are fetched
+run scripts/44_repeat_dna.py --only manifest #   by the data user with their own GDC token (see step 44)
+if [ -d data.nosync/ctsm_v1/msi/slices ]; then
+  run scripts/45_repeat_dna_reads.py --only genotype
+  run scripts/45_repeat_dna_reads.py --only test
+fi
 run scripts/36_subtype_figures.py
 # across the three tasks (docs/ACROSS_TASKS_METHODS.md D-48..D-51): nothing refitted
 run scripts/40_cross_task.py
