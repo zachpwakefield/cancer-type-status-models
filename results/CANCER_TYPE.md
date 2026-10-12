@@ -7,9 +7,9 @@ This document asks what the splicing models learned about *which tissue a tumour
 The other task, telling tumour from normal tissue within a cancer, is a different question with
 a different answer and is written up separately in [TUMOUR_STATUS.md](TUMOUR_STATUS.md).
 
-- **Methods and decisions:** [docs/BIOLOGY_METHODS.md](../docs/BIOLOGY_METHODS.md) (D-13 to D-26).
+- **Methods and decisions:** [docs/BIOLOGY_METHODS.md](../docs/BIOLOGY_METHODS.md) (D-13 to D-28).
 - **Scripts:** `07`–`19` and `22` write the tables, `21` draws these figures.
-- **Figures:** T1–T8 in [figures/cancer_type/](figures/cancer_type/), each with a caption file
+- **Figures:** T1–T9 in [figures/cancer_type/](figures/cancer_type/), each with a caption file
   and a CSV of the plotted values.
 - **Statistics in figures:** raw p. Any q is in the CSV with its FDR family named.
 
@@ -38,12 +38,17 @@ enough on its own: ten of them separate a class from the nearest of the 33 other
 1.63 — in PSI, or in the HIT index for terminal exons — with no model involved in that number
 (§8).
 
-Two sections keep the claim honest. §4 shows that the pathway enrichments of the splicing
+Three sections keep the claim honest. §4 shows that the pathway enrichments of the splicing
 explanations were largely an artefact of deeply covered ribosomal-protein splice sites, which
 are measured precisely everywhere; what survives their removal is lineage biology and the
 splicing machinery itself. §7 shows that one of the headline gains is not biology at all:
 because each TCGA tissue-source site contributes to exactly one project, the colon/rectum
-advantage disappears when whole sites are held out, while glioma, kidney and lung survive.
+advantage disappears when whole sites are held out, while glioma, kidney and lung survive. And
+§9 qualifies §5: the class-defining events are not their *own* gene's expression in disguise,
+but in unstranded libraries a terminal exon that overlaps another gene can count that gene's
+reads, and 101 of the 695 overlapping top events follow a neighbour's expression — often a
+lineage gene such as CP in liver, HNF1A in rectum or PAX6 in glioma. Two of the ten events of
+§8 are among them.
 
 ## Summary
 
@@ -54,9 +59,10 @@ advantage disappears when whole sites are held out, while glioma, kidney and lun
 3. **The two modalities fail differently.** Expression confuses anatomical neighbours
    (colon/rectum, oesophagus/stomach, glioma grades); splicing confuses cell types across organs
    (squamous carcinomas) and some tumours with their own normal tissue.
-4. **The class-defining events are not expression in disguise.** For the splice-site views they
-   correlate with their host gene's expression no more than random events do, and each class's
-   top splicing genes and top expression genes overlap by about one gene.
+4. **The class-defining events are not their own gene's expression in disguise.** For the
+   splice-site views they correlate with their host gene's expression no more than random events
+   do, and each class's top splicing genes and top expression genes overlap by about one gene.
+   Some terminal exons read a *neighbouring* gene instead (point 8).
 5. **Single exons mark single lineages** — MLANA in melanocytic tumours, RAG2 in thymoma,
    SLC37A2 in squamous carcinomas. Across all eight views, one event is often enough on its own:
    TOMM40L's terminal exon separates liver from its nearest class by 1.63 of HIT index, and
@@ -68,6 +74,10 @@ advantage disappears when whole sites are held out, while glioma, kidney and lun
    disordered, outside folded domains — yet the two tasks' top-100 sets overlap only 28–36% for
    the internal views, and none of the ten events of §8 sits in a splicing-factor regulon the
    tumour-status models' events are enriched for.
+8. **Some class-defining events measure a neighbouring gene.** 61% of the top HIT events overlap
+   another gene's exon, against 7% of measured HIT events (odds 12.6 with exon length held
+   fixed), and 101 of 695 overlapping top events follow the neighbour's expression more than
+   their own gene's — PLEKHG3 → SPTB in PCPG, BSCL2 → LRRN4CL in UVM, HPS3 → CP in liver.
 
 ---
 
@@ -159,6 +169,9 @@ What remains is two kinds of biology:
 - Each class's top-100 expression genes share about **one** gene with each splicing view's
   top-100 host genes. The shared ones are lineage markers that are both expressed and spliced
   lineage-specifically: GFAP, MBP, DUOXA2, MYH11, LGALS4, FXYD2.
+- The comparison is with the **host** gene. An event can also follow a *different* gene whose
+  exon overlaps it, which this section does not test; §9 does, and finds it for 101 of the
+  top events, mostly terminal exons.
 
 ## 6. Single exons mark single lineages
 
@@ -253,6 +266,19 @@ beyond SKCM at 0.99. These are the only two rows whose nearest class is a biolog
 one, and they are where a single event stops being enough — which is the whole argument for the
 ensembles of §1.
 
+**Two of the ten read a neighbouring gene (§9).** PLEKHG3's terminal exon overlaps an exon of
+SPTB, which runs the other way across PLEKHG3's 3′ end, by 3.2 kb, and across all samples the
+event follows SPTB's expression (ρ −0.61, against +0.16 with PLEKHG3); SPTB's own expression
+peaks in PCPG, the class the event marks. BSCL2's terminal exon overlaps the same-strand
+neighbour LRRN4CL and follows it (ρ −0.78, against −0.03 with BSCL2), with LRRN4CL highest in
+UVM. Both separate their class, but what they separate it by is how much of a neighbouring gene
+the tumour makes. Two more cannot be cleared. TOMM40L's exon overlaps NR1I3, the nuclear
+receptor CAR, on the other strand; NR1I3 is a liver gene and the event's liver reversal fits
+it, but the correlation (−0.45, against −0.05 with TOMM40L) falls short of the pre-specified
+0.5, so by the rule the event stays TOMM40L's. WDR55's last exon overlaps DND1, a germ-cell
+gene, on the other strand, and the event switches off in testis — but DND1 is not in the
+expression matrix, so the check cannot be run. The other six overlap nothing.
+
 **What the segments do.** Only five of the ten change protein sequence at all: TOMM40L and
 KRT19 inside an annotated domain, PLEKHG3 in a disordered region, MARK3 a 16-amino-acid in-frame
 swap, EVL the first 8 residues. Two more (MEF2B's first exon, CTSA's 24-nt extension) sit in a
@@ -267,6 +293,43 @@ also what §5 predicts: a class is named by where transcription starts and ends,
 same decision that makes the terminal-exon views track host-gene expression. None of the ten is
 in a splicing-factor regulon the tumour-status models' events are enriched for. Lineage
 decisions and the tumour programme are different sets of events.
+
+## 9. Which class-defining events measure another gene
+
+![T9](figures/cancer_type/T9_overlap_audit.png)
+
+The same audit as [TUMOUR_STATUS.md](TUMOUR_STATUS.md) §10 (D-27), on the cancer-type models'
+top events (top 30 of each class's explanation, per view). Most TCGA mRNA libraries are
+unstranded, so where an event's exon overlaps an exon of another gene on the other strand, reads
+of either can count towards it; and GENCODE's nested and readthrough models put one gene's exons
+inside another's.
+
+**How often.** 6.8% of the 357,832 measured events overlap another gene's exon by at least
+50 bp. The cancer-type models' top events overlap more often in every view, and in HIT by far
+the most: 61% of the top HIT events against 7% of all measured ones (odds 19.6; 12.6 with the
+exon's length held fixed, since long terminal exons overlap something more often by chance). The
+other views sit between 1.8 and 2.6 once length is matched.
+
+**How often it matters.** An event *tracks* its neighbour when, over all 9,729 samples, its
+Spearman correlation with the neighbour's expression is at least 0.5 in size and larger than
+with its own gene's — a rule fixed before any result was seen. 101 of the 695 overlapping top
+events do (15%); in HIT, 63 of 224 (28%). Another 22% cannot be checked because the neighbour is
+not in the expression matrix.
+
+**What they read.** For this task the neighbours are mostly lineage genes, and the coupling
+holds at the level of classes as well as samples. HPS3's terminal exon follows ceruloplasmin
+(CP; ρ −0.93), which peaks in liver; a C12orf43 exon follows HNF1A in rectum; an ELP4 exon
+follows PAX6 in lower-grade glioma; PKIG's last exons follow ADA in thymoma. Of the classes in
+which the tracked neighbours peak, LAML is the most common (20 of 101). These events carry real
+lineage information, but it is the neighbour's expression, which is the signal the expression
+model already reads. That is a reason to expect less complementarity from them, not a reason to
+doubt the classification.
+
+**What does not change.** No model is refitted and no event removed: the models were trained on
+these measurements and classify as well as §1 says. §5's comparison with the host gene stands,
+and §6's cassette-exon atlas is the view least affected (7 of 62 overlapping top SE events
+track). Whether a tracked event is misassigned reads or two neighbouring genes regulated
+together cannot be told apart without stranded libraries.
 
 ## What would change the reading
 
@@ -284,6 +347,10 @@ overturn the argument:
 - **The pooled normal class.** It mixes tissues, and it is the class splicing does worst on
   (−0.102 recall against expression). Splitting it by tissue would say whether that is a real
   weakness or an artefact of pooling.
+- **A stranded cohort.** §9 marks the events that follow an overlapping gene, but in unstranded
+  data misassigned reads and co-regulated neighbours look the same. Counting only sense-strand
+  reads would settle PLEKHG3/SPTB, BSCL2/LRRN4CL and TOMM40L/NR1I3, and a stranded expression
+  matrix that holds DND1 would settle WDR55.
 - **The small classes.** CHOL (35 samples), DLBC (47), UCS (55), UVM (78) and ACC (79) are the
   smallest of the 34, and they appear all over §8 — DLBC and UVM as the marked class, CHOL and
   ACC as the nearest one in five of the ten rows. Those medians rest on tens of samples, so the
@@ -302,3 +369,5 @@ overturn the argument:
 - **The site probe is a linear probe** with fixed settings. It bounds, but does not measure, how
   site-dependent the tuned MLPs are.
 - **Reference data.** Gene sets are MSigDB 2026.1; protein annotation is GENCODE v45.
+- **Unstranded libraries.** An event can count reads of an overlapping gene (§9). The audit
+  flags these but does not remove them from the models.

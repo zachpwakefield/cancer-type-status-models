@@ -8,9 +8,9 @@ This document asks what the splicing models learned about becoming a tumour. The
 telling the cancers apart, is a different question with a different answer and is written up
 separately in [CANCER_TYPE.md](CANCER_TYPE.md).
 
-- **Methods and decisions:** [docs/BIOLOGY_METHODS.md](../docs/BIOLOGY_METHODS.md) (D-13 to D-26).
+- **Methods and decisions:** [docs/BIOLOGY_METHODS.md](../docs/BIOLOGY_METHODS.md) (D-13 to D-28).
 - **Scripts:** `07`–`19` and `22` write the tables, `20` draws these figures.
-- **Figures:** S1–S9 in [figures/tumour_status/](figures/tumour_status/). Each has a caption file
+- **Figures:** S1–S10 in [figures/tumour_status/](figures/tumour_status/). Each has a caption file
   stating the question, the method, n and the test, and a CSV of the plotted values.
 - **Statistics in figures:** raw p. Any q is in the CSV with its FDR family named.
 
@@ -45,6 +45,17 @@ predicting outcome are related but distinct axes. §9 then spends ten events' wo
 showing that the headline set is not what §6 would lead one to expect: six mutually exclusive
 pairs and four terminal exons, not one cassette exon.
 
+§10 is an audit that cuts against the rest, and it changes how some events should be named.
+Most TCGA libraries are unstranded and GENCODE nests genes inside one another, so an event named
+after one gene can count another gene's reads. The models' top events overlap another gene's
+exon more often than measured events do — 44% against 7% for hybrid/terminal (HIT) exons — and
+163 of the 1,105 overlapping ones follow the other gene's expression more closely than their
+own. Three of §9's ten are among them: EXOSC7's last exon reads CLEC3B, ENOSF1's terminal exon
+partly reads its antisense partner TYMS, and PLCG1's exon pair reads ZHX3. Several of the
+neighbours are composition markers — smooth-muscle MYH11, stromal CLEC3B — so part of what looks
+like splicing is the microenvironment signal of §3 arriving by another route. No model changes,
+and the survival result of §8 holds with every overlapping event removed.
+
 ## Summary
 
 1. **Splicing adds to expression.** Over 6,815 samples, the expression model makes 99 errors and
@@ -77,6 +88,12 @@ pairs and four terminal exons, not one cassette exon.
    first in 14 of 15 cancers and is the most prognostic event in the set. Six of the nine with
    protein coordinates land *inside* an annotated domain — the opposite of the cassette-exon
    picture in point 6, because the most shared events are not cassette exons at all.
+9. **Some of the events measure a neighbouring gene.** Overlap with another gene's exon is
+   enriched among the models' top events in seven of eight views (44% against 7% for HIT, odds
+   6.6 with exon length held fixed), and 163 of 1,105 overlapping top events follow the other
+   gene's expression more than their own — EXOSC7 → CLEC3B, ENOSF1 → TYMS, PLCG1 → ZHX3,
+   NDE1 → MYH11. macroH2A1, CHN1, COL5A1 and PDLIM7 do not. The survival enrichment of point 7
+   is unchanged without any overlapping event (odds 1.25 base, 1.17 adjusted).
 
 ---
 
@@ -222,9 +239,16 @@ event fall in 14; PDLIM7 and PLCG1 mutually exclusive exon events rise in all 15
 contribute pairs of events that move in opposite directions: two EXOSC7 last exons, two NDE1
 first exons, two TPM1 mutually exclusive exon events.
 
-**A caution.** The NR1D1 and THRA HIT events overlap at chr17:40.09 Mb, where the two genes lie on
-opposite strands, and move in opposite directions in 14 of 15 cancers. Most TCGA RNA-seq is
-unstranded, so these are better read as one finding than two.
+**A caution, now measured (§10).** 107 of the 404 recurrent events overlap an exon of another
+gene and 30 of them follow that gene's expression more than their own host's. Two of the pairs
+above are among them. The EXOSC7 last exon that falls in tumours follows CLEC3B, a stromal gene
+nested in EXOSC7's 3′ end on the same strand (ρ +0.76, against −0.28 with EXOSC7), and the NDE1
+first exon that falls follows MYH11, smooth-muscle myosin (+0.80 against −0.34): both report how
+much stroma or muscle a sample holds, which normal tissue has more of. The TPM1 pair overlaps
+nothing. The NR1D1 and THRA HIT events overlap at chr17:40.09 Mb on opposite strands and move in
+opposite directions in 14 of 15 cancers; the THRA event follows NR1D1's expression (−0.62,
+against +0.42 with THRA), while the NR1D1 event follows its own gene (+0.59) more than THRA
+(−0.41). The pair is one NR1D1 signal read twice, not two events.
 
 ## 6. The exons the models use look tissue-regulated
 
@@ -325,6 +349,12 @@ none (934 against 10,762 pairs, OR 1.33, p = 0.005; `08_survival/regulon_vs_surv
 Three independent ways of asking which candidates matter — how many models agree, whether the
 event recurs, whether it belongs to a coherent factor programme — pick out the same events.
 
+**Not a neighbour's expression.** Some of the candidates read another gene's expression (§10).
+Removing every event whose segment overlaps another gene's exon — from the candidates and the
+background alike — leaves the result where it was: 10.9% against 8.9%, OR 1.25 (p = 4.5e-6) in
+the base arm and 1.17 (p = 0.001) adjusted, against 1.27 and 1.18 with them
+(`12_overlap_audit/survival_enrichment_without_overlaps.csv`).
+
 **Some single events do survive multiple testing, and they are almost all kidney.** Applying BH
 inside each cancer's own family of ~1,600 Cox tests (a different family from the one
 splice-assay prints on its pages, which is BH within one event across cancers), 229 of 11,702
@@ -365,9 +395,10 @@ adjusted model, overall survival.
 | GLIPR1 HIT | 1 | 8 | down | 5/14 (0) | 3 | BRCA 1.37 (1.07–1.74) | – |
 
 The "worse" column makes the direction problem concrete: no event in this list points the same
-way in every cancer where it reaches p < 0.05. Of the six, only COQ6 RI clears FDR inside a
-cancer (KIRC); the candidates that clear it in two are EPB41 MXE and ADAM15 MXE, in KIRC and
-KIRP, both with longer survival at a higher value.
+way in every cancer where it reaches p < 0.05. Of the six, only ENOSF1 follows a neighbouring
+gene by the rule of §10 (TYMS); COQ6 RI sits just under it (ENTPD5, ρ 0.499 against 0.38). Of
+the six, only COQ6 RI clears FDR inside a cancer (KIRC); the candidates that clear it in two are
+EPB41 MXE and ADAM15 MXE, in KIRC and KIRP, both with longer survival at a higher value.
 
 `08_survival/event_dossiers.csv` joins, for every candidate, how many models rank it, how it
 moves between tumour and normal, what it does to the protein, whose regulon it belongs to and
@@ -407,14 +438,23 @@ subunit domain (aa 402–435 of 765). It falls in tumours in 14 of 15 cancers (m
 −0.24), most steeply in LUSC (0.73 in matched normal tissue to 0.10 in tumour), and in 13 of
 the 14 models a higher value argues for normal (median Spearman between value and SHAP −0.87). It
 belongs to the HNRNPU regulon (ρ −0.37) and reaches Cox p < 0.05 in 2 of its 14 testable cancers
-(BLCA, HR 0.71 per SD).
+(BLCA, HR 0.71 per SD). The name needs stating (§10): GCOM1 is a GENCODE readthrough model
+spanning MYZAP and POLR2M. The tracked exon is a MYZAP exon and its partner a POLR2M exon, both
+joined to a MYZAP exon upstream and a POLR2M exon downstream, so the event weighs one gene's
+exon against the other's inside readthrough transcripts, and how much MYZAP–POLR2M readthrough
+a sample makes is part of what it measures. The domain the segment lands in is POLR2M's: Gdown1,
+an RNA polymerase II-associated protein.
 
 **PLCG1 · mutually exclusive exons · chr20:41,174,124-41,174,311 · up in tumour.** 188 nt against
 161 nt: a 27-nt, 9-amino-acid, in-frame difference at aa 1,216–1,278 of 1,291, inside the last
 6% of phospholipase C-γ1. It is one of two events here that move the same way in all 15 cancers
 (median +0.11, KIRC 0.50 → 0.80), and all 13 models that rank it read a higher value as tumour
 (+0.91). Two of 14 cancers reach p < 0.05 (BLCA, HR 0.75). The reference carries no InterPro
-features for this transcript, so the pipeline cannot say what the segment sits in.
+features for this transcript, so the pipeline cannot say what the segment sits in. And it may
+not be a PLCG1 choice at all (§10): the partner exon overlaps an exon of ZHX3, which runs the
+other way across PLCG1's 3′ end, and within cancers the event follows ZHX3's expression
+(ρ −0.60) more than PLCG1's (+0.20). More ZHX3 reads on the partner exon lower the PSI, so the
+rise in tumours is at least partly ZHX3 falling.
 
 **PDLIM7 · mutually exclusive exons · chr5:177,491,807-177,491,976 · up in tumour.** The largest
 in-frame change here: a 170-nt exon against a 17-nt partner, 153 nt and 51 amino acids, at
@@ -429,7 +469,12 @@ can place it but not translate it; it is the one card of the ten that S9 cannot 
 still among the cleanest signals in the study: down in 14 of 15 cancers, median ΔPSI −0.44, and
 in BLCA it goes from 0.93 in normal tissue to 0.00 in tumour — switched off. All 10 models that
 rank it read a higher value as normal (−0.89), and 2 of 14 cancers reach p < 0.05 (HNSC, HR
-0.77). §5 notes that EXOSC7 also contributes a second last exon that moves the other way.
+0.77). §5 notes that EXOSC7 also contributes a second last exon that moves the other way. The
+reason it belongs to no coding transcript of EXOSC7 is that it is CLEC3B's last exon: CLEC3B,
+which encodes the stromal and adipose protein tetranectin, is nested in EXOSC7's 3′ end on the
+same strand, and the event follows its expression (ρ +0.76, against −0.28 with EXOSC7). What
+switches off in tumours is CLEC3B, and the opposite-moving EXOSC7 exon is the other side of the
+same ratio.
 
 **ENOSF1 · terminal exon · chr18:670,318-674,406 · down in tumour.** The HIT index of this 4.1-kb
 exon measures whether it is used as a first or a last exon, and in tumours it moves towards
@@ -438,7 +483,14 @@ contributes the final 33 residues of a 443-aa protein. It is the most connected 
 13 factor regulons, among them PTBP1 (ρ −0.41), HNRNPU (−0.41) and HNRNPF (−0.38), all three
 programmes the models' events are enriched in (§4) — and the most prognostic, with Cox p < 0.05
 in 5 of 14 cancers, strongest in LIHC (HR 0.73, 0.61–0.88). Its assay page is in
-[figures/tumour_status/assay/](figures/tumour_status/assay/).
+[figures/tumour_status/assay/](figures/tumour_status/assay/). ENOSF1 was first cloned as rTS,
+an RNA antisense to thymidylate synthase (Dolnick 1993), and this exon overlaps TYMS on the other
+strand by 719 bp. Within tumours the event follows TYMS (ρ −0.62, against +0.34 with ENOSF1).
+TYMS is a proliferation gene, so the step that matters is the partial correlation (D-28): with a
+ten-gene proliferation score held fixed the event still follows TYMS in all 15 cancers (median
+ρ −0.35), and with TYMS held fixed it still follows proliferation in all 15 (−0.30). It reads
+two things at once — its antisense partner and the cell cycle — and the survival association is
+best read as theirs.
 
 **NOP16 · alternative last exon · chr5:176,383,946-176,384,374 · up in tumour.** 429 nt
 contributing aa 132–178 of 178 — the whole C-terminal quarter, inside the Nop16
@@ -452,7 +504,9 @@ last-exon use in 14 of 15 cancers (median +0.29, THCA −0.82 → −0.09). It i
 the ten that was never tested for survival, because it entered no model's top ten and so was not a
 candidate under D-22. It is also the cautionary one: as §5 says, the NR1D1 and THRA terminal
 exons overlap at chr17:40.09 Mb on opposite strands and most TCGA libraries are unstranded, so
-the pair is one observation, not two.
+the pair is one observation, not two. §10 says which: the THRA event follows NR1D1's
+expression, while this one follows NR1D1 itself (ρ +0.59) more than THRA (−0.41), so the signal
+is NR1D1's.
 
 **COL5A1 · mutually exclusive exons · chr9:134,829,976-134,830,044 · up in tumour.** Two 69-nt
 exons, so the swap is exactly length-neutral and in frame: 23 amino acids exchanged at
@@ -473,19 +527,77 @@ against 91 nt: a 9-nt, 3-amino-acid, in-frame difference inside the macro domain
 Tumours shift towards the tracked exon in 10 of 15 cancers (median +0.09, UCEC 0.56 → 0.90) —
 the least consistent direction of the ten, which the S5 heat map shows row by row. It sits in
 the HNRNPF (ρ +0.37) and HNRNPU (+0.32) regulons, both enriched for model events, and reaches
-p < 0.05 in 5 of 14 cancers (KIRC, HR 0.79), with an assay page.
+p < 0.05 in 5 of 14 cancers (KIRC, HR 0.79), with an assay page. The tracked exon is
+macroH2A1.2's: the 369-aa partner form carries the glycines (G223/G224) that let macroH2A1.1
+bind ADP-ribose (Kustatscher et al. 2005). That makes two published predictions testable here
+(D-28). QKI promotes the macroH2A1.1 exon (Novikov et al. 2011), and within tumours the
+macroH2A1.2 exon falls as QKI rises in 12 of 15 cancers (median ρ −0.23; sign test p = 0.018),
+13 of 15 with proliferation held fixed (−0.32, p = 0.004). Proliferating tumours lose
+macroH2A1.1 (Novikov 2011; Sporn et al. 2009), and the exon rises with a proliferation score in
+13 of 15 (+0.26, p = 0.004). The five cancers that do not shift towards it — KIRC, KIRP, KICH,
+THCA, HNSC — are mostly the slow-growing ones, and across the 15 the size of the shift follows
+how much more tumours proliferate than their normals (ρ 0.71; exploratory, added after seeing
+which cancers did not shift). An exon of PITX1-AS1 overlaps the partner exon on the other
+strand, but the event does not follow it (ρ +0.10). Of the ten, this is the one whose movement
+the literature predicts in both direction and regulator.
 
 **What the ten have in common.** Not one is a cassette exon: six are mutually exclusive pairs
 and four are terminal or last exons. That is §5's view-level pattern at its sharpest — SE
 contributes 7 of the 404 recurrent events — and it means the protein statistics of §6, which are
-about cassette exons, do not transfer here. Six of the nine with protein coordinates fall
-inside an annotated domain, and the other three sit on transcripts the feature reference does
-not annotate at all — so not one of the nine is known to miss every domain, which is the
-opposite of the §6 picture. Only two shift the reading frame, both by swapping an exon for a
-much longer partner. All nine that were tested reach nominal Cox significance in at least one of
-their 14 cancers, where the permuted-outcome rate of §8 would put about five of nine at that
-mark; the two that reach it in five cancers, ENOSF1 and MACROH2A1, are both in regulons the
-models' events are enriched for.
+about cassette exons, do not transfer here. Six of the nine with protein coordinates fall inside
+an annotated domain, and the other three sit on transcripts the feature reference does not
+annotate at all — so not one of the nine is known to miss every domain, which is the opposite of
+the §6 picture. Only two shift the reading frame, both by swapping an exon for a much longer
+partner. All nine that were tested reach nominal Cox significance in at least one of their 14
+cancers, where the permuted-outcome rate of §8 would put about five of nine at that mark; the
+two that reach it in five cancers, ENOSF1 and MACROH2A1, are both in regulons the models' events
+are enriched for. After §10, the ten sort into three groups: five are what they say they are and
+overlap nothing that moves them (PDLIM7, NOP16, COL5A1, CHN1, MACROH2A1); two are real splicing
+events whose name or neighbour needs stating (GCOM1, a MYZAP–POLR2M readthrough choice, and
+NR1D1, which is NR1D1's but is read twice); and three follow another gene's expression (EXOSC7 →
+CLEC3B, PLCG1 → ZHX3, ENOSF1 → TYMS, the last also following proliferation).
+
+## 10. Which events measure another gene
+
+![S10](figures/tumour_status/S10_overlap_audit.png)
+
+An event is meant to be a statement about one gene's RNA. Two features of this data can make it
+a statement about another gene instead (D-27). Most TCGA mRNA libraries are unstranded, so where
+an exon of the host overlaps an exon of a gene on the other strand, reads of either count towards
+the event. And GENCODE's readthrough and nested models put exons of one gene inside another's, so
+an "alternative" first, last or mutually exclusive exon of the host can be its neighbour's exon,
+whose use then measures how much of the neighbour is made.
+
+**How often.** Of the 357,832 measured events, 6.8% have a segment that overlaps an exon of
+another gene by at least 50 bp (5.6% antisense, 1.2% same strand); another 5.5% overlap only a
+readthrough model of their own gene, which is a naming matter. The models' top events overlap
+more often in seven of the eight views, and in HIT by far the most: 44% of the top HIT events,
+against 7% of all measured HIT events (odds 10.1). Long terminal exons overlap something more
+often by chance, and the top HIT exons are longer (median 585 against 161 nt), but with length
+held fixed the odds are still 6.6. The other views sit between 1.2 and 1.8 once length is
+matched, and MXE is not enriched at all (q = 0.28).
+
+**How often it matters.** Overlap is not the same as contamination: an overlapping event is a
+problem only if it follows the other gene. The rule, fixed before any result was seen, is that an
+event *tracks* its neighbour when, within the cancers whose model ranks it, its Spearman
+correlation with the neighbour's expression is at least 0.5 in size and larger than with its own
+gene's. 163 of the 1,105 overlapping top events do (15%); in HIT, 124 of 450 (28%). A quarter
+of the overlapping events cannot be checked because the neighbour is not in the stored
+expression matrix (mostly lncRNAs and small RNAs — snoRNAs, miRNAs — which it does not hold).
+
+**What they read.** The neighbours that do get tracked are often not splicing biology at all
+but the composition of the sample: smooth-muscle MYH11 (NDE1's first exon), stromal CLEC3B
+(EXOSC7's last exon), the liver and plasma protein CP (an HPS3 terminal exon), proliferation's
+TYMS (ENOSF1). §3 found that expression separates tumour from normal tissue through the
+microenvironment; these events carry part of that same signal, in splicing's clothes.
+
+**What does not change.** No model is refitted, and nothing above removes an event from one; the
+models were trained on these measurements, and they classify as well as they do. The global
+shifts of §2 use every measured event and cannot be driven by a few percent of them. The
+survival enrichment of §8 is the same without any overlapping event (OR 1.25 against 1.27, base
+arm). And whether a tracked event is misassigned reads or genuine co-regulation of two
+neighbouring genes — convergent transcription is itself regulated — cannot be told apart without
+stranded libraries. What changes is how the events are named, which is what §9 now does.
 
 ## What would change the reading
 
@@ -509,8 +621,10 @@ overturn the argument, and how each could be checked:
   gradient (1.27 → 1.56 → 1.62) is pooled over 15 cancers and would need to be recomputed
   without them to know how much of it is renal too; the per-cancer rates are in
   `08_survival/survival_rate_by_cancer.csv`.
-- **Strandedness.** The NR1D1/THRA pair of §5 and §9 is one observation read twice if the
-  libraries cannot tell the two strands apart. A stranded cohort settles it.
+- **Strandedness.** §10 identifies the events whose overlap with another gene could be read
+  misassignment, and tracks which follow the neighbour, but in unstranded data it cannot tell
+  misassigned reads from co-regulated neighbours. A stranded cohort would: an event that kept
+  its tumour shift with only sense-strand reads counted would be the host's.
 
 ## Limitations
 
@@ -527,3 +641,6 @@ overturn the argument, and how each could be checked:
   values. None of it establishes cause, and none of it is a therapeutic claim.
 - **Reference data.** Protein annotation is GENCODE v45 with InterPro features of one transcript
   per exon (MANE > canonical); gene sets are MSigDB 2026.1.
+- **Unstranded libraries.** An event can count reads of an overlapping gene on the other strand,
+  or of a nested gene on the same one (§10). The audit flags these but does not remove them from
+  the models.

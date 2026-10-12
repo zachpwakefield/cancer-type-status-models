@@ -10,6 +10,7 @@ One question per figure, in the order the story is told in results/TUMOUR_STATUS
     S7  what do the most shared events look like, and how does the model read them?
     S8  are the models' events associated with how long patients live?
     S9  where in the protein does each of the most shared events sit?
+    S10 do the models' events measure another gene's expression?
 
 Usage: python scripts/20_figures_status.py [S1 S5 ...]      (default: all)
 """
@@ -21,7 +22,8 @@ import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
 import numpy as np
 import pandas as pd
-from _figbase import AS_VIEWS, BIO, CANCERS, CFG, FIGURES, LOCAL, locus_label, log, run, short
+from _figbase import (AS_VIEWS, BIO, CANCERS, CFG, FIGURES, LOCAL, locus_label, log, overlap_caption,
+                      overlap_figure, run, short)
 from matplotlib.lines import Line2D
 from scipy.stats import beta, binomtest
 
@@ -671,7 +673,13 @@ protein, and no protein was measured here.
 """)
 
 
-FIGS = {f.__name__: f for f in [S1, S2, S3, S4, S5, S6, S7, S8, S9]}
+# ============================================================ S10 events that read another gene
+def S10() -> None:
+    fig, data = overlap_figure("tumour status")
+    save(fig, OUT, "S10_overlap_audit", data=data, caption=overlap_caption("tumour status", data, "S10"))
+
+
+FIGS = {f.__name__: f for f in [S1, S2, S3, S4, S5, S6, S7, S8, S9, S10]}
 
 if __name__ == "__main__":
     run(FIGS)

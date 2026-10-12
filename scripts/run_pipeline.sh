@@ -31,6 +31,9 @@ done
 run scripts/17_surv_analyze.py --workers "${WORKERS:-6}"
 # event cards: everything known about the events the narratives name (needs 17 and 19)
 run scripts/22_event_cards.py
+# events that read another gene (D-27) and two published mechanisms checked (D-28); both need 22
+run scripts/23_overlap_audit.py
+run scripts/24_literature_checks.py
 # figures, one script per narrative
 run scripts/20_figures_status.py
 run scripts/21_figures_type.py

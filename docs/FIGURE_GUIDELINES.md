@@ -50,8 +50,8 @@ imports it.
   difference (`figstyle.TN_DIVERGE`). `figstyle.DIVERGE` (blue below, red above) is for signed
   quantities that are not that contrast, such as an odds ratio or a hazard ratio.
 - **Where they live.** The figures of the interpretation layer are grouped by narrative, not by
-  the analysis that produced them: `results/figures/tumour_status/S1`–`S9`
-  ([TUMOUR_STATUS.md](../results/TUMOUR_STATUS.md)) and `results/figures/cancer_type/T1`–`T8`
+  the analysis that produced them: `results/figures/tumour_status/S1`–`S10`
+  ([TUMOUR_STATUS.md](../results/TUMOUR_STATUS.md)) and `results/figures/cancer_type/T1`–`T9`
   ([CANCER_TYPE.md](../results/CANCER_TYPE.md)), drawn by `scripts/20` and `scripts/21`. The
   tables they read stay under `results/biology/<NN>_<analysis>/`. A caption refers only to
   figures of its own narrative.

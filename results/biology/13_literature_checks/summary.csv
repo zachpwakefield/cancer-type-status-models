@@ -1,0 +1,8 @@
+quantity,expected_sign,prediction,n_cancers,n_in_expected_or_majority_direction,median_over_cancers,p_sign_test
+mH2A1.2_tumour_minus_normal,+,macroH2A1.2 exon higher in tumour than matched normal,15,10.0,0.0915,0.1509
+mH2A1.2_vs_QKI,-,macroH2A1.2 exon falls as QKI rises,15,12.0,-0.2295,0.0176
+mH2A1.2_vs_QKI_given_prolif,-,... with proliferation held fixed,15,13.0,-0.3158,0.0037
+mH2A1.2_vs_prolif,+,macroH2A1.2 exon rises with proliferation,15,13.0,0.2592,0.0037
+ENOSF1_vs_TYMS_given_prolif,none,ENOSF1 event follows antisense TYMS beyond proliferation,15,15.0,-0.3451,0.0001
+ENOSF1_vs_prolif_given_TYMS,none,ENOSF1 event still tracks proliferation with TYMS fixed,15,15.0,-0.2998,0.0001
+"exploratory: across cancers, mH2A1.2 shift vs proliferation shift",+,Spearman over the 15 cancers (post hoc),15,,0.7107,0.003

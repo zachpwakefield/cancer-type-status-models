@@ -1,16 +1,16 @@
 # Biology layer: methods and decisions
 
-Scripts `07`–`22` interpret the fitted models. None of them changes or refits a phase-1 model;
+Scripts `07`–`24` interpret the fitted models. None of them changes or refits a phase-1 model;
 steps 14 and 18 fit separate, untuned diagnostic models. No result here feeds back into a
 modelling choice, so the outer-test estimates in [`RESULTS.md`](../results/RESULTS.md) stay
 unbiased. Every threshold is fixed in [`config/biology.yaml`](../config/biology.yaml) or in the
-script's header. Steps 07–19 and 22 write tables only; steps 20 and 21 draw the figures from those
-tables in the house style ([FIGURE_GUIDELINES.md](FIGURE_GUIDELINES.md)), each with a caption
-file and a CSV of the plotted values.
+script's header. Steps 07–19 and 22–24 write tables only; steps 20 and 21 draw the figures from
+those tables in the house style ([FIGURE_GUIDELINES.md](FIGURE_GUIDELINES.md)), each with a
+caption file and a CSV of the plotted values.
 
 The two tasks answer different questions and are written up separately:
-[`results/TUMOUR_STATUS.md`](../results/TUMOUR_STATUS.md) (figures S1–S9) and
-[`results/CANCER_TYPE.md`](../results/CANCER_TYPE.md) (figures T1–T8).
+[`results/TUMOUR_STATUS.md`](../results/TUMOUR_STATUS.md) (figures S1–S10) and
+[`results/CANCER_TYPE.md`](../results/CANCER_TYPE.md) (figures T1–T9).
 
 Decisions continue the numbering of [`DECISIONS.md`](DECISIONS.md).
 
@@ -229,3 +229,49 @@ Decisions continue the numbering of [`DECISIONS.md`](DECISIONS.md).
   only, so that is what the field means.
 - **Published:** the cards, the InterPro features of each card's transcript (for S9), and the
   per-class medians of each cancer-type card (for T8). Per-sample values stay local (D-12).
+
+### D-27 Events that read another gene · `scripts/23`
+- **Why:** TCGA mRNA libraries are mostly unstranded, and GENCODE readthrough and nested models
+  put exons of one gene inside another's. Either way an event of gene A can measure how much of
+  a neighbouring gene B is transcribed. The event cards (D-26) turned up several such cases by
+  eye, so this step asks how common it is among the models' events and whether any claim
+  depends on it.
+- **Overlap:** the segment the event is about (D-26's alternative segment; for MXE both exons) is
+  intersected with every exon of every other GENCODE v45 gene; >= 50 bp counts. Classes, in
+  order of precedence: antisense (opposite strand), same-strand, readthrough, none. Readthrough
+  covers a same-strand overlap with a readthrough model of the host *or*, when the host is
+  itself a readthrough model (GCOM1), with one of its component genes: a naming question, not a
+  second gene's expression, so it is reported but not counted as overlapping. The host-side
+  case was added after the first run, which had counted GCOM1's exons as POLR2M overlaps.
+- **Enrichment:** overlapping share of the top events (tumour status: top 100 per cancer and
+  view; cancer type: top 30 per class and view) against all measured events of the view;
+  Fisher's exact per view, BH over views within a task. Long segments overlap something more
+  often by chance, so the odds ratio is repeated within deciles of queried length
+  (Mantel-Haenszel, BH the same way); this too was added after the first run.
+- **Tracking,** fixed before any result was seen: an overlapping event *tracks* its neighbour
+  when |rho(event, neighbour log2 CPM)| >= 0.5 and exceeds |rho(event, host log2 CPM)|. Tumour
+  status: within each cancer, median over the cancers whose top 100 holds the event. Cancer
+  type: over all 9,729 samples. A tracking event is described as a readout of the neighbour,
+  whether the coupling is read misassignment or genuine co-transcription; the two cannot be told
+  apart without stranded data.
+- **Robustness:** the D-25 survival enrichment is recomputed without any overlapping event, in
+  the candidate and the background set alike.
+- **What it does not do:** no model is refitted and no event is removed from a model. The audit
+  changes how events are described, not what the models were.
+
+### D-28 Published mechanisms checked against the events · `scripts/24`
+- **macroH2A1** (MXE; the tracked exon is macroH2A1.2's): QKI promotes the macroH2A1.1 exon
+  (Novikov et al. 2011, *Mol Cell Biol* 31:4244) and proliferating tumours carry little
+  macroH2A1.1 (Novikov 2011; Sporn et al. 2009, *Oncogene* 28:3423). Predicted, one-sided:
+  within tumours, the macroH2A1.2 exon falls with QKI (also with proliferation held fixed) and
+  rises with proliferation; tumours sit above their matched normals.
+- **ENOSF1** (HIT): first cloned as rTS, an antisense RNA to thymidylate synthase (Dolnick 1993,
+  *Nucleic Acids Res* 21:1747). The literature fixes no sign, so the tests are two-sided: does
+  the event follow TYMS once proliferation is held fixed, and proliferation once TYMS is?
+- **Statistics:** Spearman within the tumours of each of the 15 cancers; partial correlations on
+  ranks residualised on the ranked covariate; proliferation = mean log2 CPM of step 09's ten
+  genes; a sign test across cancers.
+- **Status:** concordance checks, not blind replications. The numbers were first seen in an
+  exploratory probe while the cards were written; the directions come from the papers. One
+  quantity was added after seeing the data (across cancers, the macroH2A1.2 shift against the
+  proliferation shift) and is labelled exploratory in the output.

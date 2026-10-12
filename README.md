@@ -31,11 +31,11 @@ separately: [tumour status](#tumour-status-tumour-vs-normal-tissue-within-a-canc
 [cancer type](#cancer-type-34-classes-pan-cancer). Each part gives the models' performance, then
 walks through what they learned, figure by figure. Full tables, CIs and the top SHAP features of
 every cohort and view are in [results/RESULTS.md](results/RESULTS.md); the methods of the
-interpretation layer are in [docs/BIOLOGY_METHODS.md](docs/BIOLOGY_METHODS.md) (D-13 to D-26).
+interpretation layer are in [docs/BIOLOGY_METHODS.md](docs/BIOLOGY_METHODS.md) (D-13 to D-28).
 
 ## Tumour status: tumour vs normal tissue within a cancer
 
-**Full write-up: [results/TUMOUR_STATUS.md](results/TUMOUR_STATUS.md)** (figures S1–S9) — *splicing
+**Full write-up: [results/TUMOUR_STATUS.md](results/TUMOUR_STATUS.md)** (figures S1–S10) — *splicing
 is a second, partly independent view of the tumour state.* One binary model per cancer and per
 view, for the 15 TCGA projects with at least 10 normal samples (6,815 samples, 135 models).
 
@@ -135,7 +135,9 @@ their median paired tumour − normal change in **every** cancer, including thos
 did not rank, so the pattern across the row is not selected on. Dots mark the cancers whose top
 100 contain the event. Recurrent events tend to move the same way everywhere (median 73% of
 cancers), and several genes contribute switch *pairs* moving in opposite directions — two EXOSC7
-last exons, two NDE1 first exons, two TPM1 mutually exclusive exons.
+last exons, two NDE1 first exons, two TPM1 mutually exclusive exons. Two of those pairs are
+partly another gene (S10): the falling EXOSC7 exon follows the stromal gene CLEC3B, and the
+falling NDE1 exon follows smooth-muscle MYH11.
 [caption](results/figures/tumour_status/S5_recurrent_events.caption.md) ·
 [§5](results/TUMOUR_STATUS.md#5-different-cancers-rely-on-the-same-events)
 
@@ -150,7 +152,9 @@ tenth belongs to no coding transcript and cannot be drawn. Not one of the ten is
 six are mutually exclusive pairs and four are terminal exons, including the macroH2A1.1/1.2
 switch, the chimaerin SH2 switch and a length-neutral 23-amino-acid exchange in the collagen V
 C-terminal domain. Three transcripts carry no InterPro features at all and say so, because an
-empty annotation is not evidence of no domain.
+empty annotation is not evidence of no domain. The macroH2A1 exon is the one in macroH2A1.2, and
+it behaves as the literature predicts: it falls as QKI rises within tumours (12 of 15 cancers;
+QKI promotes macroH2A1.1, Novikov et al. 2011) and rises with proliferation (13 of 15).
 [caption](results/figures/tumour_status/S9_event_protein.caption.md) ·
 [§9](results/TUMOUR_STATUS.md#9-the-events-one-by-one)
 
@@ -173,12 +177,28 @@ cancers. Separating tumour from normal tissue and predicting outcome are distinc
 [caption](results/figures/tumour_status/S8_survival.caption.md) ·
 [§8](results/TUMOUR_STATUS.md#8-do-these-events-carry-information-about-outcome)
 
+#### 7. Which events measure another gene
+
+<img src="results/figures/tumour_status/S10_overlap_audit.png" width="863" alt="S10: share of events overlapping another gene's exon, all measured against the models' top events, and how many track that gene">
+
+**S10.** Most TCGA libraries are unstranded and GENCODE nests genes inside one another, so an
+event named after one gene can count another's reads. Left: the share of events whose segment
+overlaps another gene's exon, for every measured event (grey) and the models' top events (dark).
+Terminal (HIT) exons stand out: 44% against 7%, odds 6.6 with exon length held fixed. Right: of
+those overlapping top events, how many follow the other gene's expression more than their own (a
+rule fixed in advance) — 163 of 1,105. Three of the ten events of S9 do: EXOSC7 → CLEC3B, ENOSF1
+→ TYMS, to which it was first described as an antisense RNA, and PLCG1 → ZHX3. The models do not
+change, and the survival enrichment of S8 is the same without any overlapping event (odds 1.25
+against 1.27); what changes is how these events are named.
+[caption](results/figures/tumour_status/S10_overlap_audit.caption.md) ·
+[§10](results/TUMOUR_STATUS.md#10-which-events-measure-another-gene)
+
 Not shown here: the protein character of the models' cassette exons against all measured exons
 (S6) and the SHAP dependence of the six most shared events (S7), both in the write-up.
 
 ## Cancer type: 34 classes, pan-cancer
 
-**Full write-up: [results/CANCER_TYPE.md](results/CANCER_TYPE.md)** (figures T1–T8) — *splicing is
+**Full write-up: [results/CANCER_TYPE.md](results/CANCER_TYPE.md)** (figures T1–T9) — *splicing is
 a lineage code, and it fails where a lineage code should.* One 34-class model per view — the 33
 TCGA projects and a pooled normal class — over 9,729 samples.
 
@@ -273,7 +293,8 @@ class; the ten clearest are drawn. Filled dot = the class the event marks, open 
 class, grey dots = the other 32. No model is involved in these numbers. TOMM40L's terminal exon
 is used as a last exon in every class except liver, where it reverses — a gap of 1.63. KRT19 and
 BSCL2 are the two graded cases, and they are where one event stops being enough, which is the
-argument for the ensembles of T1.
+argument for the ensembles of T1. Two of the ten read a neighbouring gene rather than their own
+(T9): PLEKHG3's exon follows SPTB, and BSCL2's follows LRRN4CL.
 [caption](results/figures/cancer_type/T8_class_events.caption.md) ·
 [§8](results/CANCER_TYPE.md#8-one-event-per-lineage-in-detail)
 
@@ -292,10 +313,23 @@ to this task: the tumour-status models compare tissue within patient and within 
 [caption](results/figures/cancer_type/T7_site_probe.caption.md) ·
 [§7](results/CANCER_TYPE.md#7-how-much-of-this-is-the-tissue-source-site)
 
+#### 6. Which class-defining events measure another gene
+
+<img src="results/figures/cancer_type/T9_overlap_audit.png" width="860" alt="T9: share of events overlapping another gene's exon, all measured against the class-defining events, and how many track that gene">
+
+**T9.** The audit of S10 on the cancer-type models' top events. 61% of the top terminal (HIT)
+exons overlap another gene's exon, against 7% of all measured ones (odds 12.6 with length held
+fixed), and 101 of 695 overlapping top events follow the neighbour's expression more than their
+own gene's. Here the neighbours are mostly lineage genes — ceruloplasmin in liver, HNF1A in
+rectum, PAX6 in glioma — so these events carry lineage information the expression model already
+reads. The comparison of T5 is with each event's *own* gene and stands; this is the other gene.
+[caption](results/figures/cancer_type/T9_overlap_audit.caption.md) ·
+[§9](results/CANCER_TYPE.md#9-which-class-defining-events-measure-another-gene)
+
 The remaining figures — per-class recall (T2), pathway coherence (S3, T4), exon protein
 statistics (S6), event portraits and SHAP dependence (S7), and whether class-defining events are
 expression in disguise (T5) — are in the two narratives, with the methods in
-[docs/BIOLOGY_METHODS.md](docs/BIOLOGY_METHODS.md) (D-13 to D-26).
+[docs/BIOLOGY_METHODS.md](docs/BIOLOGY_METHODS.md) (D-13 to D-28).
 
 Not shown here: per-class recall against expression (T2), in the write-up.
 
@@ -370,7 +404,7 @@ docs/         METHODS, DECISIONS, LEAKAGE_POLICY, BIOLOGY_METHODS, FIGURE_GUIDEL
 results/      data/ (cohort, splits, extraction, validation summaries)
               tumor_status/<view>/<cancer>/, cancer_type/<view>/PANCAN/, summary/, RESULTS.md
               biology/01_complementarity … 11_event_cards/ (tables)
-              figures/tumour_status/ (S1–S9), figures/cancer_type/ (T1–T8)
+              figures/tumour_status/ (S1–S10), figures/cancer_type/ (T1–T9)
               TUMOUR_STATUS.md, CANCER_TYPE.md
 ```
 

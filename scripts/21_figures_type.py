@@ -9,6 +9,7 @@ One question per figure, in the order the story is told in results/CANCER_TYPE.m
     T6  what does a lineage-defining exon look like across the classes?
     T7  how much of the separation of neighbouring classes is the tissue-source site?
     T8  can a single splicing event name a lineage on its own?
+    T9  do the class-defining events measure another gene's expression?
 
 Usage: python scripts/21_figures_type.py [T1 T5 ...]        (default: all)
 """
@@ -19,7 +20,8 @@ import re
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-from _figbase import AS_VIEWS, BIO, CANCERS, CFG, FIGURES, LOCAL, locus_label, log, run, short
+from _figbase import (AS_VIEWS, BIO, CANCERS, CFG, FIGURES, LOCAL, locus_label, log, overlap_caption,
+                      overlap_figure, run, short)
 from matplotlib.lines import Line2D
 from scipy.cluster.hierarchy import leaves_list, linkage
 
@@ -443,7 +445,13 @@ membership.
 """)
 
 
-FIGS = {f.__name__: f for f in [T1, T2, T3, T4, T5, T6, T7, T8]}
+# ============================================================ T9 events that read another gene
+def T9() -> None:
+    fig, data = overlap_figure("cancer type")
+    save(fig, OUT, "T9_overlap_audit", data=data, caption=overlap_caption("cancer type", data, "T9"))
+
+
+FIGS = {f.__name__: f for f in [T1, T2, T3, T4, T5, T6, T7, T8, T9]}
 
 if __name__ == "__main__":
     run(FIGS)
