@@ -31,7 +31,7 @@ separately: [tumour status](#tumour-status-tumour-vs-normal-tissue-within-a-canc
 [cancer type](#cancer-type-34-classes-pan-cancer). Each part gives the models' performance, then
 walks through what they learned, figure by figure. Full tables, CIs and the top SHAP features of
 every cohort and view are in [results/RESULTS.md](results/RESULTS.md); the methods of the
-interpretation layer are in [docs/BIOLOGY_METHODS.md](docs/BIOLOGY_METHODS.md) (D-13 to D-28).
+interpretation layer are in [docs/BIOLOGY_METHODS.md](docs/BIOLOGY_METHODS.md) (D-13 to D-29).
 
 ## Tumour status: tumour vs normal tissue within a cancer
 
@@ -172,8 +172,8 @@ outcomes shuffled between patients: 5.6%, so the 9% background is real signal to
 twelve strongest single events, hazard ratio per SD.
 
 The careful reading is in the narrative: the effect is modest, it halves once age, sex and stage
-enter, the events that clear FDR *inside* a cancer are 94% renal, and directions flip between
-cancers. Separating tumour from normal tissue and predicting outcome are distinct axes.
+enter, the events that clear FDR *inside* a cancer are 94% renal (though the set-level gradient
+holds without the kidney cohorts), and directions flip between cancers. Separating tumour from normal tissue and predicting outcome are distinct axes.
 [caption](results/figures/tumour_status/S8_survival.caption.md) ·
 [§8](results/TUMOUR_STATUS.md#8-do-these-events-carry-information-about-outcome)
 
@@ -329,7 +329,7 @@ reads. The comparison of T5 is with each event's *own* gene and stands; this is 
 The remaining figures — per-class recall (T2), pathway coherence (S3, T4), exon protein
 statistics (S6), event portraits and SHAP dependence (S7), and whether class-defining events are
 expression in disguise (T5) — are in the two narratives, with the methods in
-[docs/BIOLOGY_METHODS.md](docs/BIOLOGY_METHODS.md) (D-13 to D-28).
+[docs/BIOLOGY_METHODS.md](docs/BIOLOGY_METHODS.md) (D-13 to D-29).
 
 Not shown here: per-class recall against expression (T2), in the write-up.
 

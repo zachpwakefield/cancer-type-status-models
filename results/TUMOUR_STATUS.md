@@ -8,7 +8,7 @@ This document asks what the splicing models learned about becoming a tumour. The
 telling the cancers apart, is a different question with a different answer and is written up
 separately in [CANCER_TYPE.md](CANCER_TYPE.md).
 
-- **Methods and decisions:** [docs/BIOLOGY_METHODS.md](../docs/BIOLOGY_METHODS.md) (D-13 to D-28).
+- **Methods and decisions:** [docs/BIOLOGY_METHODS.md](../docs/BIOLOGY_METHODS.md) (D-13 to D-29).
 - **Scripts:** `07`–`19` and `22` write the tables, `20` draws these figures.
 - **Figures:** S1–S10 in [figures/tumour_status/](figures/tumour_status/). Each has a caption file
   stating the question, the method, n and the test, and a CSV of the plotted values.
@@ -79,8 +79,9 @@ and the survival result of §8 holds with every overlapping event removed.
    Model-selected events reach a nominal Cox p < 0.05 in 10.5% of event × cancer pairs against
    9.1% for matched events (odds 1.18, p = 3.6e-4), with the host gene's expression in the
    model, and the rate rises with how many models agree on an event (odds 1.28 in the same arm
-   for events recurrent in four or more, 1.56 without the clinical covariates). The events that
-   survive FDR inside a cancer are almost all renal, and directions flip between cancers.
+   for events recurrent in four or more, 1.56 without the clinical covariates), and the gradient
+   holds without the two kidney cohorts. The events that survive FDR inside a cancer are almost
+   all renal, and directions flip between cancers.
    Separating tumour from normal tissue and predicting outcome are distinct axes.
 8. **Ten of those events, in detail.** Six mutually exclusive pairs and four terminal exons,
    not one cassette exon: the macroH2A1.1/1.2 switch, the chimaerin SH2 switch, a 23-amino-acid
@@ -380,6 +381,14 @@ does not. Outside the two kidney cohorts only six candidate events clear FDR in 
 model at all — SLC12A4 HIT, SLC39A14 MXE and CYP4F3 MXE in LIHC, NDRG4 SE in LUAD, PHKA1 SE in
 STAD and CP A5SS in UCEC.
 
+**The set-level result is not a kidney result.** Pooling again without KIRC and KIRP (D-29), the
+rates fall — 8.6% of candidate pairs against 7.3% of background in the base arm — but the odds
+and the gradient stay: 1.19 for every candidate, 1.48 for recurrent events and 1.58 for the top
+10 of two or more cancers (adjusted 1.19, 1.30, 1.24; every row p < 0.05). Leaving out any one
+cancer instead keeps the base-arm odds for every candidate between 1.23 and 1.32
+(`14_survival_robustness/`). So the kidney cohorts carry the strong single associations, and
+the broad shift is spread across the cancers.
+
 **Direction is mostly cancer-specific.** Of the 135 model events significant in at least three
 cancers, only 30% point the same way in all of them (median consistency 0.67; the background
 behaves the same, 22%). An event that shortens survival in one cancer often lengthens it in
@@ -630,9 +639,8 @@ overturn the argument, and how each could be checked:
   pipeline. Recovering the same events in an independent cohort processed differently would
   separate biology from pipeline; failing to would not be decisive, but would bound the claim.
 - **The kidney cohorts.** Drop KIRC and KIRP and §8's FDR-level result is gone. The set-level
-  gradient (1.27 → 1.56 → 1.62) is pooled over 15 cancers and would need to be recomputed
-  without them to know how much of it is renal too; the per-cancer rates are in
-  `08_survival/survival_rate_by_cancer.csv`.
+  gradient was recomputed without them and holds (§8, D-29), so what remains open is the
+  strong single associations, not the broad shift; a renal cohort outside TCGA would test them.
 - **Strandedness.** §10 identifies the events whose overlap with another gene could be read
   misassignment, and tracks which follow the neighbour, but in unstranded data it cannot tell
   misassigned reads from co-regulated neighbours. A stranded cohort would: an event that kept

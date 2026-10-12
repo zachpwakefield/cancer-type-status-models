@@ -7,7 +7,7 @@ This document asks what the splicing models learned about *which tissue a tumour
 The other task, telling tumour from normal tissue within a cancer, is a different question with
 a different answer and is written up separately in [TUMOUR_STATUS.md](TUMOUR_STATUS.md).
 
-- **Methods and decisions:** [docs/BIOLOGY_METHODS.md](../docs/BIOLOGY_METHODS.md) (D-13 to D-28).
+- **Methods and decisions:** [docs/BIOLOGY_METHODS.md](../docs/BIOLOGY_METHODS.md) (D-13 to D-29).
 - **Scripts:** `07`–`19` and `22` write the tables, `21` draws these figures.
 - **Figures:** T1–T9 in [figures/cancer_type/](figures/cancer_type/), each with a caption file
   and a CSV of the plotted values.

@@ -34,6 +34,8 @@ run scripts/22_event_cards.py
 # events that read another gene (D-27) and two published mechanisms checked (D-28); both need 22
 run scripts/23_overlap_audit.py
 run scripts/24_literature_checks.py
+# the survival enrichment without the kidney cohorts, and leaving each cancer out (D-29)
+run scripts/25_survival_robustness.py
 # figures, one script per narrative
 run scripts/20_figures_status.py
 run scripts/21_figures_type.py

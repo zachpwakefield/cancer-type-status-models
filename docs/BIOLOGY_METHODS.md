@@ -1,10 +1,10 @@
 # Biology layer: methods and decisions
 
-Scripts `07`–`24` interpret the fitted models. None of them changes or refits a phase-1 model;
+Scripts `07`–`25` interpret the fitted models. None of them changes or refits a phase-1 model;
 steps 14 and 18 fit separate, untuned diagnostic models. No result here feeds back into a
 modelling choice, so the outer-test estimates in [`RESULTS.md`](../results/RESULTS.md) stay
 unbiased. Every threshold is fixed in [`config/biology.yaml`](../config/biology.yaml) or in the
-script's header. Steps 07–19 and 22–24 write tables only; steps 20 and 21 draw the figures from
+script's header. Steps 07–19 and 22–25 write tables only; steps 20 and 21 draw the figures from
 those tables in the house style ([FIGURE_GUIDELINES.md](FIGURE_GUIDELINES.md)), each with a
 caption file and a CSV of the plotted values.
 
@@ -275,3 +275,13 @@ Decisions continue the numbering of [`DECISIONS.md`](DECISIONS.md).
   exploratory probe while the cards were written; the directions come from the papers. One
   quantity was added after seeing the data (across cancers, the macroH2A1.2 shift against the
   proliferation shift) and is labelled exploratory in the output.
+
+### D-29 Survival enrichment without the kidney cohorts · `scripts/25`
+- **Why:** 94% of the cells that clear BH inside a cancer (D-25) are KIRC or KIRP, so the
+  narrative named "drop the kidney cohorts" as the check that would change the reading of the
+  set-level result. This is that check, run after it was named and before its result was known.
+- **How:** step 17's own `enrichment` function, the same three nested candidate sets and the same
+  matched background, over the per-cell statistics already computed; no test is re-run. Scopes:
+  all cancers (reproduces `08_survival/survival_enrichment.csv`), without KIRC and KIRP, and each
+  cancer left out in turn.
+- **Published:** `results/biology/14_survival_robustness/` (aggregates only).
