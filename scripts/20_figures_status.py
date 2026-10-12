@@ -9,6 +9,7 @@ One question per figure, in the order the story is told in results/TUMOUR_STATUS
     S6  what do the exons the models use do to the protein?
     S7  what do the most shared events look like, and how does the model read them?
     S8  are the models' events associated with how long patients live?
+    S9  where in the protein does each of the most shared events sit?
 
 Usage: python scripts/20_figures_status.py [S1 S5 ...]      (default: all)
 """
@@ -26,8 +27,9 @@ from scipy.stats import beta, binomtest
 
 from ctsm.biology import ProteinMap, bio_config, feature_values, gex_by_symbol, task_table
 from ctsm.config import PAN, load_config
-from ctsm.figstyle import (ACCENT, ACCENT_DARK, DIVERGE, DOUBLE, GRID, INK, INK2, MUTED, NORMAL, SEQ, SINGLE, TUMOUR,
-                           VIEW_NAMES, bracket, colourbar, fp, gene_label, heat_axes, save, stars)
+from ctsm.figstyle import (ACCENT, ACCENT_DARK, DIVERGE, DOUBLE, GRID, INK, INK2, MUTED, NORMAL, SEQ, SINGLE,
+                           TN_DIVERGE, TUMOUR, VIEW_NAMES, bracket, colourbar, fp, gene_label, heat_axes, save,
+                           stars)
 
 OUT = FIGURES / "tumour_status"
 SHIFT_ORDER = ["ri", "a5ss", "a3ss", "se", "mxe", "ale", "afe"]
@@ -90,15 +92,12 @@ def S1() -> None:
     ax.set_yticklabels(rows, fontsize=6)
     ax.tick_params(axis="y", length=0)
     ax.spines["left"].set_visible(False)
-    ax.set_ylim(-1.5, len(rows) - 0.4)
+    ax.set_ylim(-0.7, len(rows) - 0.3)
     ax.set_xlim(0, pooled[rows].max() * 1.22)
     ax.set_xlabel(f"errors, all {len(order)} cancers ({int(n.sum()):,} samples)")
     pt = t.groupby("model")[["only_a_correct", "only_b_correct"]].sum()
     gain = int(pt.loc["GEX + AS", "only_b_correct"]), int(pt.loc["GEX + AS", "only_a_correct"])
     pooled_p = binomtest(gain[1], sum(gain), 0.5).pvalue
-    ax.text(pooled[rows].max() * 1.2, -1.4,
-            f"fusion corrects {gain[0]} of the expression\nmodel's errors and introduces {gain[1]}\n"
-            f"(McNemar p = {fp(pooled_p)})", fontsize=5.8, color=INK, ha="right", va="bottom")
 
     data = m.merge(t[["cancer", "model", "only_a_correct", "only_b_correct", "p_mcnemar", "q_mcnemar"]],
                    on=["cancer", "model"], how="left")
@@ -235,7 +234,7 @@ def S8() -> None:
     ax.set_xticklabels([s[1] for s in sets], fontsize=5.8)
     ax.set_xlim(-0.55, 3.55)
     ax.set_ylim(0, None)
-    ax.set_ylabel("event x cancer pairs with Cox p < 0.05 (%)")
+    ax.set_ylabel("event × cancer pairs with Cox p < 0.05 (%)")
     ax.legend(frameon=False, fontsize=5.8, loc="upper right", handletextpad=0.3,
               borderpad=0.1, labelspacing=0.25)
 
@@ -261,8 +260,12 @@ def S8() -> None:
                f"each cancer: {float(null['rate'].iloc[0]):.1%} ({int(null['hits_p05'].iloc[0]):,} of "
                f"{int(null['cells'].iloc[0]):,} pairs), so both sets sit above what the gates, the host-gene\n"
                f"covariate and the test battery produce on their own.")
+    if null is not None:
+        rows.append({"arm": "permuted outcomes", "set": "all candidates", "panel": "left",
+                     "cells": int(null["cells"].iloc[0]), "hits": int(null["hits_p05"].iloc[0]),
+                     "rate": float(null["rate"].iloc[0])})
     plotted = pd.concat([
-        pd.DataFrame(rows).assign(panel="left"),
+        pd.DataFrame(rows).assign(panel=lambda z: z["panel"].fillna("left") if "panel" in z else "left"),
         sub.assign(panel="right")[["panel", "gene", "view", "event_id", "best_cohort", "hits", "cohorts_tested",
                                    "hr_per_sd", "ci_low_sd", "ci_high_sd", "cox_p", "cox_q"]],
     ], ignore_index=True)
@@ -305,11 +308,12 @@ def S2() -> None:
     piv, pv = piv.loc[order], pv.loc[order]
     lim = float(np.nanpercentile(np.abs(piv.to_numpy()), 98))
     fig, ax = plt.subplots(figsize=(3.2, 3.4))
-    im = ax.imshow(piv.to_numpy(), cmap=DIVERGE, vmin=-lim, vmax=lim, aspect="auto")
+    im = ax.imshow(piv.to_numpy(), cmap=TN_DIVERGE, vmin=-lim, vmax=lim, aspect="auto")
     for i in range(piv.shape[0]):
         for j in range(piv.shape[1]):
             v = piv.iat[i, j]
-            ax.text(j, i, f"{v:+.1f}{stars(pv.iat[i, j])}", ha="center", va="center", fontsize=4.8,
+            txt = f"{v:+.1f}".replace("-", "\u2212") + stars(pv.iat[i, j])   # typographic minus
+            ax.text(j, i, txt, ha="center", va="center", fontsize=4.8,
                     color="white" if abs(v) > 0.65 * lim else INK)
     npairs = s.drop_duplicates("cancer").set_index("cancer").loc[order, "n_pairs"]
     heat_axes(ax, [f"{c} ({n})" for c, n in npairs.items()], SHIFT_LAB, col_size=5.5, row_size=6)
@@ -331,13 +335,27 @@ say what an increase means:
 - MXE: more of the upstream exon.
 - ALE/AFE: the used last or first exons move downstream (a 0-1 position index along transcription).
 
-Stars: two-sided Wilcoxon signed-rank test across patients, raw p (* < 0.05, ** < 0.01, *** < 0.001). BH q
-(family: 15 cancers × 7 views) is in the CSV.
+Blue is higher in the tumour and orange higher in the normal tissue, the house tumour/normal colours. Stars:
+two-sided Wilcoxon signed-rank test across patients, raw p (* < 0.05, ** < 0.01, *** < 0.001). BH q (family: 15
+cancers × 7 views) is in the CSV.
 
 Retention and long splice-site forms rise in most cancers. Last exons move upstream and never downstream. BRCA is
 the exception for RI. Caveat: RNA integrity and nuclear-RNA content also raise intronic reads, and RIN is not
 available (D-15).
 """)
+
+
+HALLMARK_CAPS = {"KRAS", "TNFA", "NFKB", "E2F", "UV", "DNA", "MYC", "MTORC1", "IL2", "STAT5", "IL6", "JAK",
+                 "PI3K", "AKT", "MTOR", "G2M", "TGF", "WNT", "P53", "KEG", "ROS"}
+
+
+def hallmark_label(term: str) -> str:
+    """'HALLMARK_KRAS_SIGNALING_DN' -> 'KRAS signaling down': lower case, but gene and pathway
+    symbols stay symbols (house rule: HGNC symbols, never lower-cased)."""
+    out = []
+    for w in term.replace("HALLMARK_", "").split("_"):
+        out.append(w if w in HALLMARK_CAPS else "down" if w == "DN" else w.lower())
+    return " ".join(out)
 
 
 def S3() -> None:
@@ -355,8 +373,7 @@ def S3() -> None:
             if g:
                 ax.scatter(j, i, s=40, facecolor="none", edgecolor=INK, linewidth=0.6, zorder=3)
             rows.append({"term": t, "cancer": c, "n_AS_views_q_lt_0.05": n, "GEX_q_lt_0.05": g})
-    heat_axes(ax, [t.replace("HALLMARK_", "").replace("_", " ").lower() for t in terms], CANCERS, xrot=90,
-              row_size=5.5, col_size=5.5)
+    heat_axes(ax, [hallmark_label(t) for t in terms], CANCERS, xrot=90, row_size=5.5, col_size=5.5)
     ax.grid(which="minor", visible=False)
     ax.set_xlim(-0.6, len(CANCERS) - 0.4)
     ax.set_ylim(len(terms) - 0.5, -0.5)
@@ -397,7 +414,7 @@ def S5() -> None:
     top = top.reindex(index=M.index, columns=CANCERS).fillna(0)
     lim = 30
     fig, ax = plt.subplots(figsize=(3.6, 0.105 * len(show) + 0.9))
-    im = ax.imshow(M.to_numpy(), cmap=DIVERGE, vmin=-lim, vmax=lim, aspect="auto")
+    im = ax.imshow(M.to_numpy(), cmap=TN_DIVERGE, vmin=-lim, vmax=lim, aspect="auto")
     yy, xx = np.nonzero(top.to_numpy())
     ax.scatter(xx, yy, s=1.5, color=INK, linewidths=0)
     # the region is in the label already, so an unnamed gene just drops the name rather than
@@ -424,8 +441,8 @@ cohorts; `recurrence_vs_chance.csv`).
 
 The figure shows the 40 most recurrent events. Rows give the host gene (HGNC), view and coordinates (hg38, 1-based).
 Colour is the median paired tumour − normal change in every cancer, including cancers where the event did not rank
-(so the pattern across cancers is not selected on); the scale is clipped at ±{lim}. Dots mark the cancers whose top
-100 contain the event.
+(so the pattern across cancers is not selected on): blue where the event is higher in the tumour, orange where it
+is higher in the normal tissue, clipped at ±{lim}. Dots mark the cancers whose top 100 contain the event.
 
 Recurrent events tend to move the same way across cancers. For the median event, {cons.median():.0%} of the cancers
 where it is measured share its majority direction; {(cons >= 0.8).mean():.0%} of events reach 80%.
@@ -496,7 +513,7 @@ def S7() -> None:
     pm = ProteinMap(CFG)
     fig, axes = plt.subplots(len(picks), 2, figsize=(DOUBLE * 0.82, 1.15 * len(picks)),
                              gridspec_kw={"width_ratios": [2.4, 1.0], "hspace": 0.9, "wspace": 0.25})
-    meds, local, info_rows = [], [], []
+    meds, local = [], []
     for i, (_, r) in enumerate(picks.iterrows()):
         ax = axes[i, 0]
         dd = P[(P.view == r["view"]) & (P.feature_id == r.feature_id)].set_index("cancer").reindex(CANCERS)
@@ -518,7 +535,6 @@ def S7() -> None:
                 info = (f"; {b - a + 1} nt, {'in frame' if c['frame_preserving'] else 'frameshift'}, "
                         f"aa {c['aa_start']}-{c['aa_end']}/{c['protein_length_aa']}"
                         + (f", {c['domains']}" if c["domains"] else "") + (", disordered" if c["in_disordered"] else ""))
-            info_rows.append({"symbol": r.symbol, "region": r.region, **c})
         ax.set_title(f"{gene_label(r.symbol)}  {VIEW_NAMES[r['view']]}  {short(r.region)}{info}", loc="left", fontsize=6,
                      color=INK)
         if i == 0:
@@ -568,7 +584,6 @@ model.
 
 The CSV gives the per-cancer medians and paired Wilcoxon p (raw). Per-sample values stay local (D-12).
 """)
-    pd.DataFrame(info_rows).to_csv(OUT / "S7_event_portraits_protein.csv", index=False)
 
 
 # ============================================================ 05 regulators
@@ -601,15 +616,23 @@ def S9() -> None:
                                    zorder=3))
         ax.text(1.03, y, f"{int(L):,} aa", fontsize=5.2, color=INK2, va="center")
         note = (f"{int(r.aa_end - r.aa_start + 1)} aa terminal" if pd.isna(r.swap_nt) else
-                f"{int(r.swap_nt):+d} nt, {'in frame' if r.swap_in_frame else 'frameshift'}")
+                f"{int(r.swap_nt):+d}".replace("-", "\u2212") +
+                f" nt, {'in frame' if r.swap_in_frame else 'frameshift'}")
         dom = str(r.domains).split(";")[0].strip() if isinstance(r.domains, str) and r.domains else ""
-        dom = dom if len(dom) <= 30 else dom[:29].rstrip(" ,;") + "\u2026"
+        if len(dom) > 50:                                   # cut between words, never mid-word
+            dom = dom[:50].rsplit(" ", 1)[0].rstrip(" ,;") + "\u2026"
         # an empty feature table for the transcript is not the same as "no domain here"
         tail = f" · {dom}" if dom else ("" if len(f) else " · no InterPro annotation")
         ax.text(1.19, y, note + tail, fontsize=5.2, color=INK if dom else INK2, va="center")
-        rows.append({"symbol": r.symbol, "view": r.view, "protein_length_aa": L, "aa_start": r.aa_start,
-                     "aa_end": r.aa_end, "swap_nt": r.swap_nt, "swap_in_frame": r.swap_in_frame,
-                     "domains": r.domains, "majority_sign": r.majority_sign})
+        rows.append({"symbol": r.symbol, "view": r.view, "drawn": "alternative segment",
+                     "protein_length_aa": L, "aa_start": r.aa_start, "aa_end": r.aa_end,
+                     "swap_nt": r.swap_nt, "swap_in_frame": r.swap_in_frame, "domains": r.domains,
+                     "majority_sign": r.majority_sign})
+        for g in f[f["source_db"].isin(("pfam", "cdd", "mobidblite"))].itertuples():
+            rows.append({"symbol": r.symbol, "view": r.view,
+                         "drawn": "disordered" if g.source_db == "mobidblite" else "Pfam/CDD domain",
+                         "protein_length_aa": L, "aa_start": g.aa_start, "aa_end": g.aa_end,
+                         "domains": getattr(g, "name", None)})
     ax.set_yticks(range(len(show)))
     ax.set_yticklabels([f"{r.symbol} {VIEW_NAMES[r.view]}" for r in show.iloc[::-1].itertuples()], fontsize=6)
     ax.tick_params(axis="y", length=0)

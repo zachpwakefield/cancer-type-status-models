@@ -254,16 +254,19 @@ class ProteinMap:
         self.cds_by_tx = {t: g[["start", "end"]].to_numpy() for t, g in self.cds.groupby("transcript_id")}
         self.feat_by_tx = {t: g for t, g in self.feat.groupby("transcript_id")}
 
-    def exon_consequence(self, gene_id: str, start: int, end: int) -> dict:
+    def exon_consequence(self, gene_id: str, start: int, end: int, require_features: bool = False) -> dict:
         """Best transcript (MANE > canonical > other; coding first) with an exon exactly
         [start, end]; whether the exon is coding, frame-preserving, and which protein features
-        its residues overlap."""
+        its residues overlap. With require_features, a transcript that carries InterPro features
+        is preferred over one that carries none -- the newest MANE transcripts are sometimes not
+        in the feature table, and reading their empty annotation as "no domain" would be wrong."""
         g = self.exon_by_gene.get(gene_id)
         hit = g[(g["start"] == start) & (g["end"] == end)] if g is not None else None
         if hit is None or hit.empty:
             return {"annotated_exon": False}
-        hit = hit.assign(coding=hit["transcript_id"].isin(self.has_cds)).sort_values(["coding", "prio"],
-                                                                                     ascending=[False, True])
+        hit = hit.assign(coding=hit["transcript_id"].isin(self.has_cds),
+                         featured=hit["transcript_id"].isin(self.feat_by_tx) if require_features else True)
+        hit = hit.sort_values(["coding", "featured", "prio"], ascending=[False, False, True])
         t = hit.iloc[0]
         out = {"annotated_exon": True, "transcript_id": t["transcript_id"], "strand": t["strand"],
                "exon_length": int(end - start + 1)}

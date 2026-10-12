@@ -11,7 +11,9 @@ Colour roles in this repo
   ACCENT            the point of a non-tumour-normal figure (splicing, the AS ensemble)
   ACCENT_DARK       a second accent (fusion, "observed")
   INK2 / MUTED      reference and context (GEX, single views, chance, background)
-  DIVERGE           signed changes (blue = lower in tumour / below, red = higher / above)
+  DIVERGE           signed changes with no tumour-normal meaning (blue below, red above)
+  TN_DIVERGE        a tumour - normal difference, in the house tumour/normal hues
+                    (orange = higher in normal, blue = higher in tumour)
   SEQ               magnitudes (paper -> dark blue)
 """
 from __future__ import annotations
@@ -32,6 +34,9 @@ TUMOUR, NORMAL = "#2a78d6", "#eb6834"
 ACCENT, ACCENT_DARK, ACCENT_LIGHT = "#2a78d6", "#184f95", "#86b6ef"
 DOWN, NULLC = "#a8a69f", "#b9b6ab"
 DIVERGE = LinearSegmentedColormap.from_list("div", ["#2f5f98", "#9ebbd9", PAPER, "#e6a88a", "#b0412c"])
+# A tumour - normal difference is read with the house tumour/normal colours, so that blue means
+# "higher in tumour" here exactly as it does on every other tumour-normal figure in the lab.
+TN_DIVERGE = LinearSegmentedColormap.from_list("tn", ["#b4461a", "#f0a480", PAPER, "#8fb9e8", "#1b538f"])
 SEQ = LinearSegmentedColormap.from_list("seq", [PAPER, "#c3d6ee", "#6c9bd2", "#184f95"])   # TIER blues
 VIEW_NAMES = {"afe": "AFE", "ale": "ALE", "hit": "HIT", "se": "SE", "a5ss": "A5SS", "a3ss": "A3SS",
               "mxe": "MXE", "ri": "RI", "gex": "GEX"}

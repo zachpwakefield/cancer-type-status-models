@@ -6,8 +6,8 @@ cohorts; `recurrence_vs_chance.csv`).
 
 The figure shows the 40 most recurrent events. Rows give the host gene (HGNC), view and coordinates (hg38, 1-based).
 Colour is the median paired tumour − normal change in every cancer, including cancers where the event did not rank
-(so the pattern across cancers is not selected on); the scale is clipped at ±30. Dots mark the cancers whose top
-100 contain the event.
+(so the pattern across cancers is not selected on): blue where the event is higher in the tumour, orange where it
+is higher in the normal tissue, clipped at ±30. Dots mark the cancers whose top 100 contain the event.
 
 Recurrent events tend to move the same way across cancers. For the median event, 73% of the cancers
 where it is measured share its majority direction; 46% of events reach 80%.

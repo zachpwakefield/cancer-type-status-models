@@ -1,10 +1,68 @@
-symbol,view,protein_length_aa,aa_start,aa_end,swap_nt,swap_in_frame,domains,majority_sign
-GCOM1,mxe,765.0,402.0,435.0,-104.0,False,DNA-directed RNA polymerase II subunit GRINL1,down in tumour
-PLCG1,mxe,1291.0,1216.0,1278.0,27.0,True,,up in tumour
-PDLIM7,mxe,195.0,94.0,150.0,153.0,True,,up in tumour
-ENOSF1,hit,443.0,411.0,443.0,,,,down in tumour
-NOP16,ale,178.0,132.0,178.0,,,Ribosome biogenesis protein Nop16,up in tumour
-NR1D1,hit,614.0,549.0,614.0,,,"Nuclear hormone receptor, ligand-binding domain",up in tumour
-COL5A1,mxe,1838.0,1690.0,1712.0,0.0,True,"Fibrillar collagen, C-terminal",up in tumour
-CHN1,mxe,459.0,87.0,183.0,211.0,False,"Chimaerin, SH2 domain; SH2 domain",down in tumour
-MACROH2A1,mxe,372.0,197.0,230.0,9.0,True,Macro domain; Macro domain-like,up in tumour
+symbol,view,drawn,protein_length_aa,aa_start,aa_end,swap_nt,swap_in_frame,domains,majority_sign
+GCOM1,mxe,alternative segment,765.0,402.0,435.0,-104.0,False,DNA-directed RNA polymerase II subunit GRINL1,down in tumour
+GCOM1,mxe,Pfam/CDD domain,765.0,434.0,638.0,,,DNA-directed RNA polymerase II subunit GRINL1,
+GCOM1,mxe,disordered,765.0,1.0,23.0,,,mobidblite,
+GCOM1,mxe,disordered,765.0,515.0,531.0,,,mobidblite,
+GCOM1,mxe,disordered,765.0,515.0,583.0,,,mobidblite,
+GCOM1,mxe,disordered,765.0,546.0,560.0,,,mobidblite,
+GCOM1,mxe,disordered,765.0,561.0,576.0,,,mobidblite,
+GCOM1,mxe,disordered,765.0,600.0,621.0,,,mobidblite,
+GCOM1,mxe,disordered,765.0,600.0,624.0,,,mobidblite,
+GCOM1,mxe,disordered,765.0,652.0,667.0,,,mobidblite,
+GCOM1,mxe,disordered,765.0,652.0,679.0,,,mobidblite,
+GCOM1,mxe,disordered,765.0,736.0,765.0,,,mobidblite,
+PLCG1,mxe,alternative segment,1291.0,1216.0,1278.0,27.0,True,,up in tumour
+PDLIM7,mxe,alternative segment,195.0,94.0,150.0,153.0,True,,up in tumour
+ENOSF1,hit,alternative segment,443.0,411.0,443.0,,,,down in tumour
+NOP16,ale,alternative segment,178.0,132.0,178.0,,,Ribosome biogenesis protein Nop16,up in tumour
+NOP16,ale,Pfam/CDD domain,178.0,14.0,75.0,,,Ribosome biogenesis protein Nop16,
+NOP16,ale,Pfam/CDD domain,178.0,77.0,155.0,,,Ribosome biogenesis protein Nop16,
+NOP16,ale,disordered,178.0,1.0,27.0,,,mobidblite,
+NOP16,ale,disordered,178.0,1.0,31.0,,,mobidblite,
+NR1D1,hit,alternative segment,614.0,549.0,614.0,,,"Nuclear hormone receptor, ligand-binding domain",up in tumour
+NR1D1,hit,Pfam/CDD domain,614.0,131.0,200.0,,,"Zinc finger, nuclear hormone receptor-type",
+NR1D1,hit,Pfam/CDD domain,614.0,437.0,610.0,,,"Nuclear hormone receptor, ligand-binding domain",
+NR1D1,hit,Pfam/CDD domain,614.0,127.0,215.0,,,"Zinc finger, nuclear hormone receptor-type",
+NR1D1,hit,disordered,614.0,1.0,119.0,,,mobidblite,
+NR1D1,hit,disordered,614.0,233.0,285.0,,,mobidblite,
+NR1D1,hit,disordered,614.0,242.0,263.0,,,mobidblite,
+NR1D1,hit,disordered,614.0,311.0,329.0,,,mobidblite,
+NR1D1,hit,disordered,614.0,311.0,345.0,,,mobidblite,
+COL5A1,mxe,alternative segment,1838.0,1690.0,1712.0,0.0,True,"Fibrillar collagen, C-terminal",up in tumour
+COL5A1,mxe,Pfam/CDD domain,1838.0,469.0,517.0,,,Collagen triple helix repeat,
+COL5A1,mxe,Pfam/CDD domain,1838.0,561.0,616.0,,,Collagen triple helix repeat,
+COL5A1,mxe,Pfam/CDD domain,1838.0,751.0,808.0,,,Collagen triple helix repeat,
+COL5A1,mxe,Pfam/CDD domain,1838.0,1466.0,1523.0,,,Collagen triple helix repeat,
+COL5A1,mxe,Pfam/CDD domain,1838.0,1513.0,1571.0,,,Collagen triple helix repeat,
+COL5A1,mxe,Pfam/CDD domain,1838.0,1608.0,1836.0,,,"Fibrillar collagen, C-terminal",
+COL5A1,mxe,disordered,1838.0,242.0,269.0,,,mobidblite,
+COL5A1,mxe,disordered,1838.0,281.0,305.0,,,mobidblite,
+COL5A1,mxe,disordered,1838.0,281.0,457.0,,,mobidblite,
+COL5A1,mxe,disordered,1838.0,377.0,391.0,,,mobidblite,
+COL5A1,mxe,disordered,1838.0,470.0,520.0,,,mobidblite,
+COL5A1,mxe,disordered,1838.0,526.0,545.0,,,mobidblite,
+COL5A1,mxe,disordered,1838.0,559.0,1574.0,,,mobidblite,
+COL5A1,mxe,disordered,1838.0,682.0,700.0,,,mobidblite,
+COL5A1,mxe,disordered,1838.0,802.0,816.0,,,mobidblite,
+COL5A1,mxe,disordered,1838.0,946.0,973.0,,,mobidblite,
+COL5A1,mxe,disordered,1838.0,1156.0,1170.0,,,mobidblite,
+COL5A1,mxe,disordered,1838.0,1321.0,1357.0,,,mobidblite,
+COL5A1,mxe,disordered,1838.0,1381.0,1396.0,,,mobidblite,
+COL5A1,mxe,disordered,1838.0,1454.0,1468.0,,,mobidblite,
+COL5A1,mxe,disordered,1838.0,1525.0,1540.0,,,mobidblite,
+COL5A1,mxe,disordered,1838.0,1556.0,1573.0,,,mobidblite,
+CHN1,mxe,alternative segment,459.0,87.0,183.0,211.0,False,"Chimaerin, SH2 domain; SH2 domain",down in tumour
+CHN1,mxe,Pfam/CDD domain,459.0,50.0,118.0,,,SH2 domain,
+CHN1,mxe,Pfam/CDD domain,459.0,206.0,257.0,,,"Protein kinase C-like, phorbol ester/diacylglycerol-binding domain",
+CHN1,mxe,Pfam/CDD domain,459.0,282.0,430.0,,,Rho GTPase-activating protein domain,
+CHN1,mxe,Pfam/CDD domain,459.0,42.0,128.0,,,"Chimaerin, SH2 domain",
+CHN1,mxe,Pfam/CDD domain,459.0,206.0,255.0,,,"Protein kinase C-like, phorbol ester/diacylglycerol-binding domain",
+CHN1,mxe,Pfam/CDD domain,459.0,266.0,459.0,,,Rho GTPase activation protein,
+MACROH2A1,mxe,alternative segment,372.0,197.0,230.0,9.0,True,Macro domain; Macro domain-like,up in tumour
+MACROH2A1,mxe,Pfam/CDD domain,372.0,5.0,85.0,,,Histone H2A/H2B/H3,
+MACROH2A1,mxe,Pfam/CDD domain,372.0,89.0,122.0,,,"Histone H2A, C-terminal domain",
+MACROH2A1,mxe,Pfam/CDD domain,372.0,216.0,329.0,,,Macro domain,
+MACROH2A1,mxe,Pfam/CDD domain,372.0,5.0,117.0,,,Histone H2A,
+MACROH2A1,mxe,Pfam/CDD domain,372.0,178.0,368.0,,,Macro domain-like,
+MACROH2A1,mxe,disordered,372.0,128.0,180.0,,,mobidblite,
+MACROH2A1,mxe,disordered,372.0,140.0,160.0,,,mobidblite,

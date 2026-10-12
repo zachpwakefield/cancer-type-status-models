@@ -67,13 +67,19 @@ Full tables, CIs, figures and top SHAP features per cohort and modality are in
 **What the models learned.** The two tasks answer different questions, so they are written up
 separately:
 
-- **[results/TUMOUR_STATUS.md](results/TUMOUR_STATUS.md)** — what splicing adds to expression for
-  telling a tumour from its own normal tissue; the tumour-wide shifts in RNA processing;
-  splicing-factor regulons; the events different cancers share, what they do to the protein, and
-  whether they carry outcome information, ending with ten events in detail (figures S1–S9).
-- **[results/CANCER_TYPE.md](results/CANCER_TYPE.md)** — splicing as a lineage code: what the
-  modalities each get right, class-defining exons, and how much of the advantage over expression
-  is a tissue-source-site effect, ending with one event per lineage (figures T1–T8).
+- **[results/TUMOUR_STATUS.md](results/TUMOUR_STATUS.md)** — *splicing is a second, partly
+  independent view of the tumour state.* Expression and splicing fail on different samples, so
+  fusing them at fixed weights removes a fifth of the errors; the splicing signal forms almost no
+  pathways but concentrates in the small regulons of PTBP1, QKI, RBM47 and HNRNPU; the events
+  recur across cancers far more than chance, look like exons a tissue regulates, and carry some
+  outcome information — modest, mostly renal once multiplicity is enforced, and direction-flipping
+  between cancers. Ends with ten events in detail (figures S1–S9).
+- **[results/CANCER_TYPE.md](results/CANCER_TYPE.md)** — *splicing is a lineage code, and it fails
+  where a lineage code should.* It makes almost none of expression's anatomical-neighbour errors
+  (GBM against LGG: 20 for expression, zero for splicing) and instead confuses cell types across
+  organs; the class-defining events are not expression in disguise, and single events separate a
+  class from all 33 others on their own. One headline gain is a tissue-source-site effect and is
+  marked as such. Ends with one event per lineage (figures T1–T8).
 
 The methods are in [docs/BIOLOGY_METHODS.md](docs/BIOLOGY_METHODS.md) (D-13 to D-26).
 

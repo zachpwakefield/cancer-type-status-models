@@ -8,10 +8,13 @@ One question per figure, in the order the story is told in results/CANCER_TYPE.m
     T5  are the class-defining events just a readout of their gene's expression?
     T6  what does a lineage-defining exon look like across the classes?
     T7  how much of the separation of neighbouring classes is the tissue-source site?
+    T8  can a single splicing event name a lineage on its own?
 
 Usage: python scripts/21_figures_type.py [T1 T5 ...]        (default: all)
 """
 from __future__ import annotations
+
+import re
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -88,7 +91,7 @@ def T2() -> None:
                zorder=4, label="GEX + AS")
     ax.axvline(0, color=INK2, linewidth=0.5)
     ax.set_yticks(y)
-    ax.set_yticklabels([f"{k} ({int(n[k])})" for k in piv.index], fontsize=5.5, color=INK)
+    ax.set_yticklabels([f"{k} ({int(n[k]):,})" for k in piv.index], fontsize=5.5, color=INK)
     ax.tick_params(axis="y", length=0)
     ax.spines["left"].set_visible(False)
     ax.set_ylim(-0.7, len(piv) - 0.3)
@@ -135,6 +138,10 @@ def T3() -> None:
     y = np.arange(len(conf))
     ax.barh(y - 0.19, conf["GEX"], height=0.36, color=INK2, label="GEX")
     ax.barh(y + 0.19, conf["AS ensemble"], height=0.36, color=ACCENT, label="AS ensemble")
+    for i, (a, b) in enumerate(zip(conf["GEX"], conf["AS ensemble"])):   # a zero bar is invisible
+        for v, dy, c in ((a, -0.19, INK2), (b, 0.19, ACCENT)):
+            if v == 0:
+                ax.text(0.8, i + dy, "0", fontsize=5.5, color=c, va="center", ha="left")
     ax.set_yticks(y)
     ax.set_yticklabels(conf["pair"], fontsize=5.5, color=INK)
     ax.tick_params(axis="y", length=0)
@@ -149,8 +156,8 @@ The 16 class pairs with the most out-of-fold confusions (either direction) for t
 
 Expression mixes up anatomical neighbours: colon and rectum, oesophagus and stomach, lung adenocarcinoma and squamous
 carcinoma, the kidney subtypes, and glioma grades. Splicing makes fewer of these errors; GBM/LGG errors fall from 20
-to 0. T7 shows which of these gains survive unseen tissue-source sites: glioma, kidney and lung yes; colon/rectum
-no.
+to 0, printed as a number because a zero draws no bar. T7 shows which of these gains survive unseen tissue-source
+sites: glioma, kidney and lung yes; colon/rectum no.
 
 Splicing instead confuses squamous and urothelial carcinomas across organs (CESC/HNSC, HNSC/LUSC, BLCA/CESC,
 BLCA/HNSC). It also confuses several tumours with normal tissue (PRAD, THCA, LIHC, STAD), as if the splicing state
@@ -169,6 +176,9 @@ def T4() -> None:
     # open = all genes, filled = the ribosomal-protein sensitivity, which was only run on the
     # cancer-type AS views; the left panel and GEX have no filled bar rather than a zero one.
     axes[0].barh(y, coh[c_ts], color="none", edgecolor=cols, linewidth=0.6, height=0.65)
+    for i, v in enumerate(coh[c_ts]):                       # a zero bar is invisible
+        if v == 0:
+            axes[0].text(0.015, i, "0", fontsize=5.5, color=cols[i], va="center", ha="left")
     axes[0].set_xlabel("tumour vs normal:\nshare of 15 cancers")
     axes[1].barh(y, coh[c_ct], color="none", edgecolor=cols, linewidth=0.6, height=0.65, label="all genes")
     axes[1].barh(y, coh[c_rp], color=ACCENT, height=0.65, label="ribosomal-protein\ngenes removed")
@@ -188,15 +198,17 @@ def T4() -> None:
 The share of models whose top 200 SHAP genes are enriched (q < 0.05, BH within collection per model; GOseq/Wallenius,
 D-16) for at least one Hallmark, Reactome or GO-BP term, by view.
 
+Open bars use all genes, in each view's colour; a share of zero is printed as a number, because it draws no bar.
+
 Left: the 15 tumour-vs-normal models. GEX reaches a pathway in 14 of 15 cancers; SE in 9; MXE in 6; the other AS
 views in at most 4; RI in none. The tumour signal of splicing is mostly carried by genes that are not members of a
 common programme.
 
-Open bars use all genes, in each view's colour. Right: the 34 per-class explanations of the cancer-type models. Many AS hits there came
-from alternative 5'/3' splice sites in cytosolic ribosomal-protein genes (RPS24, RPL13A, RPL3 and others), which are
-deeply covered and so measured precisely in every tissue. Filled bars repeat the tests with RPL*/RPS* genes removed
-from both ranking and universe; that sensitivity test was run only on the cancer-type AS views, so GEX and the
-left panel have no filled bar. Most SE, MXE and A3SS classes keep enrichments. The remaining terms are lineage
+Right: the 34 per-class explanations of the cancer-type models. Many AS hits there came from alternative 5'/3'
+splice sites in cytosolic ribosomal-protein genes (RPS24, RPL13A, RPL3 and others), which are deeply covered and
+so measured precisely in every tissue. Filled bars repeat the tests with RPL*/RPS* genes removed from both
+ranking and universe; that sensitivity test was run only on the cancer-type AS views, so GEX and the left panel
+have no filled bar. Most SE, MXE and A3SS classes keep enrichments. The remaining terms are lineage
 biology (synapse and cell projection in PCPG, smooth-muscle contraction in PRAD, RHO GTPase cycle in DLBC,
 extracellular matrix in THCA) and the splicing machinery's own transcripts (RNA splicing terms from A3SS in ACC,
 KICH, LUAD and UVM). Top terms per class: `cancer_type_top_terms_by_class.csv`.
@@ -257,6 +269,12 @@ lineage-specifically, such as GFAP and MBP (glioma), DUOXA2 (thyroid), MYH11 (sm
 """)
 
 
+def exon_nt(feature_id: str) -> int:
+    """Length in nt of a cassette exon, from the rMATS id's 0-based half-open interval."""
+    a, b = re.search(r"chr[\w]+:(\d+)-(\d+)", str(feature_id)).groups()
+    return int(b) - int(a)
+
+
 def T6() -> None:
     d = BIO / "06_lineage"
     med = pd.read_csv(d / "atlas_se_median_psi_by_class.csv", index_col=0)
@@ -269,8 +287,13 @@ def T6() -> None:
     order = sorted(range(len(dev)), key=lambda i: (pos[picks["class"].iloc[i]], -abs(own[i])))
     M = dev.iloc[order][col_order]
     cls = picks["class"].iloc[order].to_numpy()
+    # two cassette exons of one gene can both be ranked by the same class (BLCAP, GAL3ST1): they
+    # differ only in one splice site, so the exon's length is what tells the rows apart
     lab = [f"{locus_label(s, f)} ({c})"
            for s, f, c in zip(picks["symbol"].iloc[order], picks.index[order], cls)]
+    nt = [exon_nt(f) for f in picks.index[order]]
+    lab = [f"{locus_label(s, f)} {n} nt ({c})" if lab.count(l) > 1 else l
+           for l, s, f, c, n in zip(lab, picks["symbol"].iloc[order], picks.index[order], cls, nt)]
     lim = 60
     fig, ax = plt.subplots(figsize=(DOUBLE * 0.72, 0.068 * len(M) + 0.9))
     im = ax.imshow(M.to_numpy(), cmap=DIVERGE, vmin=-lim, vmax=lim, aspect="auto")
@@ -363,12 +386,16 @@ def T8() -> None:
     cards = cards.reindex(cards["margin"].abs().sort_values(ascending=False).index).reset_index(drop=True)
 
     fig, ax = plt.subplots(figsize=(DOUBLE * 0.76, 0.44 * len(cards) + 1.0))
+    drawn = []
     for i, r in enumerate(cards.itertuples()):
         y = len(cards) - 1 - i
         v = med.loc[r.key].dropna().drop(labels=[r.marks_class, r.nearest_class], errors="ignore")
         # most of the other classes sit on the same value; a little jitter shows the pile-up
         jitter = np.linspace(-0.13, 0.13, len(v))
         ax.scatter(v, y + jitter, s=6, color=MUTED, linewidths=0, zorder=2)
+        drawn += [{"key": r.key, "class": c, "class_median": m,                 # every dot on the row
+                   "role": "marks" if c == r.marks_class else "nearest" if c == r.nearest_class else "other"}
+                  for c, m in med.loc[r.key].dropna().items()]
         ax.plot([r.class_median, r.nearest_class_median], [y, y], color=GRID, linewidth=0.8, zorder=1)
         ax.scatter(r.nearest_class_median, y, s=18, facecolor="white", edgecolor=ACCENT, linewidths=0.8, zorder=3)
         ax.scatter(r.class_median, y, s=20, color=ACCENT_DARK, linewidths=0, zorder=4)
@@ -383,7 +410,7 @@ def T8() -> None:
     ax.spines["left"].set_visible(False)
     ax.set_ylim(-0.6, len(cards) - 0.4)
     ax.set_xlim(-1.35, 1.35)
-    ax.set_xlabel("median over the samples of a class: PSI (0 to 1), or the HIT index (-1 to 1) for HIT events")
+    ax.set_xlabel("median over the samples of a class: PSI (0 to 1), or the HIT index (\u22121 to 1) for HIT events")
     h = [Line2D([], [], marker="o", linestyle="", markersize=3.2, color=ACCENT_DARK, markeredgewidth=0,
                 label="the class the event marks"),
          Line2D([], [], marker="o", linestyle="", markersize=3.2, markerfacecolor="white",
@@ -394,6 +421,7 @@ def T8() -> None:
               handletextpad=0.2, columnspacing=1.2)
     out = cards[["key", "symbol", "view", "marks_class", "rank_in_class", "class_median", "nearest_class",
                  "nearest_class_median", "margin", "median_over_classes", "direction_spearman", "exon_status"]]
+    out = out.merge(pd.DataFrame(drawn), on="key", how="left")
     save(fig, OUT, "T8_class_events", data=out, caption="""
 **Can a single splicing event name a lineage?**
 
@@ -404,12 +432,14 @@ first. The second step chooses which examples to show and nothing else; a featur
 still not separate it alone, because the model reads it together with the others.
 
 Each row is one event: the filled dot is the median over the samples of the class it marks, the open dot the
-nearest other class, and the small dots the remaining 32, spread vertically so that classes sharing a value can be counted. The gap
-between the two large dots is the margin a single event gives on its own, with no model and no other feature.
+nearest other class, and the small dots the remaining 32, spread vertically so that classes sharing a value can
+be counted. The gap between the two large dots is the margin a single event gives on its own, with no model and
+no other feature.
 
 Medians over all samples of each class, out-of-fold membership not required (this is a description of the data,
-not of a prediction). Per-sample values stay local (D-12); `11_event_cards/cancer_type_cards.csv` adds each
-event's geometry, protein consequence and regulon membership.
+not of a prediction). The CSV holds every drawn dot, one row per event × class. Per-sample values stay local
+(D-12); `11_event_cards/cancer_type_cards.csv` adds each event's geometry, protein consequence and regulon
+membership.
 """)
 
 

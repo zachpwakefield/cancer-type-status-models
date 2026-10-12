@@ -13,6 +13,38 @@ a different answer and is written up separately in [TUMOUR_STATUS.md](TUMOUR_STA
   and a CSV of the plotted values.
 - **Statistics in figures:** raw p. Any q is in the CSV with its FDR family named.
 
+## The argument
+
+A tumour's tissue of origin is the easiest thing about it to predict from RNA: expression gets
+34 classes right 95.4% of the time. So the interesting question is the same as in the other
+document — is splicing looking at something else? — and here the answer has a sharper edge,
+because splicing is not merely complementary. It is a *lineage code*, and it fails where a
+lineage code should fail.
+
+No single splicing view matches expression, but their average does, with a better macro recall
+(§1); fused with expression at fixed weights it removes 71 of 450 errors. The two modalities
+then fail on different classes, and the pattern is informative rather than random. Expression
+confuses anatomical neighbours — colon with rectum, oesophagus with stomach, glioma grades.
+Splicing makes almost none of those errors (GBM against LGG: 20 for expression, zero for
+splicing) and instead confuses cell types *across* organs: squamous carcinomas of head and neck,
+lung, cervix and bladder look alike to it, and several tumours look like the normal tissue they
+arose in (§2, §3). That is what a readout of the cell of origin should do.
+
+The evidence that this is lineage rather than expression re-encoded is direct. The class-defining
+splice-site events correlate with their host gene's expression no more than random events do,
+and each class's top splicing genes and top expression genes overlap by about one gene (§5).
+Single exons mark single lineages (§6), and across all eight views a single event is often
+enough on its own: ten of them separate a class from the nearest of the 33 others by 0.58 to
+1.63 — in PSI, or in the HIT index for terminal exons — with no model involved in that number
+(§8).
+
+Two sections keep the claim honest. §4 shows that the pathway enrichments of the splicing
+explanations were largely an artefact of deeply covered ribosomal-protein splice sites, which
+are measured precisely everywhere; what survives their removal is lineage biology and the
+splicing machinery itself. §7 shows that one of the headline gains is not biology at all:
+because each TCGA tissue-source site contributes to exactly one project, the colon/rectum
+advantage disappears when whole sites are held out, while glioma, kidney and lung survive.
+
 ## Summary
 
 1. **No single splicing view matches expression, but their ensemble does**: 0.950 against 0.954
@@ -31,6 +63,11 @@ a different answer and is written up separately in [TUMOUR_STATUS.md](TUMOUR_STA
    MEF2B, EVL and NPM1 fire in DLBC, BRCA and GBM and essentially nowhere else.
 6. **One advantage is a site effect, not biology.** With whole tissue-source sites held out, the
    glioma, kidney and lung advantages survive; the colon/rectum advantage disappears.
+7. **Lineage and tumour state are the same kind of exon, but not the same events.** The
+   class-defining exons have the protein character of the tumour-status ones — in frame,
+   disordered, outside folded domains — yet the two tasks' top-100 sets overlap only 28–36% for
+   the internal views, and none of the ten events of §8 sits in a splicing-factor regulon the
+   tumour-status models' events are enriched for.
 
 ---
 
@@ -136,7 +173,16 @@ These class-defining exons have the same protein character as the tumour-status 
 frame-preserving (54% divisible by 3 against 41% of measured exons), more often in disordered
 regions and less often inside folded domains (figure S6 in
 [TUMOUR_STATUS.md](TUMOUR_STATUS.md), which tests both selections against the same background).
-Lineage-switched exons and tumour-switched exons are drawn from the same kind of exon.
+
+**The same kind of exon, but not the same exons.** Those two statements sit together and are
+worth keeping apart. A tissue switching a lineage exon and a tumour switching a state exon are
+both doing the thing cells do with alternative splicing — exchanging a segment in frame, usually
+in a disordered, interaction-prone region, rarely through a folded domain — which is why the two
+selections look alike against a random background. But the *events* differ: the two tasks' top
+100 features overlap only 28–36% for the cassette-exon, splice-site and intron views (§1), none
+of the ten lineage events of §8 belongs to a splicing-factor regulon the tumour-status models
+are enriched for, and nine of those ten are terminal or first exons, against one of ten on the
+tumour-status side. The grammar is shared; the sentences are not.
 
 ## 7. How much of this is the tissue-source site?
 
@@ -221,6 +267,28 @@ also what §5 predicts: a class is named by where transcription starts and ends,
 same decision that makes the terminal-exon views track host-gene expression. None of the ten is
 in a splicing-factor regulon the tumour-status models' events are enriched for. Lineage
 decisions and the tumour programme are different sets of events.
+
+## What would change the reading
+
+The limitations below are the standing caveats. These are the specific observations that would
+overturn the argument:
+
+- **More held-out-site failures.** §7 probed six class pairs with a fixed linear probe. If the
+  same test were run on every pair and the advantages collapsed broadly rather than only for
+  colon against rectum, the lineage-code reading would become a site-handling reading. The probe
+  bounds this; it does not settle it.
+- **A batch or platform correlate.** The events of §8 are near-binary switches. A switch that
+  tracked library preparation or sequencing centre rather than tissue would look exactly the
+  same in this data. The site probe is the available check; a cohort processed elsewhere is the
+  real one.
+- **The pooled normal class.** It mixes tissues, and it is the class splicing does worst on
+  (−0.102 recall against expression). Splitting it by tissue would say whether that is a real
+  weakness or an artefact of pooling.
+- **The small classes.** CHOL (35 samples), DLBC (47), UCS (55), UVM (78) and ACC (79) are the
+  smallest of the 34, and they appear all over §8 — DLBC and UVM as the marked class, CHOL and
+  ACC as the nearest one in five of the ten rows. Those medians rest on tens of samples, so the
+  margins are the least stable numbers in the document. The ten events themselves were chosen by
+  SHAP, which does not see class size; the ranking of the margins does.
 
 ## Limitations
 

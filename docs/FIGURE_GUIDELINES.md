@@ -37,14 +37,21 @@ imports it.
   `<data_dir>/figure_data/<stem>.csv`.
 - **Statistics.** Figures show raw p as values or stars. The tiers are * < 0.05, ** < 0.01 and
   *** < 0.001, and each caption repeats them. q appears only in the CSV, with its FDR family
-  named in a `q_family` column. A missing test is shown as `–`.
-- **Gene labels.** Genes appear as HGNC symbols. A gene without one is shown as
-  "unnamed gene" plus its coordinates, and its Ensembl ID stays in the CSV.
+  named in a `q_family` column. A missing test is shown as `–`. A measured zero is printed as
+  `0`, because a zero-length bar is invisible and would otherwise read as a missing value.
+- **Gene labels.** Genes appear as HGNC symbols. A gene without one is shown by its locus
+  (`chr6:41.78 Mb`, from `_figbase.locus_label`), never as an Ensembl ID, which stays in the
+  CSV. Two rows of one figure never carry the same label: where one gene contributes two
+  events, the label adds what tells them apart, such as the exon's length.
 - **Fewer plots.** Each figure answers one question. Diagnostics are kept as tables, not
   figures; examples are the error-overlap Jaccard and the tumour-status fusion.
+- **Colour.** Blue `#2a78d6` is tumour and orange `#eb6834` is normal, on every figure where
+  the contrast is tumour against normal tissue, including the colour scale of a tumour − normal
+  difference (`figstyle.TN_DIVERGE`). `figstyle.DIVERGE` (blue below, red above) is for signed
+  quantities that are not that contrast, such as an odds ratio or a hazard ratio.
 - **Where they live.** The figures of the interpretation layer are grouped by narrative, not by
-  the analysis that produced them: `results/figures/tumour_status/S1`–`S8`
-  ([TUMOUR_STATUS.md](../results/TUMOUR_STATUS.md)) and `results/figures/cancer_type/T1`–`T7`
+  the analysis that produced them: `results/figures/tumour_status/S1`–`S9`
+  ([TUMOUR_STATUS.md](../results/TUMOUR_STATUS.md)) and `results/figures/cancer_type/T1`–`T8`
   ([CANCER_TYPE.md](../results/CANCER_TYPE.md)), drawn by `scripts/20` and `scripts/21`. The
   tables they read stay under `results/biology/<NN>_<analysis>/`. A caption refers only to
   figures of its own narrative.

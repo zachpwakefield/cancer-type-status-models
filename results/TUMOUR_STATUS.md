@@ -14,6 +14,37 @@ separately in [CANCER_TYPE.md](CANCER_TYPE.md).
   stating the question, the method, n and the test, and a CSV of the plotted values.
 - **Statistics in figures:** raw p. Any q is in the CSV with its FDR family named.
 
+## The argument
+
+Expression already separates tumour from normal tissue almost perfectly, so the question is not
+whether splicing can do the same — it is whether splicing is *looking at something else*. Three
+findings say it is. The two modalities fail on different samples, so fusing them at fixed
+weights removes a fifth of the errors (§1). Expression's signal runs through microenvironment
+pathways; the splicing models' genes mostly form no pathway at all (§3), so the splicing signal
+is not the expression signal re-encoded. And where the splicing signal does organise, it
+organises by *regulator* rather than by pathway: the models' events are concentrated in the
+small, distinct programmes of PTBP1, QKI, RBM47 and HNRNPU and depleted from the large shared
+nuclear-processing programme (§4).
+
+One result anchors the rest because no model touched it. Using every measured event, with no
+SHAP ranking anywhere in the calculation, tumours retain more intronic sequence, use more long
+splice-site forms and move their last exons upstream relative to each patient's own normal
+tissue (§2). Whatever the models are selecting, they are selecting it from a transcriptome that
+really has moved.
+
+What those events look like is consistent with that reading. They recur across cancers far more
+than chance allows (§5), they have the protein character of exons a tissue regulates rather than
+of damage — in frame, disordered, outside folded domains (§6) — and the models read them
+monotonically, as markers rather than as interactions (§7).
+
+The last two sections are where the story is most careful. The events do carry outcome
+information, more than matched events do, and more the more models agree on them (§8) — but the
+effect is modest, concentrates in two kidney cohorts once multiplicity is enforced inside a
+cancer, and reverses direction between cancers. Separating tumour from normal tissue and
+predicting outcome are related but distinct axes. §9 then spends ten events' worth of detail
+showing that the headline set is not what §6 would lead one to expect: six mutually exclusive
+pairs and four terminal exons, not one cassette exon.
+
 ## Summary
 
 1. **Splicing adds to expression.** Over 6,815 samples, the expression model makes 99 errors and
@@ -43,7 +74,9 @@ separately in [CANCER_TYPE.md](CANCER_TYPE.md).
 8. **Ten of those events, in detail.** Six mutually exclusive pairs and four terminal exons,
    not one cassette exon: the macroH2A1.1/1.2 switch, the chimaerin SH2 switch, a 23-amino-acid
    exchange in the collagen V C-terminal domain, and a 4-kb ENOSF1 exon that moves from last to
-   first in 14 of 15 cancers and is the most prognostic event in the set.
+   first in 14 of 15 cancers and is the most prognostic event in the set. Six of the nine with
+   protein coordinates land *inside* an annotated domain — the opposite of the cassette-exon
+   picture in point 6, because the most shared events are not cassette exons at all.
 
 ---
 
@@ -213,15 +246,32 @@ These are the properties of exons that tissues regulate.
 and the most domain-depleted (30%, OR 0.42); exons included more in tumours are the most enriched
 for disorder (24%, OR 1.98).
 
-## 7. What the most shared events look like
+## 7. The models read these events as markers, not as interactions
 
 ![S7](figures/tumour_status/S7_event_portraits.png)
 
 Six events are shown: the most recurrent, one per gene, whose paired change has the same sign in
 at least 80% of cancers. Left, each cancer's matched normal and tumour medians; right, the SHAP
-dependence in the cancer where the event ranks highest. The model reads all six monotonically —
-the further a sample's value lies in the tumour direction, the more it is pushed towards
-"tumour".
+dependence in the cancer where the event ranks highest.
+
+**The medians say the shift moves the typical tumour, not a subset of them.** Each of the six
+moves the same way in 14 or 15 of the 15 cancers, and the median shift is large for four of them
+(|ΔPSI| 0.17–0.46). There is one substantial reversal in the whole panel: GCOM1 rises by 0.34 in
+KICH against a median fall of 0.24 elsewhere — the single off-colour cell of its row in S5.
+These are not events that pick out an aggressive subset; they are events whose typical value
+differs between a patient's tumour and that patient's own normal tissue.
+
+**The dependence plots say the models use them as levels.** Value and SHAP are monotone in all
+six panels (Spearman 0.75–0.93 in five; 0.52 in EXOSC7, where 61% of the samples sit at exactly
+one value and the correlation is bounded by the ties). Within any fifth of the value range,
+tumour and normal samples get almost the same push — the two groups' mean SHAP differs by at
+most 0.05–0.18 against total SHAP ranges of 0.43–0.70 — so the model is reading the event's
+level, not the label it happens to come with.
+
+That is also the mechanical reason §1 came out the way it did. If each view contributes a nearly
+additive, nearly monotone piece of evidence, a fixed 1:1 average is close to the right
+combination rule and a stacker with freedom to learn weights has little left to find, which is
+what the error counts show (77 against 76, with a worse mean AUROC for the stacker).
 
 ## 8. Do these events carry information about outcome?
 
@@ -436,6 +486,31 @@ much longer partner. All nine that were tested reach nominal Cox significance in
 their 14 cancers, where the permuted-outcome rate of §8 would put about five of nine at that
 mark; the two that reach it in five cancers, ENOSF1 and MACROH2A1, are both in regulons the
 models' events are enriched for.
+
+## What would change the reading
+
+The limitations below are the standing caveats. These are the specific observations that would
+overturn the argument, and how each could be checked:
+
+- **An RIN or nuclear-RNA measurement.** §2's intron-retention and long-form shifts are the one
+  global result with a plausible technical twin. If retention tracked RNA integrity within
+  tumours in a cohort that has RIN, §2 would become a quality finding rather than a biological
+  one. §4–§9 would survive it: they are about which events the models pick, against a background
+  matched on coverage and spread.
+- **A deconvolution.** Tumour and matched normal tissue differ in stromal, immune and muscle
+  content, and §4 already shows that one global axis — the sample's own mean PSI — manufactures
+  regulons when it is not residualised out. If the enrichments of §4 vanished under cell-type
+  deconvolution rather than marker scores, the "small, specific programmes" reading would go
+  with them.
+- **A second cohort.** The recurrence of §5 is across cancers inside TCGA, with one processing
+  pipeline. Recovering the same events in an independent cohort processed differently would
+  separate biology from pipeline; failing to would not be decisive, but would bound the claim.
+- **The kidney cohorts.** Drop KIRC and KIRP and §8's FDR-level result is gone. The set-level
+  gradient (1.27 → 1.56 → 1.62) is pooled over 15 cancers and would need to be recomputed
+  without them to know how much of it is renal too; the per-cancer rates are in
+  `08_survival/survival_rate_by_cancer.csv`.
+- **Strandedness.** The NR1D1/THRA pair of §5 and §9 is one observation read twice if the
+  libraries cannot tell the two strands apart. A stranded cohort settles it.
 
 ## Limitations
 
