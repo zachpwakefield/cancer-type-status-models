@@ -441,6 +441,20 @@ difference is compared between patients with and without an MSI tumour (9 agains
 three projects pooled, scores built in the main matrix). S4: the score rebuilt in the main matrix
 with its own feature filter. Family S: STAD and COAD (7 tests); UCEC reported alongside.
 
+### D-56 Reading the repeats in the tumours' DNA · `config/followup.yaml: msi_dna` · `scripts/44`, `scripts/45`
+Added 2026-10-12 after D-52..D-55, before any read was fetched. D-52..D-55 inferred repeat
+shortening from the reference genome and the MSI label; this reads it. 785 loci (label-blind:
+every SE acceptor T-run ≥ 20, seeded samples of 250 runs of 14–19 and of 10–13, the A3SS repeat
+acceptors, and the clinical MSI markers BAT-25 and BAT-26) are sliced from harmonised exome BAMs
+of every MSI and POLE tumour with its normal and 120 MSS tumours (60 with normals), in that
+order, stopping at 6 GB. The data user fetches the slices with their own GDC token; the
+repository never handles it. Each read's run length is called between exact 8-nt flanks, with
+no trust in the aligner's indel placement. Contraction per tumour and locus is the share of reads
+shorter than the germline mode, minus the same share in the normal. Predictions G1–G6: MSI
+tumours carry more contraction (G1), POLE less than MSI (G2); within MSI tumours, a shorter allele
+goes with less inclusion of its exon at runs of 10–19 (G3) and with more at runs ≥ 20 (G5); loci
+that contract more skip more (G4); contraction rises with run length (G6). Family D (8 tests).
+
 ---
 
 ## Amendments and deviations

@@ -5,6 +5,7 @@
 #   msi_long_tracts                          docs/SUBTYPE_METHODS.md D-53 (after D-52's results)
 #   msi_a3ss_replication                     docs/SUBTYPE_METHODS.md D-54 (after D-53's results)
 #   msi_robustness                           docs/SUBTYPE_METHODS.md D-55 (after D-54's results)
+#   msi_dna                                  docs/SUBTYPE_METHODS.md D-56 (before any read was fetched)
 #
 # Written 2026-10-12, after every model of the three tasks had been fitted and summarised, and
 # before any analysis below was run. Nothing here refits a model or changes a label, a cohort, a
@@ -370,3 +371,46 @@ msi_robustness:                          # D-55 · scripts/43_msi_robustness.py
   exploratory: leave-one-site-out AUROC range; the MSI-patient normals' scores against the other
                normals; AUROC within the lower-immune half; Spearman of the score with stromal,
                immune and ri_mean within MSI and within rest
+
+msi_dna:                                 # D-56 · scripts/44_repeat_dna.py (loci, manifest), 45 (genotype, test)
+  # Written 2026-10-12 after D-52..D-55 were read and before any read was fetched. The loci and
+  # the BAM list come from step 44 (label-blind loci; open GDC metadata). The slices are fetched
+  # by the data user with their own token; this repository never handles the credential.
+  loci: acceptor T-run of SE repeat exons (all >= 20 nt; seeded random 250 of 14-19 and of 10-13),
+        of A3SS repeat acceptors, and BAT-25 / BAT-26 as positive controls (785 loci)
+  bams: harmonised WXS (BWA, GRCh38) - every MSI and POLE tumour with its normal (blood preferred),
+        40 random MSS tumours per cohort, 20 of them with their normal; fetched in that order with
+        a 6 GB stop (the user's 10 GB cap)
+  reads: MAPQ >= 20; not unmapped, secondary, supplementary, QC-fail or duplicate
+  informative_read: the read (reference-forward) holds the exact 8-nt left flank, >= 1 run base,
+                    then the exact 8-nt right flank; run length = bases between the flanks
+  usable_cell: at least 8 informative reads for that sample and locus
+  germline_mode: mode of the patient's normal at the locus; tumours without a normal in the set use
+                 the mode over all normals at the locus
+  contraction: c = share of tumour reads shorter than the germline mode minus the same share in the
+               normal (the patient's own; else all normals at the locus), a stutter correction
+  burden: a tumour's mean c over its usable SE and A3SS loci
+  fdr_family: D, the 8 tests G1-G6
+  predictions:
+    - id: G1
+      claim: burden is higher in MSI than in rest tumours, in each cohort (Mann-Whitney)
+      why: assay check - mismatch-repair deficiency shortens mononucleotide repeats
+    - id: G2
+      claim: UCEC_TCGA, burden is lower in POLE than in MSI tumours (Mann-Whitney)
+    - id: G3
+      claim: SE loci with runs 10-19 - within MSI tumours, per locus, Spearman(c, the exon's PSI
+             percentile in its cohort) < 0; loci with >= 10 usable MSI tumours; sign test over loci
+      why: the tumour whose allele is shorter skips the exon more - the cis route, tumour by tumour
+    - id: G4
+      claim: SE loci with runs 10-19 - across loci, the mean c of MSI tumours against the exon's
+             mean delta_adj over the cohorts that measure it, Spearman < 0
+    - id: G5
+      claim: SE loci with runs >= 20 - as G3 but Spearman > 0 (shortening raises inclusion)
+      why: the reversal of D-53/D-54 at the level of the allele
+    - id: G6
+      claim: across SE and A3SS loci, the mean c of MSI tumours rises with the reference run length
+             (Spearman > 0)
+      why: longer repeats slip more often (positive control of the dose)
+  exploratory: BAT-25/BAT-26 c in each group; G3/G5 with c partialled on the tumour's burden;
+               normals' share of reads shorter than the reference length, MSI patients against the
+               rest (somatic or germline)
