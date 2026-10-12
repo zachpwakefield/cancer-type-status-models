@@ -64,24 +64,183 @@ patient-grouped cross-validation. It is explained with SHAP on held-out samples 
 Full tables, CIs, figures and top SHAP features per cohort and modality are in
 **[results/RESULTS.md](results/RESULTS.md)**.
 
-**What the models learned.** The two tasks answer different questions, so they are written up
-separately:
+## The findings, in figures
 
-- **[results/TUMOUR_STATUS.md](results/TUMOUR_STATUS.md)** — *splicing is a second, partly
-  independent view of the tumour state.* Expression and splicing fail on different samples, so
-  fusing them at fixed weights removes a fifth of the errors; the splicing signal forms almost no
-  pathways but concentrates in the small regulons of PTBP1, QKI, RBM47 and HNRNPU; the events
-  recur across cancers far more than chance, look like exons a tissue regulates, and carry some
-  outcome information — modest, mostly renal once multiplicity is enforced, and direction-flipping
-  between cancers. Ends with ten events in detail (figures S1–S9).
-- **[results/CANCER_TYPE.md](results/CANCER_TYPE.md)** — *splicing is a lineage code, and it fails
-  where a lineage code should.* It makes almost none of expression's anatomical-neighbour errors
-  (GBM against LGG: 20 for expression, zero for splicing) and instead confuses cell types across
-  organs; the class-defining events are not expression in disguise, and single events separate a
-  class from all 33 others on their own. One headline gain is a tissue-source-site effect and is
-  marked as such. Ends with one event per lineage (figures T1–T8).
+Eleven figures, in the order the argument runs. Each has a caption file and a CSV of the plotted
+values next to it; the two narratives carry the rest and the numbers behind every claim.
 
-The methods are in [docs/BIOLOGY_METHODS.md](docs/BIOLOGY_METHODS.md) (D-13 to D-26).
+- **[results/TUMOUR_STATUS.md](results/TUMOUR_STATUS.md)** (S1–S9) — *splicing is a second,
+  partly independent view of the tumour state.*
+- **[results/CANCER_TYPE.md](results/CANCER_TYPE.md)** (T1–T8) — *splicing is a lineage code, and
+  it fails where a lineage code should.*
+
+### 1. The two modalities fail on different samples
+
+<img src="results/figures/tumour_status/S1_modality_gain.png" width="866" alt="S1: out-of-fold errors per cancer and pooled, for GEX, the AS ensemble and their fusion">
+
+**S1.** Out-of-fold errors for each of the 15 tumour-vs-normal cohorts (left, as a share of that
+cancer's samples) and pooled over all 6,815 samples (right), for expression (black), the mean of
+the 8 splicing views (light blue) and an equal-weight fusion of the two (dark blue). Expression
+makes 99 errors and splicing 91 — but not the same ones, so the fusion makes 77: 27 of
+expression's errors corrected against 5 introduced (exact McNemar p = 1.1e-4). The weights were
+fixed before any result was seen. `stacked` is a cross-fitted logistic regression allowed to
+learn the weights; it is shown as a ceiling and does no better.
+[caption](results/figures/tumour_status/S1_modality_gain.caption.md) ·
+[§1](results/TUMOUR_STATUS.md#1-combining-the-modalities-beats-expression-alone)
+
+<img src="results/figures/cancer_type/T1_modality_gain.png" width="442" alt="T1: 34-class accuracy by modality, with the ensembles">
+
+**T1.** The same question for the 34-class task, over 9,729 samples: out-of-fold accuracy with
+95% bootstrap intervals. Every splicing view alone is below expression (0.898–0.941), yet their
+average reaches 0.950 against expression's 0.954, with a *higher* macro recall (0.940 against
+0.936) — the views' errors are largely independent of each other. Fusing the two gives 0.961:
+109 of expression's errors corrected, 38 introduced, p = 3.9e-9. Brackets carry raw p.
+[caption](results/figures/cancer_type/T1_modality_gain.caption.md) ·
+[§1](results/CANCER_TYPE.md#1-combining-the-modalities-identifies-the-tissue-better-than-expression-alone)
+
+### 2. And they fail in ways that say what each is reading
+
+<img src="results/figures/cancer_type/T3_class_confusions.png" width="376" alt="T3: the 16 most-confused class pairs, GEX against the AS ensemble">
+
+**T3.** The 16 class pairs with the most out-of-fold confusions, either direction. Expression
+mixes up **anatomical neighbours** — colon with rectum (96 errors), oesophagus with stomach (40),
+lung adenocarcinoma with squamous carcinoma (37), glioma grades (20). Splicing makes almost none
+of those (GBM against LGG: zero, printed as a number because a zero draws no bar) and instead
+confuses **cell types across organs**: squamous carcinomas of cervix, head and neck, lung and
+bladder, and several tumours with the normal tissue they arose in. That is what a readout of the
+cell of origin should do.
+[caption](results/figures/cancer_type/T3_class_confusions.caption.md) ·
+[§3](results/CANCER_TYPE.md#3-the-two-modalities-confuse-different-classes)
+
+### 3. One result that no model selection could have biased
+
+<img src="results/figures/tumour_status/S2_global_shifts.png" width="467" alt="S2: median paired tumour minus normal shift, 15 cancers by 7 event views">
+
+**S2.** Every measured event, with no SHAP ranking anywhere in the calculation: the median over
+matched patients of the patient's own tumour − normal change, by cancer (rows, n pairs in
+brackets) and event class (columns). Blue is higher in the tumour, orange higher in the normal
+tissue — the house tumour/normal colours. Tumours **retain more intronic sequence** (7 cancers
+up, BRCA down), **use more long splice-site forms** (A5SS up in 10, down in none) and **move
+their last exons upstream** (7 cancers, none the other way). Stars are the raw Wilcoxon p across
+patients. Caveat: RNA integrity also raises intronic reads and TCGA has no RIN for these samples.
+[caption](results/figures/tumour_status/S2_global_shifts.caption.md) ·
+[§2](results/TUMOUR_STATUS.md#2-tumours-retain-more-intronic-sequence-and-choose-upstream-last-exons)
+
+### 4. The splicing signal organises by regulator, not by pathway
+
+<img src="results/figures/tumour_status/S4_regulons.png" width="900" alt="S4: regulon enrichment of model events, and regulon overlap">
+
+**S4.** A splicing factor's *core regulon* is the events whose PSI tracks its expression within
+tumours, reproducibly in ≥ 5 of the 15 cancers, after residualising out stromal and immune
+scores **and the sample's own mean PSI** — without that third covariate every nuclear factor
+appears to regulate a thousand events, because factor expression and overall PSI share one
+sample-level axis. Left: the odds that a model's top event sits in a factor's regulon, against a
+background matched on coverage and spread; only q < 0.05 shown (BH over 32 factors). Right: the
+large regulons are not separate programmes — 1,074 events carry 7,529 memberships, about 7
+factors each. The models' events concentrate in the small, distinct programmes of PTBP1, RBM47,
+HNRNPU, HNRNPF and QKI and are depleted from the big shared one.
+[caption](results/figures/tumour_status/S4_regulons.caption.md) ·
+[§4](results/TUMOUR_STATUS.md#4-the-models-events-live-in-small-specific-splicing-factor-programmes)
+
+The complement of this result is that the splicing models' genes form almost no pathways at all
+— their top genes reach any enriched Hallmark, Reactome or GO-BP term in at most 9 of 15 cancers
+and in none for retained introns, against 14 of 15 for expression
+([S3](results/figures/tumour_status/S3_pathways.png),
+[T4](results/figures/cancer_type/T4_pathway_coherence.png)). The splicing signal is not the
+expression signal re-encoded, which is the mechanical reason the fusion in S1 and T1 works.
+
+### 5. Different cancers rely on the same events
+
+<img src="results/figures/tumour_status/S5_recurrent_events.png" width="820" alt="S5: the 40 most recurrent events, their paired change in every cancer">
+
+**S5.** 404 events rank in the top 100 of at least 4 of the 15 independent per-cancer models;
+about 3 would be expected if the rankings were independent. The 40 most recurrent are shown with
+their median paired tumour − normal change in **every** cancer, including those where the event
+did not rank, so the pattern across the row is not selected on. Dots mark the cancers whose top
+100 contain the event. Recurrent events tend to move the same way everywhere (median 73% of
+cancers), and several genes contribute switch *pairs* moving in opposite directions — two EXOSC7
+last exons, two NDE1 first exons, two TPM1 mutually exclusive exons.
+[caption](results/figures/tumour_status/S5_recurrent_events.caption.md) ·
+[§5](results/TUMOUR_STATUS.md#5-different-cancers-rely-on-the-same-events)
+
+### 6. What those events do to the protein
+
+<img src="results/figures/tumour_status/S9_event_protein.png" width="882" alt="S9: the alternative segment of nine recurrent events on their proteins">
+
+**S9.** Nine of the ten most shared events, each on its own protein scaled N to C: grey blocks
+are Pfam/CDD domains, the line underneath marks disordered regions, and the coloured block is the
+segment the event adds or removes — blue where it is higher in tumours, orange where lower. The
+tenth belongs to no coding transcript and cannot be drawn. Not one of the ten is a cassette exon:
+six are mutually exclusive pairs and four are terminal exons, including the macroH2A1.1/1.2
+switch, the chimaerin SH2 switch and a length-neutral 23-amino-acid exchange in the collagen V
+C-terminal domain. Three transcripts carry no InterPro features at all and say so, because an
+empty annotation is not evidence of no domain.
+[caption](results/figures/tumour_status/S9_event_protein.caption.md) ·
+[§9](results/TUMOUR_STATUS.md#9-the-events-one-by-one)
+
+### 7. On the other task, one exon can mark one lineage
+
+<img src="results/figures/cancer_type/T6_lineage_atlas.png" width="880" alt="T6: two cassette exons per class, median inclusion across all 34 classes">
+
+**T6.** The two cassette exons with the largest per-class importance for each of the 34 classes
+(rows), against every class (columns, clustered). Colour is the exon's median inclusion in a
+class minus its median over all classes; dots mark the class that ranks it. The coloured diagonal
+is the finding: MLANA is skipped in the melanocytic tumours, RAG2 in thymoma, SLC37A2 included in
+the squamous carcinomas, TAGLN and DENND2B in LAML. Off-diagonal blocks are exons shared by
+related classes.
+[caption](results/figures/cancer_type/T6_lineage_atlas.caption.md) ·
+[§6](results/CANCER_TYPE.md#6-single-exons-mark-single-lineages)
+
+<img src="results/figures/cancer_type/T8_class_events.png" width="683" alt="T8: one event per class, its class median against the nearest class and the other 32">
+
+**T8.** How far one event goes alone, across all eight splicing views. For each class, of the five
+events the models rank highest, the one whose class median is furthest from the nearest other
+class; the ten clearest are drawn. Filled dot = the class the event marks, open dot = its nearest
+class, grey dots = the other 32. No model is involved in these numbers. TOMM40L's terminal exon
+is used as a last exon in every class except liver, where it reverses — a gap of 1.63. KRT19 and
+BSCL2 are the two graded cases, and they are where one event stops being enough, which is the
+argument for the ensembles of T1.
+[caption](results/figures/cancer_type/T8_class_events.caption.md) ·
+[§8](results/CANCER_TYPE.md#8-one-event-per-lineage-in-detail)
+
+### 8. Does any of it predict outcome?
+
+<img src="results/figures/tumour_status/S8_survival.png" width="833" alt="S8: share of event-by-cancer pairs with Cox p below 0.05, and the strongest single events">
+
+**S8.** Every model event was tested against a background event matched on view, coverage and
+spread, through the same tool with the same gates, nothing about outcome entering either
+selection. Left: the share of event × cancer pairs reaching a nominal Cox p < 0.05, for two
+pre-specified arms. Model events beat the background (11.1% against 9.0%), and the rate **rises
+with how many models agree** on an event (odds 1.27 → 1.56 → 1.62) — which is what one expects if
+the models select biology rather than cohort noise. The dashed line is the same pipeline on
+outcomes shuffled between patients: 5.6%, so the 9% background is real signal too. Right: the
+twelve strongest single events, hazard ratio per SD.
+
+The careful reading is in the narrative: the effect is modest, it halves once age, sex and stage
+enter, the events that clear FDR *inside* a cancer are 94% renal, and directions flip between
+cancers. Separating tumour from normal tissue and predicting outcome are distinct axes.
+[caption](results/figures/tumour_status/S8_survival.caption.md) ·
+[§8](results/TUMOUR_STATUS.md#8-do-these-events-carry-information-about-outcome)
+
+### 9. And one headline gain that is not biology
+
+<img src="results/figures/cancer_type/T7_site_probe.png" width="826" alt="T7: a fixed probe on six class pairs, grouped by patient against whole sites held out">
+
+**T7.** In TCGA every tissue-source site contributes to exactly one project, so separating
+neighbouring projects can exploit site handling rather than biology — and splicing readouts such
+as intron retention are plausibly more sensitive to handling than expression is. A fixed, untuned
+probe, cross-validated grouped by patient (open) and with whole sites held out (filled). Glioma
+grade, kidney subtype and lung histology **hold** (drop ≤ 0.015). Colon against rectum **fails**:
+no splicing view separates them at unseen sites, while expression keeps 0.66. The colon/rectum
+advantage in T2 and T3 is not biology and is marked as such throughout. This confound is specific
+to this task — tumour-vs-normal comparisons are within patient and within site.
+[caption](results/figures/cancer_type/T7_site_probe.caption.md) ·
+[§7](results/CANCER_TYPE.md#7-how-much-of-this-is-the-tissue-source-site)
+
+The remaining figures — per-class recall (T2), pathway coherence (S3, T4), exon protein
+statistics (S6), event portraits and SHAP dependence (S7), and whether class-defining events are
+expression in disguise (T5) — are in the two narratives, with the methods in
+[docs/BIOLOGY_METHODS.md](docs/BIOLOGY_METHODS.md) (D-13 to D-26).
 
 ## How the models are built
 
