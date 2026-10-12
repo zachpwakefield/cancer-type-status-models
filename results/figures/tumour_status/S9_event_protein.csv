@@ -1,0 +1,10 @@
+symbol,view,protein_length_aa,aa_start,aa_end,swap_nt,swap_in_frame,domains,majority_sign
+GCOM1,mxe,765.0,402.0,435.0,-104.0,False,DNA-directed RNA polymerase II subunit GRINL1,down in tumour
+PLCG1,mxe,1291.0,1216.0,1278.0,27.0,True,,up in tumour
+PDLIM7,mxe,195.0,94.0,150.0,153.0,True,,up in tumour
+ENOSF1,hit,443.0,411.0,443.0,,,,down in tumour
+NOP16,ale,178.0,132.0,178.0,,,Ribosome biogenesis protein Nop16,up in tumour
+NR1D1,hit,614.0,549.0,614.0,,,"Nuclear hormone receptor, ligand-binding domain",up in tumour
+COL5A1,mxe,1838.0,1690.0,1712.0,0.0,True,"Fibrillar collagen, C-terminal",up in tumour
+CHN1,mxe,459.0,87.0,183.0,211.0,False,"Chimaerin, SH2 domain; SH2 domain",down in tumour
+MACROH2A1,mxe,372.0,197.0,230.0,9.0,True,Macro domain; Macro domain-like,up in tumour

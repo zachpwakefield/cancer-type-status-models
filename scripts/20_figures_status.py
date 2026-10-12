@@ -574,7 +574,81 @@ The CSV gives the per-cancer medians and paired Wilcoxon p (raw). Per-sample val
 # ============================================================ 05 regulators
 
 
-FIGS = {f.__name__: f for f in [S1, S2, S3, S4, S5, S6, S7, S8]}
+# ============================================================ 11 event cards
+
+
+def S9() -> None:
+    d = BIO / "11_event_cards"
+    cards = pd.read_csv(d / "tumour_status_cards.csv")
+    trk = pd.read_csv(d / "tumour_status_protein_tracks.csv")
+    show = cards[cards["aa_start"].notna()].reset_index(drop=True)
+
+    fig, ax = plt.subplots(figsize=(DOUBLE * 0.84, 0.42 * len(show) + 1.0))
+    rows = []
+    for i, r in enumerate(show.itertuples()):
+        y, L = len(show) - 1 - i, r.protein_length_aa
+        ax.add_patch(plt.Rectangle((0, y - 0.11), 1, 0.22, facecolor=GRID, edgecolor="none"))
+        f = trk[trk["feature_id"].eq(r.feature_id)]
+        for g in f[f["source_db"].isin(("pfam", "cdd"))].itertuples():
+            ax.add_patch(plt.Rectangle((g.aa_start / L, y - 0.17), (g.aa_end - g.aa_start + 1) / L, 0.34,
+                                       facecolor=MUTED, edgecolor="none", alpha=0.55))
+        for g in f[f["source_db"].eq("mobidblite")].itertuples():
+            ax.plot([g.aa_start / L, g.aa_end / L], [y - 0.28] * 2, color=INK2, linewidth=1.1,
+                    solid_capstyle="butt")
+        colr = TUMOUR if r.majority_sign == "up in tumour" else NORMAL
+        a, b = r.aa_start / L, (r.aa_end + 1) / L
+        ax.add_patch(plt.Rectangle((a, y - 0.24), max(b - a, 0.004), 0.48, facecolor=colr, edgecolor="none",
+                                   zorder=3))
+        ax.text(1.03, y, f"{int(L):,} aa", fontsize=5.2, color=INK2, va="center")
+        note = (f"{int(r.aa_end - r.aa_start + 1)} aa terminal" if pd.isna(r.swap_nt) else
+                f"{int(r.swap_nt):+d} nt, {'in frame' if r.swap_in_frame else 'frameshift'}")
+        dom = str(r.domains).split(";")[0].strip() if isinstance(r.domains, str) and r.domains else ""
+        dom = dom if len(dom) <= 30 else dom[:29].rstrip(" ,;") + "\u2026"
+        # an empty feature table for the transcript is not the same as "no domain here"
+        tail = f" · {dom}" if dom else ("" if len(f) else " · no InterPro annotation")
+        ax.text(1.19, y, note + tail, fontsize=5.2, color=INK if dom else INK2, va="center")
+        rows.append({"symbol": r.symbol, "view": r.view, "protein_length_aa": L, "aa_start": r.aa_start,
+                     "aa_end": r.aa_end, "swap_nt": r.swap_nt, "swap_in_frame": r.swap_in_frame,
+                     "domains": r.domains, "majority_sign": r.majority_sign})
+    ax.set_yticks(range(len(show)))
+    ax.set_yticklabels([f"{r.symbol} {VIEW_NAMES[r.view]}" for r in show.iloc[::-1].itertuples()], fontsize=6)
+    ax.tick_params(axis="y", length=0)
+    ax.set_xlim(0, 1.72)
+    ax.set_ylim(-0.6, len(show) - 0.4)
+    ax.set_xticks([0, 0.25, 0.5, 0.75, 1])
+    ax.set_xticklabels(["N", "", "half", "", "C"])
+    ax.spines["bottom"].set_bounds(0, 1)
+    ax.set_xlabel("position along the protein", x=0.29)
+    for s in ("left", "right", "top"):
+        ax.spines[s].set_visible(False)
+    hand = [Line2D([], [], color=TUMOUR, linewidth=4, label="segment, higher in tumour"),
+            Line2D([], [], color=NORMAL, linewidth=4, label="segment, lower in tumour"),
+            Line2D([], [], color=MUTED, linewidth=4, alpha=0.55, label="Pfam/CDD domain"),
+            Line2D([], [], color=INK2, linewidth=1.1, label="disordered")]
+    ax.legend(handles=hand, frameon=False, fontsize=5.8, ncol=4, loc="lower left",
+              bbox_to_anchor=(0, 1.0), handlelength=1.2, columnspacing=1.2)
+    save(fig, OUT, "S9_event_protein", data=pd.DataFrame(rows), caption=f"""
+**Where in the protein does each event's alternative segment sit?**
+
+The {len(show)} recurrent events of S5 whose exon belongs to a protein-coding transcript (of ten, by number of
+models; `11_event_cards/tumour_status_cards.csv` holds all ten with the rest of what is known about them). Each bar
+is one protein, scaled to its own length (printed at the right), from its N terminus to its C terminus: grey blocks
+are Pfam/CDD domains of the chosen transcript, the line underneath marks disordered regions (MobiDB-lite), and the
+coloured block is the segment the event adds or removes -- blue where the segment is higher in tumours, orange
+where it is lower (D-17, GENCODE v45). Three of the transcripts have no InterPro annotation at all, which is said
+so in the margin: a bare bar there means the reference is silent, not that the segment misses every domain.
+
+The annotation is what the swap does to the reading frame. For a mutually exclusive pair that is the difference
+between the two exons, not either length, because the swap replaces one with the other. A first or last exon
+replaces one end of the protein rather than shifting a frame, so it is annotated by the length of the segment it
+contributes instead. A retained intron has no protein coordinates and is not drawn.
+
+These are annotations of one transcript per gene, not isoform quantification: the models see the event, not the
+protein, and no protein was measured here.
+""")
+
+
+FIGS = {f.__name__: f for f in [S1, S2, S3, S4, S5, S6, S7, S8, S9]}
 
 if __name__ == "__main__":
     run(FIGS)

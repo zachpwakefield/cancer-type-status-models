@@ -1,16 +1,16 @@
 # Biology layer: methods and decisions
 
-Scripts `07`–`19` interpret the fitted models. None of them changes or refits a phase-1 model;
+Scripts `07`–`22` interpret the fitted models. None of them changes or refits a phase-1 model;
 steps 14 and 18 fit separate, untuned diagnostic models. No result here feeds back into a
 modelling choice, so the outer-test estimates in [`RESULTS.md`](../results/RESULTS.md) stay
 unbiased. Every threshold is fixed in [`config/biology.yaml`](../config/biology.yaml) or in the
-script's header. Steps 07–19 write tables only; steps 20 and 21 draw the figures from those
+script's header. Steps 07–19 and 22 write tables only; steps 20 and 21 draw the figures from those
 tables in the house style ([FIGURE_GUIDELINES.md](FIGURE_GUIDELINES.md)), each with a caption
 file and a CSV of the plotted values.
 
 The two tasks answer different questions and are written up separately:
-[`results/TUMOUR_STATUS.md`](../results/TUMOUR_STATUS.md) (figures S1–S8) and
-[`results/CANCER_TYPE.md`](../results/CANCER_TYPE.md) (figures T1–T7).
+[`results/TUMOUR_STATUS.md`](../results/TUMOUR_STATUS.md) (figures S1–S9) and
+[`results/CANCER_TYPE.md`](../results/CANCER_TYPE.md) (figures T1–T8).
 
 Decisions continue the numbering of [`DECISIONS.md`](DECISIONS.md).
 
@@ -202,3 +202,30 @@ Decisions continue the numbering of [`DECISIONS.md`](DECISIONS.md).
 - **A permuted-outcome replicate** (survival shuffled between patients within each cancer, OS,
   base model, one replicate) measures what this pipeline reports when nothing is associated:
   `survival_null.csv`. It is the reference line in figure S8, in place of the nominal 5%.
+
+### D-26 Event cards · `scripts/22`
+- **What they are:** for the handful of events each narrative names, one row holding everything
+  the pipeline already knows — geometry, protein consequence, per-cancer or per-class movement,
+  how each model reads the event, regulon membership and survival. The narratives quote these
+  rows; nothing here is a new statistic.
+- **Which events, tumour status:** the recurrent events of D-17 (top 100 of >= 4 models), most
+  models first, one per gene. No new selection.
+- **Which events, cancer type:** per class, the five events with the largest mean |SHAP| in that
+  class's own explanation across the 8 splicing views (the models' own ranking), then the one of
+  those whose class median is furthest from the nearest other class, then the ten clearest
+  classes. The second step decides **which examples to show and nothing else** — a feature can
+  rank first for a class and still not separate it alone, because the model reads it together
+  with the others, and an example that does not separate cannot be described concretely.
+- **The alternative segment** is the piece the two forms differ by: the exon for SE and for the
+  terminal views, the **difference between the two exons** for MXE (the swap replaces one with
+  the other, so neither length alone sets the frame), the retained intron for RI, and the
+  extension the long form adds for A3SS/A5SS. The reading frame is recorded only for internal
+  events; a first or last exon replaces one end of the protein, so the field is left empty.
+- **Protein consequence:** GENCODE v45, coding transcripts first, then MANE > canonical, and
+  within that a transcript carrying InterPro features in preference to one carrying none — some
+  of the newest MANE transcripts are absent from the feature table and reading their empty
+  annotation as "no domain" would be wrong. An exon in no coding transcript of its gene is
+  recorded as such rather than as "no consequence"; the protein map holds coding transcripts
+  only, so that is what the field means.
+- **Published:** the cards, the InterPro features of each card's transcript (for S9), and the
+  per-class medians of each cancer-type card (for T8). Per-sample values stay local (D-12).

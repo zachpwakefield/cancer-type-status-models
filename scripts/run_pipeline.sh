@@ -29,6 +29,8 @@ for s in 08_bio_complementarity 09_bio_global_shifts 10_bio_pathways 11_bio_even
 done
 # the survival layer shells out to splice-assay (its own environment; see docs/BIOLOGY_METHODS.md D-25)
 run scripts/17_surv_analyze.py --workers "${WORKERS:-6}"
+# event cards: everything known about the events the narratives name (needs 17 and 19)
+run scripts/22_event_cards.py
 # figures, one script per narrative
 run scripts/20_figures_status.py
 run scripts/21_figures_type.py

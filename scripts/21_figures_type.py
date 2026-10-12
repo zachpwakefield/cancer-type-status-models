@@ -352,7 +352,68 @@ The probe is diagnostic: it does not re-estimate the phase-1 models. Values per 
 """)
 
 
-FIGS = {f.__name__: f for f in [T1, T2, T3, T4, T5, T6, T7]}
+# ============================================================ 11 event cards
+
+
+def T8() -> None:
+    d = BIO / "11_event_cards"
+    cards = pd.read_csv(d / "cancer_type_cards.csv")
+    med = pd.read_csv(d / "cancer_type_class_medians.csv", index_col=0)
+    cards["key"] = cards["symbol"] + " " + cards["view"].str.upper()
+    cards = cards.reindex(cards["margin"].abs().sort_values(ascending=False).index).reset_index(drop=True)
+
+    fig, ax = plt.subplots(figsize=(DOUBLE * 0.76, 0.44 * len(cards) + 1.0))
+    for i, r in enumerate(cards.itertuples()):
+        y = len(cards) - 1 - i
+        v = med.loc[r.key].dropna().drop(labels=[r.marks_class, r.nearest_class], errors="ignore")
+        # most of the other classes sit on the same value; a little jitter shows the pile-up
+        jitter = np.linspace(-0.13, 0.13, len(v))
+        ax.scatter(v, y + jitter, s=6, color=MUTED, linewidths=0, zorder=2)
+        ax.plot([r.class_median, r.nearest_class_median], [y, y], color=GRID, linewidth=0.8, zorder=1)
+        ax.scatter(r.nearest_class_median, y, s=18, facecolor="white", edgecolor=ACCENT, linewidths=0.8, zorder=3)
+        ax.scatter(r.class_median, y, s=20, color=ACCENT_DARK, linewidths=0, zorder=4)
+        off = 0.035 if r.margin > 0 else -0.035
+        ax.text(r.class_median + off, y, r.marks_class, fontsize=5.4, color=ACCENT_DARK, va="center",
+                ha="left" if r.margin > 0 else "right")
+        ax.text(r.nearest_class_median - off, y, r.nearest_class, fontsize=5.4, color=INK2, va="center",
+                ha="right" if r.margin > 0 else "left")
+    ax.set_yticks(range(len(cards)))
+    ax.set_yticklabels([f"{r.key}" for r in cards.iloc[::-1].itertuples()], fontsize=6)
+    ax.tick_params(axis="y", length=0)
+    ax.spines["left"].set_visible(False)
+    ax.set_ylim(-0.6, len(cards) - 0.4)
+    ax.set_xlim(-1.35, 1.35)
+    ax.set_xlabel("median over the samples of a class: PSI (0 to 1), or the HIT index (-1 to 1) for HIT events")
+    h = [Line2D([], [], marker="o", linestyle="", markersize=3.2, color=ACCENT_DARK, markeredgewidth=0,
+                label="the class the event marks"),
+         Line2D([], [], marker="o", linestyle="", markersize=3.2, markerfacecolor="white",
+                markeredgecolor=ACCENT, label="its nearest class"),
+         Line2D([], [], marker="o", linestyle="", markersize=2.6, color=MUTED, markeredgewidth=0,
+                label="the other 32 classes")]
+    ax.legend(handles=h, frameon=False, fontsize=5.8, ncol=3, loc="lower left", bbox_to_anchor=(0, 1.0),
+              handletextpad=0.2, columnspacing=1.2)
+    out = cards[["key", "symbol", "view", "marks_class", "rank_in_class", "class_median", "nearest_class",
+                 "nearest_class_median", "margin", "median_over_classes", "direction_spearman", "exon_status"]]
+    save(fig, OUT, "T8_class_events", data=out, caption="""
+**Can a single splicing event name a lineage?**
+
+One event per class, picked in two steps (D-26): of the five events with the largest mean |SHAP| in that class's
+own explanation -- across all 8 splicing views, so this is the models' own ranking -- the one whose class median is
+furthest from the nearest other class. The ten classes with the clearest such event are drawn, most separated
+first. The second step chooses which examples to show and nothing else; a feature can rank first for a class and
+still not separate it alone, because the model reads it together with the others.
+
+Each row is one event: the filled dot is the median over the samples of the class it marks, the open dot the
+nearest other class, and the small dots the remaining 32, spread vertically so that classes sharing a value can be counted. The gap
+between the two large dots is the margin a single event gives on its own, with no model and no other feature.
+
+Medians over all samples of each class, out-of-fold membership not required (this is a description of the data,
+not of a prediction). Per-sample values stay local (D-12); `11_event_cards/cancer_type_cards.csv` adds each
+event's geometry, protein consequence and regulon membership.
+""")
+
+
+FIGS = {f.__name__: f for f in [T1, T2, T3, T4, T5, T6, T7, T8]}
 
 if __name__ == "__main__":
     run(FIGS)

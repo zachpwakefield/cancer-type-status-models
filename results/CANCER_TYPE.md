@@ -7,9 +7,9 @@ This document asks what the splicing models learned about *which tissue a tumour
 The other task, telling tumour from normal tissue within a cancer, is a different question with
 a different answer and is written up separately in [TUMOUR_STATUS.md](TUMOUR_STATUS.md).
 
-- **Methods and decisions:** [docs/BIOLOGY_METHODS.md](../docs/BIOLOGY_METHODS.md) (D-13 to D-25).
-- **Scripts:** `07`–`19` write the tables, `21` draws these figures.
-- **Figures:** T1–T7 in [figures/cancer_type/](figures/cancer_type/), each with a caption file
+- **Methods and decisions:** [docs/BIOLOGY_METHODS.md](../docs/BIOLOGY_METHODS.md) (D-13 to D-26).
+- **Scripts:** `07`–`19` and `22` write the tables, `21` draws these figures.
+- **Figures:** T1–T8 in [figures/cancer_type/](figures/cancer_type/), each with a caption file
   and a CSV of the plotted values.
 - **Statistics in figures:** raw p. Any q is in the CSV with its FDR family named.
 
@@ -26,7 +26,9 @@ a different answer and is written up separately in [TUMOUR_STATUS.md](TUMOUR_STA
    correlate with their host gene's expression no more than random events do, and each class's
    top splicing genes and top expression genes overlap by about one gene.
 5. **Single exons mark single lineages** — MLANA in melanocytic tumours, RAG2 in thymoma,
-   SLC37A2 in squamous carcinomas.
+   SLC37A2 in squamous carcinomas. Across all eight views, one event is often enough on its own:
+   TOMM40L's terminal exon separates liver from its nearest class by 1.63 of HIT index, and
+   MEF2B, EVL and NPM1 fire in DLBC, BRCA and GBM and essentially nowhere else.
 6. **One advantage is a site effect, not biology.** With whole tissue-source sites held out, the
    glioma, kidney and lung advantages survive; the colon/rectum advantage disappears.
 
@@ -154,6 +156,71 @@ cross-validated two ways: grouped by patient, and with whole sites held out (D-2
 
 This confound is specific to this task. Tumour-versus-normal comparisons are within patient and
 within site, so [TUMOUR_STATUS.md](TUMOUR_STATUS.md) is not exposed to it.
+
+## 8. One event per lineage, in detail
+
+![T8](figures/cancer_type/T8_class_events.png)
+
+§6 showed that single cassette exons mark single lineages. This section asks how far one event
+alone can go, across all eight splicing views, and names ten of them. The rule has two steps
+(D-26): of the five events with the largest mean |SHAP| in a class's own explanation — the
+models' own ranking — keep the one whose median in that class is furthest from the nearest other
+class, then take the ten clearest classes. The second step decides which examples to show and
+nothing else; a feature can rank first for a class and still not separate it by itself, because
+the model reads it together with 3,999 others.
+
+The margin below is the gap between the class and its nearest neighbour among the other 33, in
+PSI, or in the HIT index for terminal exons. It is a description of the data, not a prediction:
+no model is involved in that number.
+
+| Event | Class | Median there | Nearest class | Margin | Over all classes | What the segment is |
+|---|---|---|---|---|---|---|
+| TOMM40L HIT | LIHC | −0.66 | CHOL 0.97 | −1.63 | 1.00 | last 46 aa of 308, in a domain |
+| PLEKHG3 HIT | PCPG | −0.70 | LUAD 0.61 | −1.32 | 1.00 | last 240 aa of 1,219, disordered |
+| WDR55 ALE | TGCT | 0.00 | ACC 1.00 | −1.00 | 1.00 | not in a coding transcript |
+| MARK3 MXE | LAML | 0.00 | LUAD 0.97 | −0.97 | 1.00 | −48 nt, in frame, aa 615–624 of 753 |
+| MEF2B AFE | DLBC | 0.86 | ACC 0.00 | +0.86 | 0.00 | first exon, outside the CDS |
+| EVL AFE | BRCA | 0.82 | ACC 0.00 | +0.82 | 0.00 | first exon, aa 1–8 of 390 |
+| NPM1 ALE | GBM | 0.77 | ACC 0.00 | +0.77 | 0.00 | not in a coding transcript |
+| CTSA A5SS | THYM | 0.81 | LAML 0.11 | +0.69 | 0.01 | 24-nt extension, outside the CDS |
+| KRT19 HIT | HNSC | 0.38 | SKCM 0.98 | −0.60 | −1.00 | first 140 aa of 400, in a domain |
+| BSCL2 HIT | UVM | 0.14 | SKCM 0.73 | −0.58 | 0.99 | not in a coding transcript |
+
+**Four of them are near-perfect switches.** TOMM40L's terminal exon is used as a last exon in
+every class (median HIT index 1.00) except liver, where it reverses to −0.66 — a 1.63 gap to the
+nearest class, and the largest of any event here. PLEKHG3 does the same in PCPG, WDR55's last
+exon is used everywhere but testis, and MARK3's mutually exclusive pair switches only in LAML.
+These are binary, tissue-level decisions: one event, read alone, separates one class from all 33
+others.
+
+**Four mark a class against a silent background.** MEF2B, EVL and NPM1 sit at 0.00 in the median
+class and at 0.77–0.86 in DLBC, BRCA and GBM; CTSA's 24-nt extension sits at 0.01 everywhere and
+0.81 in thymoma. The alternative form exists essentially nowhere else, which for a classifier is
+the cheapest possible evidence, and it is part of why §5 found so little overlap with
+expression: a promoter or poly(A) choice that fires in one lineage need not change how much RNA
+the gene makes.
+
+**Two are graded rather than binary, and both are the interesting cases.** KRT19's terminal exon
+runs at −1.00 across most classes, rises to 0.98 in melanoma, and sits between the two at 0.38
+in HNSC; BSCL2 separates uveal from cutaneous melanoma by 0.58 with the rest of the classes
+beyond SKCM at 0.99. These are the only two rows whose nearest class is a biologically close
+one, and they are where a single event stops being enough — which is the whole argument for the
+ensembles of §1.
+
+**What the segments do.** Only five of the ten change protein sequence at all: TOMM40L and
+KRT19 inside an annotated domain, PLEKHG3 in a disordered region, MARK3 a 16-amino-acid in-frame
+swap, EVL the first 8 residues. Two more (MEF2B's first exon, CTSA's 24-nt extension) sit in a
+coding transcript but outside its coding sequence, and three belong to no coding transcript of
+their gene in GENCODE v45. The lineage signal is carried about as often by untranslated
+structure as by protein sequence.
+
+Nine of the ten are terminal exons, first exons or a splice-site shift, and only MARK3 is a
+mutually exclusive swap — the opposite balance to the tumour-status events of
+[TUMOUR_STATUS.md](TUMOUR_STATUS.md) §9, where six of ten are mutually exclusive pairs. It is
+also what §5 predicts: a class is named by where transcription starts and ends, which is the
+same decision that makes the terminal-exon views track host-gene expression. None of the ten is
+in a splicing-factor regulon the tumour-status models' events are enriched for. Lineage
+decisions and the tumour programme are different sets of events.
 
 ## Limitations
 

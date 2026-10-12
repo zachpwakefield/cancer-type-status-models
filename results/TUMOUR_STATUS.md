@@ -8,9 +8,9 @@ This document asks what the splicing models learned about becoming a tumour. The
 telling the cancers apart, is a different question with a different answer and is written up
 separately in [CANCER_TYPE.md](CANCER_TYPE.md).
 
-- **Methods and decisions:** [docs/BIOLOGY_METHODS.md](../docs/BIOLOGY_METHODS.md) (D-13 to D-25).
-- **Scripts:** `07`–`19` write the tables, `20` draws these figures.
-- **Figures:** S1–S8 in [figures/tumour_status/](figures/tumour_status/). Each has a caption file
+- **Methods and decisions:** [docs/BIOLOGY_METHODS.md](../docs/BIOLOGY_METHODS.md) (D-13 to D-26).
+- **Scripts:** `07`–`19` and `22` write the tables, `20` draws these figures.
+- **Figures:** S1–S9 in [figures/tumour_status/](figures/tumour_status/). Each has a caption file
   stating the question, the method, n and the test, and a CSV of the plotted values.
 - **Statistics in figures:** raw p. Any q is in the CSV with its FDR family named.
 
@@ -40,6 +40,10 @@ separately in [CANCER_TYPE.md](CANCER_TYPE.md).
    for events recurrent in four or more, 1.56 without the clinical covariates). The events that
    survive FDR inside a cancer are almost all renal, and directions flip between cancers.
    Separating tumour from normal tissue and predicting outcome are distinct axes.
+8. **Ten of those events, in detail.** Six mutually exclusive pairs and four terminal exons,
+   not one cassette exon: the macroH2A1.1/1.2 switch, the chimaerin SH2 switch, a 23-amino-acid
+   exchange in the collagen V C-terminal domain, and a 4-kb ENOSF1 exon that moves from last to
+   first in 14 of 15 cancers and is the most prognostic event in the set.
 
 ---
 
@@ -325,8 +329,113 @@ three most promising cancers — are in
 **What this does and does not say.** Splicing carries outcome information in these cohorts, and
 the events the tumour-status models select carry somewhat more of it than matched events. But
 the effect is modest, the individually significant events concentrate in two kidney cohorts, and
-directions flip between cancers. Tumour-versus-normal discrimination and prognosis are related but distinct axes, and these
-numbers are associations in observational cohorts, not causes and not targets.
+directions flip between cancers. Tumour-versus-normal discrimination and prognosis are related
+but distinct axes, and these numbers are associations in observational cohorts, not causes and
+not targets.
+
+## 9. The events one by one
+
+![S9](figures/tumour_status/S9_event_protein.png)
+
+Everything above is about sets of events. This section takes ten of them — the recurrent events
+of §5, most models first, one per gene — and says what the pipeline knows about each: where the
+alternative segment falls in the protein, how it moves between tumour and normal, how the models
+read it, whose programme it belongs to, and whether it tracks outcome (D-26). Every number is
+from `11_event_cards/tumour_status_cards.csv`, which holds the rest of each card. Where a
+sentence names a known isoform, that is context from the literature and not a result here.
+
+Two conventions matter. For a mutually exclusive pair the length that counts is the *difference*
+between the two exons, because the swap replaces one with the other: COL5A1's two exons are both
+69 nt, so that swap exchanges 23 amino acids and changes nothing else. And for a first or last
+exon the reading frame is not the question — the event replaces one end of the protein.
+
+**GCOM1 · mutually exclusive exons · chr15:57,674,968-57,675,068 · down in tumour.** The most
+widely shared event in the study: in the top 100 of 14 of the 15 models, ranked first in one of
+them, median rank 8. The tracked exon is 101 nt against a 205-nt partner, so the two forms
+differ by 104 nt and by the frame downstream, and the segment lands inside the RNA polymerase II
+subunit domain (aa 402–435 of 765). It falls in tumours in 14 of 15 cancers (median ΔPSI
+−0.24), most steeply in LUSC (0.73 in matched normal tissue to 0.10 in tumour), and in 13 of
+the 14 models a higher value argues for normal (median Spearman between value and SHAP −0.87). It
+belongs to the HNRNPU regulon (ρ −0.37) and reaches Cox p < 0.05 in 2 of its 14 testable cancers
+(BLCA, HR 0.71 per SD).
+
+**PLCG1 · mutually exclusive exons · chr20:41,174,124-41,174,311 · up in tumour.** 188 nt against
+161 nt: a 27-nt, 9-amino-acid, in-frame difference at aa 1,216–1,278 of 1,291, inside the last
+6% of phospholipase C-γ1. It is one of two events here that move the same way in all 15 cancers
+(median +0.11, KIRC 0.50 → 0.80), and all 13 models that rank it read a higher value as tumour
+(+0.91). Two of 14 cancers reach p < 0.05 (BLCA, HR 0.75). The reference carries no InterPro
+features for this transcript, so the pipeline cannot say what the segment sits in.
+
+**PDLIM7 · mutually exclusive exons · chr5:177,491,807-177,491,976 · up in tumour.** The largest
+in-frame change here: a 170-nt exon against a 17-nt partner, 153 nt and 51 amino acids, at
+aa 94–150 of a 195-residue isoform (ENST00000393546). Up in all 15 cancers, with the single
+biggest shift of any event in this list — COAD moves from 0.25 to 0.88 — and all 12 models read
+it the same way. It is also the one event here whose higher values go with *worse* survival
+where it is strongest: KIRC HR 1.49 per SD, significant in 3 of 14 cancers.
+
+**EXOSC7 · alternative last exon · chr3:45,035,524-45,036,066 · down in tumour.** A 543-nt last
+exon that belongs to no protein-coding transcript of the gene in GENCODE v45, so the pipeline
+can place it but not translate it; it is the one card of the ten that S9 cannot draw. It is
+still among the cleanest signals in the study: down in 14 of 15 cancers, median ΔPSI −0.44, and
+in BLCA it goes from 0.93 in normal tissue to 0.00 in tumour — switched off. All 10 models that
+rank it read a higher value as normal (−0.89), and 2 of 14 cancers reach p < 0.05 (HNSC, HR
+0.77). §5 notes that EXOSC7 also contributes a second last exon that moves the other way.
+
+**ENOSF1 · terminal exon · chr18:670,318-674,406 · down in tumour.** The HIT index of this 4.1-kb
+exon measures whether it is used as a first or a last exon, and in tumours it moves towards
+first-exon use in 14 of 15 cancers (median −0.46, UCEC 0.68 → −0.62). Used as a last exon it
+contributes the final 33 residues of a 443-aa protein. It is the most connected event here — in
+13 factor regulons, among them PTBP1 (ρ −0.41), HNRNPU (−0.41) and HNRNPF (−0.38), all three
+programmes the models' events are enriched in (§4) — and the most prognostic, with Cox p < 0.05
+in 5 of 14 cancers, strongest in LIHC (HR 0.73, 0.61–0.88). Its assay page is in
+[figures/tumour_status/assay/](figures/tumour_status/assay/).
+
+**NOP16 · alternative last exon · chr5:176,383,946-176,384,374 · up in tumour.** 429 nt
+contributing aa 132–178 of 178 — the whole C-terminal quarter, inside the Nop16
+ribosome-biogenesis domain. The median shift is small (+0.05) because the event is near
+all-or-nothing in only some cancers: LUAD goes from 0.00 in normal tissue to 1.00 in tumour, and
+11 of 15 cancers share the direction. Two of 14 cancers reach p < 0.05 (HNSC, HR 1.29).
+
+**NR1D1 · terminal exon · chr17:40,092,793-40,093,282 · up in tumour.** The last 66 residues of a
+614-aa protein, inside the nuclear-hormone-receptor ligand-binding domain. It shifts towards
+last-exon use in 14 of 15 cancers (median +0.29, THCA −0.82 → −0.09). It is the one card of
+the ten that was never tested for survival, because it entered no model's top ten and so was not a
+candidate under D-22. It is also the cautionary one: as §5 says, the NR1D1 and THRA terminal
+exons overlap at chr17:40.09 Mb on opposite strands and most TCGA libraries are unstranded, so
+the pair is one observation, not two.
+
+**COL5A1 · mutually exclusive exons · chr9:134,829,976-134,830,044 · up in tumour.** Two 69-nt
+exons, so the swap is exactly length-neutral and in frame: 23 amino acids exchanged at
+aa 1,690–1,712 of 1,838, inside the fibrillar-collagen C-terminal domain. Up in 11 of 15 cancers
+(median +0.11, ESCA 0.63 → 0.87), and all nine models that rank it read a higher value as tumour
+(+0.90). One of 14 cancers reaches p < 0.05 (LUSC, HR 0.85).
+
+**CHN1 · mutually exclusive exons · chr2:174,877,840-174,878,128 · down in tumour.** A 289-nt
+exon against a 78-nt partner — 211 nt, frame-shifting — inside the SH2 domain at aa 87–183 of
+459. This is the switch that distinguishes the two chimaerin isoforms, only one of which carries
+the SH2 domain. Tumours use less of the SH2-containing form in 13 of 15 cancers (median −0.11,
+HNSC 0.38 → 0.15), 8 of 9 models read a higher value as normal (−0.75), and 2 of 14 cancers
+reach p < 0.05 (KIRC, HR 0.83).
+
+**MACROH2A1 · mutually exclusive exons · chr5:135,352,946-135,353,045 · up in tumour.** 100 nt
+against 91 nt: a 9-nt, 3-amino-acid, in-frame difference inside the macro domain (aa 197–230 of
+372). These are the two exons that distinguish the macroH2A1.1 and macroH2A1.2 histone variants.
+Tumours shift towards the tracked exon in 10 of 15 cancers (median +0.09, UCEC 0.56 → 0.90) —
+the least consistent direction of the ten, which the S5 heat map shows row by row. It sits in
+the HNRNPF (ρ +0.37) and HNRNPU (+0.32) regulons, both enriched for model events, and reaches
+p < 0.05 in 5 of 14 cancers (KIRC, HR 0.79), with an assay page.
+
+**What the ten have in common.** Not one is a cassette exon: six are mutually exclusive pairs
+and four are terminal or last exons. That is §5's view-level pattern at its sharpest — SE
+contributes 7 of the 404 recurrent events — and it means the protein statistics of §6, which are
+about cassette exons, do not transfer here. Six of the nine with protein coordinates fall
+inside an annotated domain, and the other three sit on transcripts the feature reference does
+not annotate at all — so not one of the nine is known to miss every domain, which is the
+opposite of the §6 picture. Only two shift the reading frame, both by swapping an exon for a
+much longer partner. All nine that were tested reach nominal Cox significance in at least one of
+their 14 cancers, where the permuted-outcome rate of §8 would put about five of nine at that
+mark; the two that reach it in five cancers, ENOSF1 and MACROH2A1, are both in regulons the
+models' events are enriched for.
 
 ## Limitations
 
