@@ -98,3 +98,51 @@ class TestSiteProbeHelpers(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestMsiRepeatHelpers(unittest.TestCase):
+    """scripts/42 (D-52..D-54): window orientation, run lengths and the background-weighted score."""
+    @classmethod
+    def setUpClass(cls):
+        cls.m = load_script("42_msi_repeats.py")
+
+    def test_predictions_are_named_once(self):
+        ids = [p["id"] for k in ("msi_cis", "msi_long_tracts", "msi_a3ss_replication")
+               for p in FOLLOWUP[k]["predictions"]]
+        self.assertEqual(len(ids), len(set(ids)))
+        self.assertEqual(set(FOLLOWUP["msi_cis"]["cohorts"]), {"UCEC_TCGA", "STAD_TCGA", "COAD_TCGA"})
+
+    def test_max_runs_counts_a_run_overlapping_the_window_in_full(self):
+        seq = "AG" + "C" * 46 + "T" * 12 + "GA"          # positions 1..62; the T-run spans 49..60
+        r = self.m.max_runs(seq, 1, 50)
+        self.assertEqual(r["T"], 12)
+        self.assertEqual(r["C"], 46)
+        self.assertEqual(self.m.max_runs(seq, 1, 40)["T"], 0)
+
+    def test_window_reads_the_upstream_intron_on_both_strands(self):
+        intron = "T" * 20 + "CAG"                         # ...TTTTCAG|exon on the sense strand
+        exon, down = "GGGGG", "GTAAGT" + "A" * 60
+        plus = "A" * 60 + intron + exon + down
+        es = 60 + len(intron)
+        r = pd.Series({"strand": "+", "es": es, "ee": es + 5, "left_end": 0, "right_start": len(plus)})
+        s, n = self.m.window_seq(plus, r, "acc")
+        self.assertEqual(s[:3], "GAC")                     # -1 G, -2 A, -3 C
+        self.assertEqual(self.m.max_runs(s, 1, 50)["T"], 20)
+        comp = str.maketrans("ACGT", "TGCA")
+        minus = plus.translate(comp)[::-1]                 # the same gene on the minus strand
+        L = len(minus)
+        rm = pd.Series({"strand": "-", "es": L - (es + 5), "ee": L - es, "left_end": 0, "right_start": L})
+        sm, _ = self.m.window_seq(minus, rm, "acc")
+        self.assertEqual(sm[:len(s)], s)
+
+    def test_score_weights_background_to_the_repeat_deciles(self):
+        P = np.array([[0.9, 0.1, 0.5, 0.5], [0.1, 0.9, 0.5, 0.5]])
+        in_r = np.array([True, False, False, False])
+        in_b = np.array([False, True, True, True])
+        dec = np.array([0, 0, 1, 1])                       # only exon 1 shares the repeat's decile
+        sc = self.m.set_score(P, in_r, in_b, dec)
+        np.testing.assert_allclose(sc, [0.8, -0.8])
+
+    def test_auroc_lower(self):
+        a, p = self.m.auroc_lower(np.array([1.0, 2.0]), np.array([3.0, 4.0, 5.0]))
+        self.assertEqual(a, 1.0)

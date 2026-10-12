@@ -44,7 +44,7 @@ tasks relate.
 | AS ensemble (8 splicing views) | 0.994; 91 errors | 0.950 | 0.80 / 0.82 / 0.81 |
 | GEX + AS (1:1) | 77 errors (McNemar p = 1.1e-4) | 0.961 (p = 3.9e-9) | −0.04 to +0.04 per cohort; no McNemar p < 0.05 |
 | Headline | splicing is a second, partly independent view of the tumour state | splicing is a lineage code, and fails where a lineage code should | splicing matches expression on lineage and genome-state subtypes and loses where one gene defines the class |
-| Write-up · figures | [TUMOUR_STATUS.md](results/TUMOUR_STATUS.md) · S1–S10 | [CANCER_TYPE.md](results/CANCER_TYPE.md) · T1–T9 | [SUBTYPE.md](results/SUBTYPE.md) · U1–U9 |
+| Write-up · figures | [TUMOUR_STATUS.md](results/TUMOUR_STATUS.md) · S1–S10 | [CANCER_TYPE.md](results/CANCER_TYPE.md) · T1–T9 | [SUBTYPE.md](results/SUBTYPE.md) · U1–U11 |
 
 [**Across the three tasks**](#across-the-three-tasks) ([ACROSS_TASKS.md](results/ACROSS_TASKS.md),
 X1–X4) compares them:
@@ -54,11 +54,17 @@ X1–X4) compares them:
 - the splicing status models find all six predicted subtypes less tumour-like;
 - the exons all three tasks use have the same protein character.
 
+One subtype result goes furthest. The MSI splicing marks are largely written in the genome: the
+exons the MSI models chose sit after long poly-T tracts that mismatch-repair deficiency destabilises.
+A score from the reference sequence alone ranks MSI tumours in stomach and colon
+([U10–U11](#8-msi-splicing-follows-acceptor-poly-t-repeats-in-the-genome)).
+
 Full tables, CIs and the top SHAP features of every cohort and view are in
 [results/RESULTS.md](results/RESULTS.md). Methods are in three files:
 - [docs/BIOLOGY_METHODS.md](docs/BIOLOGY_METHODS.md), D-13 to D-29: interpretation of status and
   type;
-- [docs/SUBTYPE_METHODS.md](docs/SUBTYPE_METHODS.md), D-30 to D-47: the subtype task;
+- [docs/SUBTYPE_METHODS.md](docs/SUBTYPE_METHODS.md), D-30 to D-47 and D-52 to D-54: the subtype task
+  and its MSI-repeat follow-up;
 - [docs/ACROSS_TASKS_METHODS.md](docs/ACROSS_TASKS_METHODS.md), D-48 to D-51: the cross-task
   layer.
 
@@ -384,7 +390,7 @@ Not shown here, all in the write-up: per-class recall against expression (T2), p
 
 ## Subtype within a cancer: 22 cohorts in 15 cancers
 
-**Full write-up: [results/SUBTYPE.md](results/SUBTYPE.md)** (figures U1–U9) — *within a cancer,
+**Full write-up: [results/SUBTYPE.md](results/SUBTYPE.md)** (figures U1–U11) — *within a cancer,
 splicing recovers lineage and genome state about as well as expression, and loses where a subtype
 is a single gene switched on.* One model per (cohort, view) over 22 subtype cohorts from 15 TCGA
 projects:
@@ -393,9 +399,9 @@ projects:
 
 Every label map, exclusion and minimum class size (20 patients) was fixed in
 [config/subtype.yaml](config/subtype.yaml) before the first model was fitted
-([docs/SUBTYPE_METHODS.md](docs/SUBTYPE_METHODS.md), D-30 to D-45); the regulator and site
-analyses of U8–U9 were fixed in [config/followup.yaml](config/followup.yaml) before they were run
-(D-46, D-47).
+([docs/SUBTYPE_METHODS.md](docs/SUBTYPE_METHODS.md), D-30 to D-45); the regulator, site
+and MSI-repeat analyses of U8–U11 were fixed in [config/followup.yaml](config/followup.yaml) before
+they were run (D-46, D-47, D-52 to D-54).
 
 ### Performance
 
@@ -593,6 +599,42 @@ grouped by patient, then with whole tissue-source sites held out.
 
 [caption](results/figures/subtype/U9_site_probe.caption.md) ·
 [§10](results/SUBTYPE.md#10-is-the-subtype-signal-tied-to-the-site-that-sent-the-sample)
+
+#### 8. MSI splicing follows acceptor poly-T repeats in the genome
+
+<img src="results/figures/subtype/U10_msi_repeats.png" width="900" alt="U10: share of MSI-model top events with an acceptor poly-T run, a genome-only repeat score by MSI status, and its AUROC by run length">
+
+**U10.** Why do the U7 events change in MSI? Mismatch-repair-deficient tumours cannot repair
+slippage at mononucleotide repeats, and a shortened poly-T just before an exon weakens its 3′
+splice site. That much is known for MRE11 exon 5, for HSP110 exon 9, and genome-wide in
+colorectal cancer. Exons were chosen from the reference genome alone: the longest T-run in the 50
+intron bases before each cassette exon. The predictions were fixed before any PSI was read this
+way (D-52).
+- **The models had found the repeats.** 40 of the STAD and 34 of the COAD MSI model's top 50 SE
+  events carry a T-run ≥ 10, and 10 of UCEC's, against 5% of all exons. So do 7 of the 9 SE
+  events behind U7, among them CCNDBP1 (T30).
+- **The genome alone ranks MSI tumours.** A per-patient score with no model and no training
+  reaches AUROC 0.71 in STAD and 0.78 in COAD. Endometrium does not separate (0.51).
+- **Only at the acceptor.** The same score built from T-runs deep in the intron is worse by
+  0.17–0.41 AUROC in all three cancers, endometrium included.
+- **Beyond pyrimidine content.** The MSI shift grows with run length after adjusting for the
+  acceptor's pyrimidine content (STAD, COAD).
+- **The same exons in three organs.** Their shifts correlate between cancers (ρ 0.43–0.65).
+- **Positive control.** MRE11 exon 5 replicates in all three.
+
+<img src="results/figures/subtype/U11_msi_long_tracts.png" width="870" alt="U11: share of repeat exons more included in MSI by run length, the A3SS replication, and the exons with the largest shared shifts">
+
+**U11.** The longest tracts go the other way. Exons after runs ≥ 20 nt are *more* included in MSI
+in all three cancers (56–67% move up, against 38–49% for runs of 10–19). The largest increases
+(ANXA7, CCNDBP1, TBK1, …) all carry runs of 21–32. This was seen after the fact.
+- **Replication on unread A3SS events** (D-54): 2 of 6 tests supported, all 6 in the predicted
+  direction.
+- **No mechanism yet:** the hnRNP C mechanism written down for it was not supported (D-53).
+- **Caveat:** there is no tumour DNA here, so the contractions are inferred, not seen.
+
+[U10 caption](results/figures/subtype/U10_msi_repeats.caption.md) ·
+[U11 caption](results/figures/subtype/U11_msi_long_tracts.caption.md) ·
+[§11](results/SUBTYPE.md#11-the-msi-splicing-marks-are-written-in-the-genome-acceptor-poly-t-repeats)
 
 ### Checks and caveats
 

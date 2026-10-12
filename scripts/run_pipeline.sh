@@ -49,9 +49,11 @@ wait $p1 && wait $p2 && wait $p3
 run scripts/33_subtype_run_all.py --workers "${WORKERS:-6}"
 run scripts/34_subtype_summarise.py
 run scripts/35_subtype_interpret.py
-# splicing regulators and the site probe of the subtypes (D-46, D-47; config/followup.yaml)
+# splicing regulators, the site probe and the MSI repeats of the subtypes (D-46, D-47, D-52..D-54;
+# config/followup.yaml)
 run scripts/37_subtype_regulators.py --workers "${WORKERS:-6}"
 run scripts/38_subtype_site_probe.py --workers "${WORKERS:-6}"
+run scripts/42_msi_repeats.py               # D-52..D-54; needs the GRCh38 FASTA (FASTA in the script)
 run scripts/36_subtype_figures.py
 # across the three tasks (docs/ACROSS_TASKS_METHODS.md D-48..D-51): nothing refitted
 run scripts/40_cross_task.py

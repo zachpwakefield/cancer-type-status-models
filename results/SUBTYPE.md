@@ -9,19 +9,19 @@ tissue it came from ([CANCER_TYPE.md](CANCER_TYPE.md)). This one asks, inside on
 kind of that cancer a tumour is — and whether splicing knows. How the three tasks' results relate
 is in [ACROSS_TASKS.md](ACROSS_TASKS.md).
 
-- **Methods and decisions:** [docs/SUBTYPE_METHODS.md](../docs/SUBTYPE_METHODS.md) (D-30 to D-47,
-  amendments A-1 to A-7). Every label map, cohort and threshold was fixed in
-  [config/subtype.yaml](../config/subtype.yaml) before the first model was fitted; the regulator
-  and site analyses of §9–§10 were fixed in [config/followup.yaml](../config/followup.yaml) before
-  they were run.
+- **Methods and decisions:** [docs/SUBTYPE_METHODS.md](../docs/SUBTYPE_METHODS.md) (D-30 to D-47
+  and D-52 to D-54, amendments A-1 to A-7 and A-9). Every label map, cohort and threshold was fixed in
+  [config/subtype.yaml](../config/subtype.yaml) before the first model was fitted; the regulator,
+  site and MSI-repeat analyses of §9–§11 were fixed in [config/followup.yaml](../config/followup.yaml)
+  before they were run.
 - **Scripts:** `30`–`35` build the labels, matrices, models and tables; `37` and `38` the
-  regulator and site analyses; `36` draws these figures.
-- **Figures:** U1–U9 in [figures/subtype/](figures/subtype/). Each has a caption file stating the
+  regulator and site analyses; `42` the MSI-repeat analysis; `36` draws these figures.
+- **Figures:** U1–U11 in [figures/subtype/](figures/subtype/). Each has a caption file stating the
   question, the method, n and the test, and a CSV of the plotted values.
 - **Tables:** `results/subtype/summary/` (performance, baselines, recall, fusion tests),
   `results/subtype/interpret/` (markers, gene overlap, event audit, cross-family tables),
-  `results/subtype/regulators/`, `results/subtype/site_probe/` and one folder per (view, cohort)
-  under `results/subtype/<view>/<cohort>/`.
+  `results/subtype/regulators/`, `results/subtype/site_probe/`, `results/subtype/msi_cis/` and one
+  folder per (view, cohort) under `results/subtype/<view>/<cohort>/`.
 - **Statistics in figures:** raw p. Any q is in the CSV with its FDR family named.
 - **Result or context.** Each biological statement is marked as a *result* of this data or as
   *context* from the literature; the literature was never used to choose a feature, a model or an
@@ -67,6 +67,15 @@ the splicing models' accuracy on HPV status, the HNSC expression classes, cervic
 gastric molecular class is specific to the sites that sent the samples, where expression's is
 not (§10).
 
+A third follow-up explains §8. MSI tumours cannot repair slippage at mononucleotide repeats, and
+the exons their models chose sit, far more often than chance, right after a long poly-T tract in
+the intron: 40 and 34 of the top 50 in stomach and colon, against 5% of exons. A score built from
+the reference genome alone, with no model, ranks MSI tumours in both (AUROC 0.71, 0.78). It works
+only for tracts at the acceptor, and the same exons move in all three organs. The longest tracts
+(≥ 20 nt) move the other way, toward inclusion. That reversal was seen after the fact and
+replicated only in part on alternative 3′ splice sites, and the mechanism we wrote down for it
+did not hold (§11).
+
 The neighbour-gene audit keeps this honest. Of 2,248 top events, 97 follow an overlapping gene
 more than their own — 62 of them in HIT — and four of the nineteen strongest single events are
 such readouts; the leiomyosarcoma first exon that looks like an NDE1 promoter is MYH11
@@ -101,6 +110,11 @@ transcription read on the other strand (§7).
 9. **Site** (U9): holding tissue-source sites out costs GEX ≤ 0.035 in 20 of 21 cohorts, but the
    splicing views 0.056–0.098 in HNSC_HPV, CESC, THCA, HNSC_mRNA, TGCT and STAD_TCGA. "Splicing
    loses more than GEX in most cohorts" holds in 16 of 21 (q = 0.080): not resolved.
+10. **MSI splicing follows acceptor poly-T repeats** (U10–U11; M1–M7, N1–N3, Q1–Q2 fixed in
+    advance): 80% and 68% of the STAD and COAD MSI models' top 50 SE events carry an acceptor
+    T-run ≥ 10 (5% of exons); a genome-only score ranks MSI at AUROC 0.71 and 0.78 (UCEC 0.51), at
+    the acceptor only; MRE11 exon 5 replicates in all three. Runs ≥ 20 move toward inclusion
+    (exploratory; 2 of 6 replication tests supported, 6 of 6 in direction).
 
 ---
 
@@ -622,6 +636,100 @@ splicing models' accuracy is site-specific, plausibly how each site handles its 
 loses most (0.142) but SE and A5SS are close behind (0.125, 0.112). The probe's accuracies are
 those of a simple classifier, not of the subtype models (D-20).
 
+## 11. The MSI splicing marks are written in the genome: acceptor poly-T repeats
+
+![U10](figures/subtype/U10_msi_repeats.png)
+
+**Why.** §8 found MSI splicing marks shared by three cancers but could not say where they come
+from. Mismatch-repair-deficient cells cannot correct slippage at mononucleotide repeats. A
+shortened poly-T tract in an acceptor's polypyrimidine tract weakens the 3′ splice site, and the
+exon after it is skipped (context): MRE11 exon 5 (Giannini et al. 2002, 2004), HSP110 exon 9
+(Dorard et al. 2011), and genome-wide in colorectal cancer (Jonchère et al. 2024). D-52 asks
+whether that route shows across UCEC, STAD and COAD when the exons are chosen from the reference
+genome alone. Its predictions were committed before any PSI value was read by repeat class.
+
+**What was done.** For every cassette exon in the subtype SE matrix, the longest sense-strand
+T-run overlapping intron positions −1..−50 was read from GRCh38. 99.9% of exons read AG at
+−2,−1, a check on the coordinates; 5% carry a run of ≥ 10. Each patient gets a repeat score with
+no model and no label: each exon's PSI as a percentile within the cohort, averaged over the
+repeat exons (≥ 10) minus the average over background exons (≤ 5). The background is weighted to
+the repeat exons' mean-PSI deciles, which cancels the global PSI axis of D-24. MSI is compared
+with every other class except POLE (result; `results/subtype/msi_cis/`).
+
+- **The models had found the repeats** (M6, supported in all three). Of the top 50 SE events of
+  each cohort's MSI model, 40 (STAD), 34 (COAD) and 10 (UCEC) carry an acceptor T-run ≥ 10,
+  against 4.5–4.9% of the exons measured (odds ratio 84, 43 and 5). Of the nine SE events among
+  §8's MSI top events, seven carry runs of 13–30: PTP4A2 14, CDC16 13, TMX3 15, ECT2 16, BOD1L1 24,
+  ANXA7 29 and CCNDBP1 30. The other two, GEMIN2 and COA8, carry 6.
+- **The genome alone ranks MSI tumours** (M1). The score is lower in MSI with AUROC 0.71 in STAD
+  and 0.78 in COAD (p ≤ 1.1e-6). In UCEC it is 0.51, not resolved. The trained models reach
+  0.84–0.99 (`detector.csv`), so the score is a test of mechanism, not a detector.
+- **Only at the acceptor** (M4, supported in all three, UCEC included). The same score built
+  from T-runs ≥ 10 deep in the intron (−201..−400) separates MSI by 0.17, 0.28 and 0.41 AUROC
+  less (UCEC, STAD, COAD; bootstrap CIs exclude 0). It even runs the other way (0.34–0.43).
+- **Longer runs, larger shifts** (M2, M3). Across exons with runs ≥ 6, the per-exon MSI shift
+  falls as the run lengthens. That holds in STAD (partial ρ −0.055). In COAD it misses by a hair
+  (q = 0.050) until the acceptor's pyrimidine content is also held fixed; then it holds in both
+  (M3: −0.062 and −0.048). So the effect follows repeat length beyond the tract's pyrimidine
+  richness, which is what slippage predicts. A trans change in 3′-site strength would follow
+  pyrimidine richness instead (interpretation). UCEC is not resolved on either.
+- **The same exons in three organs** (M7). For repeat exons measured in two cohorts, the MSI
+  shifts correlate between cancers (Spearman 0.44 UCEC–STAD, 0.43 UCEC–COAD, 0.65 STAD–COAD). For
+  background exons the figures are 0.25, 0.19 and 0.35.
+- **Positive control** (K1, supported in all three). MRE11 exon 5, an 88-nt exon after a T11,
+  whose skipping makes the known 484del88 transcript, is less included in MSI: AUROC 0.63, 0.81
+  and 0.76. Median PSI is 0.93 against 1.00 in STAD and COAD.
+- **POLE** (M5, not resolved). Because the UCEC score does not separate MSI itself, MSI against
+  POLE (0.53) cannot test anything here.
+- **How much it explains** (exploratory). Among exons significantly less included in MSI, 22%
+  (UCEC), 17% (STAD) and 16% (COAD) carry a run ≥ 10, against 5% of all exons (odds ratio
+  3.8–5.5). Most MSI-associated skipping is therefore not explained by a long acceptor T-run. That
+  agrees with Jonchère et al., who explained only part of it in colorectal cancer.
+
+**Endometrium.** UCEC is the weak cohort on the sample score. Yet its repeat exons shift with
+those of STAD and COAD (ρ 0.44), and the acceptor window beats the deep one. Endometrial MSI
+tumours show smaller allele shifts at mononucleotide repeats than colorectal and gastric ones
+(Chung et al. 2023; context). Smaller shifts would mean a weaker cis effect, and UCEC also has
+the fewest MSI patients (34). This reading was formed after the result and was not tested.
+
+![U11](figures/subtype/U11_msi_long_tracts.png)
+
+**The longest runs go the other way.** The two §8 loci that are *more* included in MSI, CCNDBP1
+and ANXA7, carry the two longest runs of the set (30 and 29 nt).
+- **Exploratory, after D-52.** Among all repeat exons (§8's nine left out), runs of 10–19 lean
+  toward skipping in MSI: 38–49% move up. Runs ≥ 20 lean toward inclusion: 56–67% move up, in all
+  three cancers (U11a).
+- **The extremes split by length.** The exons with the largest shared increase carry runs of
+  21–32 nt (ANXA7, CCNDBP1, TBK1, CDC42EP1, ELOF1, EPN2, BOD1L1). The largest decreases carry
+  14–21 nt (U11c).
+- **A mechanism, pre-specified and not supported** (D-53). hnRNP C binds long U-tracts and
+  competes with U2AF65, repressing the acceptor (Zarnack et al. 2013; context). That predicts an
+  increase mainly for exons at low baseline inclusion. N1–N3 test that dependence on baseline,
+  and all nine tests are not resolved. The direction follows run length, not baseline inclusion.
+- **A replication on events not read before** (D-54, U11b). An A3SS event has two acceptors, so
+  a run at the distal and at the proximal one predicts opposite signs. Runs of 10–19 make their
+  acceptor used less in MSI; supported in STAD (median −0.017, p = 0.009, n = 85). Runs ≥ 20 make
+  it used more; supported in UCEC (+0.044, p = 0.016, n = 16). The other four tests are not
+  resolved, but all six medians fall in the predicted direction. The long-run sets hold only 16–19
+  events per cohort.
+
+**Reading.** In stomach and colon, most of the MSI splicing signal the models learned (§8) is a
+DNA-sequence signal; in endometrium, a smaller part (interpretation). A fixed set of acceptors with
+long poly-T tracts sits in every genome, mismatch-repair deficiency makes them unstable, and their
+exons shift together in stomach, colon and endometrium.
+- **Length sets the shift.** The longer the tract, the larger the shift.
+- **The longest tracts reverse.** From about 20 nt, an MSI tumour includes the exon more rather
+  than less. That reversal is a length rule we can describe (exploratory, partly replicated in
+  A3SS), not one we can explain. The hnRNP C version we wrote down did not hold.
+
+**What this does not show.**
+- **The deletions themselves.** There is no tumour DNA here: the mechanism is inferred from the
+  reference sequence and the MSI label, not from contraction alleles seen in each tumour.
+- **Exon-body reads.** The repository does not record whether the rMATS PSI counts exon-body
+  reads. If it does, unspliced pre-mRNA could add to an apparent increase.
+- **The retained-intron check.** It was too thin to settle that: only 4 repeat exons with runs
+  ≥ 20 per cohort have a matching RI event (`ri_check.csv`).
+
 ## What would change the reading
 
 - **Mutation and copy-number calls joined to the events.** Three named results in §7–§8 rest on a
@@ -634,6 +742,12 @@ those of a simple classifier, not of the subtype models (D-20).
 
   A finding that the skipping tumours carry no CDH1 lesion, or that the RPL22L1 event is unrelated
   to RPL22, would remove those mechanisms from the reading.
+- **Tumour DNA at the repeats.** §11 infers repeat contraction from the reference sequence and the
+  MSI label. Reads over these acceptor tracts showing contraction alleles in MSI tumours, with
+  each tumour's exon shift tracking its own allele, would make the cis route a result; no
+  contraction would remove it. For the reversal at ≥ 20 nt, a minigene shortening the CCNDBP1 or
+  ANXA7 tract that raised inclusion would show the effect is real and cis; read counts split into
+  junction and exon-body reads would show whether unspliced RNA contributes.
 - **The MSI events in another cohort.** U7 was found and tested within TCGA (three cancers, one
   pipeline). The claim would weaken considerably if the events fail in an independent MSI cohort
   (e.g. CPTAC colon or endometrial, or a cell-line panel with known MMR status) processed through
@@ -677,7 +791,8 @@ those of a simple classifier, not of the subtype models (D-20).
   - HNSC HPV status is known for a minority of patients (112 of 501) and is confounded with tumour
     site, since oropharynx tumours are mostly HPV-positive. Site was not modelled.
 - **No mutation, methylation or copy-number data locally** for CDH1, POLE, RPL22 or MLH1. Every
-  mechanism in §7–§8 is therefore context, not result.
+  mechanism in §7–§8 is therefore context, not result. §11 tests one mechanism from the reference genome, and its
+  repeat exons are a result; the deletions behind them are inferred, not observed.
 - **Unstranded libraries.** The audit can flag but not resolve antisense overlap. 65 top events
   overlap a gene the expression matrix does not hold and stay uncleared, including two of U6's
   nineteen.
@@ -689,7 +804,9 @@ those of a simple classifier, not of the subtype models (D-20).
   event association of §9 runs across classes, so it cannot separate regulation from co-variation
   with the subtype. Only R5/R6 adjust for class.
 - **Exploratory additions.** The error-marker, shared-class and MSI-confound tables and U7 were
-  added after results had been read (A-4), as were the R5/R6 sensitivity checks (A-6). They are
+  added after results had been read (A-4), as were the R5/R6 sensitivity checks (A-6). In §11,
+  D-53 and D-54 were written after D-52's results; the reversal at ≥ 20 nt (U11a, c) is
+  exploratory, and D-54 is its partial replication. They are
   descriptive, and none feeds a model. A-1 to A-3 changed presentation or widened an audit only.
 
 ## References
@@ -705,13 +822,17 @@ Literature used as *context* (never to choose a feature, a model or an event):
 - Cancer Genome Atlas Research Network (2017) Comprehensive and integrated genomic characterization of adult soft tissue sarcomas. *Cell* 171:950.
 - Cancer Genome Atlas Research Network (2017) Integrated genomic characterization of oesophageal carcinoma. *Nature* 541:169.
 - Ceccarelli M et al. (2016) Molecular profiling reveals biologically discrete subsets and pathways of progression in diffuse glioma. *Cell* 164:550.
+- Chung Y et al. (2023) Evaluation of an eight marker-panel including long mononucleotide repeat markers to detect microsatellite instability in colorectal, gastric, and endometrial cancers. *BMC Cancer* 23:1100.
 - Ciriello G et al. (2015) Comprehensive molecular portraits of invasive lobular breast cancer. *Cell* 163:506.
 - Dorard C et al. (2011) Expression of a mutant HSP110 sensitizes colorectal cancer cells to chemotherapy and improves disease prognosis. *Nat Med* 17:1283.
 - Eisenhofer G et al. (2004) Distinct gene expression profiles in norepinephrine- and epinephrine-producing hereditary and sporadic pheochromocytomas: activation of hypoxia-driven angiogenic pathways in von Hippel-Lindau syndrome. *Endocr Relat Cancer* 11:897.
 - Fishbein L et al. (2017) Comprehensive molecular characterization of pheochromocytoma and paraganglioma. *Cancer Cell* 31:181.
+- Giannini G et al. (2002) Human MRE11 is inactivated in mismatch repair-deficient cancers. *EMBO Rep* 3:248.
+- Giannini G et al. (2004) Mutations of an intronic repeat induce impaired MRE11 expression in primary human cancer with microsatellite instability. *Oncogene* 23:2640.
 - Gooding C et al. (1994) Smooth muscle-specific switching of α-tropomyosin mutually exclusive exon selection by specific inhibition of the strong default exon. *EMBO J* 13:3861.
 - Gooding C, Roberts GC, Smith CW (1998) Role of an inhibitory pyrimidine element and polypyrimidine tract binding protein in repression of a regulated α-tropomyosin exon. *RNA* 4:85.
 - Gooding C et al. (2013) MBNL1 and PTB cooperate to repress splicing of Tpm1 exon 3. *Nucleic Acids Res* 41:4765.
+- Jonchère V et al. (2024) Microsatellite instability at U2AF-binding polypyrimidic tract sites perturbs alternative splicing during colorectal cancer initiation. *Genome Biol* 25:210.
 - Liu J et al. (2018) An integrated TCGA pan-cancer clinical data resource to drive high-quality survival outcome analytics. *Cell* 173:400.
 - Liu Y et al. (2018) Comparative molecular analysis of gastrointestinal adenocarcinomas. *Cancer Cell* 33:721.
 - Louis DN et al. (2016) The 2016 World Health Organization classification of tumors of the central nervous system. *Acta Neuropathol* 131:803.
@@ -723,9 +844,12 @@ Literature used as *context* (never to choose a feature, a model or an event):
 - Warzecha CC et al. (2009) ESRP1 and ESRP2 are epithelial cell-type-specific regulators of FGFR2 splicing. *Mol Cell* 33:591.
 - Warzecha CC et al. (2010) An ESRP-regulated splicing programme is abrogated during the epithelial–mesenchymal transition. *EMBO J* 29:3286.
 - Zhang Y et al. (2017) Ribosomal proteins Rpl22 and Rpl22l1 control morphogenesis by regulating pre-mRNA splicing. *Cell Rep* 18:545.
+- Zarnack K et al. (2013) Direct competition between hnRNP C and U2AF65 protects the transcriptome from the exonization of Alu elements. *Cell* 152:453.
 
 The ten citations outside the TCGA marker papers were checked against PubMed, PMC or publisher
 records on 2026-10-12; two were corrected (the title of Eisenhofer 2004, and the year and journal
 of Gooding 1994). The five added with §9 (Gooding 1998 and 2013, Vanharanta 2014, Warzecha 2009
 and 2010) were checked against the same kinds of record; re-reading the two Gooding abstracts is
-what exposed the R6 misreading (A-5).
+what exposed the R6 misreading (A-5). The five added with §11 (Chung 2023, Giannini 2002 and 2004,
+Jonchère 2024, Zarnack 2013) and Dorard 2011 were checked against PubMed, PMC or publisher records
+on 2026-10-12, before they were cited.

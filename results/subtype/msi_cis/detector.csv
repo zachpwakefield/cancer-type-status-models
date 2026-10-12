@@ -1,0 +1,13 @@
+cohort,method,auroc
+UCEC_TCGA,repeat score (no training),0.5108932461873639
+UCEC_TCGA,GEX model (out-of-fold),0.8910675381263616
+UCEC_TCGA,AS ensemble model (out-of-fold),0.8442265795206971
+UCEC_TCGA,GEX + AS model (out-of-fold),0.8941176470588236
+STAD_TCGA,repeat score (no training),0.7090909090909091
+STAD_TCGA,GEX model (out-of-fold),0.9913550600343053
+STAD_TCGA,AS ensemble model (out-of-fold),0.9923842195540309
+STAD_TCGA,GEX + AS model (out-of-fold),0.9925214408233276
+COAD_TCGA,repeat score (no training),0.7780769230769231
+COAD_TCGA,GEX model (out-of-fold),0.9687179487179487
+COAD_TCGA,AS ensemble model (out-of-fold),0.9948717948717949
+COAD_TCGA,GEX + AS model (out-of-fold),0.9937179487179487

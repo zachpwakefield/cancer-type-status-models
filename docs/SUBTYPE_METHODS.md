@@ -3,7 +3,8 @@
 The third task of the repository: **within one cancer, which subtype is a primary tumour?** It is
 modelled, like the other two, independently in each of the nine views (AFE, ALE, HIT, SE, A5SS,
 A3SS, MXE, RI, GEX). Decisions are numbered from D-30 (D-48..D-51, which span the three tasks, are in
-[ACROSS_TASKS_METHODS.md](ACROSS_TASKS_METHODS.md); D-01..D-12 are in
+[ACROSS_TASKS_METHODS.md](ACROSS_TASKS_METHODS.md), as is amendment A-8; D-52..D-54, the MSI-repeat
+follow-up, are here; D-01..D-12 are in
 [DECISIONS.md](DECISIONS.md), D-13..D-29 in [BIOLOGY_METHODS.md](BIOLOGY_METHODS.md)). Values live
 in [config/subtype.yaml](../config/subtype.yaml); this file explains them.
 
@@ -442,6 +443,7 @@ runs ≥ 20, oriented shift > 0. Wilcoxon signed-rank per cohort, BH over 6 test
 | A-5 | 2026-10-12, after R1–R6 were computed | R6's predicted sign (PTBP1 moves the TPM1 exon 2/3 event *against* the LMS direction) rested on a misreading of Gooding et al. 1998: in TPM1, PTB, with MBNL1 (Gooding et al. 2013), represses exon 3, the *non*-smooth-muscle exon, so the published mechanism predicts PTBP1 *with* the LMS direction. The test and the verdict computed under the rule are kept as written ("supported"); the text reports R6 as running against the published mechanism. R4's rationale ("PTBP1 represses the smooth-muscle exons of ACTN1 and TPM1") holds for ACTN1 only | Found when the mechanism was re-read to write the result | Yes: the reading of R6 changed after its result was seen; no test, threshold or number changed |
 | A-6 | 2026-10-12, after R1–R6 were read | Two exploratory checks of R5/R6 (`scripts/37 --only post`): the partial Spearman also adjusting for each sample's mean MXE PSI (the global axis of D-24), and PTBP1's rank among the 70 factors for each event | D-24 had shown that factor–PSI correlations need that covariate; D-46 mirrored D-18, which predates it | Yes: exploratory; reported beside the pre-specified test, never instead of it |
 | A-7 | 2026-10-12, after the site probe's p-values were seen | D-47 did not name the FDR family for P1 and P2; it is taken as D-47's three tests (P1, P2 for GEX, P2 for the splicing median), the stricter of the two readings: P1 q = 0.080 ("not resolved") rather than 0.027 alone | The config's header rule needs a family | Yes: chosen after the p-values were seen, in the direction that weakens the result |
+| A-9 | 2026-10-12, after the D-52 code was written, before it was run | K1 reads MRE11 exon 5 from the full SE matrix whatever the cohort pre-filter (`msi_cis` names the event, not the matrix subset), and `test` also writes exploratory tables (`share_explained`, `detector`, `shared_repeat_exons`, `dose_exon_delta`) that the config lists as exploratory. After D-53, an exploratory retained-intron check (`ri_check.csv`) was added to ask whether unspliced RNA could explain the increases | The config did not say which matrix subset a named event is read from | K1 rule: no. The retained-intron check: yes, it was added after the reversal at ≥ 20 nt was seen; it is exploratory and too thin to decide (4 long-run exons per cohort) |
 
 ## Verification that the existing tasks are unchanged
 - `tests/test_subtype.py::TestExistingTasksUnchanged` rebuilds every existing task table from

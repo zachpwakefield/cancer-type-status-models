@@ -10,9 +10,12 @@ One question per figure, in the order the story is told in results/SUBTYPE.md:
     U7  do the exons that mark MSI in one cancer mark it in the other two?
     U8  do the splicing regulators the literature names differ between subtypes (D-46)?
     U9  is the subtype signal tied to the tissue-source site (D-47)?
+    U10 does genome sequence say which exons MSI tumours skip (D-52)?
+    U11 do the longest acceptor repeats move the other way (D-53, D-54)?
 
 Reads results/subtype/summary/ (step 34), results/subtype/interpret/ (step 35),
-results/subtype/regulators/ (step 37) and results/subtype/site_probe/ (step 38). Every figure
+results/subtype/regulators/ (step 37), results/subtype/site_probe/ (step 38) and
+results/subtype/msi_cis/ (step 42). Every figure
 is SVG + PDF + 400-dpi PNG with `<stem>.csv` of the plotted values and `<stem>.caption.md`.
 Usage: python scripts/36_subtype_figures.py [U1 U3 ...]        (default: all)
 """
@@ -677,6 +680,235 @@ def U9() -> None:
     save(fig, OUT, "U9_site_probe", data=data, caption=CAPTIONS["U9"](per, tests, conf))
 
 
+# ============================================================ U10, U11 MSI cis repeats
+MSI_DIR = SCFG.results_dir / TASK / "msi_cis"
+MSI_LOCAL = SCFG.base_data_dir / "msi"
+COH_STYLE = {"UCEC_TCGA": ("#c98a2b", "o"), "STAD_TCGA": (ACCENT, "s"), "COAD_TCGA": (ACCENT_DARK, "^")}
+
+
+def _short(c: str) -> str:
+    return c.replace("_TCGA", "")
+
+
+def _stars(p: float) -> str:
+    return "***" if p < 0.001 else "**" if p < 0.01 else "*" if p < 0.05 else "ns"
+
+
+def U10() -> None:
+    pr = pd.read_csv(MSI_DIR / "predictions.csv")
+    top = pd.read_csv(MSI_DIR / "model_top_events.csv").set_index("cohort")
+    au = pd.read_csv(MSI_DIR / "score_aurocs.csv")
+    sc = pd.read_parquet(MSI_LOCAL / "sample_scores.parquet")
+    coh = list(COH_STYLE)
+    fig = plt.figure(figsize=(DOUBLE, 2.45))
+    gs = fig.add_gridspec(1, 3, width_ratios=[0.85, 1.55, 1.15], wspace=0.55)
+    rows = []
+    # a. share of the MSI model's top 50 SE events with an acceptor T-run >= 10
+    ax = fig.add_subplot(gs[0])
+    for i, c in enumerate(coh):
+        r = top.loc[c]
+        col = COH_STYLE[c][0]
+        p6 = pr[(pr.id == "M6") & (pr.cohort == c)].iloc[0]
+        for k, (lab, num, den, colr) in enumerate([("all measured exons", r.other_R, r.other_n, MUTED),
+                                                    ("top 50 MSI events", r.top_R, r.top_n, col)]):
+            y = i * 2.6 + k
+            v = 100 * num / den
+            ax.barh(y, v, height=0.8, color=colr, linewidth=0)
+            ax.text(v + 2, y, f"{v:.0f}%", va="center", fontsize=5.4, color=INK)
+            rows.append({"panel": "a", "cohort": c, "set": lab, "n": int(den), "n_acceptor_T10": int(num),
+                         "percent": v, "odds_ratio": r.odds_ratio, "p": p6.p, "q": p6.q,
+                         "q_family": "M (msi_cis, 19 tests)"})
+        ax.text(105, i * 2.6 + 0.5, _stars(p6.p), va="center", fontsize=6, color=INK)
+    ax.set_yticks([i * 2.6 + k for i in range(3) for k in (0, 1)])
+    ax.set_yticklabels([f"{_short(c)} {lab}" for c in coh for lab in ("all", "top 50")], fontsize=5.6)
+    ax.set_ylim(7.0, -0.7)
+    ax.set_xlim(0, 118)
+    ax.set_xticks([0, 50, 100])
+    ax.spines["bottom"].set_bounds(0, 100)
+    ax.tick_params(axis="y", length=0)
+    ax.spines["left"].set_visible(False)
+    ax.set_xlabel("% with an acceptor T-run ≥ 10", fontsize=6)
+    # b. the sample score by group
+    bx = fig.add_subplot(gs[1])
+    pos, ticks, labs = 0, [], []
+    rng = np.random.default_rng(0)
+    local = []
+    for c in coh:
+        groups = ["MSI", "POLE", "rest"] if c == "UCEC_TCGA" else ["MSI", "rest"]
+        xs = {}
+        for g in groups:
+            v = sc[(sc.cohort == c) & (sc.group == g)]["score_acc"].to_numpy()
+            col = COH_STYLE[c][0] if g == "MSI" else MUTED
+            q1, med, q3 = np.percentile(v, [25, 50, 75])
+            lo, hi = v[v >= q1 - 1.5 * (q3 - q1)].min(), v[v <= q3 + 1.5 * (q3 - q1)].max()
+            bx.add_patch(plt.Rectangle((pos - 0.3, q1), 0.6, q3 - q1, facecolor="white", edgecolor=col, linewidth=0.7,
+                                       zorder=2))
+            bx.vlines(pos, lo, q1, color=col, linewidth=0.6, zorder=1)
+            bx.vlines(pos, q3, hi, color=col, linewidth=0.6, zorder=1)
+            bx.scatter(pos + rng.uniform(-0.2, 0.2, len(v)), v, s=2.2, color=col, alpha=0.45, linewidths=0, zorder=3)
+            bx.scatter(pos, med, marker="D", s=10, color=col, edgecolors="white", linewidths=0.4, zorder=4)
+            rows.append({"panel": "b", "cohort": c, "set": g, "n": len(v), "median": med, "q1": q1, "q3": q3,
+                         "whisker_low": lo, "whisker_high": hi})
+            local.append(sc[(sc.cohort == c) & (sc.group == g)][["cohort", "group", "score_acc"]])
+            xs[g] = pos
+            ticks.append(pos)
+            labs.append(f"{g}\n({len(v)})")
+            pos += 1
+        top_y = sc[sc.cohort == c]["score_acc"].quantile(0.995)
+        m1 = pr[(pr.id == "M1") & (pr.cohort == c)].iloc[0]
+        h = 0.012
+        bx.plot([xs["MSI"], xs["MSI"], xs["rest"], xs["rest"]], [top_y + h, top_y + 1.4 * h, top_y + 1.4 * h, top_y + h],
+                color=INK2, linewidth=0.5)
+        bx.text((xs["MSI"] + xs["rest"]) / 2, top_y + 1.6 * h, _stars(m1.p), ha="center", va="bottom", fontsize=6)
+        rows.append({"panel": "b", "cohort": c, "set": "MSI vs rest (M1)", "auroc": m1.effect + 0.5, "p": m1.p,
+                     "q": m1.q, "q_family": "M (msi_cis, 19 tests)"})
+        if c == "UCEC_TCGA":
+            m5 = pr[pr.id == "M5"].iloc[0]
+            y5 = top_y + 3.2 * h
+            bx.plot([xs["MSI"], xs["MSI"], xs["POLE"], xs["POLE"]], [y5, y5 + 0.4 * h, y5 + 0.4 * h, y5],
+                    color=INK2, linewidth=0.5)
+            bx.text((xs["MSI"] + xs["POLE"]) / 2, y5 + 0.6 * h, _stars(m5.p), ha="center", va="bottom", fontsize=6)
+            rows.append({"panel": "b", "cohort": c, "set": "MSI vs POLE (M5)", "auroc": m5.effect + 0.5, "p": m5.p,
+                         "q": m5.q, "q_family": "M (msi_cis, 19 tests)"})
+        bx.text((xs["MSI"] + xs["rest"]) / 2, -0.205, _short(c), ha="center", va="top", fontsize=6.2, color=INK,
+                transform=bx.get_xaxis_transform())
+        pos += 0.6
+    bx.axhline(0, color=GRID, linewidth=0.6, zorder=0)
+    bx.set_xticks(ticks)
+    bx.set_xticklabels(labs, fontsize=5.4)
+    bx.tick_params(axis="x", length=0)
+    bx.set_xlim(-0.6, pos - 0.9)
+    bx.set_ylabel("repeat score (percentile)", fontsize=6)
+    # c. AUROC by acceptor run length, and the deep-window control
+    cx = fig.add_subplot(gs[2])
+    bins = [("bin_6", "6–7"), ("bin_8", "8–9"), ("bin_10", "10–11"), ("bin_12", "12–13"), ("bin_14", "≥14")]
+    for c in coh:
+        col, mk = COH_STYLE[c]
+        d = au[au.cohort == c].set_index("score")
+        y = [d.at[k, "auroc_msi_vs_rest"] for k, _ in bins]
+        cx.plot(range(len(bins)), y, color=col, linewidth=0.9, marker=mk, ms=3, mec="white", mew=0.3, label=_short(c))
+        cx.scatter(len(bins) + 0.8, d.at["deep", "auroc_msi_vs_rest"], marker=mk, s=11, facecolors="white",
+                   edgecolors=col, linewidths=0.8, zorder=3)
+        for k, lab in bins + [("deep", "deep ≥10")]:
+            rows.append({"panel": "c", "cohort": c, "set": lab, "auroc": d.at[k, "auroc_msi_vs_rest"],
+                         "p": d.at[k, "p"], "q_family": "exploratory (dose_auroc); deep = M4 comparator"})
+    cx.axhline(0.5, color=MUTED, linewidth=0.6, linestyle=(0, (3, 2)), zorder=0)
+    cx.set_xticks(list(range(len(bins))) + [len(bins) + 0.8])
+    cx.set_xticklabels([b.replace("–", "–\n") for _, b in bins] + ["deep\n≥10"], fontsize=5.4)
+    cx.set_xlabel("acceptor T-run (nt)", fontsize=6)
+    cx.set_ylabel("AUROC, score lower in MSI", fontsize=6)
+    cx.set_ylim(0.3, 0.85)
+    cx.legend(loc="lower left", fontsize=5.4, handlelength=1.4, borderaxespad=0.2)
+    for a_, lab, x in [(ax, "a", -0.62), (bx, "b", -0.17), (cx, "c", -0.25)]:
+        a_.text(x, 1.04, lab, transform=a_.transAxes, fontsize=8, fontweight="bold")
+    rows += [{"panel": "b", "set": "reference line", "median": 0.0},
+             {"panel": "c", "set": "reference line (chance)", "auroc": 0.5}]
+    data = pd.DataFrame(rows)
+    save(fig, OUT, "U10_msi_repeats", data=data, caption=CAPTIONS["U10"](pr, top, au),
+         local_data=(SCFG.base_data_dir / "figure_data", pd.concat(local, ignore_index=True)))
+
+
+def U11() -> None:
+    ex = pd.read_parquet(MSI_LOCAL / "exon_effects.parquet")
+    u7 = pd.read_csv(INT / "shared_class_events.csv")
+    drop = set(u7.loc[u7["class"].eq("MSI") & u7["view"].eq("SE"), "feature_id"])
+    a3 = pd.read_parquet(MSI_LOCAL / "a3ss_effects.parquet")
+    q = pd.read_csv(MSI_DIR / "a3ss_predictions.csv")
+    n_tests = pd.read_csv(MSI_DIR / "long_tract_predictions.csv")
+    sh = pd.read_csv(MSI_DIR / "shared_repeat_exons.csv")
+    coh = list(COH_STYLE)
+    fig = plt.figure(figsize=(DOUBLE, 2.9))
+    outer = fig.add_gridspec(1, 2, width_ratios=[2.0, 1.25], wspace=0.95)
+    gs = outer[0].subgridspec(1, 2, wspace=0.75)
+    rows = []
+    # a. share of SE repeat exons more included in MSI, by run length
+    ax = fig.add_subplot(gs[0])
+    bins = [(10, 14, "10–14"), (15, 19, "15–19"), (20, 999, "≥20")]
+    for j, c in enumerate(coh):
+        col, mk = COH_STYLE[c]
+        e = ex[(ex.cohort == c) & ~ex.feature_id.isin(drop)]
+        ys, xs = [], []
+        for i, (lo, hi, lab) in enumerate(bins):
+            v = e[(e.acc_T >= lo) & (e.acc_T <= hi)]["delta_adj"]
+            k, n = int((v > 0).sum()), len(v)
+            ph = k / n
+            z = 1.96
+            den = 1 + z * z / n
+            mid = (ph + z * z / (2 * n)) / den
+            half = z * np.sqrt(ph * (1 - ph) / n + z * z / (4 * n * n)) / den
+            x = i + (j - 1) * 0.16
+            ax.vlines(x, mid - half, mid + half, color=col, linewidth=0.7)
+            xs.append(x)
+            ys.append(ph)
+            rows.append({"panel": "a", "cohort": c, "set": f"SE acceptor T-run {lab}", "n": n, "n_up": k, "share_up": ph,
+                         "ci_low": mid - half, "ci_high": mid + half, "q_family": "exploratory (D-53 table)"})
+        ax.plot(xs, ys, color=col, linewidth=0.8, marker=mk, ms=3, mec="white", mew=0.3, label=_short(c))
+    ax.axhline(0.5, color=MUTED, linewidth=0.6, linestyle=(0, (3, 2)), zorder=0)
+    ax.set_xticks(range(3))
+    ax.set_xticklabels([b[2] for b in bins], fontsize=5.6)
+    ax.set_xlabel("acceptor T-run (nt), cassette exons", fontsize=6)
+    ax.set_ylabel("share more included in MSI", fontsize=6)
+    ax.set_ylim(0.2, 0.85)
+    ax.legend(loc="upper left", fontsize=5.4, handlelength=1.4, borderaxespad=0.2)
+    # b. A3SS replication: oriented shift for moderate and long runs
+    bx = fig.add_subplot(gs[1])
+    for j, c in enumerate(coh):
+        col, mk = COH_STYLE[c]
+        e = a3[(a3.cohort == c) & (a3.side != 0)]
+        for i, (pid, lo, hi, lab) in enumerate([("Q1", 10, 19, "10–19"), ("Q2", 20, 999, "≥20")]):
+            v = e[(e.run >= lo) & (e.run <= hi)]["oriented"]
+            q1, med, q3 = np.percentile(v, [25, 50, 75])
+            x = i + (j - 1) * 0.27
+            bx.vlines(x, q1, q3, color=col, linewidth=0.8, alpha=0.6)
+            bx.scatter(x, med, marker=mk, s=13, color=col, edgecolors="white", linewidths=0.3, zorder=3)
+            t = q[(q.id == pid) & (q.cohort == c)].iloc[0]
+            bx.text(x, 1.0, _stars(t.p), ha="center", va="bottom", fontsize=5.0, color=INK,
+                    transform=bx.get_xaxis_transform())
+            rows.append({"panel": "b", "cohort": c, "set": f"A3SS run {lab} ({pid})", "n": len(v), "median": med,
+                         "q1": q1, "q3": q3, "p": t.p, "q": t.q, "q_family": "Q (msi_a3ss_replication, 6 tests)"})
+    bx.axhline(0, color=MUTED, linewidth=0.6, linestyle=(0, (3, 2)), zorder=0)
+    bx.set_xticks([0, 1])
+    bx.set_xticklabels(["10–19", "≥20"], fontsize=5.6)
+    bx.set_xlim(-0.55, 1.55)
+    bx.set_xlabel("T-run at one acceptor (nt), A3SS", fontsize=6)
+    bx.set_ylabel("use of that acceptor, MSI − rest", fontsize=6)
+    # c. the exons with the largest shared shifts
+    cx = fig.add_subplot(outer[1])
+    s1 = sh.assign(a=sh.mean_delta_adj.abs()).sort_values("a", ascending=False).drop_duplicates("symbol")
+    down = s1[s1.mean_delta_adj < 0].nsmallest(9, "mean_delta_adj")
+    up = s1[s1.mean_delta_adj > 0].nlargest(7, "mean_delta_adj")
+    extra = s1[s1.symbol.eq("MRE11") & ~s1.symbol.isin(down.symbol)]
+    pick = pd.concat([up.sort_values("mean_delta_adj", ascending=False), down.sort_values("mean_delta_adj", ascending=False),
+                      extra]).reset_index(drop=True)
+    for i, r in pick.iterrows():
+        vals = [r[f"delta_adj_{c}"] for c in coh]
+        cx.plot([min(vals), max(vals)], [i, i], color=GRID, linewidth=1.4, solid_capstyle="round", zorder=1)
+        for c, v in zip(coh, vals):
+            col, mk = COH_STYLE[c]
+            cx.scatter(v, i, marker=mk, s=11, color=col, edgecolors="white", linewidths=0.3, zorder=3)
+            rows.append({"panel": "c", "cohort": c, "set": r.symbol, "feature_id": r.feature_id, "acc_T": int(r.acc_T),
+                         "exon_len": int(r.exon_len), "delta_adj": v, "q": r[f"q_{c}"],
+                         "q_family": "BH over the cohort's exons (per-exon Mann-Whitney)"})
+    cx.axvline(0, color=INK2, linewidth=0.6, zorder=0)
+    sep = len(up) - 0.5
+    cx.axhline(sep, color=GRID, linewidth=0.6)
+    if len(extra):
+        cx.axhline(len(pick) - 1.5, color=GRID, linewidth=0.6)
+    cx.set_yticks(range(len(pick)))
+    cx.set_yticklabels([f"{r.symbol} · T{int(r.acc_T)} · {int(r.exon_len)} nt" for r in pick.itertuples()], fontsize=5.4)
+    cx.set_ylim(len(pick) - 0.5, -0.6)
+    cx.tick_params(axis="y", length=0)
+    cx.spines["left"].set_visible(False)
+    cx.set_xlabel("MSI − rest (adjusted percentile)", fontsize=6)
+    for a_, lab, x in [(ax, "a", -0.3), (bx, "b", -0.36), (cx, "c", -0.62)]:
+        a_.text(x, 1.04, lab, transform=a_.transAxes, fontsize=8, fontweight="bold")
+    rows += [{"panel": "a", "set": "reference line", "share_up": 0.5},
+             {"panel": "b", "set": "reference line", "median": 0.0},
+             {"panel": "c", "set": "reference line", "delta_adj": 0.0}]
+    data = pd.DataFrame(rows)
+    save(fig, OUT, "U11_msi_long_tracts", data=data, caption=CAPTIONS["U11"](data, q, n_tests, pick))
+
+
 def _cap_u8(pr, sens, scan):
     r = pr
     def a(i):
@@ -736,9 +968,87 @@ median, black = GEX. Ordered by the splicing median. SARC is not probed: myxofib
 Largest splicing losses: {ts}. The probe's accuracies are those of the untuned classifier, not of the subtype
 models; per view, scheme and seed in `results/subtype/site_probe/`."""
 
+
+def _cap_u10(pr, top, au):
+    g = pr.set_index(["id", "cohort"])
+    def m(pid, c):
+        return g.loc[(pid, c)]
+    coh = list(COH_STYLE)
+    m6 = "; ".join(f"{_short(c)} {int(top.at[c, 'top_R'])} of {int(top.at[c, 'top_n'])} against "
+                   f"{100 * top.at[c, 'other_R'] / top.at[c, 'other_n']:.1f}% (OR {top.at[c, 'odds_ratio']:.0f}, "
+                   f"p = {fp(m('M6', c).p)})" for c in coh)
+    m1 = "; ".join(f"{_short(c)} {m('M1', c).effect + 0.5:.2f} (p = {fp(m('M1', c).p)})" for c in coh)
+    m4 = "; ".join(f"{_short(c)} {signed(m('M4', c).effect, 2)} (95% CI {signed(m('M4', c).ci_low, 2)} to "
+                   f"{signed(m('M4', c).ci_high, 2)})" for c in coh)
+    k1 = ", ".join(f"{_short(c)} {m('K1', c).effect + 0.5:.2f}" for c in coh)
+    m7 = pr[pr.id == "M7"]
+    m5 = m("M5", "UCEC_TCGA")
+    pole = au[(au.cohort == "UCEC_TCGA") & (au.score == "acc")].iloc[0]
+    return f"""**Does genome sequence say which exons MSI tumours skip?**
+
+Pre-specified before any PSI was read by repeat (config/followup.yaml: msi_cis, D-52). For every cassette exon, the
+longest sense-strand T-run overlapping intron positions −1..−50 before it was read from GRCh38; no label or model chose
+the exons. MSI against the other classes (POLE apart) of UCEC_TCGA, STAD_TCGA and COAD_TCGA.
+
+a, share of exons with a run ≥ 10 among all exons measured in the cohort and among the top 50 SE events of the cohort's
+MSI model (mean |SHAP| over MSI patients); Fisher exact (M6). b, the repeat score of each patient: each exon's PSI as a
+percentile within the cohort, mean over exons with a run ≥ 10 minus the mean over exons with ≤ 5 (weighted to the same
+mean-PSI deciles, which cancels the global PSI axis of D-24). Box = interquartile range, diamond = median, whiskers =
+1.5 × IQR, dots = patients (n under each box); Mann–Whitney (M1, M5). c, AUROC of the same score built from each
+run-length bin, and (hollow) from T-runs ≥ 10 at −201..−400, deep in the intron, with the acceptor ≤ 6.
+
+- M6, the trained MSI models chose repeat exons: {m6}.
+- M1, the score is lower in MSI: AUROC {m1}. Endometrium does not separate on this score.
+- M4, acceptor window against deep window: AUROC difference {m4}; supported in all three, endometrium included.
+- M5, MSI against POLE (UCEC): AUROC {m5.effect + 0.5:.2f}, p = {fp(m5.p)}, not resolved; POLE against the rest
+  {pole.auroc_pole_vs_rest:.2f}. With MSI itself at {pole.auroc_msi_vs_rest:.2f} in this cohort, the POLE control
+  cannot discriminate here.
+- Not drawn: K1, MRE11 exon 5 (T11) is less included in MSI in all three (AUROC {k1}); M7, the repeat exons' shifts
+  agree between cohorts (Spearman {', '.join(f'{v:.2f}' for v in m7.effect)}).
+
+Stars: * p < 0.05, ** p < 0.01, *** p < 0.001, ns otherwise. q over family M (19 tests) is in the CSV with every verdict
+in `results/subtype/msi_cis/predictions.csv`. Per-patient scores are kept locally (D-12)."""
+
+
+def _cap_u11(data, q, n_tests, pick):
+    qq = q.set_index(["id", "cohort"])
+    def t(pid):
+        return "; ".join(f"{_short(c)} median {signed(qq.at[(pid, c), 'effect'], 3)}, n = {int(qq.at[(pid, c), 'n'])}, "
+                         f"p = {fp(qq.at[(pid, c), 'p'])}" for c in COH_STYLE)
+    a = data[data.panel == "a"]
+    lo = a[a.set.str.contains("10–14|15–19")]["share_up"]
+    hi = a[a.set.str.contains("≥20")]["share_up"]
+    sup = (q.verdict == "supported").sum()
+    up = pick[pick.mean_delta_adj > 0]
+    dn = pick[(pick.mean_delta_adj < 0) & (pick.symbol != "MRE11")]
+    return f"""**Do the longest acceptor repeats move the other way in MSI?**
+
+a, exploratory (read after D-52): SE exons with an acceptor T-run ≥ 10 (the nine MSI events of §8 left out), share
+whose background-adjusted MSI shift is positive, by run length; bars = Wilson 95% interval. Runs of 10–19 lean toward
+skipping (share {lo.min():.2f}–{lo.max():.2f}), runs ≥ 20 toward inclusion ({hi.min():.2f}–{hi.max():.2f}) in all three
+cancers. b, the replication fixed after that (D-54) on A3SS events, which this analysis had not read: one acceptor with
+the run, the other ≤ 6; shift in the use of the acceptor carrying the run (negative = used less in MSI); marker =
+median, bar = interquartile range; Wilcoxon signed-rank against 0.
+
+- Q1, runs 10–19, predicted < 0: {t('Q1')}.
+- Q2, runs ≥ 20, predicted > 0: {t('Q2')}.
+- {sup} of 6 clear q < 0.05 (family Q); all 6 medians fall in the predicted direction. The long-run sets are small.
+
+c, exons measured in all three cohorts with the largest mean shift, one per gene: the {len(up)} largest increases (top
+block) and the {len(dn)} largest decreases, then MRE11 exon 5, the known MSI target. Label = gene · acceptor T-run ·
+exon length. The increases carry runs of {int(up.acc_T.min())}–{int(up.acc_T.max())} nt; the decreases
+{int(dn.acc_T.min())}–{int(dn.acc_T.max())} nt.
+
+The pre-specified mechanism was not supported: D-53 predicted that the shift would depend on the exon's baseline
+inclusion, as hnRNP C repression of long U-tracts would make it (Zarnack et al. 2013), and N1–N3 are not resolved in any
+cohort. What the data show is a length rule, not its cause. Whether the rMATS PSI here counts exon-body reads is not
+recorded; if it does, unspliced pre-mRNA could add to an apparent increase. Stars: * p < 0.05, ** p < 0.01,
+*** p < 0.001, ns otherwise; q in the CSV."""
+
 CAPTIONS = {k: (lambda f: (lambda *a: tidy(f(*a))))(f) for k, f in
             {"U1": _cap_u1, "U2": _cap_u2, "U3": _cap_u3, "U4": _cap_u4, "U5": _cap_u5, "U6": _cap_u6,
-             "U7": _cap_u7, "U8": _cap_u8, "U9": _cap_u9}.items()}
+             "U7": _cap_u7, "U8": _cap_u8, "U9": _cap_u9,
+             "U10": _cap_u10, "U11": _cap_u11}.items()}
 
 if __name__ == "__main__":
-    run({"U1": U1, "U2": U2, "U3": U3, "U4": U4, "U5": U5, "U6": U6, "U7": U7, "U8": U8, "U9": U9})
+    run({"U1": U1, "U2": U2, "U3": U3, "U4": U4, "U5": U5, "U6": U6, "U7": U7, "U8": U8, "U9": U9, "U10": U10, "U11": U11})
