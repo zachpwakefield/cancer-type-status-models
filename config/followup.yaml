@@ -3,6 +3,7 @@
 #   cross_task                               docs/ACROSS_TASKS_METHODS.md D-48..D-51
 #   msi_cis                                  docs/SUBTYPE_METHODS.md D-52 (added later the same day)
 #   msi_long_tracts                          docs/SUBTYPE_METHODS.md D-53 (after D-52's results)
+#   msi_a3ss_replication                     docs/SUBTYPE_METHODS.md D-54 (after D-53's results)
 #
 # Written 2026-10-12, after every model of the three tasks had been fitted and summarised, and
 # before any analysis below was run. Nothing here refits a model or changes a label, a cohort, a
@@ -304,3 +305,29 @@ msi_long_tracts:                         # D-53 · scripts/42_msi_repeats.py --o
   exploratory: share of exons with exon_delta_adj > 0 by baseline-PSI tertile x run length
                (10-14, 15-19, >= 20); the absolute exon_delta_adj against run length, acceptor
                against deep window
+
+msi_a3ss_replication:                    # D-54 · scripts/42_msi_repeats.py --only a3ss
+  # Written 2026-10-12 after the D-52 and D-53 results were read, before any A3SS value was read
+  # in this analysis (the A3SS view entered only SUBTYPE.md section 8, through its top events).
+  # Seen: exploratory long_tract_share_up.csv - among SE repeat exons, runs >= 20 move toward
+  # inclusion in MSI in all three cohorts (share up 0.55-0.73) while runs 10-19 move toward
+  # skipping (0.32-0.55). A3SS events are a different event set, so they replicate both.
+  events: subtype A3SS matrix, cohort pre-filter, finite in >= 80% of the cohort and >= 10 patients
+          of MSI and of rest; one event per (long form, short form) pair, the first in matrix order
+  acceptors: distal = start of the long form (PSI = use of it); proximal = start of the short
+             form. Window -1..-50 upstream of each, sense strand, AG at -2,-1 of both
+  sets:
+    moderate: one acceptor with a T-run 10-19, the other <= 6
+    long: one acceptor with a T-run >= 20, the other <= 6
+    B: both acceptors <= 5 (background for exon_delta_adj, as msi_cis)
+  effect: oriented delta = exon_delta_adj x (+1 if the run is at the distal acceptor, -1 if at the
+          proximal); negative = the acceptor carrying the run is used less in MSI
+  test: Wilcoxon signed-rank against 0, per cohort
+  fdr_family: Q1-Q2 over the three cohorts (6 tests)
+  predictions:
+    - id: Q1
+      claim: moderate runs - oriented delta < 0 (the repeat-bearing acceptor is used less in MSI)
+      source: "Jonchere et al. 2024; Giannini et al. 2002 (as msi_cis M1)"
+    - id: Q2
+      claim: long runs - oriented delta > 0 (the repeat-bearing acceptor is used more in MSI)
+      source: exploratory SE observation above; Zarnack et al. 2013 for a possible mechanism

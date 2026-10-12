@@ -419,6 +419,16 @@ with the exon's mean PSI (Spearman < 0); N2, more so than for deep-intron T-runs
 runs ≥ 20 than for runs 10–14. The nine MSI-class SE events of §8 are left out. BH over N1–N3
 and the three cohorts (9 tests).
 
+### D-54 Replication in alternative 3′ splice sites · `config/followup.yaml: msi_a3ss_replication` · `scripts/42 --only a3ss`
+Added 2026-10-12 after the D-52 and D-53 results were read, before any A3SS value was read in
+this analysis. Exploratory tables of D-53 showed SE repeat exons with acceptor T-runs ≥ 20 moving
+toward inclusion in MSI in all three cohorts, while runs of 10–19 move toward skipping. An A3SS
+event has two acceptors, and the long form's PSI is the use of the distal one, so a run at the
+distal acceptor and a run at the proximal one predict opposite signs. Oriented shift = the
+background-adjusted shift × (+1 distal, −1 proximal); negative means the acceptor carrying the
+run is used less in MSI. Q1: runs 10–19 at one acceptor (other ≤ 6), oriented shift < 0. Q2:
+runs ≥ 20, oriented shift > 0. Wilcoxon signed-rank per cohort, BH over 6 tests.
+
 ---
 
 ## Amendments and deviations
