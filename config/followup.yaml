@@ -1,6 +1,7 @@
 # Follow-up analyses, fixed before any of them was computed.
 #   subtype_regulators, subtype_site_probe   docs/SUBTYPE_METHODS.md D-46, D-47
 #   cross_task                               docs/ACROSS_TASKS_METHODS.md D-48..D-51
+#   msi_cis                                  docs/SUBTYPE_METHODS.md D-52 (added later the same day)
 #
 # Written 2026-10-12, after every model of the three tasks had been fitted and summarised, and
 # before any analysis below was run. Nothing here refits a model or changes a label, a cohort, a
@@ -183,3 +184,93 @@ cross_task:                              # docs/ACROSS_TASKS_METHODS.md · scrip
         claim: subtype top exons are, like the other two tasks', more often divisible by 3, less often
                in a domain and more often in a disordered region than the background
         source: "Buljan et al. 2012 Mol Cell 46:871; Ellis et al. 2012 Mol Cell 46:884"
+
+msi_cis:                                 # D-52 · scripts/42_msi_repeats.py
+  # Written 2026-10-12, after results/SUBTYPE.md §8 and before any PSI value was read by repeat
+  # class. Already seen when this section was written (so it could have shaped a prediction):
+  #   - SUBTYPE.md §8 / U7: ten MSI events shared by UCEC, STAD and COAD, their direction (7 of 9
+  #     loci less included in MSI), the POLE tumours' values on them, the immune and MLH1 checks;
+  #   - the label counts below, and the PCR MSI status of the UCEC_TCGA POLE tumours (1 MSI-H);
+  #   - the label-blind repeat annotation (`--only annotate`): the distribution of acceptor T-run
+  #     lengths, set sizes per cohort, and that MRE11 exon 5 (88 nt, chr11:94479674-94479761) has
+  #     a T11 acceptor run while HSPH1 exon 9 is not a cassette event of either SE matrix;
+  #   - Jonchere et al. 2024 Genome Biol 25:210 (MSI at U2AF-binding polypyrimidine tracts ->
+  #     exon skipping, colorectal only); Dorard et al. 2011 Nat Med 17:1283 (HSP110 T17);
+  #     Giannini et al. 2002 EMBO Rep 3:248 (MRE11 T11 -> exon 5 skipping).
+  # Not seen: any PSI by repeat class or by MSI status outside the ten U7 events, any score.
+  cohorts: [UCEC_TCGA, STAD_TCGA, COAD_TCGA]          # subtype task tables, unchanged
+  groups:
+    MSI: label MSI (UCEC.MSI; GI.HM-indel)
+    rest: every other class except POLE (UCEC CN-low + CN-high; STAD CIN + GS + EBV; COAD CIN + GS)
+    POLE: UCEC_TCGA label POLE, without the PCR MSI-H tumour (TCGASubtype Subtype_other)
+  exons:
+    matrix: subtype SE matrix, features passing the cohort's pre-filter
+    keep: finite PSI in >= 80% of the cohort and >= 10 patients of each compared group;
+          acceptor window measurable (upstream intron >= 60 nt) with AG at -2,-1
+  repeats:                               # sense strand, longest homopolymer run overlapping a window
+    acceptor: positions -1..-50 of the upstream intron
+    deep: positions -201..-400 of the upstream intron (intron >= 500 nt)
+    R: acceptor T-run >= 10              # repeat exons
+    B: acceptor T-run <= 5               # background exons
+    R_deep: acceptor T-run <= 6 and deep T-run >= 10
+    B_deep: acceptor T-run <= 5 and deep T-run <= 5
+    dose_bins: [6-7, 8-9, 10-11, 12-13, ">=14"]
+  score:
+    percentile: per exon, PSI ranked over the cohort's patients (average ties, missing left out)
+    sample_score: mean percentile over R minus the mean over B, B weighted to R's distribution over
+                  deciles of the exon's cohort mean PSI (cancels the global PSI axis of D-24)
+    exon_delta: mean percentile in MSI minus mean percentile in rest
+  bootstrap: {reps: 2000, seed: 0, resample: patients within group}
+  fdr_families:
+    M: M1-M7, all cohorts together (19 tests)
+    K: K1 over the cohorts
+  predictions:
+    - id: M1
+      claim: in each cohort the sample score is lower in MSI than in rest (AUROC > 0.5)
+      test: Mann-Whitney
+      why: shortened acceptor poly-T tracts weaken the 3' splice site, so the exon is skipped
+      source: "Jonchere et al. 2024 Genome Biol 25:210; Giannini et al. 2002; Dorard et al. 2011"
+    - id: M2
+      claim: across exons with an acceptor T-run >= 6, exon_delta falls as the run lengthens
+             (partial Spearman < 0, adjusting for the cohort mean PSI)
+      why: longer repeats slip more often in MMR-deficient cells
+    - id: M3
+      claim: as M2, also adjusting for the pyrimidine fraction of positions -1..-50
+      why: separates repeat slippage from a trans change that tracks 3' splice-site strength
+    - id: M4
+      claim: the acceptor score separates MSI from rest better than the same score built from the
+             deep window (R_deep vs B_deep) - AUROC difference > 0
+      test: paired bootstrap; p = 2 x the smaller tail share (floor 1/2000)
+      why: a repeat acts on the acceptor only inside the polypyrimidine tract / branch-point region
+    - id: M5
+      claim: UCEC_TCGA, the sample score is lower in MSI than in POLE (AUROC > 0.5)
+      test: Mann-Whitney
+      why: POLE tumours are hypermutated by base substitutions but mismatch-repair proficient, so
+           their repeats are stable; expectation, not a verdict - POLE vs rest AUROC near 0.5
+    - id: M6
+      claim: the top 50 SE events of each cohort's MSI class (mean |SHAP| over MSI patients, D-38
+             cache) carry an acceptor T-run >= 10 more often than the cohort's other exons
+      test: Fisher exact (odds ratio > 1)
+      why: if the cis route is real, the models that learned MSI from data will have used it
+    - id: M7
+      claim: for R exons measured in two cohorts, exon_delta minus the median exon_delta of B exons
+             in the same mean-PSI decile correlates between the cohorts (Spearman > 0; 3 pairs)
+      why: the same repeats are exposed in every MMR-deficient genome, whatever the organ
+    - id: K1
+      claim: MRE11 exon 5 (T11 acceptor) is less included in MSI than in rest, in each cohort
+      test: Mann-Whitney on PSI
+      source: "Giannini et al. 2002 EMBO Rep 3:248; Giannini et al. 2004 Oncogene 23:2640"
+  exploratory:                           # reported as such, never as a verdict
+    dose_auroc: the sample-score AUROC per dose bin (each bin's exons against B)
+    share_explained: of exons less included in MSI (per-exon Mann-Whitney, BH q < 0.05 within the
+                     cohort), the share with an acceptor T-run >= 10, against the share among all
+    u7_events: the acceptor T-runs of the ten U7 events
+    detector: the sample score as a label-free MSI detector (MSI vs every other patient) next to
+              the subtype models' out-of-fold MSI AUROCs
+    base_specificity: the same score from A-, C- and G-runs (A >= 10, C >= 8, G >= 8)
+    donor: the same score from T-runs at +1..+50 of the downstream intron
+    cn_low: UCEC MSI against CN-low only (both mostly endometrioid)
+    pole_msi_h: where the PCR MSI-H POLE tumour falls
+    frame: share of exons skipped in MSI with an acceptor T-run >= 10 whose length is not a
+           multiple of 3 (skipping shifts the frame), against all R exons
+    shared: R exons less included in MSI in all three cohorts, ranked

@@ -383,6 +383,30 @@ more than GEX when sites are held out in most cohorts (sign test), as they did b
 neighbouring projects in D-20; P2, the loss rises with Cramér's V (Spearman over cohorts).
 The probe is a diagnostic: it never touches a subtype model or its estimate.
 
+### D-52 Does genome sequence say which exons MSI tumours skip? · `config/followup.yaml: msi_cis` · `scripts/42`
+Added 2026-10-12, after §8 of `results/SUBTYPE.md` and before any PSI value was read by repeat
+class. Mismatch-repair-deficient tumours shorten mononucleotide repeats; a shortened poly-T tract
+in an acceptor's polypyrimidine tract weakens the 3′ splice site and the exon is skipped (MRE11
+exon 5, Giannini et al. 2002; HSP110 exon 9, Dorard et al. 2011; genome-wide in colorectal
+cancer, Jonchère et al. 2024). §8 found MSI splicing marks shared by three organs; this asks
+whether a cis route explains part of them, choosing exons from the genome alone.
+- **Label-blind annotation** (`--only annotate`, GRCh38 primary assembly). For every cassette exon
+  of the subtype SE matrix, the longest sense-strand run of each base overlapping three intronic
+  windows: acceptor −1..−50, deep −201..−400 (intron ≥ 500 nt) and donor +1..+50. 99.9% of
+  exons read AG at −2,−1, which checks the coordinates; MRE11 exon 5 reads its T11.
+- **Groups.** UCEC_TCGA, STAD_TCGA and COAD_TCGA as in the subtype task: MSI against every other
+  class except POLE; the UCEC POLE tumours (hypermutated, mismatch-repair proficient) as a
+  negative control, without the one called MSI-H by PCR.
+- **Score** (per patient, no model): each exon's PSI as a percentile within the cohort; the mean
+  over repeat exons (acceptor T-run ≥ 10) minus the mean over background exons (≤ 5), the
+  background weighted to the repeat exons' mean-PSI deciles so the global PSI axis (D-24) cancels.
+- **Predictions** M1–M7 and K1 (config): the score is lower in MSI (M1); per-exon MSI shift falls
+  with repeat length (M2), also after adjusting for the acceptor's pyrimidine content (M3); the
+  acceptor window beats the deep window (M4); MSI scores below POLE (M5); the trained MSI models'
+  top SE events are enriched for acceptor T-runs (M6); the repeat exons' shifts agree between
+  organs (M7); MRE11 exon 5 is skipped in MSI (K1). FDR families M (19 tests) and K (3).
+  HSPH1 exon 9 is not a cassette event of either SE matrix and cannot be tested.
+
 ---
 
 ## Amendments and deviations
