@@ -63,7 +63,7 @@ Full tables, CIs and the top SHAP features of every cohort and view are in
 [results/RESULTS.md](results/RESULTS.md). Methods are in three files:
 - [docs/BIOLOGY_METHODS.md](docs/BIOLOGY_METHODS.md), D-13 to D-29: interpretation of status and
   type;
-- [docs/SUBTYPE_METHODS.md](docs/SUBTYPE_METHODS.md), D-30 to D-47 and D-52 to D-54: the subtype task
+- [docs/SUBTYPE_METHODS.md](docs/SUBTYPE_METHODS.md), D-30 to D-47 and D-52 to D-56: the subtype task
   and its MSI-repeat follow-up;
 - [docs/ACROSS_TASKS_METHODS.md](docs/ACROSS_TASKS_METHODS.md), D-48 to D-51: the cross-task
   layer.
@@ -401,7 +401,7 @@ Every label map, exclusion and minimum class size (20 patients) was fixed in
 [config/subtype.yaml](config/subtype.yaml) before the first model was fitted
 ([docs/SUBTYPE_METHODS.md](docs/SUBTYPE_METHODS.md), D-30 to D-45); the regulator, site
 and MSI-repeat analyses of U8–U11 were fixed in [config/followup.yaml](config/followup.yaml) before
-they were run (D-46, D-47, D-52 to D-54).
+they were run (D-46, D-47, D-52 to D-56).
 
 ### Performance
 
@@ -630,7 +630,10 @@ in all three cancers (56–67% move up, against 38–49% for runs of 10–19). T
 - **Replication on unread A3SS events** (D-54): 2 of 6 tests supported, all 6 in the predicted
   direction.
 - **No mechanism yet:** the hnRNP C mechanism written down for it was not supported (D-53).
-- **Caveat:** there is no tumour DNA here, so the contractions are inferred, not seen.
+- **Not the hospital** (D-55): the score holds within hospital (AUROC 0.68 STAD, 0.81 COAD), after
+  adjusting for site, infiltrate and RNA handling, and in the less-infiltrated half of each cohort.
+- **Caveat:** there is no tumour DNA here yet, so the contractions are inferred, not seen. Reading
+  them in the exome reads is pre-specified (D-56).
 
 [U10 caption](results/figures/subtype/U10_msi_repeats.caption.md) ·
 [U11 caption](results/figures/subtype/U11_msi_long_tracts.caption.md) ·

@@ -722,9 +722,33 @@ exons shift together in stomach, colon and endometrium.
   than less. That reversal is a length rule we can describe (exploratory, partly replicated in
   A3SS), not one we can explain. The hnRNP C version we wrote down did not hold.
 
+**Not the hospital, the infiltrate or RNA handling** (D-55; family S, 6 of 7 supported). U9
+showed that splicing models can learn the hospital, so the score was checked against the sending
+site, tumour composition and RNA handling (`results/subtype/msi_cis/robustness/`).
+- **Within hospital** (S1). Using only MSI and other tumours from the same tissue-source site, the
+  score still separates MSI: AUROC 0.68 in STAD (13 sites, permutation p = 0.0008) and 0.81 in
+  COAD (15 sites, p = 0.0001). Leaving out one site at a time keeps it within 0.69–0.73 and
+  0.76–0.79.
+- **Adjusted** (S2). With site, stromal and immune expression and the mean retained-intron PSI in
+  the model, the MSI coefficient is −0.017 in STAD (95% CI −0.026 to −0.009) and −0.025 in COAD
+  (−0.034 to −0.017). With site alone it is −0.019 and −0.028.
+- **Not the infiltrate.** MSI tumours are heavily infiltrated (context), so this was the confound
+  most worth ruling out. Immune expression lowers the score on its own (p ≤ 0.002 in STAD and
+  COAD) but takes little of the MSI effect. In the less-infiltrated half of each cohort the AUROC
+  is 0.73 (STAD, 21 MSI) and 0.75 (COAD, 12 MSI).
+- **The normal tissue** (S3, not resolved). If the cause were the patient, the hospital or the
+  handling, the adjacent normal would carry it too. 6 of 9 MSI patients' tumours score below their
+  normals, against 25 of 47 other patients (AUROC 0.61, p = 0.29). Nine pairs cannot decide this.
+- **The feature filter** (S4). Rebuilt in the main SE matrix, the score separates MSI with AUROC
+  0.71 (STAD) and 0.78 (COAD). It correlates ρ = 1.000 with the original, so this rules out the
+  filter and nothing more (A-10).
+- **Endometrium** stays at 0.54 within hospital (outside the family).
+
 **What this does not show.**
-- **The deletions themselves.** There is no tumour DNA here: the mechanism is inferred from the
-  reference sequence and the MSI label, not from contraction alleles seen in each tumour.
+- **The deletions themselves.** There is no tumour DNA here yet: the mechanism is inferred from
+  the reference sequence and the MSI label, not from contraction alleles seen in each tumour. D-56
+  pre-specifies reading the 785 repeats in each tumour's exome reads (G1–G6); it waits on the BAM
+  slices.
 - **Exon-body reads.** The repository does not record whether the rMATS PSI counts exon-body
   reads. If it does, unspliced pre-mRNA could add to an apparent increase.
 - **The retained-intron check.** It was too thin to settle that: only 4 repeat exons with runs

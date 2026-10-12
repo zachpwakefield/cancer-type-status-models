@@ -1,0 +1,11 @@
+id,cohort,in_family,what,effect,predicted_sign,ci_low,ci_high,p,n,q,verdict
+S1,UCEC_TCGA,False,within-site AUROC(score lower in MSI) - 0.5,0.04166666666666663,1,,,0.5612438756124387,MSI 34 in 15 mixed sites,,"reported, not in family: direction as predicted"
+S2,UCEC_TCGA,False,"OLS coefficient of MSI, adjusted for site, stromal, immune, ri_mean (HC3)",-0.006745241612620018,-1,-0.017386234051128928,0.0038957508258888936,0.2140868800669815,135 patients (10 from single-patient sites left out),,"reported, not in family: direction as predicted"
+S1,STAD_TCGA,True,within-site AUROC(score lower in MSI) - 0.5,0.18181818181818177,1,,,0.0007999200079992001,MSI 55 in 13 mixed sites,0.0009332400093324002,supported
+S2,STAD_TCGA,True,"OLS coefficient of MSI, adjusted for site, stromal, immune, ri_mean (HC3)",-0.017284750012857515,-1,-0.025718715039578396,-0.008850784986136635,5.899562538910998e-05,316 patients (4 from single-patient sites left out),0.00010324234443094247,supported
+S1,COAD_TCGA,True,within-site AUROC(score lower in MSI) - 0.5,0.31426202321724706,1,,,9.999000099990002e-05,MSI 39 in 15 mixed sites,0.00013998600139986003,supported
+S2,COAD_TCGA,True,"OLS coefficient of MSI, adjusted for site, stromal, immune, ri_mean (HC3)",-0.02531099919283385,-1,-0.033803747364005904,-0.016818251021661797,5.1796611320165776e-09,227 patients (8 from single-patient sites left out),3.6257627924116045e-08,supported
+S3,pooled,True,AUROC(tumour - normal difference lower in MSI patients) - 0.5,0.11229314420803782,1,,,0.29439447824722353,"MSI patients 9, others 47",0.29439447824722353,not resolved
+S4,UCEC_TCGA,False,"AUROC(score lower in MSI) - 0.5, main matrix",0.010333863275039712,1,,,0.8574121634547491,"29847 exons, R 1478",,"reported, not in family: direction as predicted"
+S4,STAD_TCGA,True,"AUROC(score lower in MSI) - 0.5, main matrix",0.2089536878216124,1,,,1.0790549780994731e-06,"35455 exons, R 1793",2.5177949488987707e-06,supported
+S4,COAD_TCGA,True,"AUROC(score lower in MSI) - 0.5, main matrix",0.2779487179487179,1,,,3.1284356840218863e-08,"33253 exons, R 1705",1.0949524894076603e-07,supported

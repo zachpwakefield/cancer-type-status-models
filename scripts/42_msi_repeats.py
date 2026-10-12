@@ -27,6 +27,7 @@ from __future__ import annotations
 import argparse
 import gzip
 import re
+from pathlib import Path
 
 import numpy as np
 import pandas as pd
@@ -111,8 +112,9 @@ def window_seq(chrom_seq: str, r, side: str) -> tuple[str | None, int]:
     return s, n
 
 
-def annotate() -> pd.DataFrame:
-    f = parse_features(pd.read_parquet(DATA / "subtype" / "matrices" / "se" / "features.parquet"))
+def annotate(features: Path = DATA / "subtype" / "matrices" / "se" / "features.parquet",
+             out: Path = LOCAL / "se_repeats.parquet") -> pd.DataFrame:
+    f = parse_features(pd.read_parquet(features))
     rows = []
     for chrom, seq in read_genome(set(f["chrom"])):
         sub = f[f["chrom"].eq(chrom)]
@@ -133,7 +135,7 @@ def annotate() -> pd.DataFrame:
         log(f"{chrom}: {len(sub):,} exons")
     ann = f.merge(pd.DataFrame(rows), on="feature_id", how="left")
     LOCAL.mkdir(parents=True, exist_ok=True)
-    ann.to_parquet(LOCAL / "se_repeats.parquet", index=False)
+    ann.to_parquet(out, index=False)
     log(f"annotated {len(ann):,} exons; canonical AG at -2,-1: {ann['acc_ag'].eq('AG').mean():.3f}")
     return ann
 

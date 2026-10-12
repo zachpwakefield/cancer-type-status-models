@@ -3,7 +3,7 @@
 The third task of the repository: **within one cancer, which subtype is a primary tumour?** It is
 modelled, like the other two, independently in each of the nine views (AFE, ALE, HIT, SE, A5SS,
 A3SS, MXE, RI, GEX). Decisions are numbered from D-30 (D-48..D-51, which span the three tasks, are in
-[ACROSS_TASKS_METHODS.md](ACROSS_TASKS_METHODS.md), as is amendment A-8; D-52..D-54, the MSI-repeat
+[ACROSS_TASKS_METHODS.md](ACROSS_TASKS_METHODS.md), as is amendment A-8; D-52..D-56, the MSI-repeat
 follow-up, are here; D-01..D-12 are in
 [DECISIONS.md](DECISIONS.md), D-13..D-29 in [BIOLOGY_METHODS.md](BIOLOGY_METHODS.md)). Values live
 in [config/subtype.yaml](../config/subtype.yaml); this file explains them.
@@ -469,6 +469,7 @@ that contract more skip more (G4); contraction rises with run length (G6). Famil
 | A-6 | 2026-10-12, after R1–R6 were read | Two exploratory checks of R5/R6 (`scripts/37 --only post`): the partial Spearman also adjusting for each sample's mean MXE PSI (the global axis of D-24), and PTBP1's rank among the 70 factors for each event | D-24 had shown that factor–PSI correlations need that covariate; D-46 mirrored D-18, which predates it | Yes: exploratory; reported beside the pre-specified test, never instead of it |
 | A-7 | 2026-10-12, after the site probe's p-values were seen | D-47 did not name the FDR family for P1 and P2; it is taken as D-47's three tests (P1, P2 for GEX, P2 for the splicing median), the stricter of the two readings: P1 q = 0.080 ("not resolved") rather than 0.027 alone | The config's header rule needs a family | Yes: chosen after the p-values were seen, in the direction that weakens the result |
 | A-9 | 2026-10-12, after the D-52 code was written, before it was run | K1 reads MRE11 exon 5 from the full SE matrix whatever the cohort pre-filter (`msi_cis` names the event, not the matrix subset), and `test` also writes exploratory tables (`share_explained`, `detector`, `shared_repeat_exons`, `dose_exon_delta`) that the config lists as exploratory. After D-53, an exploratory retained-intron check (`ri_check.csv`) was added to ask whether unspliced RNA could explain the increases | The config did not say which matrix subset a named event is read from | K1 rule: no. The retained-intron check: yes, it was added after the reversal at ≥ 20 nt was seen; it is exploratory and too thin to decide (4 long-run exons per cohort) |
+| A-10 | 2026-10-12, S2: when the D-55 code was written, before it was run; S4: after it was run | S2 leaves out patients from tissue-source sites that sent only one patient of the cohort (UCEC 10, STAD 4, COAD 8): with a site fixed effect their leverage is 1, so their HC3 error is undefined, and they carry no within-site information. S4's score correlates ρ = 1.000 with the subtype-matrix score in all three cohorts (the same RNA files and nearly the same exons), so S4 checks the feature filter only, as D-55 says, and is not a second sample | `msi_robustness` did not say how S2 treats single-patient sites | S2: no. S4: a reading, added after the result; no number changed |
 
 ## Verification that the existing tasks are unchanged
 - `tests/test_subtype.py::TestExistingTasksUnchanged` rebuilds every existing task table from
