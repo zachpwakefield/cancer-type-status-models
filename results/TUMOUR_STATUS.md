@@ -144,12 +144,17 @@ direction?
   (median 15% vs 4.5% of events), in 13 of 15 cancers.
 - The shift is carried by most patients: in KICH, BLCA, PRAD and KIRC, 70–91% of patients retain
   more in their tumour than in their own normal tissue.
+- This is the pattern Dvinge and Bradley (2015) reported across 16 TCGA cancer types with matched
+  normals, including its exception: retention rose in tumours in almost every type, while in
+  breast it was enriched in the *normal* tissue. BRCA is the one cancer that retains less here.
 
 **Alternative splice sites.** A5SS long forms rise in 10 cancers and fall in none; A3SS long
 forms rise in 5.
 
 **Last exons.** They move upstream in 7 cancers and downstream in none — the direction of the
-proximal polyadenylation widely reported in tumours.
+proximal polyadenylation widely reported in tumours (Mayr and Bartel 2009; across TCGA, Xia et
+al. 2014). Those studies measured tandem 3′ UTRs, which this one does not; an upstream
+alternative last exon is the same choice made between exons rather than within one.
 
 **Alternative explanations.**
 - *Proliferation.* Within tumours, per-sample retention does not track a 10-gene proliferation
@@ -216,7 +221,10 @@ events.
 **Which factors change.** Of about 70 pre-specified RNA-binding proteins, ESRP1 rises in 10
 cancers and the cleavage and polyadenylation factors in up to 8, while CELF2 (11 cancers),
 RBM20 and RBM24 (10 each), NOVA2 (9), QKI and RBM47 (7 each) fall. Part of that fall is
-composition: normal tissue carries more stroma and smooth muscle.
+composition: normal tissue carries more stroma and smooth muscle. QKI's fall matches the
+literature, which finds it among the splicing factors most often lost in lung adenocarcinoma
+(Zong et al. 2014) and reduced across the cancers that lose macroH2A1.1 (Novikov et al. 2011);
+§9 tests the second of those links on the models' own macroH2A1 event.
 
 These are correlations inside tumours. A factor may be co-regulated with its apparent targets
 rather than drive them.
@@ -264,7 +272,11 @@ The top cassette exons of the tumour-status models (n = 1,281) and of the cancer
 
 So the signal sits in exons that change protein segments in frame, mostly in disordered,
 interaction-prone regions, rather than breaking folded domains or shifting the reading frame.
-These are the properties of exons that tissues regulate.
+These are the properties of exons that tissues regulate: tissue-specific exons are enriched in
+disordered segments carrying binding motifs, and switching them rewires protein interactions
+(Buljan et al. 2012; Ellis et al. 2012). The frame bias has also been seen in tumours before.
+Tsai et al. (2015) found 53% of cancer-specific cassette exons across TCGA to be
+frame-preserving, against 42% of controls, close to the 51% against 41% here.
 
 **Direction.** Exons skipped more in tumours are the most frame-preserving (55% divisible by 3)
 and the most domain-depleted (30%, OR 0.42); exons included more in tumours are the most enriched
@@ -526,20 +538,20 @@ against 91 nt: a 9-nt, 3-amino-acid, in-frame difference inside the macro domain
 372). These are the two exons that distinguish the macroH2A1.1 and macroH2A1.2 histone variants.
 Tumours shift towards the tracked exon in 10 of 15 cancers (median +0.09, UCEC 0.56 → 0.90) —
 the least consistent direction of the ten, which the S5 heat map shows row by row. It sits in
-the HNRNPF (ρ +0.37) and HNRNPU (+0.32) regulons, both enriched for model events, and reaches
-p < 0.05 in 5 of 14 cancers (KIRC, HR 0.79), with an assay page. The tracked exon is
-macroH2A1.2's: the 369-aa partner form carries the glycines (G223/G224) that let macroH2A1.1
-bind ADP-ribose (Kustatscher et al. 2005). That makes two published predictions testable here
-(D-28). QKI promotes the macroH2A1.1 exon (Novikov et al. 2011), and within tumours the
-macroH2A1.2 exon falls as QKI rises in 12 of 15 cancers (median ρ −0.23; sign test p = 0.018),
-13 of 15 with proliferation held fixed (−0.32, p = 0.004). Proliferating tumours lose
-macroH2A1.1 (Novikov 2011; Sporn et al. 2009), and the exon rises with a proliferation score in
-13 of 15 (+0.26, p = 0.004). The five cancers that do not shift towards it — KIRC, KIRP, KICH,
-THCA, HNSC — are mostly the slow-growing ones, and across the 15 the size of the shift follows
-how much more tumours proliferate than their normals (ρ 0.71; exploratory, added after seeing
-which cancers did not shift). An exon of PITX1-AS1 overlaps the partner exon on the other
-strand, but the event does not follow it (ρ +0.10). Of the ten, this is the one whose movement
-the literature predicts in both direction and regulator.
+the HNRNPF (ρ +0.37) and HNRNPU (+0.32) regulons, both enriched for model events, and reaches p
+< 0.05 in 5 of 14 cancers (KIRC, HR 0.79), with an assay page. The tracked exon is
+macroH2A1.2's; the 369-aa partner form is macroH2A1.1, whose macro domain binds ADP-ribose
+metabolites, which macroH2A1.2's cannot (Kustatscher et al. 2005). That makes two published
+predictions testable here (D-28). QKI promotes the macroH2A1.1 exon (Novikov et al. 2011), and
+within tumours the macroH2A1.2 exon falls as QKI rises in 12 of 15 cancers (median ρ −0.23; sign
+test p = 0.018), 13 of 15 with proliferation held fixed (−0.32, p = 0.004). Proliferating
+tumours lose macroH2A1.1 (Novikov 2011; Sporn et al. 2009), and the exon rises with a
+proliferation score in 13 of 15 (+0.26, p = 0.004). The five cancers that do not shift towards
+it — KIRC, KIRP, KICH, THCA, HNSC — are mostly the slow-growing ones, and across the 15 the size
+of the shift follows how much more tumours proliferate than their normals (ρ 0.71; exploratory,
+added after seeing which cancers did not shift). An exon of PITX1-AS1 overlaps the partner exon
+on the other strand, but the event does not follow it (ρ +0.10). Of the ten, this is the one
+whose movement the literature predicts in both direction and regulator.
 
 **What the ten have in common.** Not one is a cassette exon: six are mutually exclusive pairs
 and four are terminal or last exons. That is §5's view-level pattern at its sharpest — SE
@@ -644,3 +656,31 @@ overturn the argument, and how each could be checked:
 - **Unstranded libraries.** An event can count reads of an overlapping gene on the other strand,
   or of a nested gene on the same one (§10). The audit flags these but does not remove them from
   the models.
+
+## References
+
+Literature cited for context and for the concordance checks of §2, §4, §6 and §9 (D-28). None
+of it was used to choose a feature, a model or an event.
+
+- Buljan M, et al. Tissue-specific splicing of disordered segments that embed binding motifs
+  rewires protein interaction networks. *Mol Cell* 2012;46:871–883.
+- Dolnick BJ. Cloning and characterization of a naturally occurring antisense RNA to human
+  thymidylate synthase mRNA. *Nucleic Acids Res* 1993;21:1747–1752.
+- Dvinge H, Bradley RK. Widespread intron retention diversifies most cancer transcriptomes.
+  *Genome Med* 2015;7:45.
+- Ellis JD, et al. Tissue-specific alternative splicing remodels protein-protein interaction
+  networks. *Mol Cell* 2012;46:884–892.
+- Kustatscher G, Hothorn M, Pugieux C, Scheffzek K, Ladurner AG. Splicing regulates NAD
+  metabolite binding to histone macroH2A. *Nat Struct Mol Biol* 2005;12:624–625.
+- Mayr C, Bartel DP. Widespread shortening of 3′UTRs by alternative cleavage and
+  polyadenylation activates oncogenes in cancer cells. *Cell* 2009;138:673–684.
+- Novikov L, et al. QKI-mediated alternative splicing of the histone variant macroH2A1 regulates
+  cancer cell proliferation. *Mol Cell Biol* 2011;31:4244–4255.
+- Sporn JC, et al. Histone macroH2A isoforms predict the risk of lung cancer recurrence.
+  *Oncogene* 2009;28:3423–3428.
+- Tsai YS, Dominguez D, Gomez SM, Wang Z. Transcriptome-wide identification and study of
+  cancer-specific splicing events across multiple tumors. *Oncotarget* 2015;6:6825–6839.
+- Xia Z, et al. Dynamic analyses of alternative polyadenylation from RNA-seq reveal a 3′-UTR
+  landscape across seven tumour types. *Nat Commun* 2014;5:5274.
+- Zong FY, et al. The RNA-binding protein QKI suppresses cancer-associated aberrant splicing.
+  *PLoS Genet* 2014;10:e1004289.

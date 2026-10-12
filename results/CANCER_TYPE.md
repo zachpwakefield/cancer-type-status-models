@@ -141,6 +141,11 @@ LUSC, BLCA with CESC and HNSC. It also confuses several tumours with the normal 
 arose in (PRAD, THCA, LIHC, STAD), which is consistent with splicing tracking the cell of
 origin more than the tumour state.
 
+The squamous pattern has been seen without a classifier. In an embedding of exon-skipping PSI
+across 32 TCGA cancers, Kahles et al. (2018) found LUSC, CESC and HNSC grouping together,
+in their words "even overpowering" the tissue of origin, and found the lineage structure less
+pronounced in expression. That is the confusion matrix here, from the other direction.
+
 ## 4. Do the views agree on the processes behind a class?
 
 ![T4](figures/cancer_type/T4_pathway_coherence.png)
@@ -290,9 +295,12 @@ Nine of the ten are terminal exons, first exons or a splice-site shift, and only
 mutually exclusive swap — the opposite balance to the tumour-status events of
 [TUMOUR_STATUS.md](TUMOUR_STATUS.md) §9, where six of ten are mutually exclusive pairs. It is
 also what §5 predicts: a class is named by where transcription starts and ends, which is the
-same decision that makes the terminal-exon views track host-gene expression. None of the ten is
-in a splicing-factor regulon the tumour-status models' events are enriched for. Lineage
-decisions and the tumour programme are different sets of events.
+same decision that makes the terminal-exon views track host-gene expression. It is also what
+GTEx shows for normal tissues: alternative start and termination sites, not splicing, account
+for most tissue-dependent isoform usage, and most tissue-dependent splicing involves untranslated
+exons (Reyes and Huber 2018) — the two features of this list. None of the ten is in a
+splicing-factor regulon the tumour-status models' events are enriched for. Lineage decisions and
+the tumour programme are different sets of events.
 
 ## 9. Which class-defining events measure another gene
 
@@ -371,3 +379,13 @@ overturn the argument:
 - **Reference data.** Gene sets are MSigDB 2026.1; protein annotation is GENCODE v45.
 - **Unstranded libraries.** An event can count reads of an overlapping gene (§9). The audit
   flags these but does not remove them from the models.
+
+## References
+
+Literature cited for context (§3, §8). None of it was used to choose a feature, a model or an
+event.
+
+- Kahles A, et al. Comprehensive analysis of alternative splicing across tumors from 8,705
+  patients. *Cancer Cell* 2018;34:211–224.
+- Reyes A, Huber W. Alternative start and termination sites of transcription drive most
+  transcript isoform differences across human tissues. *Nucleic Acids Res* 2018;46:582–592.
