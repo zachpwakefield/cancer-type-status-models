@@ -407,6 +407,18 @@ whether a cis route explains part of them, choosing exons from the genome alone.
   organs (M7); MRE11 exon 5 is skipped in MSI (K1). FDR families M (19 tests) and K (3).
   HSPH1 exon 9 is not a cassette event of either SE matrix and cannot be tested.
 
+### D-53 Long U-tracts: can MSI raise inclusion? · `config/followup.yaml: msi_long_tracts` · `scripts/42 --only tracts`
+Added 2026-10-12 after the D-52 results were read, before this relation was computed. The two
+U7 loci more included in MSI (CCNDBP1, ANXA7) carry 30- and 29-nt acceptor T-runs, the longest
+of the U7 events, and the spread of the MSI shift widens for runs ≥ 14 in both directions.
+hnRNP C binds long U-tracts and competes with U2AF65 at the acceptor, repressing the exon
+(Zarnack et al. 2013). If MSI shortens such a tract it may relieve repression, while a moderate
+tract that U2AF65 needs is weakened. Repressed exons sit at low baseline inclusion, so the
+predictions are about baseline: N1, among repeat exons the background-adjusted MSI shift falls
+with the exon's mean PSI (Spearman < 0); N2, more so than for deep-intron T-runs; N3, more so for
+runs ≥ 20 than for runs 10–14. The nine MSI-class SE events of §8 are left out. BH over N1–N3
+and the three cohorts (9 tests).
+
 ---
 
 ## Amendments and deviations

@@ -2,6 +2,7 @@
 #   subtype_regulators, subtype_site_probe   docs/SUBTYPE_METHODS.md D-46, D-47
 #   cross_task                               docs/ACROSS_TASKS_METHODS.md D-48..D-51
 #   msi_cis                                  docs/SUBTYPE_METHODS.md D-52 (added later the same day)
+#   msi_long_tracts                          docs/SUBTYPE_METHODS.md D-53 (after D-52's results)
 #
 # Written 2026-10-12, after every model of the three tasks had been fitted and summarised, and
 # before any analysis below was run. Nothing here refits a model or changes a label, a cohort, a
@@ -274,3 +275,32 @@ msi_cis:                                 # D-52 · scripts/42_msi_repeats.py
     frame: share of exons skipped in MSI with an acceptor T-run >= 10 whose length is not a
            multiple of 3 (skipping shifts the frame), against all R exons
     shared: R exons less included in MSI in all three cohorts, ranked
+
+msi_long_tracts:                         # D-53 · scripts/42_msi_repeats.py --only tracts
+  # Written 2026-10-12 after the D-52 results (results/subtype/msi_cis/) had been read, before the
+  # relation below was computed. Prompted by two observations: the two U7 loci MORE included in
+  # MSI (CCNDBP1, ANXA7) carry the longest acceptor T-runs of the U7 events (30 and 29 nt), and the
+  # spread of exon_delta widens for runs >= 14 (dose_exon_delta.csv, both tails). Seen: those two
+  # tables, the U7 events' runs, every D-52 prediction and exploratory table. Not seen: exon_delta
+  # against baseline inclusion for any repeat set, or any table split by baseline PSI.
+  hypothesis: a long U-tract is bound by hnRNP C, which competes with U2AF65 and represses the
+              acceptor; shortening it in MSI can relieve repression (inclusion up) while a
+              moderate tract that U2AF65 needs is weakened (inclusion down). Repressed exons have
+              low baseline inclusion, so the MSI shift should depend on baseline PSI.
+  source: "Zarnack et al. 2013 Cell 152:453 (hnRNP C vs U2AF65 at U-tracts, Alu exons)"
+  sets: R and R_deep of msi_cis; the nine SE events of the MSI class in
+        results/subtype/interpret/shared_class_events.csv are left out
+  effect: exon_delta_adj of msi_cis (exon delta minus the B median of its mean-PSI decile)
+  fdr_family: N1-N3 over the three cohorts (9 tests)
+  predictions:
+    - id: N1
+      claim: among R exons, Spearman(exon_delta_adj, cohort mean PSI) < 0
+    - id: N2
+      claim: that Spearman is more negative for R than for R_deep (Fisher z, independent sets)
+      why: a deep-intron T-run is not at the acceptor, so neither factor reads it there
+    - id: N3
+      claim: that Spearman is more negative for acceptor runs >= 20 than for runs 10-14 (Fisher z)
+      why: hnRNP C needs long U-tracts; U2AF65 binds shorter ones
+  exploratory: share of exons with exon_delta_adj > 0 by baseline-PSI tertile x run length
+               (10-14, 15-19, >= 20); the absolute exon_delta_adj against run length, acceptor
+               against deep window
