@@ -59,6 +59,13 @@ exons. The same metrics for the union of every subtype cohort's top 100 SE event
 same background; Fisher exact tests, BH over metrics and sets. E1: subtype exons share the
 other tasks' bias (frame-preserving, outside domains, in disordered regions).
 
+### Amendments and deviations
+Numbered with the subtype amendments (A-1..A-7 in [SUBTYPE_METHODS.md](SUBTYPE_METHODS.md)).
+
+| # | When | What | Why | Informed by results? |
+|---|---|---|---|---|
+| A-8 | 2026-10-12, written into `scripts/40` before it was first run, but not into the config | D-49 sensitivity: the targets' share of the probability *not* given to the patient's own project, P(targets) / (1 − P(own)), same test | A summed target probability also rises when a tumour is simply less confidently its own project; the share separates "resembles the target" from "resembles nothing in particular" | No, but it is not pre-specified and is reported as a sensitivity |
+
 ### What is published (D-12)
 Aggregates only: per class, cohort and view. Per-patient probabilities stay in
 `<data_dir>`.

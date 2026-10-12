@@ -49,4 +49,10 @@ wait $p1 && wait $p2 && wait $p3
 run scripts/33_subtype_run_all.py --workers "${WORKERS:-6}"
 run scripts/34_subtype_summarise.py
 run scripts/35_subtype_interpret.py
+# splicing regulators and the site probe of the subtypes (D-46, D-47; config/followup.yaml)
+run scripts/37_subtype_regulators.py --workers "${WORKERS:-6}"
+run scripts/38_subtype_site_probe.py --workers "${WORKERS:-6}"
 run scripts/36_subtype_figures.py
+# across the three tasks (docs/ACROSS_TASKS_METHODS.md D-48..D-51): nothing refitted
+run scripts/40_cross_task.py
+run scripts/41_figures_cross_task.py

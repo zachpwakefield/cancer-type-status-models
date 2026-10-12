@@ -9,6 +9,9 @@ These are deep-learning classifiers that predict, from a single TCGA RNA-seq sam
 3. **Subtype, within a cancer.** Which histological, molecular or IHC-defined subtype is a
    primary tumour? This is a separate model for each of 22 subtype cohorts in 15 cancers.
 
+A fourth layer fits no new model. It compares the three tasks' predictions and explanations on
+the same patients.
+
 Each task is modelled **independently in each of nine modalities**:
 
 | View | Feature | Source |
@@ -28,13 +31,36 @@ patient-grouped cross-validation. It is explained with SHAP on held-out samples 
 
 ## Results
 
-The three tasks are separate questions with separate answers, so their results are posted
-separately: [tumour status](#tumour-status-tumour-vs-normal-tissue-within-a-cancer) first, then
-[cancer type](#cancer-type-34-classes-pan-cancer), then
-[subtype](#subtype-within-a-cancer-22-cohorts-in-15-cancers). Each part gives the models' performance, then
-walks through what they learned, figure by figure. Full tables, CIs and the top SHAP features of
-every cohort and view are in [results/RESULTS.md](results/RESULTS.md); the methods of the
-interpretation layer are in [docs/BIOLOGY_METHODS.md](docs/BIOLOGY_METHODS.md) (D-13 to D-29).
+Three questions, each answered on its own and then compared. Every task section below has the
+same four parts: what was asked, performance, what the models learned (figure by figure), and the
+checks that bound the claims. Each also has a full write-up. A fourth section asks how the three
+tasks relate.
+
+| | [Tumour status](#tumour-status-tumour-vs-normal-tissue-within-a-cancer) | [Cancer type](#cancer-type-34-classes-pan-cancer) | [Subtype](#subtype-within-a-cancer-22-cohorts-in-15-cancers) |
+|---|---|---|---|
+| Question | tumour or adjacent normal tissue? | which of 33 projects, or normal tissue? | which subtype of this cancer? |
+| Scope | 15 cancers, 6,815 samples, 135 models | 34 classes, 9,729 samples, 9 models | 22 cohorts in 15 cancers, 7,552 patient–cohort pairs, 198 models |
+| GEX | mean AUROC 0.992; 99 errors | accuracy 0.954 | balanced accuracy 0.84 / 0.88 / 0.90 (histology / genomic or IHC / expression-defined) |
+| AS ensemble (8 splicing views) | 0.994; 91 errors | 0.950 | 0.80 / 0.82 / 0.81 |
+| GEX + AS (1:1) | 77 errors (McNemar p = 1.1e-4) | 0.961 (p = 3.9e-9) | −0.04 to +0.04 per cohort; no McNemar p < 0.05 |
+| Headline | splicing is a second, partly independent view of the tumour state | splicing is a lineage code, and fails where a lineage code should | splicing matches expression on lineage and genome-state subtypes and loses where one gene defines the class |
+| Write-up · figures | [TUMOUR_STATUS.md](results/TUMOUR_STATUS.md) · S1–S10 | [CANCER_TYPE.md](results/CANCER_TYPE.md) · T1–T9 | [SUBTYPE.md](results/SUBTYPE.md) · U1–U9 |
+
+[**Across the three tasks**](#across-the-three-tasks) ([ACROSS_TASKS.md](results/ACROSS_TASKS.md),
+X1–X4) compares them:
+- the tasks' models share genes 5–8 times more often than chance;
+- 12 of 13 literature predictions about which other cancers a subtype resembles hold in the
+  cancer-type model's probabilities;
+- the splicing status models find all six predicted subtypes less tumour-like;
+- the exons all three tasks use have the same protein character.
+
+Full tables, CIs and the top SHAP features of every cohort and view are in
+[results/RESULTS.md](results/RESULTS.md). Methods are in three files:
+- [docs/BIOLOGY_METHODS.md](docs/BIOLOGY_METHODS.md), D-13 to D-29: interpretation of status and
+  type;
+- [docs/SUBTYPE_METHODS.md](docs/SUBTYPE_METHODS.md), D-30 to D-47: the subtype task;
+- [docs/ACROSS_TASKS_METHODS.md](docs/ACROSS_TASKS_METHODS.md), D-48 to D-51: the cross-task
+  layer.
 
 ## Tumour status: tumour vs normal tissue within a cancer
 
@@ -197,8 +223,22 @@ against 1.27); what changes is how these events are named.
 [caption](results/figures/tumour_status/S10_overlap_audit.caption.md) ·
 [§10](results/TUMOUR_STATUS.md#10-which-events-measure-another-gene)
 
-Not shown here: the protein character of the models' cassette exons against all measured exons
-(S6) and the SHAP dependence of the six most shared events (S7), both in the write-up.
+Not shown here, both in the write-up:
+- the protein character of the models' cassette exons against all measured exons (S6, extended to
+  all three tasks in X4);
+- the SHAP dependence of the six most shared events (S7).
+
+### Checks and caveats
+
+- **Neighbouring genes.** 163 of 1,105 overlapping top events read another gene more than their
+  own (S10). They are named as such throughout.
+- **RNA quality.** Tumours retain more intronic sequence (S2), but RNA integrity raises intronic
+  reads too, and TCGA has no RIN for these samples.
+- **Few normal samples.** ESCA has 11, and every splicing view drops there.
+- **Outcome.** The survival signal of S8 is modest, halves with age, sex and stage, and is mostly
+  renal at the level of single events.
+- **Site.** Not a confound for this task: a patient's tumour and normal sample come from the same
+  site.
 
 ## Cancer type: 34 classes, pan-cancer
 
@@ -330,16 +370,21 @@ reads. The comparison of T5 is with each event's *own* gene and stands; this is 
 [caption](results/figures/cancer_type/T9_overlap_audit.caption.md) ·
 [§9](results/CANCER_TYPE.md#9-which-class-defining-events-measure-another-gene)
 
-The remaining figures — per-class recall (T2), pathway coherence (S3, T4), exon protein
-statistics (S6), event portraits and SHAP dependence (S7), and whether class-defining events are
-expression in disguise (T5) — are in the two narratives, with the methods in
-[docs/BIOLOGY_METHODS.md](docs/BIOLOGY_METHODS.md) (D-13 to D-29).
+Not shown here, all in the write-up: per-class recall against expression (T2), pathway coherence
+(T4), and whether class-defining events are expression in disguise (T5).
 
-Not shown here: per-class recall against expression (T2), in the write-up.
+### Checks and caveats
+
+- **Site.** The splicing views' colon/rectum advantage is a tissue-source-site effect (T7) and is
+  not counted as biology. Glioma grade, kidney subtype and lung histology hold at unseen sites.
+- **Neighbouring genes.** 101 of 695 overlapping top events read another gene (T9). That gene is
+  mostly a lineage gene the expression model already reads.
+- **Small classes.** Balanced accuracy and macro F1 sit below accuracy for every view because the
+  small classes are the hard ones (T2).
 
 ## Subtype within a cancer: 22 cohorts in 15 cancers
 
-**Full write-up: [results/SUBTYPE.md](results/SUBTYPE.md)** (figures U1–U7) — *within a cancer,
+**Full write-up: [results/SUBTYPE.md](results/SUBTYPE.md)** (figures U1–U9) — *within a cancer,
 splicing recovers lineage and genome state about as well as expression, and loses where a subtype
 is a single gene switched on.* One model per (cohort, view) over 22 subtype cohorts from 15 TCGA
 projects:
@@ -348,7 +393,9 @@ projects:
 
 Every label map, exclusion and minimum class size (20 patients) was fixed in
 [config/subtype.yaml](config/subtype.yaml) before the first model was fitted
-([docs/SUBTYPE_METHODS.md](docs/SUBTYPE_METHODS.md), D-30 to D-45).
+([docs/SUBTYPE_METHODS.md](docs/SUBTYPE_METHODS.md), D-30 to D-45); the regulator and site
+analyses of U8–U9 were fixed in [config/followup.yaml](config/followup.yaml) before they were run
+(D-46, D-47).
 
 ### Performance
 
@@ -505,6 +552,165 @@ three (AUROC ≥ 0.75 or ≤ 0.25 in each).
 [caption](results/figures/subtype/U7_msi_events.caption.md) ·
 [§8](results/SUBTYPE.md#8-msi-leaves-the-same-splicing-marks-in-three-cancers-exploratory)
 
+#### 6. Splicing regulators of the subtypes
+
+<img src="results/figures/subtype/U8_regulators.png" width="900" alt="U8: predicted splicing-factor differences between subtypes, and the ACTN1 and TPM1 events by PTBP1 level in sarcoma">
+
+**U8.** Six predictions, fixed before any splicing factor was looked at by subtype (D-46).
+- **Supported:**
+  - ESRP2 is lower in biphasic than in epithelioid mesothelioma (AUROC 0.82);
+  - ESRP1 is lower in the mesenchymal HNSC class (0.76);
+  - PTBP1 is lower in leiomyosarcoma (0.66);
+  - adjusting for class and composition, higher PTBP1 moves the ACTN1 smooth-muscle exon away
+    from the leiomyosarcoma pattern (partial ρ +0.43; +0.57 within leiomyosarcoma), as PTB's
+    repression of that exon predicts.
+- **Not resolved:** ESRP1 in mesothelioma, where it is barely expressed.
+- **Against the mechanism:** the TPM1 exon 2/3 event also moves away from the leiomyosarcoma
+  pattern as PTBP1 rises (ρ −0.22). That matches the sign written down in advance, but the sign
+  misread its source: in TPM1, PTB and MBNL1 repress the *non*-smooth-muscle exon (A-5). MBNL1
+  follows the event most closely, in the published direction.
+- **Specificity** (exploratory): PTBP1 ranks 2nd of 70 factors for ACTN1 and 12th for TPM1, so
+  this is a PTB–MBNL axis rather than one factor.
+
+[caption](results/figures/subtype/U8_regulators.caption.md) ·
+[§9](results/SUBTYPE.md#9-splicing-regulators-of-the-subtypes)
+
+#### 7. Part of the splicing accuracy is specific to the site
+
+<img src="results/figures/subtype/U9_site_probe.png" width="833" alt="U9: loss of balanced accuracy when tissue-source sites are held out, per cohort, and against site–class association">
+
+**U9.** The site probe of T7 on 21 subtype cohorts (D-47). A fixed classifier is cross-validated
+grouped by patient, then with whole tissue-source sites held out.
+- **Expression transfers.** GEX loses ≤ 0.035 balanced accuracy in 20 of 21 cohorts; THCA, where
+  tall-cell tumours come from 5 sites, loses 0.116.
+- **Splicing loses more, in particular cohorts** (median of the 8 views): HNSC_HPV 0.098, CESC
+  0.077, THCA 0.077, HNSC_mRNA 0.073. Outside THCA, GEX loses −0.001 to 0.014 in these cohorts.
+- **Pre-specified tests:**
+  - "splicing loses more than GEX in most cohorts" holds in 16 of 21 (sign-test q = 0.080): not
+    resolved;
+  - "the loss grows with site–class association" is not supported. ESCA, the most confounded
+    cohort, loses almost nothing.
+
+[caption](results/figures/subtype/U9_site_probe.caption.md) ·
+[§10](results/SUBTYPE.md#10-is-the-subtype-signal-tied-to-the-site-that-sent-the-sample)
+
+### Checks and caveats
+
+- **Site** (U9). Part of the splicing models' accuracy on HPV status, the HNSC expression classes,
+  cervical histology and gastric molecular class is specific to the sites that sent the samples;
+  expression's is not.
+- **Neighbouring genes** (U6). 97 of 2,248 top events read a neighbour, and every named event is
+  given with its audit status.
+- **Label provenance.**
+  - Expression-defined labels make GEX near-circular.
+  - The PRAD ETS-fusion calls used RNA-seq.
+  - HPV status is known for 112 of 501 HNSC patients and is confounded with tumour site.
+- **Small classes.** Classes of 20–40 patients have recall intervals up to ±0.20.
+
+## Across the three tasks
+
+**Full write-up: [results/ACROSS_TASKS.md](results/ACROSS_TASKS.md)** (figures X1–X4). *The three
+tasks' models share genes and exon types, and where the type and status models hesitate, they
+hesitate as the literature predicts.*
+
+Nothing is refitted: every number comes from the three tasks' out-of-fold predictions and
+held-out SHAP values. The predictions, their sources and a list of what had already been seen
+were committed in [config/followup.yaml](config/followup.yaml) before anything was computed
+([docs/ACROSS_TASKS_METHODS.md](docs/ACROSS_TASKS_METHODS.md), D-48 to D-51).
+
+| Predictions | GEX | AS ensemble | GEX + AS |
+|---|---|---|---|
+| T1–T13: a subtype carries more type probability for the projects it is said to resemble | 11 of 13 | 13 of 13 | 12 of 13 |
+| S1–S6: a subtype looks less tumour-like to its cancer's status model | 2 of 6 | 6 of 6 | 6 of 6 |
+
+The model-level predictions:
+- **Supported:** G1 (every pair of tasks shares genes above chance) and E1 (subtype exons have the
+  other tasks' protein character).
+- **Not supported:** G2 (histology subtypes sit closer to the type model than to the status model)
+  and C1 (stromal and immune content explains the status probabilities).
+
+#### 1. The three tasks read overlapping genes
+
+<img src="results/figures/across_tasks/X1_gene_overlap.png" width="744" alt="X1: top-100 gene overlap between each pair of tasks, and for histology cohorts subtype against status and type">
+
+**X1.** For each subtype cohort, the top 100 genes per view of three models: the subtype model,
+its cancer's status model, and the type model's importance over that cancer's own samples.
+- **Every pair overlaps** 5–8 times more than chance (87–94% of 387 comparisons at q < 0.05).
+- **No lineage preference.** Histology subtypes are no closer to the type model than to the status
+  model.
+- **The shared core is splicing.** 402 of the 413 gene entries found in all three lists of a cancer
+  come from splicing views. Most are switches in smooth-muscle and stromal genes: TPM1 in 10
+  cohort-views, CHN1, ACTN1. They track tissue composition, which every task's samples vary in.
+
+[caption](results/figures/across_tasks/X1_gene_overlap.caption.md) ·
+[§1](results/ACROSS_TASKS.md#1-the-three-tasks-read-overlapping-genes)
+
+#### 2. Which other cancers a subtype resembles
+
+<img src="results/figures/across_tasks/X2_type_probability_by_subtype.png" width="900" alt="X2: cancer-type probability of the predicted target projects in each subtype group, and AUROC by model">
+
+**X2.** The pan-cancer type model never saw a subtype label. Where it spreads probability beyond a
+tumour's own project, it does so as the literature predicts:
+- squamous oesophageal and cervical tumours lean towards head-and-neck and lung squamous
+  carcinoma;
+- oesophageal adenocarcinoma leans towards stomach (18 of 81 called STAD, against 0 of 80 squamous
+  tumours);
+- cervical adenocarcinoma leans towards endometrium;
+- IDH-wildtype lower-grade glioma leans towards glioblastoma;
+- copy-number-high and serous endometrial cancer lean towards ovary and carcinosarcoma;
+- biphasic mesothelioma leans towards sarcoma;
+- HPV-positive head-and-neck cancer leans towards cervix (AUROC 0.92).
+
+Intestinal-type gastric cancer leaning towards colon is not resolved. One caution (A-8, not
+pre-specified): basal-like breast tumours carry more ovarian probability only because they carry
+more off-target probability of every kind.
+
+[caption](results/figures/across_tasks/X2_type_probability_by_subtype.caption.md) ·
+[§2](results/ACROSS_TASKS.md#2-which-other-cancers-a-subtype-resembles)
+
+#### 3. How tumour-like the status model finds each subtype
+
+<img src="results/figures/across_tasks/X3_status_probability_by_subtype.png" width="900" alt="X3: mean one minus P(tumour) by subtype group, AUROC by model, and P(tumour) against stromal and immune scores">
+
+**X3.** The splicing status models find all six predicted subtypes less tumour-like:
+- normal-like breast cancer (AUROC 0.84; 13% scored below 0.5, against ≤ 0.5% of other PAM50
+  classes);
+- follicular-variant thyroid cancer (tall cell is more tumour-like than classical);
+- diffuse and genomically stable gastric cancer;
+- lobular breast cancer.
+
+GEX resolves two of the six, because its probabilities sit at the ceiling (medians 0.998–1.000),
+so this is partly calibration. Stromal and immune content does not explain it: P(tumour) falls
+with those scores in three cancers and rises in two.
+
+[caption](results/figures/across_tasks/X3_status_probability_by_subtype.caption.md) ·
+[§3](results/ACROSS_TASKS.md#3-how-tumour-like-the-status-model-finds-each-subtype)
+
+#### 4. The same kind of exon in every task
+
+<img src="results/figures/across_tasks/X4_exon_protein_character.png" width="546" alt="X4: protein character of the top cassette exons of the three tasks against all measured exons">
+
+**X4.** The subtype models' top cassette exons (1,857) carry the signature first seen in the other
+two tasks (S6), slightly weaker:
+- more often divisible by 3 (49% against 41% of all measured exons);
+- less often in a Pfam/CDD domain (39% against 51%);
+- more often in a disordered region (18% against 14%).
+
+Whatever separates tumour from normal, tissue from tissue or subtype from subtype, the splicing
+models reach for exons that rewire interaction segments rather than break folded domains.
+
+[caption](results/figures/across_tasks/X4_exon_protein_character.caption.md) ·
+[§4](results/ACROSS_TASKS.md#4-the-exons-each-task-uses-do-the-same-kind-of-thing-to-the-protein)
+
+### Checks and caveats
+
+- **When the predictions were written.** They were written after the main results. Some
+  project-level confusions (ESCA ↔ STAD, CESC ↔ HNSC) had already been seen, as the config
+  records; only the subtype split was new.
+- **Calibration.** X3 reads probabilities that GEX pushes to the ceiling.
+- **A sensitivity that is not pre-specified.** The off-target share (A-8) changes the reading of
+  T6.
+
 ## How the models are built
 
 ```
@@ -560,7 +766,8 @@ centred logit zₖ − z̄ of the sample's true class (see [docs/METHODS.md](doc
 
 ```
 config/       study.yaml (every rule and the search space), sources.yaml (raw data and reference paths),
-              biology.yaml (interpretation thresholds), subtype.yaml (label maps, fixed before any fit)
+              biology.yaml (interpretation thresholds), subtype.yaml (label maps, fixed before any fit),
+              followup.yaml (predictions of the subtype regulator/site and cross-task analyses)
 src/ctsm/     library
   cohort.py splits.py annotation.py extract.py matrix_io.py   data
   preprocess.py model.py pipeline.py metrics.py explain.py    modelling
@@ -573,16 +780,20 @@ scripts/      00_register_sources → 01_build_cohort → 02_extract_matrices �
               → 20_figures_status / 21_figures_type (every figure)
               subtype task: 00b_fetch_gdc_labels → 30_subtype_labels → 31_subtype_extract
               → 32_subtype_run_job / 33_subtype_run_all → 34_subtype_summarise
-              → 35_subtype_interpret → 36_subtype_figures
+              → 35_subtype_interpret → 37_subtype_regulators, 38_subtype_site_probe → 36_subtype_figures
+              across tasks: 40_cross_task → 41_figures_cross_task
               run_pipeline.sh
 tests/        unit tests (leakage guards, encodings, preprocessing, SHAP additivity, biology helpers)
-docs/         METHODS, DECISIONS, LEAKAGE_POLICY, BIOLOGY_METHODS, SUBTYPE_METHODS, FIGURE_GUIDELINES
+docs/         METHODS, DECISIONS, LEAKAGE_POLICY, BIOLOGY_METHODS, SUBTYPE_METHODS, ACROSS_TASKS_METHODS,
+              FIGURE_GUIDELINES
 results/      data/ (cohort, splits, extraction, validation summaries)
               tumor_status/<view>/<cancer>/, cancer_type/<view>/PANCAN/, summary/, RESULTS.md
               biology/01_complementarity … 14_survival_robustness/ (tables)
-              subtype/<view>/<cohort>/, subtype/{data,summary,interpret}/
-              figures/tumour_status/ (S1–S10), figures/cancer_type/ (T1–T9), figures/subtype/ (U1–U7)
-              TUMOUR_STATUS.md, CANCER_TYPE.md, SUBTYPE.md
+              subtype/<view>/<cohort>/, subtype/{data,summary,interpret,regulators,site_probe}/
+              across_tasks/ (tables)
+              figures/tumour_status/ (S1–S10), figures/cancer_type/ (T1–T9), figures/subtype/ (U1–U9),
+              figures/across_tasks/ (X1–X4)
+              TUMOUR_STATUS.md, CANCER_TYPE.md, SUBTYPE.md, ACROSS_TASKS.md
 ```
 
 ## Reproducing
@@ -611,6 +822,8 @@ OMP_NUM_THREADS=1 python scripts/04_run_job.py tumor_status se BRCA
   subtype jobs ran on 2026-10-12 from a working tree whose subtype code was not yet committed,
   so their `git_commit` is the commit of the day plus `+dirty`; that code was committed
   afterwards, with the results.
+- **Follow-up analyses:** the predictions of `config/followup.yaml` were committed in `741a1a1`
+  before steps 37, 38 and 40 were first run (2026-10-12). Those steps refit no task model.
 - **Subtype labels:** the TCGA-CDR histology table (path in `config/sources.yaml`) and two
   open-access GDC PanCanAtlas tables (published subtype calls and clinical fields), fetched and
   MD5-checked by `scripts/00b_fetch_gdc_labels.py` into `data.nosync/`.

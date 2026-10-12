@@ -1,0 +1,67 @@
+model,id,cohort,higher_in,lower_in,source,n_higher,n_lower,median_higher,median_lower,mean_higher,mean_lower,auroc,p,q,verdict,panel,project,score,n,rho,q_family
+AS ensemble,S1,BRCA_PAM50,LumA+LumB+Her2+Basal,Normal-like,Parker et al. 2009 J Clin Oncol 27:1160 (normal-like reflects normal-tissue content),1034.0,39.0,0.9991280704440944,0.955070139445906,0.990768799928653,0.8085913960364645,0.8377721569210931,7.527134391483035e-13,4.51628063488982e-12,supported,"a, b",,,,,BH across S1-S6 within each model
+AS ensemble,S2,THCA,Classical,Follicular,"TCGA 2014 Cell 159:676 (RAS-like, follicular, most differentiated)",351.0,100.0,0.9884808152131088,0.971472754665657,0.9530250662837,0.9137176767619224,0.6714245014245014,1.672050532708464e-07,5.016151598125393e-07,supported,"a, b",,,,,BH across S1-S6 within each model
+AS ensemble,S3,THCA,Tall cell,Classical,"TCGA 2014 Cell 159:676 (tall-cell-like cluster, lowest differentiation score)",35.0,351.0,0.9920887606527335,0.9884808152131088,0.984630154086114,0.9530250662837,0.6188848188848188,0.0203661943629995,0.0203661943629995,supported,"a, b",,,,,BH across S1-S6 within each model
+AS ensemble,S4,STAD,Intestinal,Diffuse,Lauren 1965 (diffuse type infiltrates as scattered cells in stroma),157.0,70.0,0.9818223398440098,0.976061577645955,0.9651425378943168,0.9354948011188756,0.6052775250227479,0.0113779721941744,0.0136535666330092,supported,"a, b",,,,,BH across S1-S6 within each model
+AS ensemble,S5,STAD_TCGA,CIN+MSI+EBV,GS,TCGA 2014 Nature 513:202 (GS enriched for diffuse histology),277.0,43.0,0.980853412163782,0.9506267293655816,0.9602673438476907,0.868941657489076,0.6980941986399127,2.9255143691770393e-05,5.851028738354078e-05,supported,"a, b",,,,,BH across S1-S6 within each model
+AS ensemble,S6,BRCA,Ductal,Lobular,histological definition (discohesive single-file infiltration),759.0,193.0,0.9991481524407724,0.9989954206978964,0.9890816328770298,0.96264846231852,0.5770409660925543,0.0009375877409058,0.0014063816113587,supported,"a, b",,,,,BH across S1-S6 within each model
+GEX,S1,BRCA_PAM50,LumA+LumB+Her2+Basal,Normal-like,Parker et al. 2009 J Clin Oncol 27:1160 (normal-like reflects normal-tissue content),1034.0,39.0,0.9997035255460384,0.998927673803906,0.9973223218923934,0.8576682455071205,0.6862322075088032,7.72358525262376e-05,0.0004634151151574,supported,"a, b",,,,,BH across S1-S6 within each model
+GEX,S2,THCA,Classical,Follicular,"TCGA 2014 Cell 159:676 (RAS-like, follicular, most differentiated)",351.0,100.0,0.9982273039046958,0.9981633975068234,0.9793356708942664,0.9883195092034396,0.4903703703703703,0.7691226868149839,0.8567270676480074,not resolved,"a, b",,,,,BH across S1-S6 within each model
+GEX,S3,THCA,Tall cell,Classical,"TCGA 2014 Cell 159:676 (tall-cell-like cluster, lowest differentiation score)",35.0,351.0,0.9987636439397009,0.9982273039046958,0.99859494475381,0.9793356708942664,0.6478632478632479,0.0039126843105962,0.0117380529317887,supported,"a, b",,,,,BH across S1-S6 within each model
+GEX,S4,STAD,Intestinal,Diffuse,Lauren 1965 (diffuse type infiltrates as scattered cells in stroma),157.0,70.0,0.998150764411714,0.9985004633277864,0.9933287409644186,0.9807528626431,0.5075523202911738,0.8567270676480074,0.8567270676480074,not resolved,"a, b",,,,,BH across S1-S6 within each model
+GEX,S5,STAD_TCGA,CIN+MSI+EBV,GS,TCGA 2014 Nature 513:202 (GS enriched for diffuse histology),277.0,43.0,0.9982962729883204,0.9964373657902262,0.989640627230598,0.9504327334780844,0.570816891948619,0.1353186398058082,0.2029779597087123,not resolved,"a, b",,,,,BH across S1-S6 within each model
+GEX,S6,BRCA,Ductal,Lobular,histological definition (discohesive single-file infiltration),759.0,193.0,0.9996875837989598,0.9997093177707376,0.9960671798589906,0.9766881751854444,0.5506085864274646,0.0297506133426647,0.0595012266853295,not resolved,"a, b",,,,,BH across S1-S6 within each model
+GEX + AS,S1,BRCA_PAM50,LumA+LumB+Her2+Basal,Normal-like,Parker et al. 2009 J Clin Oncol 27:1160 (normal-like reflects normal-tissue content),1034.0,39.0,0.9992885591707048,0.9767504868642086,0.9940455609105232,0.8331298207717927,0.8366066557555919,9.015205749263908e-13,5.409123449558344e-12,supported,"a, b",,,,,BH across S1-S6 within each model
+GEX + AS,S2,THCA,Classical,Follicular,"TCGA 2014 Cell 159:676 (RAS-like, follicular, most differentiated)",351.0,100.0,0.992966690409822,0.9828328117321736,0.9661803685889832,0.951018592982681,0.6752421652421653,8.840741180501082e-08,2.652222354150325e-07,supported,"a, b",,,,,BH across S1-S6 within each model
+GEX + AS,S3,THCA,Tall cell,Classical,"TCGA 2014 Cell 159:676 (tall-cell-like cluster, lowest differentiation score)",35.0,351.0,0.9953426365761782,0.992966690409822,0.991612549419962,0.9661803685889832,0.6406186406186406,0.0060747201017957,0.0072896641221548,supported,"a, b",,,,,BH across S1-S6 within each model
+GEX + AS,S4,STAD,Intestinal,Diffuse,Lauren 1965 (diffuse type infiltrates as scattered cells in stroma),157.0,70.0,0.9889147248733436,0.9868594100757552,0.9792356394293678,0.958123831880988,0.5936305732484076,0.024400919297962,0.024400919297962,supported,"a, b",,,,,BH across S1-S6 within each model
+GEX + AS,S5,STAD_TCGA,CIN+MSI+EBV,GS,TCGA 2014 Nature 513:202 (GS enriched for diffuse histology),277.0,43.0,0.9886308345387208,0.9700430707548912,0.974953985539144,0.90968719548358,0.6856687095961717,8.966054688150564e-05,0.000179321093763,supported,"a, b",,,,,BH across S1-S6 within each model
+GEX + AS,S6,BRCA,Ductal,Lobular,histological definition (discohesive single-file infiltration),759.0,193.0,0.9992843029003674,0.9991734680626214,0.9925744063680102,0.969668318751982,0.5687876739915487,0.0031352987254626,0.004702948088194,supported,"a, b",,,,,BH across S1-S6 within each model
+GEX,C1,,,,,,,,,,,,4.827058814587368e-06,7.723294103339789e-05,,c,BRCA,stromal,1073.0,-0.1390630632702875,BH across C1 tests within each model
+GEX,C1,,,,,,,,,,,,0.002248656574951,0.0179892525996085,,c,BRCA,immune,1073.0,0.0931769844928957,BH across C1 tests within each model
+AS ensemble,C1,,,,,,,,,,,,0.1019711859570976,0.1926522078024598,,c,BRCA,stromal,1073.0,-0.0499518824626574,BH across C1 tests within each model
+AS ensemble,C1,,,,,,,,,,,,0.1936406201731323,0.2816590838881925,,c,BRCA,immune,1073.0,-0.0397136660722171,BH across C1 tests within each model
+GEX + AS,C1,,,,,,,,,,,,0.00139208239911,0.0031819026265371,,c,BRCA,stromal,1073.0,-0.0974579066742023,BH across C1 tests within each model
+GEX + AS,C1,,,,,,,,,,,,0.8835934660079098,0.9424996970751036,,c,BRCA,immune,1073.0,-0.00447498148384,BH across C1 tests within each model
+GEX,C1,,,,,,,,,,,,0.1273701928789689,0.2037923086063502,,c,COAD,stromal,263.0,-0.0942476311602367,BH across C1 tests within each model
+GEX,C1,,,,,,,,,,,,0.0866162431400914,0.1539844322490514,,c,COAD,immune,263.0,-0.1058675455099568,BH across C1 tests within each model
+AS ensemble,C1,,,,,,,,,,,,0.5260508497923291,0.647447199744405,,c,COAD,stromal,263.0,-0.0392689117981545,BH across C1 tests within each model
+AS ensemble,C1,,,,,,,,,,,,0.0020842387743587,0.0047639743413915,,c,COAD,immune,263.0,-0.1889820915450032,BH across C1 tests within each model
+GEX + AS,C1,,,,,,,,,,,,0.2134908477666288,0.3526287513057048,,c,COAD,stromal,263.0,-0.0769625550486433,BH across C1 tests within each model
+GEX + AS,C1,,,,,,,,,,,,0.0002126761925022,0.0005671365133392,,c,COAD,immune,263.0,-0.22646992081439,BH across C1 tests within each model
+GEX,C1,,,,,,,,,,,,0.3639490049515038,0.4852653399353384,,c,ESCA,stromal,161.0,0.0720180584311019,BH across C1 tests within each model
+GEX,C1,,,,,,,,,,,,0.844261401394001,0.9005454948202677,,c,ESCA,immune,161.0,-0.0156027145157579,BH across C1 tests within each model
+AS ensemble,C1,,,,,,,,,,,,0.8951296999267955,0.9548050132552484,,c,ESCA,stromal,161.0,0.0104698642742121,BH across C1 tests within each model
+AS ensemble,C1,,,,,,,,,,,,0.0002133364059344,0.00068267649899,,c,ESCA,immune,161.0,-0.2878536922015183,BH across C1 tests within each model
+GEX + AS,C1,,,,,,,,,,,,0.3176102926657873,0.4234803902210498,,c,ESCA,stromal,161.0,0.0792558086036347,BH across C1 tests within each model
+GEX + AS,C1,,,,,,,,,,,,0.0290396125602963,0.0580792251205927,,c,ESCA,immune,161.0,-0.1720956981826547,BH across C1 tests within each model
+GEX,C1,,,,,,,,,,,,0.0098218855826162,0.0335378193224776,,c,HNSC,stromal,501.0,0.1152601569768828,BH across C1 tests within each model
+GEX,C1,,,,,,,,,,,,0.0112255702471696,0.0335378193224776,,c,HNSC,immune,501.0,0.1132005630173915,BH across C1 tests within each model
+AS ensemble,C1,,,,,,,,,,,,0.000500423940683,0.0013344638418213,,c,HNSC,stromal,501.0,0.154945535224372,BH across C1 tests within each model
+AS ensemble,C1,,,,,,,,,,,,0.8846387713205663,0.9548050132552484,,c,HNSC,immune,501.0,0.0064983658181644,BH across C1 tests within each model
+GEX + AS,C1,,,,,,,,,,,,8.306257114777632e-05,0.0003102036425602,,c,HNSC,stromal,501.0,0.1749000166996684,BH across C1 tests within each model
+GEX + AS,C1,,,,,,,,,,,,0.3849863951933683,0.4472685396830511,,c,HNSC,immune,501.0,0.0388951499391654,BH across C1 tests within each model
+GEX,C1,,,,,,,,,,,,0.0137074008720218,0.0335378193224776,,c,PRAD,stromal,497.0,-0.1105026974908135,BH across C1 tests within each model
+GEX,C1,,,,,,,,,,,,0.0146727959535839,0.0335378193224776,,c,PRAD,immune,497.0,-0.1094116193468623,BH across C1 tests within each model
+AS ensemble,C1,,,,,,,,,,,,4.398829915091342e-10,3.5190639320730734e-09,,c,PRAD,stromal,497.0,-0.2751386867649738,BH across C1 tests within each model
+AS ensemble,C1,,,,,,,,,,,,3.0432295793902457e-11,4.869167327024393e-10,,c,PRAD,immune,497.0,-0.2922495134037806,BH across C1 tests within each model
+GEX + AS,C1,,,,,,,,,,,,1.9987576531264743e-08,1.0660040816674533e-07,,c,PRAD,stromal,497.0,-0.2484065879927837,BH across C1 tests within each model
+GEX + AS,C1,,,,,,,,,,,,3.414027144746462e-09,5.46244343159434e-08,,c,PRAD,immune,497.0,-0.2611579895228346,BH across C1 tests within each model
+GEX,C1,,,,,,,,,,,,0.263535194332443,0.383323919029008,,c,STAD,stromal,352.0,0.059752845517718,BH across C1 tests within each model
+GEX,C1,,,,,,,,,,,,0.0128859026162615,0.0335378193224776,,c,STAD,immune,352.0,0.1324392871843296,BH across C1 tests within each model
+AS ensemble,C1,,,,,,,,,,,,0.1854341781987493,0.2816590838881925,,c,STAD,stromal,352.0,-0.0707436645821914,BH across C1 tests within each model
+AS ensemble,C1,,,,,,,,,,,,0.1083668668888836,0.1926522078024598,,c,STAD,immune,352.0,-0.0857248668863399,BH across C1 tests within each model
+GEX + AS,C1,,,,,,,,,,,,0.2203929695660655,0.3526287513057048,,c,STAD,stromal,352.0,-0.0654813002546713,BH across C1 tests within each model
+GEX + AS,C1,,,,,,,,,,,,0.3913599722226697,0.4472685396830511,,c,STAD,immune,352.0,-0.0458254367602809,BH across C1 tests within each model
+GEX,C1,,,,,,,,,,,,0.0230776408925324,0.0461552817850649,,c,THCA,stromal,503.0,0.1013013174981603,BH across C1 tests within each model
+GEX,C1,,,,,,,,,,,,0.7909514537391382,0.9005454948202677,,c,THCA,immune,503.0,-0.0118481861628559,BH across C1 tests within each model
+AS ensemble,C1,,,,,,,,,,,,1.0561799134348794e-06,5.632959538319357e-06,,c,THCA,stromal,503.0,0.2155991201340618,BH across C1 tests within each model
+AS ensemble,C1,,,,,,,,,,,,0.000202420012054,0.00068267649899,,c,THCA,immune,503.0,0.1649611909269105,BH across C1 tests within each model
+GEX + AS,C1,,,,,,,,,,,,1.4860626678437481e-08,1.0660040816674533e-07,,c,THCA,stromal,503.0,0.2491356169565796,BH across C1 tests within each model
+GEX + AS,C1,,,,,,,,,,,,9.693863830008164e-05,0.0003102036425602,,c,THCA,immune,503.0,0.1729280926092091,BH across C1 tests within each model
+GEX,C1,,,,,,,,,,,,0.924932984782408,0.924932984782408,,c,UCEC,stromal,178.0,-0.0071122393287152,BH across C1 tests within each model
+GEX,C1,,,,,,,,,,,,0.4926457333243972,0.606333210245412,,c,UCEC,immune,178.0,0.0517560368921482,BH across C1 tests within each model
+AS ensemble,C1,,,,,,,,,,,,0.3432305927543854,0.4576407903391805,,c,UCEC,stromal,178.0,-0.0714532693426844,BH across C1 tests within each model
+AS ensemble,C1,,,,,,,,,,,,0.9585782544318328,0.9585782544318328,,c,UCEC,immune,178.0,-0.0039205088895012,BH across C1 tests within each model
+GEX + AS,C1,,,,,,,,,,,,0.2819143921115495,0.4100572976167994,,c,UCEC,stromal,178.0,-0.0810901674488179,BH across C1 tests within each model
+GEX + AS,C1,,,,,,,,,,,,0.9594767298598458,0.9594767298598458,,c,UCEC,immune,178.0,0.0038353960777888,BH across C1 tests within each model

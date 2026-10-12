@@ -1,0 +1,5 @@
+id,pair,n,median_fold_enrichment,share_q05,median_jaccard,p_wilcoxon_log2fe_vs_0,median_difference,share_positive,p_wilcoxon
+G1,status-type,72,7.83875,0.9444444444444444,0.07817494914269107,1.658751802376397e-13,,,
+G1,subtype-status,117,4.9608,0.8717948717948718,0.0582010582010582,1.3128050198846233e-20,,,
+G1,subtype-type,198,6.08705,0.8838383838383839,0.06951871657754011,1.4491303975116492e-33,,,
+G2,histology: subtype-type minus subtype-status Jaccard,45,,,,,0.0,0.4444444444444444,0.24485724030464473
