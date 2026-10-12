@@ -13,7 +13,7 @@ Pipeline, fitted inside each training fold: top-2,000 variance (NaN-aware) -> me
 standardise -> L2 logistic regression (C = 0.05, balanced classes). A view whose accuracy collapses when sites
 are held out was relying on site-specific signal.
 
-Outputs: results/biology/07_site_probe/ (tables; figures: scripts/15_bio_figures.py)
+Outputs: results/biology/07_site_probe/ (tables; figures: scripts/21_figures_type.py)
 """
 from __future__ import annotations
 

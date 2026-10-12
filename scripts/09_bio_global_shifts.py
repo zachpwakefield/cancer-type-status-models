@@ -12,7 +12,7 @@ Uses ALL measured events of each cohort (no SHAP selection, so the tests are not
               1 = most downstream); paired tumour - normal change per patient.
 Also: does per-sample intron retention track a proliferation score within tumours?
 
-Outputs: results/biology/02_global_shifts/ (tables; figures: scripts/15_bio_figures.py; per-patient values stay in <data_dir>/bio_cache, D-12)
+Outputs: results/biology/02_global_shifts/ (tables; figures: scripts/20_figures_status.py; per-patient values stay in <data_dir>/bio_cache, D-12)
 """
 from __future__ import annotations
 

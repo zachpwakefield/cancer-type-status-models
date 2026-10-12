@@ -14,7 +14,7 @@ A regulator is a candidate driver when its expression changes between tumour and
 tracks the top events beyond background. This is correlation, not causation: a factor can track
 the events because it is co-regulated with them.
 
-Outputs: results/biology/05_regulators/ (tables; figures: scripts/15_bio_figures.py)
+Outputs: results/biology/05_regulators/ (tables; figures: scripts/20_figures_status.py)
 """
 from __future__ import annotations
 

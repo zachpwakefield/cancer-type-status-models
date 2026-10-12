@@ -1,0 +1,16 @@
+cancer,gex_errors,rescued_by_as,rescued_by_fused,as_only_errors,both_wrong
+BLCA,7,5,3,3,2
+BRCA,7,4,2,7,3
+COAD,1,0,0,0,1
+ESCA,15,10,4,3,5
+HNSC,7,4,2,3,3
+KICH,1,1,1,0,0
+KIRC,2,0,0,0,2
+KIRP,1,1,1,1,0
+LIHC,11,4,2,2,7
+LUAD,6,6,4,0,0
+LUSC,3,2,1,1,1
+PRAD,24,12,6,12,12
+STAD,6,3,1,3,3
+THCA,7,2,0,11,5
+UCEC,1,0,0,0,1

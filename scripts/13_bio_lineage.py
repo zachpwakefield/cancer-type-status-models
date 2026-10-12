@@ -10,7 +10,7 @@
 3. A lineage atlas of cassette exons: the top SE events of each class (per-class SHAP), median
    PSI in every class.
 
-Outputs: results/biology/06_lineage/ (tables; figures: scripts/15_bio_figures.py)
+Outputs: results/biology/06_lineage/ (tables; figures: scripts/21_figures_type.py)
 """
 from __future__ import annotations
 

@@ -12,9 +12,9 @@ cancers, and what do they do to the encoded protein?
    divisible by 3, exact GENCODE v45 exon, coding, and overlap with Pfam/CDD domains, MobiDB-lite
    disordered regions and TM helices (residues of the best transcript: MANE > canonical > other).
    Fisher exact tests, BH across metrics and sets.
-(Portraits of the most recurrent events are drawn by scripts/15_bio_figures.py from these tables.)
+(Portraits of the most recurrent events are drawn by scripts/20_figures_status.py from these tables.)
 
-Outputs: results/biology/04_events/ (tables; figures: scripts/15_bio_figures.py)
+Outputs: results/biology/04_events/ (tables; figures: scripts/20_figures_status.py)
 """
 from __future__ import annotations
 

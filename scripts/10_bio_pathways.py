@@ -13,7 +13,7 @@ driven by alternative 5'/3' splice sites in ribosomal-protein genes (deeply cove
 measured in every tissue). The per-class AS tests are repeated with ribosomal-protein genes
 (RPL*/RPS*, regex in config) removed from both the ranking and the universe.
 
-Outputs: results/biology/03_pathways/ (per-model tables and summaries; figures: scripts/15_bio_figures.py)
+Outputs: results/biology/03_pathways/ (per-model tables and summaries; figures: scripts/20_figures_status.py and scripts/21_figures_type.py)
 Usage: python scripts/10_bio_pathways.py [--workers 6] [--rerun]
 """
 from __future__ import annotations

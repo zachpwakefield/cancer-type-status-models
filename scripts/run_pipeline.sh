@@ -24,6 +24,11 @@ run scripts/06_summarise_results.py
 # interpretation layer (docs/BIOLOGY_METHODS.md); no model is refitted
 run scripts/07_shap_importance.py --workers "${WORKERS:-6}"
 for s in 08_bio_complementarity 09_bio_global_shifts 10_bio_pathways 11_bio_events 12_bio_regulators \
-         13_bio_lineage 14_bio_site_probe 15_bio_figures; do
+         13_bio_lineage 14_bio_site_probe 16_surv_inputs 18_ensemble 19_regulons; do
   run "scripts/$s.py"
 done
+# the survival layer shells out to splice-assay (its own environment; see docs/BIOLOGY_METHODS.md D-25)
+run scripts/17_surv_analyze.py --workers "${WORKERS:-6}"
+# figures, one script per narrative
+run scripts/20_figures_status.py
+run scripts/21_figures_type.py

@@ -1,3 +1,0 @@
-A,B,only_A_correct,only_B_correct,p_mcnemar_exact
-GEX,AS ensemble,254,213,0.0640571339145487
-GEX,GEX + AS (1:1),38,109,3.8816126461272605e-09

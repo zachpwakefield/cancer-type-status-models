@@ -4,7 +4,7 @@ Uses only out-of-fold probabilities (every sample predicted by a model that neve
 fusion weights are fixed in config/biology.yaml (no tuning): 'all_equal' = mean of the 9
 views; 'gex_as_half' = 0.5 GEX + 0.5 mean of the 8 AS views.
 
-Outputs: results/biology/01_complementarity/ (tables; figures: scripts/15_bio_figures.py)
+Outputs: results/biology/01_complementarity/ (tables; figures: scripts/20_figures_status.py and scripts/21_figures_type.py)
 """
 from __future__ import annotations
 

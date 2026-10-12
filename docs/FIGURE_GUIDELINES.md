@@ -42,6 +42,12 @@ imports it.
   "unnamed gene" plus its coordinates, and its Ensembl ID stays in the CSV.
 - **Fewer plots.** Each figure answers one question. Diagnostics are kept as tables, not
   figures; examples are the error-overlap Jaccard and the tumour-status fusion.
+- **Where they live.** The figures of the interpretation layer are grouped by narrative, not by
+  the analysis that produced them: `results/figures/tumour_status/S1`–`S8`
+  ([TUMOUR_STATUS.md](../results/TUMOUR_STATUS.md)) and `results/figures/cancer_type/T1`–`T7`
+  ([CANCER_TYPE.md](../results/CANCER_TYPE.md)), drawn by `scripts/20` and `scripts/21`. The
+  tables they read stay under `results/biology/<NN>_<analysis>/`. A caption refers only to
+  figures of its own narrative.
 - **Per-job panels.** These are `results/<task>/<view>/<cohort>/fig_*.png`, one per job, 153
   in all. They are PNG only, to keep the repository small, and each has a caption file. Their
   values are the job's SHAP and metrics tables.

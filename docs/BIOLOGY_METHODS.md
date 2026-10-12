@@ -1,13 +1,16 @@
 # Biology layer: methods and decisions
 
-Scripts `07`–`14` interpret the fitted models. None of them changes or refits a phase-1 model;
-step 14 fits separate, untuned diagnostic probes. No result here feeds back into a modelling
-choice, so the outer-test estimates in [`RESULTS.md`](../results/RESULTS.md) stay unbiased.
-Every threshold is fixed in [`config/biology.yaml`](../config/biology.yaml) or in the
-script's header. Steps 08–14 write tables only. Step 15 draws every figure from those tables in
-the house style ([FIGURE_GUIDELINES.md](FIGURE_GUIDELINES.md)), each with a caption file and a
-CSV of the plotted values.
-The narrative is in [`results/BIOLOGY.md`](../results/BIOLOGY.md).
+Scripts `07`–`19` interpret the fitted models. None of them changes or refits a phase-1 model;
+steps 14 and 18 fit separate, untuned diagnostic models. No result here feeds back into a
+modelling choice, so the outer-test estimates in [`RESULTS.md`](../results/RESULTS.md) stay
+unbiased. Every threshold is fixed in [`config/biology.yaml`](../config/biology.yaml) or in the
+script's header. Steps 07–19 write tables only; steps 20 and 21 draw the figures from those
+tables in the house style ([FIGURE_GUIDELINES.md](FIGURE_GUIDELINES.md)), each with a caption
+file and a CSV of the plotted values.
+
+The two tasks answer different questions and are written up separately:
+[`results/TUMOUR_STATUS.md`](../results/TUMOUR_STATUS.md) (figures S1–S8) and
+[`results/CANCER_TYPE.md`](../results/CANCER_TYPE.md) (figures T1–T7).
 
 Decisions continue the numbering of [`DECISIONS.md`](DECISIONS.md).
 
@@ -33,6 +36,10 @@ Decisions continue the numbering of [`DECISIONS.md`](DECISIONS.md).
   (1,000 resamples).
 - **Caveat:** fused out-of-fold predictions are an honest estimate for fixed weights. They
   are not a nested estimate of a fusion method that chooses its weights.
+- **Superseded for the narratives.** Step 18 (D-23) repeats this per cancer and per class, adds
+  bootstrap CIs and a stacked comparator, and is the source of every number in
+  `TUMOUR_STATUS.md` and `CANCER_TYPE.md`. Step 08's tables are kept for the error-overlap and
+  per-class recall views that step 18 does not reproduce.
 
 ### D-15 Global shifts in matched pairs · `scripts/09`
 - **Events tested:** ALL measured events of each cohort (extraction pre-filter), with no SHAP
@@ -124,3 +131,74 @@ Decisions continue the numbering of [`DECISIONS.md`](DECISIONS.md).
 - **Figures:** they may plot per-sample points, without identifiers. A figure's published CSV
   holds aggregates. The exact per-sample plotted values go to `<data_dir>/figure_data/`
   ([FIGURE_GUIDELINES.md](FIGURE_GUIDELINES.md)).
+
+### D-22 Outcome-blind candidates and a matched background · `scripts/16`
+- **Candidates:** the top 10 features by mean |SHAP| of every tumour-status model (8 AS views ×
+  15 cancers), pooled: 1,014 distinct events.
+- **Background:** for each candidate, one event of the same view drawn from the same quintile of
+  observed fraction and of SD (both over that view's tumours in the 15 cancers), never in the
+  top 100 of any model: 910 distinct events.
+- **Why:** candidates are well measured and variable, and those two properties alone make an
+  event easier to test for anything. The background holds them fixed, so a difference in hit
+  rate is not a difference in measurability.
+- **Blindness:** no survival time, event indicator, stage, age or sex enters either set. The
+  models themselves never saw an outcome.
+- The same split is reused by the regulon enrichment (D-24) and the survival layer (D-25).
+
+### D-23 Stacked ensemble · `scripts/18`
+- **Fixed-weight fusion is the headline** (D-14): nothing is estimated, so it cannot overfit.
+- **Stacked:** a logistic regression on the 9 views' out-of-fold probabilities (standardised,
+  C = 1, no tuning), cross-fitted over the same outer folds — fold *k* is scored by a stacker
+  fitted on the other folds only.
+- **Residual optimism:** the base models that produced the stacker's *training* probabilities
+  were themselves trained on folds that include the samples the stacker later scores. The effect
+  is second order but not zero, so the stacked number is reported as a ceiling and never as the
+  headline.
+- Bootstrap CIs resample cases (1,000 resamples). AUROC in the bootstrap is computed from the
+  rank sum of the positives, which equals `roc_auc_score` with ties averaged.
+
+### D-24 Splicing-factor regulons · `scripts/19`
+- **Scope:** within the tumours of each cancer (normals would turn any tumour-normal difference
+  into a correlation).
+- **Universe:** 2,000 random events per view (one seeded list, the same in every cancer) plus
+  every D-22 candidate and background event; in a given cancer an event needs ≥ 80% observed
+  values and non-zero variance, and the remaining missing values are median-imputed.
+- **Statistic:** partial Spearman of factor expression against event PSI, both rank-transformed
+  and residualised on a stromal and an immune marker score (D-18). A pair is a member in that
+  cancer if |ρ| ≥ 0.3 and p < 0.05.
+- **Core regulon:** the pairs that recur with the same sign in ≥ 5 of the 15 cancers.
+- **Enrichment:** candidates against the matched background (D-22), Fisher exact.
+- **Caveat:** these are correlations inside tumours. A factor may be co-regulated with its
+  apparent targets rather than drive them, and a 0.3 threshold on ρ is a convention, not a
+  biological boundary.
+
+### D-25 Survival association of the model's events · `scripts/16`, `scripts/17`
+- **Tool:** splice-assay 0.4.0 (an external, separately tested package), run over a local
+  dataset built from the same matrices the models used.
+- **Cohorts:** the 15 tumour-status cancers, 6,152 tumours, 1,620 deaths (OS) and 960 (DSS).
+  Survival and clinical values come from the TCGA clinical table; `is_missing` is read as
+  missing.
+- **Models per event × cancer:** Cox on PSI with the host gene's own expression (base), and the
+  same plus age, sex and stage, against stage I and female (adjusted). Also a median-split
+  Kaplan-Meier with a log-rank test, and tumour-vs-normal group tests.
+- **Gates (splice-assay defaults):** Cox needs 30 patients and 10 events, and is marked
+  low-power below 20 events; the log-rank test needs 10 patients per arm and 10 events; an
+  event needs 10 patients off its modal value. Cells that fail a gate are not counted in either
+  arm of the enrichment test.
+- **Multiplicity, two families, do not mix them.** `cox_q_cohort` / `km_q_cohort` are BH over
+  every event tested in one cancer × endpoint × model (about 1,600 Cox tests) — the family that
+  answers "does this one event stand out in this cancer", and the one the narrative quotes.
+  `cox_q` / `km_q` are splice-assay's own, BH within one event over the cancers it was run in,
+  which is what its assay pages star; the tool leaves them empty for families under 10, so they
+  are mostly missing here. Figures show raw p. The enrichment test itself is one Fisher test per
+  endpoint × model × candidate set, BH over those.
+- **What is claimed:** association in observational cohorts, never cause and never a
+  therapeutic target. PSI can reflect tumour purity or composition as well as splicing.
+- **What is published:** the per-event × cohort statistics, as a small `event_index.csv` (one
+  row per event) and `event_survival_cells.csv.gz` keyed by it — repeating the long rMATS ids
+  over 115,000 rows would be most of the file. Numbers are written to 4 significant digits, and
+  the untrimmed table stays in `<data_dir>/survival/cells_full.parquet`. The PSI, expression and
+  clinical tables behind them stay in `<data_dir>/survival/` (D-12).
+- **A permuted-outcome replicate** (survival shuffled between patients within each cancer, OS,
+  base model, one replicate) measures what this pipeline reports when nothing is associated:
+  `survival_null.csv`. It is the reference line in figure S8, in place of the nominal 5%.

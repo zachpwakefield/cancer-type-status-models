@@ -64,15 +64,18 @@ patient-grouped cross-validation. It is explained with SHAP on held-out samples 
 Full tables, CIs, figures and top SHAP features per cohort and modality are in
 **[results/RESULTS.md](results/RESULTS.md)**.
 
-**What the models learned:** see **[results/BIOLOGY.md](results/BIOLOGY.md)**. It covers:
-- what splicing adds to expression;
-- the tumour-wide shifts in RNA processing;
-- pathways, shared events and their protein consequences;
-- candidate regulators;
-- cell lineage;
-- a check for tissue-source-site confounding.
+**What the models learned.** The two tasks answer different questions, so they are written up
+separately:
 
-The methods are in [docs/BIOLOGY_METHODS.md](docs/BIOLOGY_METHODS.md).
+- **[results/TUMOUR_STATUS.md](results/TUMOUR_STATUS.md)** — what splicing adds to expression for
+  telling a tumour from its own normal tissue; the tumour-wide shifts in RNA processing;
+  splicing-factor regulons; the events different cancers share, what they do to the protein, and
+  whether they carry outcome information (figures S1–S8).
+- **[results/CANCER_TYPE.md](results/CANCER_TYPE.md)** — splicing as a lineage code: what the
+  modalities each get right, class-defining exons, and how much of the advantage over expression
+  is a tissue-source-site effect (figures T1–T7).
+
+The methods are in [docs/BIOLOGY_METHODS.md](docs/BIOLOGY_METHODS.md) (D-13 to D-25).
 
 ## How the models are built
 
@@ -137,13 +140,16 @@ src/ctsm/     library
   figstyle.py plots.py                                        house figure style and phase-1 figures
 scripts/      00_register_sources → 01_build_cohort → 02_extract_matrices → 03_validate_data
               → 04_run_job (one job) / 05_run_all (all jobs, parallel) → 06_summarise_results
-              → 07_shap_importance → 08–14 biology analyses (tables) → 15_bio_figures
+              → 07_shap_importance → 08–19 interpretation analyses (tables only)
+              → 20_figures_status / 21_figures_type (every figure)
               run_pipeline.sh
 tests/        unit tests (leakage guards, encodings, preprocessing, SHAP additivity, biology helpers)
 docs/         METHODS, DECISIONS, LEAKAGE_POLICY, BIOLOGY_METHODS, FIGURE_GUIDELINES
 results/      data/ (cohort, splits, extraction, validation summaries)
               tumor_status/<view>/<cancer>/, cancer_type/<view>/PANCAN/, summary/, RESULTS.md
-              biology/01_complementarity … 07_site_probe/ (tables + figures), BIOLOGY.md
+              biology/01_complementarity … 10_regulons/ (tables)
+              figures/tumour_status/ (S1–S8), figures/cancer_type/ (T1–T7)
+              TUMOUR_STATUS.md, CANCER_TYPE.md
 ```
 
 ## Reproducing
