@@ -554,6 +554,13 @@ Written 2026-10-13, after D-65..D-67 and before either was computed.
   different means. Does score G follow those calls in the 30 held-out cancers? D-69 runs only if
   the user approves the download: per-sample attributes from the cBioPortal PanCancer Atlas
   studies, about 20,000 records.
+- **Outcome, D-68 (computed 2026-10-13; IF1–IF6 supported).** Held out, the MMR coefficient on
+  the G percentile is −0.339 adjusted for stromal, immune and retained-intron levels (−0.335
+  unadjusted; IF1) and −0.334 with purity (IF2). In the lower-immune half of each cancer the
+  AUROC is 0.84 (21 MMR-deficient tumours; IF3). In UCEC, STAD and COAD, with site fixed effects
+  and HC3 errors, the MSI coefficient keeps 1.01–1.07 of its site-only value (IF4–IF6). The
+  immune score alone gives AUROC 0.59, and its adjusted coefficient on G is positive (+0.055),
+  against the MMR effect. Tables: `results/subtype/msi_cis/code/infiltration/`; figure U20.
 
 ---
 

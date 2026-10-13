@@ -1,0 +1,23 @@
+what,value,n,p
+IF1: unadjusted coefficient (cancer fixed effects only),-0.3345,7685,
+IF1: share of the unadjusted coefficient kept,1.014,7685,
+IF1: coefficient of stromal_p,0.004416,7685,0.7173
+IF1: coefficient of immune_p,0.05512,7685,5.317e-06
+IF1: coefficient of ri_mean_p,0.02958,7685,0.01108
+IF2: unadjusted coefficient (cancer fixed effects only),-0.3302,7261,
+IF2: share of the unadjusted coefficient kept,1.013,7261,
+IF2: coefficient of stromal_p,0.004269,7261,0.7397
+IF2: coefficient of immune_p,0.05051,7261,0.0004358
+IF2: coefficient of ri_mean_p,0.02793,7261,0.0197
+IF2: coefficient of purity_p,-0.004491,7261,0.7535
+IF3 by cancer: BRCA,0.7086,4,
+IF4: share of the site-only coefficient kept,1.065,135,
+"IF4: AUROC(G lower in MSI), lower-immune half",0.8462,14,
+IF5: share of the site-only coefficient kept,1.01,316,
+"IF5: AUROC(G lower in MSI), lower-immune half",0.9788,21,
+IF6: share of the site-only coefficient kept,1.025,227,
+"IF6: AUROC(G lower in MSI), lower-immune half",0.9819,12,
+"AUROC of the immune score itself, higher in MMR-deficient (held-out)",0.5862,50,
+"Spearman(pct_G, immune percentile), non-MMR-deficient held-out tumours",0.05382,7635,2.535e-06
+"Spearman(pct_down, immune percentile), non-MMR-deficient held-out tumours",-0.0006696,7635,0.9534
+"Spearman(pct_up, immune percentile), non-MMR-deficient held-out tumours",-0.04041,7635,0.0004121

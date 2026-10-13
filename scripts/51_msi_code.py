@@ -11,6 +11,7 @@ reads both arms; score A is D-52's, which reads all repeat exons as falling.
   specificity  D-65 (BS1-BS4)
   pancancer    D-66 (PC1-PC8): the 30 TCGA projects other than COAD, STAD and UCEC
   endometrium  D-67 (EG1-EG2)
+  infiltration D-68 (IF1-IF6): score G against stromal, immune, retained-intron and purity covariates
 
 Outputs: data.nosync/ctsm_v1/msi/ (per-tumour scores, kept local)
          results/subtype/msi_cis/code/ (aggregates)
@@ -437,14 +438,100 @@ def endometrium() -> None:
     log(f"endometrium exploratory:\n{ex.round(3).to_string(index=False)}")
 
 
+# ---------------------------------------------------------------- D-68 infiltration
+
+def infiltration() -> None:
+    import statsmodels.formula.api as smf
+
+    from ctsm.biology import gex_by_symbol
+    from ctsm.config import load_config
+    m43 = _load("msi43", "43_msi_robustness.py")
+    st, im = m43.BIO["stromal_genes"], m43.BIO["immune_genes"]
+    sc = pd.read_parquet(LOCAL / "pancancer_scores.parquet")
+    g = gex_by_symbol(load_config(), sc.file_id, st + im)
+    sc["stromal"] = g[[x for x in st if x in g]].mean(axis=1).to_numpy()
+    sc["immune"] = g[[x for x in im if x in g]].mean(axis=1).to_numpy()
+    ri = np.full(len(sc), np.nan)
+    for _, s in sc.groupby("project"):
+        X = load_view(PAN, "ri", s.file_id)[0].get()
+        ri[s.index.to_numpy()] = np.nanmean(X[:, np.isfinite(X).mean(axis=0) >= 0.8], axis=1)
+    sc["ri_mean"] = ri
+    for c in ["stromal", "immune", "ri_mean", "purity"]:
+        sc[f"{c}_p"] = sc.groupby("project")[c].rank(pct=True)
+    sc["mmr_i"] = sc.mmr.astype(int)
+    sc.to_parquet(LOCAL / "pancancer_covariates.parquet", index=False)
+    pred, ex = [], []
+
+    def add(pid, effect, sign, p, n, what, lo=np.nan, hi=np.nan):
+        pred.append({"id": pid, "what": what, "effect": effect, "predicted_sign": sign, "p": p, "n": n,
+                     "ci_low": lo, "ci_high": hi})
+
+    base = "pct_G ~ mmr_i + C(project)"
+    adj = base + " + stromal_p + immune_p + ri_mean_p"
+    for pid, formula, d, what in [("IF1", adj, sc, "stromal, immune, ri_mean"),
+                                  ("IF2", adj + " + purity_p", sc[sc.purity.notna()], "the same and ABSOLUTE purity")]:
+        fit = smf.ols(formula, data=d).fit(cov_type="HC3")
+        raw = smf.ols(base, data=d).fit(cov_type="HC3")
+        ci = fit.conf_int().loc["mmr_i"]
+        add(pid, float(fit.params["mmr_i"]), -1, float(fit.pvalues["mmr_i"]),
+            f"{len(d):,} tumours, {int(d.mmr.sum())} MMR-deficient; unadjusted {raw.params['mmr_i']:+.3f}",
+            f"held-out OLS coefficient of MMR deficiency on the G percentile, cancer fixed effects, adjusted for {what}",
+            ci[0], ci[1])
+        ex.append({"what": f"{pid}: unadjusted coefficient (cancer fixed effects only)", "value": float(raw.params["mmr_i"]),
+                   "n": len(d)})
+        ex.append({"what": f"{pid}: share of the unadjusted coefficient kept", "value": float(fit.params["mmr_i"] / raw.params["mmr_i"]),
+                   "n": len(d)})
+        for cov in [c for c in ["stromal_p", "immune_p", "ri_mean_p", "purity_p"] if c in formula]:
+            ex.append({"what": f"{pid}: coefficient of {cov}", "value": float(fit.params[cov]), "p": float(fit.pvalues[cov]),
+                       "n": len(d)})
+    low = sc[sc.immune <= sc.groupby("project").immune.transform("median")]
+    au, p = m42.auroc_lower(low.loc[low.mmr, "pct_G"].to_numpy(), low.loc[~low.mmr, "pct_G"].to_numpy())
+    add("IF3", au - 0.5, 1, p, f"MMR-deficient {int(low.mmr.sum())}, other {int((~low.mmr).sum())}",
+        "AUROC(G lower in MMR-deficient) - 0.5, lower-immune half of each cancer")
+    for proj, v in low.groupby("project"):
+        if v.mmr.sum() >= 3:
+            ex.append({"what": f"IF3 by cancer: {proj}", "value": auc_lower(v.pct_G.to_numpy(), v.mmr.to_numpy()),
+                       "n": int(v.mmr.sum())})
+    three = pd.read_parquet(LOCAL / "code_scores_three.parquet")
+    for pid, cohort in [("IF4", "UCEC_TCGA"), ("IF5", "STAD_TCGA"), ("IF6", "COAD_TCGA")]:
+        tab = pd.read_parquet(DATA / "subtype" / "tasks" / f"subtype__{cohort}.parquet")
+        s = three[three.cohort.eq(cohort)].merge(tab[["file_id", "tss"]], on="file_id")
+        s = s.join(m43.covariates(cohort, s), on="file_id")
+        s = s[s.group.isin(["MSI", "rest"])].reset_index(drop=True)
+        s["msi"] = s.group.eq("MSI").astype(int)
+        keep = s.groupby("tss")["tss"].transform("size") > 1
+        fit = smf.ols("score_G ~ msi + C(tss) + stromal + immune + ri_mean", data=s[keep]).fit(cov_type="HC3")
+        raw = smf.ols("score_G ~ msi + C(tss)", data=s[keep]).fit(cov_type="HC3")
+        ci = fit.conf_int().loc["msi"]
+        add(pid, float(fit.params["msi"]), -1, float(fit.pvalues["msi"]),
+            f"{int(keep.sum())} patients ({int((~keep).sum())} from single-patient sites left out); site only {raw.params['msi']:+.4f}",
+            f"{cohort}: OLS coefficient of MSI on score G, adjusted for site, stromal, immune, ri_mean (HC3)", ci[0], ci[1])
+        ex.append({"what": f"{pid}: share of the site-only coefficient kept", "value": float(fit.params["msi"] / raw.params["msi"]),
+                   "n": int(keep.sum())})
+        lw = s[s.immune <= s.immune.median()]
+        ex.append({"what": f"{pid}: AUROC(G lower in MSI), lower-immune half", "n": int(lw.msi.sum()),
+                   "value": m42.auroc_lower(lw.loc[lw.msi.eq(1), "score_G"].to_numpy(), lw.loc[lw.msi.eq(0), "score_G"].to_numpy())[0]})
+    predictions(pred, "infiltration")
+    ex.append({"what": "AUROC of the immune score itself, higher in MMR-deficient (held-out)",
+               "value": 1 - auc_lower(sc.immune_p.to_numpy(), sc.mmr.to_numpy()), "n": int(sc.mmr.sum())})
+    o = sc[~sc.mmr]
+    for col in ["pct_G", "pct_down", "pct_up"]:
+        r = spearmanr(o[col], o.immune_p)
+        ex.append({"what": f"Spearman({col}, immune percentile), non-MMR-deficient held-out tumours",
+                   "value": float(r.statistic), "p": float(r.pvalue), "n": len(o)})
+    ex = pd.DataFrame(ex)
+    ex.to_csv(OUT / "infiltration" / "exploratory.csv", index=False, float_format="%.4g")
+    log(f"infiltration exploratory:\n{ex.round(4).to_string(index=False)}")
+
+
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--only", required=True,
-                    choices=["annotate", "geometry", "specificity", "pancancer", "endometrium"])
+                    choices=["annotate", "geometry", "specificity", "pancancer", "endometrium", "infiltration"])
     a = ap.parse_args()
     OUT.mkdir(parents=True, exist_ok=True)
     {"annotate": annotate, "geometry": geometry, "specificity": specificity, "pancancer": pancancer,
-     "endometrium": endometrium}[a.only]()
+     "endometrium": endometrium, "infiltration": infiltration}[a.only]()
 
 
 if __name__ == "__main__":

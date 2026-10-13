@@ -66,6 +66,7 @@ run scripts/51_msi_code.py --only geometry
 run scripts/51_msi_code.py --only specificity
 run scripts/51_msi_code.py --only pancancer
 run scripts/51_msi_code.py --only endometrium
+run scripts/51_msi_code.py --only infiltration    # D-68
 run scripts/44_repeat_dna.py --only loci    # D-56: loci and the BAM manifest; the slices are fetched
 run scripts/44_repeat_dna.py --only manifest #   by the data user with their own GDC token (see step 44)
 if [ -d data.nosync/ctsm_v1/msi/slices ]; then

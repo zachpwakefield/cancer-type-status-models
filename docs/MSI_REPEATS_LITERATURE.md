@@ -151,6 +151,10 @@ already pre-specified)*
 - *Status (D-66, done within TCGA):* the two-arm sequence code finds MMR-deficient tumours, called
   from MC3 homopolymer deletions, in 30 cancers never used to define it (AUROC 0.83; 0.85 against
   hypermutated proficient tumours). An external cohort and a non-MC3 MSI call are still to come.
+- *Status (D-68, done):* the code is not an infiltration readout. Adjusting for stromal and
+  immune expression and the retained-intron level keeps the whole MMR effect (1.01 held out,
+  1.01–1.07 in the training cancers), and the lower-immune half separates at 0.84. D-69, the test
+  against MANTIS and MSIsensor calls, is pre-specified and waits on a download.
 
 **Start with Q1 and Q5:** both use only local data, and Q1 directly tests the endometrium
 explanation. **Q2 and Q3 each need one small download**, which would be stated and approved first.
@@ -169,7 +173,7 @@ explanation. **Q2 and Q3 each need one small download**, which would be stated a
 - Giannini G et al. (2002) Human MRE11 is inactivated in mismatch repair-deficient cancers. *EMBO Rep* 3:248.
 - Giannini G et al. (2004) Mutations of an intronic repeat induce impaired MRE11 expression in primary human cancer with microsatellite instability. *Oncogene* 23:2640.
 - Hamanaka K et al. (2023) Genome-wide identification of tandem repeats associated with splicing variation across 49 tissues in humans. *Genome Res* 33:435. — [PMC10078293](https://pmc.ncbi.nlm.nih.gov/articles/PMC10078293)
-- Hause RJ et al. (2016) Classification and characterization of microsatellite instability across 18 cancer types. *Nat Med* 22:1342. — [PMC5972025](https://pmc.ncbi.nlm.nih.gov/articles/PMC5972025)
+- Hause RJ et al. (2016) Classification and characterization of microsatellite instability across 18 cancer types. *Nat Med* 22:1342. — [PMID 27694933](https://pubmed.ncbi.nlm.nih.gov/27694933/)
 - Jia P et al. (2024) MSIsensor-RNA: microsatellite instability detection for bulk and single-cell gene expression data. *Genomics Proteomics Bioinformatics*. — [PMC12016039](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC12016039/)
 - Jonchère V et al. (2024) Microsatellite instability at U2AF-binding polypyrimidic tract sites perturbs alternative splicing during colorectal cancer initiation. *Genome Biol* 25:210. — [PubMed 39107855](https://pubmed.ncbi.nlm.nih.gov/39107855/)
 - Kim TM, Laird PW, Park PJ (2013) The landscape of microsatellite instability in colorectal and endometrial cancer genomes. *Cell* 155:858. — [PMC3871995](https://pmc.ncbi.nlm.nih.gov/articles/PMC3871995)

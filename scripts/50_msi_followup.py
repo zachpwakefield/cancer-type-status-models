@@ -63,7 +63,8 @@ def effects() -> pd.DataFrame:
 
 
 def add_verdicts(pred: list[dict]) -> pd.DataFrame:
-    pr = pd.DataFrame(pred).reindex(columns=["id", "what", "effect", "predicted_sign", "p", "n"])
+    pr = pd.DataFrame(pred)
+    pr = pr.reindex(columns=list(dict.fromkeys(["id", "what", "effect", "predicted_sign", "p", "n", *pr.columns])))
     ok = pr.p.notna()
     pr["q"] = np.nan
     if ok.any():
