@@ -1,0 +1,8 @@
+id,what,effect,predicted_sign,p,n,q,verdict
+HU1,LumA/LumB: AUROC(GEX P(Her2) higher when amplified) - 0.5,0.25275695485590544,1,1.3427116886226496e-08,"amplified 45, not 667",9.398981820358548e-08,supported
+HU2,"LumA/LumB: AUROC(AS ensemble) - AUROC(GEX), amplified against not",0.061702482092287125,1,0.04997501249375312,"712 tumours; 95% CI half-width 0.063; AS 0.814, GEX 0.753",0.08745627186406797,not resolved
+HU3,"LumA/LumB without D-58's amplified: AUROC(AS ensemble) - AUROC(GEX), newly amplified against not",-0.004204204204204198,1,0.894552723638181,"newly amplified 15, not 666; 95% CI half-width 0.094; AS 0.822, GEX 0.826",0.9205397301349325,not resolved
+HU4,"PAM50 Her2: AUROC(GEX) - AUROC(AS ensemble), amplified against not",-0.049624060150375904,1,0.5397301349325337,"amplified 35, not 19; 95% CI half-width 0.161; GEX 0.531, AS 0.580",0.7556221889055472,not resolved
+HU5,AUROC(AS P(Her2) higher in non-amplified Her2 than amplified LumA/LumB) - 0.5,0.3514619883040936,1,1.0418028520311336e-05,"non-amplified Her2 19, amplified luminal 45",3.6463099821089674e-05,supported
+HU6,"amplified LumA/LumB: Spearman(GEX P(Her2), amplification level)",0.46561264822134385,1,0.0012679947036518134,45 amplified luminal tumours,0.0029586543085208983,supported
+HU7,amplified LumA/LumB: Spearman(GEX) - Spearman(AS ensemble),0.01225296442687751,1,0.9205397301349325,45 tumours; 95% CI half-width 0.177; AS rho 0.453,0.9205397301349325,not resolved

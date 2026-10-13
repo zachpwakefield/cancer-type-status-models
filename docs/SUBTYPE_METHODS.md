@@ -475,7 +475,8 @@ installed). Families L (6 tests) and A (3).
 Added with D-57. The PAM50 Her2 class is an expression programme; clinical HER2 is ERBB2
 amplification. The GEX model's top Her2 genes are the 17q12 amplicon; the AS models' are not, and
 a PSI does not move with copy number. H1–H4 ask which HER2 each modality learned, with
-amplification from ABSOLUTE copy number at ERBB2 (≥ 2 × ploidy). Family H (4 tests).
+amplification from ABSOLUTE copy number at ERBB2 (≥ 2 × ploidy). Family H (4 tests). Re-tested
+without ABSOLUTE's ceiling in D-60.
 
 ### D-59 Splice-site mutations and SF3B1 in BRCA · `config/followup.yaml: brca_mutations` · `scripts/48`
 Added with D-57. MC3 splice-site SNVs are mapped to the cassette exon they hit (C1, every gene; C2,

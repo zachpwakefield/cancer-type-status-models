@@ -11,6 +11,8 @@ All come from GDC publication pages (no token, no controlled data):
   ABSOLUTE_scores.tsv                           aneuploidy and LOH scores
   TCGA_mastercalls.abs_segtabs.fixed.txt        ABSOLUTE allele-specific segments (LOH per segment)
   mc3.v0.2.8.PUBLIC.maf.gz                      MC3 public somatic mutation calls
+  added 2026-10-13 for D-60, with the data user's approval:
+  broad.mit.edu_PANCAN_Genome_Wide_SNP_6_whitelisted.seg  SNP6 copy-ratio segments (no ceiling)
 Each file is pinned by UUID, byte count and MD5. A file already on disk is re-hashed and kept if
 it matches; a mismatch stops the step instead of overwriting. Downloads refuse anything larger
 than the pinned size. Written to <data_dir>/external/gdc_pancanatlas/ (git-ignored: the tables
@@ -56,6 +58,10 @@ FILES = {
     "mc3.v0.2.8.PUBLIC.maf.gz": {
         "uuid": "1c8cfe5f-e52d-41ba-94da-f15ea1337efc", "bytes": 753_339_089,
         "md5": "639ad8f8386e98dacc22e439188aa8fa",
+        "page": "https://gdc.cancer.gov/about-data/publications/pancanatlas"},
+    "broad.mit.edu_PANCAN_Genome_Wide_SNP_6_whitelisted.seg": {
+        "uuid": "00a32f7a-c85f-4f86-850d-be53973cbc4d", "bytes": 166_238_394,
+        "md5": "7fafc537807d5b3ddf0bb89665279a9d",
         "page": "https://gdc.cancer.gov/about-data/publications/pancanatlas"},
 }
 

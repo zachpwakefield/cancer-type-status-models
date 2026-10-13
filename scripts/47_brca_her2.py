@@ -14,6 +14,7 @@ Usage: python scripts/47_brca_her2.py
 """
 from __future__ import annotations
 
+import functools
 import importlib.util
 import json
 from pathlib import Path
@@ -45,11 +46,17 @@ WIDE_GENES = CORE_GENES + ["NEUROD2", "IKZF3", "ZPBP2", "GSDMB", "ORMDL3", "LRRC
 SEED, BOOT = 0, 2000
 
 
-def erbb2_copy_number() -> pd.DataFrame:
+@functools.lru_cache(maxsize=1)
+def erbb2_anchor() -> float:
+    """GRCh37 position of ERBB2: the midpoint of its MC3 call span."""
     m = pd.read_csv(EXT / "mc3.v0.2.8.PUBLIC.maf.gz", sep="\t", usecols=["Gene", "Chromosome", "Start_Position"],
                     dtype={"Gene": str, "Chromosome": str})
     m = m[m.Gene.eq(ERBB2) & m.Chromosome.eq("17")]
-    anchor = (m.Start_Position.min() + m.Start_Position.max()) / 2
+    return float((m.Start_Position.min() + m.Start_Position.max()) / 2)
+
+
+def erbb2_copy_number() -> pd.DataFrame:
+    anchor = erbb2_anchor()
     seg = pd.read_csv(EXT / "TCGA_mastercalls.abs_segtabs.fixed.txt", sep="\t",
                       usecols=["Sample", "Chromosome", "Start", "End", "Modal_Total_CN"])
     seg = seg[seg.Chromosome.eq(17) & (seg.Start <= anchor) & (seg.End >= anchor)]

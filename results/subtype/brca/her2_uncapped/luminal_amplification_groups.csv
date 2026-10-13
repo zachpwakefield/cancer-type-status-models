@@ -1,0 +1,4 @@
+group,n,median_ploidy,median_rel,median_absolute_cn,lumb_share,auroc_gex,auroc_as
+D-58 amplified,31,2.09,5.295,7,0.3548,0.7224,0.8142
+newly amplified,15,3.85,5.661,7,0.5333,0.826,0.8218
+not amplified,666,2.11,1.008,2,0.2643,,

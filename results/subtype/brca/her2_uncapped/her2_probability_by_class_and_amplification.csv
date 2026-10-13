@@ -1,0 +1,11 @@
+label,amplified,n,median_p_gex,median_p_as,median_rel
+Basal,False,163,0.0001401,0.01046,0.7795
+Basal,True,1,,,
+Her2,False,19,0.9366,0.5193,1.016
+Her2,True,35,0.9474,0.6766,6.69
+LumA,False,490,0.0008954,0.02308,1.003
+LumA,True,27,0.0106,0.1144,5.283
+LumB,False,177,0.002437,0.05831,1.056
+LumB,True,18,0.02969,0.2696,5.828
+Normal-like,False,30,0.0008455,0.03198,0.9608
+Normal-like,True,2,,,

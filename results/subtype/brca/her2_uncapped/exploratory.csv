@@ -1,0 +1,19 @@
+what,value,p,n
+"raw rule (R >= 2): HU1, LumA/LumB: AUROC(GEX P(Her2) higher when amplified) - 0.5",0.251,5.761e-09,"amplified 48, not 700"
+"raw rule (R >= 2): HU2, LumA/LumB: AUROC(AS ensemble) - AUROC(GEX), amplified against not",0.09182,0.002999,"748 tumours; 95% CI half-width 0.058; AS 0.843, GEX 0.751"
+"raw rule (R >= 2): HU3, LumA/LumB without D-58's amplified: AUROC(AS ensemble) - AUROC(GEX), newly amplified against not",0.05533,0.1179,"newly amplified 22, not 695; 95% CI half-width 0.070; AS 0.880, GEX 0.824"
+"raw rule (R >= 2): HU4, PAM50 Her2: AUROC(GEX) - AUROC(AS ensemble), amplified against not",0.03367,0.6937,"amplified 54, not 22; 95% CI half-width 0.141; GEX 0.615, AS 0.582"
+"raw rule (R >= 2): HU5, AUROC(AS P(Her2) higher in non-amplified Her2 than amplified LumA/LumB) - 0.5",0.3333,8.713e-06,"non-amplified Her2 22, amplified luminal 48"
+"raw rule (R >= 2): HU6, amplified LumA/LumB: Spearman(GEX P(Her2), amplification level)",0.6115,3.894e-06,48 amplified luminal tumours
+"raw rule (R >= 2): HU7, amplified LumA/LumB: Spearman(GEX) - Spearman(AS ensemble)",0.2574,0.01599,48 tumours; 95% CI half-width 0.225; AS rho 0.354
+D-60 rule: amplified among clinical HER2 positive,0.4564,,149
+D-60 rule: amplified among clinical HER2 negative,0.004354,,689
+raw rule: amplified among clinical HER2 positive,0.4973,,187
+raw rule: amplified among clinical HER2 negative,0.004149,,723
+D-58 ABSOLUTE rule: amplified among clinical HER2 positive,0.3356,,149
+D-58 ABSOLUTE rule: amplified among clinical HER2 negative,0.007236,,691
+"Spearman(q, ABSOLUTE copy number) where ABSOLUTE is below 7",0.9247,,880
+D-60 amplified: share with ABSOLUTE copy number at its ceiling (7),0.9157,,83
+D-60 amplified: median q / ploidy,6.145,,83
+convention check: median of per-sample genome-median Segment_Mean,0.0025,,1043
+convention check: share of samples with |genome median| <= 0.1,0.8917,,1043
