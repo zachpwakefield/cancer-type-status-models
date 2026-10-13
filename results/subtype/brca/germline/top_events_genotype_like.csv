@@ -1,0 +1,4 @@
+cohort,top_events,eligible,genotype_like,share_all_eligible
+BRCA,480,169,19,0.02635
+BRCA_ER,480,241,40,0.02635
+BRCA_PAM50,1200,526,63,0.02635

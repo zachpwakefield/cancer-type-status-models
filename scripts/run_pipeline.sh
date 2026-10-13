@@ -49,7 +49,7 @@ wait $p1 && wait $p2 && wait $p3
 run scripts/33_subtype_run_all.py --workers "${WORKERS:-6}"
 run scripts/34_subtype_summarise.py
 run scripts/35_subtype_interpret.py
-# splicing regulators, the site probe and the MSI repeats of the subtypes (D-46, D-47, D-52..D-56;
+# splicing regulators, the site probe, the MSI repeats and BRCA (D-46, D-47, D-52..D-59;
 # config/followup.yaml)
 run scripts/37_subtype_regulators.py --workers "${WORKERS:-6}"
 run scripts/38_subtype_site_probe.py --workers "${WORKERS:-6}"
@@ -61,6 +61,13 @@ if [ -d data.nosync/ctsm_v1/msi/slices ]; then
   run scripts/45_repeat_dna_reads.py --only genotype
   run scripts/45_repeat_dna_reads.py --only test
 fi
+# BRCA follow-ups (D-57..D-59): PanCanAtlas ABSOLUTE and MC3 tables from step 00b
+run scripts/46_brca_germline.py --only scan
+run scripts/46_brca_germline.py --only test
+run scripts/46_brca_germline.py --only check       # A-13, A-14: the tumour-normal germline check
+run scripts/46_brca_germline.py --only confirmed   # A-13: L1-L6 and A3 on germline-confirmed events
+run scripts/47_brca_her2.py
+run scripts/48_brca_mutations.py
 run scripts/36_subtype_figures.py
 # across the three tasks (docs/ACROSS_TASKS_METHODS.md D-48..D-51): nothing refitted
 run scripts/40_cross_task.py

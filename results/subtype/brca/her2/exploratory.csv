@@ -1,0 +1,12 @@
+what,value,n
+"H4 counterpart, GEX: AUROC(P(Her2) higher in non-amplified Her2 than amplified luminal)",0.9731,"24, 31"
+"LumA/LumB: Spearman(p_gex, ERBB2 copy number / ploidy)",0.04446,714
+"LumA/LumB: Spearman(p_as, ERBB2 copy number / ploidy)",0.01514,714
+"LumA/LumB: AUROC(p_gex, clinical HER2 positive against negative)",0.6503,"120, 550"
+"LumA/LumB: AUROC(p_as, clinical HER2 positive against negative)",0.7132,"120, 550"
+"Her2: AUROC(p_gex, clinical HER2 positive against negative)",0.6854,"52, 14"
+"Her2: AUROC(p_as, clinical HER2 positive against negative)",0.5824,"52, 14"
+H4 with clinical HER2 (p_gex): HER2-negative Her2 against HER2-positive luminal,0.9607,"14, 120"
+H4 with clinical HER2 (p_as): HER2-negative Her2 against HER2-positive luminal,0.8917,"14, 120"
+amplified among clinical HER2 positive,0.3356,149
+amplified among clinical HER2 negative,0.007236,691

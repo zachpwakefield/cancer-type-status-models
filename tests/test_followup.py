@@ -96,9 +96,6 @@ class TestSiteProbeHelpers(unittest.TestCase):
         self.assertTrue(np.all(p[y != 2].sum(1) > 0))
 
 
-if __name__ == "__main__":
-    unittest.main()
-
 
 class TestMsiRepeatHelpers(unittest.TestCase):
     """scripts/42 (D-52..D-54): window orientation, run lengths and the background-weighted score."""
@@ -213,3 +210,36 @@ class TestRepeatDnaReads(unittest.TestCase):
         self.assertEqual(ct.germline_mode.iloc[0], 12)
         self.assertAlmostEqual(ct.c.iloc[0], 0.5 - 0.1)
         self.assertEqual(ct.reference.iloc[0], "own normal")
+
+
+class TestBrcaGermline(unittest.TestCase):
+    """scripts/46 (D-57, A-13, A-14): the exact Fisher test, the three-group split and pair agreement."""
+    @classmethod
+    def setUpClass(cls):
+        cls.m = load_script("46_brca_germline.py")
+
+    def test_fisher_matches_scipy(self):
+        from scipy.stats import fisher_exact
+        rng = np.random.default_rng(0)
+        for a, b, c, d in rng.integers(0, 40, size=(200, 4)):
+            self.assertAlmostEqual(self.m.fisher_p(a, b, c, d), fisher_exact([[a, b], [c, d]])[1], places=9)
+
+    def test_three_groups_finds_the_gaps(self):
+        v = np.sort(np.r_[np.full(30, 0.05), np.full(30, 0.5), np.full(30, 0.95)])
+        a, b, mu, sd = self.m.three_groups(v)
+        self.assertTrue(0.05 < a <= 0.5 < b <= 0.95)
+        np.testing.assert_allclose(mu, [0.05, 0.5, 0.95])
+        self.assertAlmostEqual(sd, 0.0)
+
+    def test_pair_kappa(self):
+        g = np.repeat([0.0, 1.0, 2.0], 10)
+        self.assertAlmostEqual(self.m.pair_kappa(g, g), 1.0)
+        self.assertLess(self.m.pair_kappa(g, np.roll(g, 10)), 0)       # every pair moves group
+        self.assertTrue(np.isnan(self.m.pair_kappa(g[:5], g[:5])))     # fewer than 20 pairs
+        h = g.copy()
+        h[0] = np.nan                                                   # incomplete pairs drop out
+        self.assertAlmostEqual(self.m.pair_kappa(h, g), 1.0)
+
+
+if __name__ == "__main__":
+    unittest.main()

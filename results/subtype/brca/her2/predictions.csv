@@ -1,0 +1,5 @@
+id,what,effect,predicted_sign,p,n,q,verdict
+H1,LumA/LumB: AUROC(GEX P(Her2) higher when amplified) - 0.5,0.21605346431776318,1,4.654592010141448e-05,"amplified 31, not 683",9.309184020282896e-05,supported
+H2,"LumA/LumB: AUROC(GEX) - AUROC(AS ensemble), amplified against not",-0.09214565720493084,1,0.012,714 tumours; 95% CI half-width 0.077; AS AUROC 0.808,0.016,against
+H3,"PAM50 Her2: AUROC(GEX) - AUROC(AS ensemble), amplified against not",-0.002777777777777768,1,1.0,"amplified 30, not 24; 95% CI half-width 0.151; GEX 0.482, AS 0.485",1.0,not resolved
+H4,AUROC(AS P(Her2) higher in non-amplified Her2 than amplified LumA/LumB) - 0.5,0.3709677419354839,1,2.931816123180804e-06,"non-amplified Her2 24, amplified luminal 31",1.1727264492723216e-05,supported

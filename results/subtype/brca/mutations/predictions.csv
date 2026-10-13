@@ -1,0 +1,4 @@
+id,what,effect,predicted_sign,p,n,q,verdict
+C1,"share of mutated tumours with the exon below the cohort median, minus 0.5",0.2006369426751592,1,5.342153941870037e-07,110 of 157 mutations below the median; median percentile 0.093,8.013230912805056e-07,supported
+C2,"share of mutated tumours with the exon below the cohort median, minus 0.5",0.5,1,0.0625,5 of 5 mutations below the median; median percentile 0.001,0.0625,not resolved
+C3,AUROC(cryptic A3SS score higher in SF3B1-hotspot tumours) - 0.5,0.3969378119519763,1,3.248749150262681e-07,"hotspot 14, rest 1059; 820 events",8.013230912805056e-07,supported

@@ -1,0 +1,10 @@
+id,what,effect,predicted_sign,p,n,family,q,verdict,reading
+L1,"share of tumours whose heterozygous events sit further from the middle inside LOH, minus 0.5",0.3712871287128713,1,7.52058652903178e-15,88 of 101 tumours; median difference 0.034,L,4.512351917419068e-14,supported,
+L2,"Spearman(L1 difference, purity)",0.22154123440371867,1,0.025981204442949137,101 tumours,L,0.03117744533153896,supported,
+L3,"share of tumours with Spearman(d, d_pred) > 0, minus 0.5",0.17647058823529416,1,0.00046860434916208907,69 of 102 tumours; median rho 0.024,L,0.0009372086983241781,supported,
+L4,Spearman over arms of LumA-minus-Basal depletion and LumA-minus-Basal LOH share,0.37790422000948315,1,0.02110728816291707,37 arms,L,0.03117744533153896,supported,
+L5,AUROC(16q depletion higher in lobular than ductal) - 0.5,-0.0022322799975424412,1,0.9236805974352336,"lobular 193, ductal 759",L,0.9236805974352336,not resolved,
+L6,"share of arms with Spearman(depletion, arm LOH) > 0, minus 0.5",0.472972972972973,1,5.529727786779404e-10,36 of 37 arms; median rho 0.092,L,1.6589183360338211e-09,supported,
+A1,"log odds ratio of GSTM1 null, Black vs white",-0.5658437338403247,-1,0.0008287853634876168,"Black null 93/181, white null 486/747; threshold log2CPM 2.75",A,0.0009995002498750624,supported,
+A2,crude minus Mantel-Haenszel log OR of ER-negative for GSTM1 present,0.14158994552838589,1,0.0009995002498750624,"883 patients; crude log OR -0.465, race-stratified -0.607",A,0.0009995002498750624,supported,"against the claim as worded: the crude log OR is negative, so a positive difference means the association grew under race stratification (A-13)"
+A3,"genes with a race allele-frequency difference at q < 0.05, minus the permutation median",360.0,1,0.000999000999000999,"360 of 1110 genes; permutation median 0, max 6",A,0.0009995002498750624,supported,

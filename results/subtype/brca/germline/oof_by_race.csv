@@ -1,0 +1,13 @@
+cohort,model,race,n,balanced_accuracy
+BRCA,GEX,Black,163,0.7577
+BRCA,GEX,white,654,0.8817
+BRCA,AS ensemble,Black,163,0.7362
+BRCA,AS ensemble,white,654,0.8534
+BRCA_ER,GEX,Black,178,0.9049
+BRCA_ER,GEX,white,705,0.9295
+BRCA_ER,AS ensemble,Black,178,0.9114
+BRCA_ER,AS ensemble,white,705,0.9227
+BRCA_PAM50,GEX,Black,181,0.8636
+BRCA_PAM50,GEX,white,747,0.8551
+BRCA_PAM50,AS ensemble,Black,181,0.8372
+BRCA_PAM50,AS ensemble,white,747,0.8198
