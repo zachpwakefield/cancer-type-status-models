@@ -1,0 +1,5 @@
+id,what,effect,predicted_sign,p,n,q,verdict
+BP1,"STAD_TCGA: Spearman(delta_adj, d_bp | run-length bin, mean PSI)",0.16133469751414903,1,0.000999000999000999,1492 exons,0.000999000999000999,supported
+BP2,"COAD_TCGA: Spearman(delta_adj, d_bp | run-length bin, mean PSI)",0.11480175535622512,1,0.000999000999000999,1415 exons,0.000999000999000999,supported
+BP3,"UCEC_TCGA: Spearman(delta_adj, d_bp | run-length bin, mean PSI)",0.10861455379311478,1,0.000999000999000999,1235 exons,0.000999000999000999,supported
+BP4,"mean delta_adj over cohorts: Spearman(., d_bp | run-length bin, mean PSI)",0.15614240967969945,1,0.000999000999000999,1420 exons in >= 2 cohorts,0.000999000999000999,supported

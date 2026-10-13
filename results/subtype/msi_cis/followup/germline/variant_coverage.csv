@@ -1,0 +1,10 @@
+tissue,window,runs,runs_with_any_variant,runs_with_an_indel
+Stomach,inside the run (from start - 1),1580,0,0
+Stomach,within 50 nt of the run,1580,56,2
+Stomach,within 300 nt of the run,1580,265,33
+Colon_Transverse,inside the run (from start - 1),1580,0,0
+Colon_Transverse,within 50 nt of the run,1580,80,6
+Colon_Transverse,within 300 nt of the run,1580,315,44
+Uterus,inside the run (from start - 1),1580,0,0
+Uterus,within 50 nt of the run,1580,38,2
+Uterus,within 300 nt of the run,1580,144,19

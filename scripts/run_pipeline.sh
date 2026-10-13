@@ -55,6 +55,12 @@ run scripts/37_subtype_regulators.py --workers "${WORKERS:-6}"
 run scripts/38_subtype_site_probe.py --workers "${WORKERS:-6}"
 run scripts/42_msi_repeats.py               # D-52..D-54; needs the GRCh38 FASTA (FASTA in the script)
 run scripts/43_msi_robustness.py            # D-55
+# D-61..D-64: MC3 and ABSOLUTE from step 00b; GTEx v8 sQTL pairs pinned in the script (fetched by hand)
+run scripts/50_msi_followup.py --only geometry
+run scripts/50_msi_followup.py --only load
+run scripts/50_msi_followup.py --only nmd
+run scripts/50_msi_followup.py --only branch
+run scripts/50_msi_followup.py --only germline
 run scripts/44_repeat_dna.py --only loci    # D-56: loci and the BAM manifest; the slices are fetched
 run scripts/44_repeat_dna.py --only manifest #   by the data user with their own GDC token (see step 44)
 if [ -d data.nosync/ctsm_v1/msi/slices ]; then

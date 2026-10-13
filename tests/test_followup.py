@@ -241,5 +241,39 @@ class TestBrcaGermline(unittest.TestCase):
         self.assertAlmostEqual(self.m.pair_kappa(h, g), 1.0)
 
 
+class TestMsiFollowup(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.m = load_script("50_msi_followup.py")
+
+    def test_run_and_branch_point_from_sequence(self):
+        # position order (index 0 = position 1): AG reversed, a T12, then yUnAy read 3' to 5'
+        rev = "GACG" + "T" * 12 + "C" + "A" + "G" + "T" + "C" + "G" * 30
+        g = self.m.run_geometry(rev)
+        self.assertEqual((g["run_near"], g["run_far"], g["run_len"]), (5, 16, 12))
+        self.assertEqual(g["d_bp"], 18)
+        no_t = rev[:19] + "G" + rev[20:]                 # the T 2 nt 5' of the A is lost
+        self.assertTrue(np.isnan(self.m.run_geometry(no_t)["d_bp"]))
+        self.assertEqual(self.m.run_geometry("GACG" + "C" * 60), {})
+
+    def test_context_run_counts_the_right_flank(self):
+        self.assertEqual(self.m.context_run("GCAGTC" + "T" + "TTTG", "T"), 4)
+        self.assertEqual(self.m.context_run("GCAGTC" + "AA" + "AAAAA", "AA"), 7)
+        self.assertEqual(self.m.context_run("GCAGTC" + "A" + "CAAAA", "A"), 1)
+
+    def test_adjusted_rho_permutes_within_bins(self):
+        rng = np.random.default_rng(1)
+        x = rng.normal(size=300)
+        bins = np.repeat(np.array(["a", "b", "c"], dtype=object), 100)
+        y = x + 3 * (bins == "b") + rng.normal(scale=0.5, size=300)
+        r, p, n = self.m.adjusted_rho(y, x, bins, [], np.random.default_rng(0), perm=99)
+        self.assertGreater(r, 0.7)
+        self.assertAlmostEqual(p, 0.01)
+        self.assertEqual(n, 300)
+        r0, p0, _ = self.m.adjusted_rho(rng.normal(size=300), x, bins, [], np.random.default_rng(0), perm=99)
+        self.assertLess(abs(r0), 0.2)
+        self.assertGreater(p0, 0.01)
+
+
 if __name__ == "__main__":
     unittest.main()

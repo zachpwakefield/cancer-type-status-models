@@ -1,0 +1,4 @@
+id,what,effect,predicted_sign,p,n,q,verdict
+GL1,runs 10-19: not testable,,,,0 exons,,not testable
+GL2,runs >=20: not testable,,,,0 exons,,not testable
+GL3,not testable,,,,0 exons,,not testable

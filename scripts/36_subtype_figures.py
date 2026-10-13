@@ -16,10 +16,12 @@ One question per figure, in the order the story is told in results/SUBTYPE.md:
     U13 which HER2 did each modality learn: amplification or the HER2-enriched programme (D-58)?
     U14 do splice-site mutations and SF3B1 hotspots leave their marks in BRCA splicing (D-59)?
     U15 does splicing's HER2 lead survive ERBB2 copy number without the ABSOLUTE ceiling (D-60)?
+    U16 does more mismatch-repair damage mean more skipping of repeat exons (D-61)?
+    U17 does the branch point's distance from the 3' splice site set the direction of the MSI shift (D-63)?
 
 Reads results/subtype/summary/ (step 34), results/subtype/interpret/ (step 35),
 results/subtype/regulators/ (step 37), results/subtype/site_probe/ (step 38),
-results/subtype/msi_cis/ (step 42) and results/subtype/brca/ (steps 46-48). Every figure
+results/subtype/msi_cis/ (steps 42, 50) and results/subtype/brca/ (steps 46-49). Every figure
 is SVG + PDF + 400-dpi PNG with `<stem>.csv` of the plotted values and `<stem>.caption.md`.
 Usage: python scripts/36_subtype_figures.py [U1 U3 ...]        (default: all)
 """
@@ -1516,12 +1518,234 @@ filled = amplified by D-58 too, hollow = newly amplified.
 
 q over family HU (7 tests). Per-tumour values are kept locally (D-12)."""
 
+# ============================================================ MSI follow-up (D-61..D-64)
+FU_DIR = MSI_DIR / "followup"
+
+
+def U16() -> None:
+    pr = pd.read_csv(FU_DIR / "load" / "predictions.csv").set_index("id")
+    gr = pd.read_csv(FU_DIR / "load" / "by_cohort_group.csv")
+    d = pd.read_parquet(MSI_LOCAL / "deletion_load.parquet")
+    au = pd.read_csv(MSI_DIR / "score_aurocs.csv")
+    au = au[au.score.eq("acc")].set_index("cohort").auroc_msi_vs_rest
+    coh = ["STAD_TCGA", "COAD_TCGA", "UCEC_TCGA"]
+    test_of = {"STAD_TCGA": "DL1", "COAD_TCGA": "DL2", "UCEC_TCGA": "DL3"}
+    fig = plt.figure(figsize=(DOUBLE * 0.92, 2.05))
+    gs = fig.add_gridspec(1, 4, width_ratios=[1, 1, 1, 0.95], wspace=0.42)
+    ticks = [0, 10, 100, 1000]
+    rows, local, axes = [], [], []
+    ylo, yhi = d.score_acc.min(), d.score_acc.max()
+    pad = 0.06 * (yhi - ylo)
+    for i, c in enumerate(coh):
+        ax = fig.add_subplot(gs[i])
+        axes.append(ax)
+        col, mk = COH_STYLE[c]
+        for g, face, s_, z in [("rest", MUTED, 3, 1), ("MSI", col, 7, 2)]:
+            v = d[d.cohort.eq(c) & d.group.eq(g)]
+            ax.scatter(v.load, v.score_acc, s=s_, marker=mk, color=face, alpha=0.55 if g == "rest" else 0.85,
+                       linewidths=0, zorder=z)
+            local.append(v[["cohort", "group", "n_hp", "load", "score_acc", "purity"]])
+        t = pr.loc[test_of[c]]
+        ax.text(0.98, 0.97, f"MSI ρ = {signed(t.effect, 2)}\np = {fp(t.p)}", transform=ax.transAxes, ha="right",
+                va="top", fontsize=5.4, color=INK)
+        ax.set_xticks(np.log1p(ticks))
+        ax.set_xticklabels([str(k) for k in ticks], fontsize=5.6)
+        ax.set_xlim(-0.25, np.log1p(1500))
+        ax.set_ylim(ylo - pad, yhi + pad)
+        ax.set_title(_short(c), fontsize=6.5, pad=2)
+        ax.set_xlabel("homopolymer deletions", fontsize=6)
+        if i == 0:
+            ax.set_ylabel("repeat-exon score (D-52)", fontsize=6)
+        else:
+            ax.set_yticklabels([])
+        rows.append({"panel": c, "set": f"{test_of[c]}: MSI tumours, partial Spearman | purity", "n": t.n,
+                     "value": t.effect, "p": t.p, "q": t.q, "q_family": "DL (msi_deletion_load, 6 tests)",
+                     "verdict": t.verdict})
+        for g in ["MSI", "rest"]:
+            r = gr[gr.cohort.eq(c) & gr.group.eq(g)].iloc[0]
+            rows.append({"panel": c, "set": f"{g} tumours plotted", "n": int(r.n), "value": r.median_n_hp,
+                         "statistic": "median homopolymer deletions"})
+    # last panel: MSI tumours' deletion load by cohort, with the cohort's D-52 AUROC
+    bx = fig.add_subplot(gs[3])
+    rng = np.random.default_rng(0)
+    for i, c in enumerate(coh):
+        v = d[d.cohort.eq(c) & d.group.eq("MSI")].n_hp.to_numpy()
+        b = _box(bx, i, np.log1p(v), COH_STYLE[c][0], width=0.5, rng=rng, s=3)
+        rows.append({"panel": "load by cohort", "set": f"{c} MSI", "n": b["n"], "value": float(np.expm1(b["median"])),
+                     "statistic": "median homopolymer deletions (box on log(1 + count))",
+                     "q1": float(np.expm1(b["q1"])), "q3": float(np.expm1(b["q3"]))})
+        rows.append({"panel": "load by cohort", "set": f"{c} D-52 score AUROC, MSI vs rest", "value": float(au[c]),
+                     "statistic": "AUROC (score lower in MSI)"})
+    bx.set_xticks(range(3))
+    bx.set_xticklabels([f"{_short(c)}\n{au[c]:.2f}" for c in coh], fontsize=5.6)
+    bx.tick_params(axis="x", length=0)
+    bx.set_yticks(np.log1p([10, 30, 100, 300]))
+    bx.set_yticklabels(["10", "30", "100", "300"], fontsize=5.6)
+    bx.set_xlim(-0.6, 2.6)
+    bx.set_ylabel("homopolymer deletions, MSI", fontsize=6)
+    for a_, lab in [(axes[0], "a"), (bx, "b")]:
+        a_.text(-0.34 if a_ is axes[0] else -0.42, 1.04, lab, transform=a_.transAxes, fontsize=8, fontweight="bold")
+    data = pd.DataFrame(rows)
+    save(fig, OUT, "U16_msi_deletion_load", data=data, caption=CAPTIONS["U16"](pr, gr, au),
+         local_data=(SCFG.base_data_dir / "figure_data", pd.concat(local, ignore_index=True)))
+
+
+def _cap_u16(pr, gr, au):
+    m = gr[gr.group.eq("MSI")].set_index("cohort")
+    r = gr[gr.group.eq("rest")].set_index("cohort")
+    dl = lambda k: f"ρ = {signed(pr.loc[k].effect, 2)}, q = {fp(pr.loc[k].q)}, {pr.loc[k].verdict}"
+    return f"""**Does more mismatch-repair damage mean more skipping of repeat exons?**
+
+Pre-specified (config/followup.yaml: msi_deletion_load, D-61). Homopolymer deletion = an MC3 deletion (FILTER PASS, wga
+or native_wga_mix) of A or T bases inside a run of ≥ 5 of that base, counted per tumour in the exome. Score = the D-52
+per-tumour repeat-exon score: mean inclusion percentile of exons whose acceptor carries a T-run ≥ 10, minus that of
+matched exons without one (lower = repeat exons less included). Partial Spearman of score and log(1 + count), adjusted
+for ABSOLUTE purity, within MSI tumours.
+
+a, one panel per cancer: score against homopolymer deletions (x on a log(1 + count) scale); MSI tumours in colour,
+the rest grey. The rest carry a median of {int(r.median_n_hp.max())} homopolymer deletions in every cancer (upper
+quartile ≤ {int(r.q3_n_hp.max())}); MSI tumours a median of {int(m.loc['COAD_TCGA'].median_n_hp)} (COAD) to
+{int(m.loc['UCEC_TCGA'].median_n_hp)} (UCEC). b, MSI tumours' homopolymer deletions by cancer (box = interquartile
+range, diamond = median, whiskers 1.5 × IQR, points = tumours), with each cancer's D-52 score AUROC for MSI against the
+rest (second line of each label).
+
+- DL1–DL3, more deletions, lower score: STAD {dl('DL1')}; COAD {dl('DL2')}; UCEC {dl('DL3')}.
+- DL4–DL5, a smaller share of multi-base deletions in UCEC (explaining its weaker shift): not resolved; the median
+  share is {m.loc['UCEC_TCGA'].median_long_share:.3f} in UCEC, {m.loc['STAD_TCGA'].median_long_share:.3f} in STAD
+  and {m.loc['COAD_TCGA'].median_long_share:.3f} in COAD. Over 98% of these deletions remove one base.
+- DL6, multi-base deletions beyond single-base ones: {dl('DL6')}.
+
+Dose tracks the score within STAD only. Between cancers it runs the other way: UCEC MSI tumours carry the most deletions
+and the D-52 score does not separate them from the rest (AUROC {au['UCEC_TCGA']:.2f}). The exome counts coding runs,
+mostly shorter than 10; the intronic tracts themselves were not measured. q over family DL (6 tests); per-tumour values
+are kept locally (D-12)."""
+
+
+def U17() -> None:
+    pr = pd.read_csv(FU_DIR / "branch" / "predictions.csv").set_index("id")
+    ex = pd.read_csv(FU_DIR / "branch" / "exploratory.csv")
+    g = pd.read_parquet(MSI_LOCAL / "run_geometry.parquet").drop_duplicates(["chrom", "strand", "es", "ee"])
+    coh = ["STAD_TCGA", "COAD_TCGA", "UCEC_TCGA"]
+    fig = plt.figure(figsize=(DOUBLE * 0.86, 2.2))
+    gs = fig.add_gridspec(1, 3, width_ratios=[0.9, 1.45, 0.95], wspace=0.55)
+    rows = []
+    # a. where the branch point lies: d_bp by run class
+    ax = fig.add_subplot(gs[0])
+    bins = np.arange(10, 102, 4)
+    for cls, k, col in [("10–19", g.acc_T < 20, INK2), ("≥20", g.acc_T >= 20, ACCENT)]:
+        v = g.loc[k, "d_bp"].dropna()
+        h, e = np.histogram(v, bins=bins)
+        ax.step(e[:-1], h / h.sum(), where="post", color=col, linewidth=0.8, label=f"{cls} nt")
+        rows += [{"panel": "a", "set": f"T-run {cls}", "bin_start": int(a), "share": float(b / h.sum()), "n": len(v)}
+                 for a, b in zip(e[:-1], h)]
+    ax.axvspan(19, 23, color=GRID, zorder=0, linewidth=0)
+    rows.append({"panel": "a", "set": "reference band: 19-23 nt (Chua and Reed 2001)", "bin_start": 19})
+    ax.set_xlabel("branch point to 3′ss (nt)", fontsize=6)
+    ax.set_ylabel("share of R exons", fontsize=6)
+    ax.set_xlim(10, 100)
+    ax.legend(loc="upper right", fontsize=5.2, handlelength=1.0, borderaxespad=0.1, bbox_to_anchor=(1.02, 0.72),
+              title="T-run", title_fontsize=5.2)
+    # b. share more included in MSI by branch-point tertile, within run classes
+    bx = fig.add_subplot(gs[1])
+    t = ex[ex.what.eq("share moving up by d_bp tertile")]
+    for j, c in enumerate(coh):
+        col, mk = COH_STYLE[c]
+        for i, cls in enumerate(["10-19", ">=20"]):
+            v = t[t.cohort.eq(c) & t.run_class.eq(cls)].set_index("tertile").loc[["near", "middle", "far"]]
+            xs = i * 3.6 + np.arange(3) + (j - 1) * 0.16
+            for x, r in zip(xs, v.itertuples()):
+                n, ph, z = r.n, r.share_up, 1.96
+                den = 1 + z * z / n
+                mid = (ph + z * z / (2 * n)) / den
+                half = z * np.sqrt(ph * (1 - ph) / n + z * z / (4 * n * n)) / den
+                bx.vlines(x, mid - half, mid + half, color=col, linewidth=0.6, alpha=0.8)
+                rows.append({"panel": "b", "cohort": c, "set": f"T-run {cls}, d_bp {r.Index} (median {r.median_d_bp:g} nt)",
+                             "n": int(n), "share": ph, "ci_low": mid - half, "ci_high": mid + half})
+            bx.plot(xs, v.share_up, color=col, linewidth=0.8, marker=mk, ms=3, mec="white", mew=0.3,
+                    label=_short(c) if i == 0 else None)
+    bx.axhline(0.5, color=MUTED, linewidth=0.6, linestyle=(0, (3, 2)), zorder=0)
+    rows.append({"panel": "b", "set": "reference line", "share": 0.5})
+    bx.set_xticks([0, 1, 2, 3.6, 4.6, 5.6])
+    bx.set_xticklabels(["near", "mid", "far"] * 2, fontsize=5.6)
+    bx.tick_params(axis="x", length=0)
+    for x, lab in [(1, "T-run 10–19"), (4.6, "T-run ≥ 20")]:
+        bx.text(x, -0.2, lab, ha="center", va="top", fontsize=6, transform=bx.get_xaxis_transform())
+    bx.set_ylabel("share more included in MSI", fontsize=6)
+    bx.set_ylim(0.2, 0.85)
+    bx.legend(loc="upper left", fontsize=5.4, handlelength=1.4, borderaxespad=0.2)
+    # c. adjusted Spearman of the MSI shift with d_bp (tests) and with d_run (exploratory)
+    cx = fig.add_subplot(gs[2])
+    sets = [("BP1", "STAD_TCGA"), ("BP2", "COAD_TCGA"), ("BP3", "UCEC_TCGA"), ("BP4", "mean of >= 2 cohorts")]
+    dr = ex[ex.what.eq("d_run in place of d_bp")].set_index("cohort")
+    for i, (pid, c) in enumerate(sets):
+        r = pr.loc[pid]
+        col = COH_STYLE[c][0] if c in COH_STYLE else INK
+        cx.scatter(r.effect, i - 0.12, marker="o", s=14, color=col, zorder=3)
+        cx.scatter(dr.loc[c, "rho"], i + 0.12, marker="o", s=14, facecolor="white", edgecolor=col, linewidth=0.7, zorder=3)
+        cx.text(0.255, i - 0.12, f"p = {fp(r.p)}", va="center", fontsize=5.2, color=INK)
+        rows.append({"panel": "c", "cohort": c, "set": f"{pid}: d_bp", "n": r.n, "value": r.effect, "p": r.p, "q": r.q,
+                     "q_family": "BP (msi_branchpoint, 4 tests)", "verdict": r.verdict})
+        rows.append({"panel": "c", "cohort": c, "set": "d_run (exploratory, 200 permutations)", "n": int(dr.loc[c, "n"]),
+                     "value": dr.loc[c, "rho"], "p": dr.loc[c, "p"]})
+    cx.axvline(0, color=INK2, linewidth=0.6)
+    rows.append({"panel": "c", "set": "reference line", "value": 0.0})
+    cx.set_yticks(range(4))
+    cx.set_yticklabels(["STAD", "COAD", "UCEC", "≥ 2 cancers"], fontsize=5.8)
+    cx.set_ylim(4.5, -0.6)
+    cx.set_xlim(-0.05, 0.25)
+    cx.set_xticks([0, 0.1, 0.2])
+    cx.tick_params(axis="y", length=0)
+    cx.spines["left"].set_visible(False)
+    cx.set_xlabel("adjusted Spearman ρ", fontsize=6)
+    from matplotlib.lines import Line2D
+    cx.legend(handles=[Line2D([], [], marker="o", linestyle="", markersize=3.5, color=INK, label="branch point"),
+                       Line2D([], [], marker="o", linestyle="", markersize=3.5, markerfacecolor="white",
+                              markeredgecolor=INK, label="run's far end")],
+              loc="lower right", fontsize=5.2, handletextpad=0.2, borderaxespad=0.1, bbox_to_anchor=(1.0, -0.02))
+    for a_, lab, x in [(ax, "a", -0.4), (bx, "b", -0.25), (cx, "c", -0.3)]:
+        a_.text(x, 1.04, lab, transform=a_.transAxes, fontsize=8, fontweight="bold")
+    data = pd.DataFrame(rows)
+    save(fig, OUT, "U17_msi_branchpoint", data=data, caption=CAPTIONS["U17"](pr, ex, g))
+
+
+def _cap_u17(pr, ex, g):
+    t = ex[ex.what.eq("share moving up by d_bp tertile") & ex.cohort.eq("mean of >= 2 cohorts")].set_index(
+        ["run_class", "tertile"])
+    bp = lambda k: f"ρ = {signed(pr.loc[k].effect, 3)}"
+    return f"""**Does the branch point's distance from the 3′ splice site set the direction of the MSI shift?**
+
+Pre-specified (config/followup.yaml: msi_branchpoint, D-63). Exons whose acceptor carries a T-run ≥ 10 (R exons, D-52),
+read from the GRCh38 primary assembly. Branch point = the A nearest the 3′ splice site that lies upstream of the run,
+within 100 nt, and matches yUnAy; found for {g.d_bp.notna().mean() * 100:.0f}% of {len(g)} exons. MSI shift =
+D-52's background-adjusted difference in inclusion percentile, MSI minus the rest.
+
+a, distance from the branch point to the 3′ss, by run length ({int(g[g.acc_T < 20].d_bp.notna().sum())} exons with
+runs of 10–19 nt, {int(g[g.acc_T >= 20].d_bp.notna().sum())} with ≥ 20 nt); grey band = 19–23 nt, the optimum for a 3′ss AG
+(Chua and Reed 2001). b, share of R exons more included in MSI, by tertile of that distance within run classes,
+per cancer; bars = Wilson 95% interval. c, the tests: Spearman of the MSI shift with the branch-point distance after
+both are rank-residualised on run-length bins (10–11, 12–13, 14–15, 16–19, 20–24, ≥ 25) and mean inclusion; p by
+permuting the distance within run-length bins (1,000; the floor is 0.001). Hollow = the same with the run's far end in
+place of the branch point (exploratory).
+
+- BP1–BP4, an exon whose branch point lies further from the 3′ss is more included in MSI, beyond its run length:
+  STAD {bp('BP1')}, COAD {bp('BP2')}, UCEC {bp('BP3')}, mean over ≥ 2 cancers {bp('BP4')}; all q = {fp(pr.q.max())},
+  supported.
+- Mean over ≥ 2 cancers, runs of 10–19: {t.loc[('10-19', 'near')].share_up:.2f} of exons with the nearest branch
+  points move up, {t.loc[('10-19', 'far')].share_up:.2f} with the farthest. Runs ≥ 20:
+  {t.loc[('>=20', 'near')].share_up:.2f} against {t.loc[('>=20', 'far')].share_up:.2f}. The long-run reversal of
+  D-53 sits in the exons whose branch point is far.
+
+The run's far end carries nearly the same information as the branch point, because the branch point must lie beyond
+it; these tests cannot separate the two. The branch point is a motif call, not a measured position. q over family BP
+(4 tests)."""
+
 
 CAPTIONS = {k: (lambda f: (lambda *a: tidy(f(*a))))(f) for k, f in
             {"U1": _cap_u1, "U2": _cap_u2, "U3": _cap_u3, "U4": _cap_u4, "U5": _cap_u5, "U6": _cap_u6,
              "U7": _cap_u7, "U8": _cap_u8, "U9": _cap_u9,
-             "U10": _cap_u10, "U11": _cap_u11, "U12": _cap_u12, "U13": _cap_u13, "U14": _cap_u14, "U15": _cap_u15}.items()}
+             "U10": _cap_u10, "U11": _cap_u11, "U12": _cap_u12, "U13": _cap_u13, "U14": _cap_u14, "U15": _cap_u15,
+             "U16": _cap_u16, "U17": _cap_u17}.items()}
 
 if __name__ == "__main__":
     run({"U1": U1, "U2": U2, "U3": U3, "U4": U4, "U5": U5, "U6": U6, "U7": U7, "U8": U8, "U9": U9, "U10": U10, "U11": U11,
-         "U12": U12, "U13": U13, "U14": U14, "U15": U15})
+         "U12": U12, "U13": U13, "U14": U14, "U15": U15, "U16": U16, "U17": U17})

@@ -1,0 +1,7 @@
+id,what,effect,predicted_sign,p,n,q,verdict
+DL1,"STAD_TCGA: partial Spearman(score, homopolymer-deletion load | purity)",-0.4480958830458206,-1,0.0007662372329502727,54 MSI tumours,0.004597423397701636,supported
+DL2,"COAD_TCGA: partial Spearman(score, homopolymer-deletion load | purity)",0.13090437703714577,-1,0.43995894179224837,38 MSI tumours,0.5814364502889399,not resolved
+DL3,"UCEC_TCGA: partial Spearman(score, homopolymer-deletion load | purity)",-0.12606019683200498,-1,0.48453037524078324,34 MSI tumours,0.5814364502889399,not resolved
+DL4,AUROC(long share higher in STAD_TCGA than UCEC_TCGA MSI) - 0.5,-0.07299465240641712,1,0.2301304363731438,"UCEC 34, STAD 55; median long share 0.010 vs 0.007",0.4602608727462876,not resolved
+DL5,AUROC(long share higher in COAD_TCGA than UCEC_TCGA MSI) - 0.5,-0.1411764705882353,1,0.025497358650823313,"UCEC 34, COAD 40; median long share 0.010 vs 0.000",0.07649207595246994,not resolved
+DL6,"MSI, ranks within cohort: partial Spearman(score, long load | short load, purity)",-0.02590962613377375,-1,0.7751513162978734,126 MSI tumours,0.7751513162978734,not resolved

@@ -1,0 +1,5 @@
+id,what,effect,predicted_sign,p,n,q,verdict
+NM1,"STAD_TCGA, exons skipped in MSI: AUROC(gene log2FC lower when frameshifting) - 0.5",-0.0404761904761905,1.0,0.674150223875841,"frameshifting 15 (median +0.196), in-frame 28 (median +0.127)",0.674150223875841,not resolved
+NM2,"COAD_TCGA, exons skipped in MSI: AUROC(gene log2FC lower when frameshifting) - 0.5",0.13571428571428568,1.0,0.18944367317382127,"frameshifting 14 (median -0.091), in-frame 20 (median +0.021)",0.2841655097607319,not resolved
+NM3,UCEC_TCGA: not testable,,,,"frameshifting 2, in-frame 3",,not testable
+NM4,"all cohorts: Spearman(delta_adj, gene log2FC), frameshifting minus in-frame",0.11933351237519664,1.0,0.134,"frameshifting 339 (rho -0.047), in-frame 335 (rho -0.166)",0.2841655097607319,not resolved

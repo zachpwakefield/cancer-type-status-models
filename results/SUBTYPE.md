@@ -124,7 +124,11 @@ transcription read on the other strand (§7).
     advance): 80% and 68% of the STAD and COAD MSI models' top 50 SE events carry an acceptor
     T-run ≥ 10 (5% of exons); a genome-only score ranks MSI at AUROC 0.71 and 0.78 (UCEC 0.51), at
     the acceptor only; MRE11 exon 5 replicates in all three. Runs ≥ 20 move toward inclusion
-    (exploratory; 2 of 6 replication tests supported, 6 of 6 in direction).
+    (exploratory; 2 of 6 replication tests supported, 6 of 6 in direction). Followed up (U16–U17;
+    D-61 to D-64 fixed in advance): an exon whose branch point lies further from the AG gains
+    inclusion in MSI, beyond its run length, in all three cancers (adjusted ρ 0.11–0.16). Deletion
+    dose tracks the score in STAD only, and does not explain the weak endometrial score. No NMD
+    signature shows in gene expression. GTEx genotypes no variant inside the runs.
 11. **BRCA with DNA** (U12–U15; D-57 to D-60 fixed in advance): the AS ensemble separates
     ERBB2-amplified luminal tumours about as well as GEX (0.81 against 0.75 without the ABSOLUTE
     ceiling; HU2 not resolved, and no gap on the 15 newly amplified tumours), and not through the
@@ -762,14 +766,80 @@ site, tumour composition and RNA handling (`results/subtype/msi_cis/robustness/`
 - **Endometrium** stays at 0.54 within hospital (outside the family).
 
 **What this does not show.**
-- **The deletions themselves.** There is no tumour DNA here yet: the mechanism is inferred from
-  the reference sequence and the MSI label, not from contraction alleles seen in each tumour. D-56
-  pre-specifies reading the 785 repeats in each tumour's exome reads (G1–G6); it waits on the BAM
-  slices.
+- **The deletions themselves.** The mechanism is inferred from the reference sequence and the MSI
+  label, not from contraction alleles seen at these tracts in each tumour. MC3 adds only coding
+  homopolymer deletions (D-61), a measure of mismatch-repair damage, not of the intronic tracts.
+  D-56 pre-specifies reading the 785 repeats in each tumour's exome reads (G1–G6); it waits on the
+  BAM slices.
 - **Exon-body reads.** The repository does not record whether the rMATS PSI counts exon-body
   reads. If it does, unspliced pre-mRNA could add to an apparent increase.
 - **The retained-intron check.** It was too thin to settle that: only 4 repeat exons with runs
   ≥ 20 per cohort have a matching RI event (`ri_check.csv`).
+
+### Followed up: branch point, dose, frame and germline (D-61 to D-64, U16, U17)
+
+Four questions from [MSI_REPEATS_LITERATURE.md](../docs/MSI_REPEATS_LITERATURE.md) (Q2, Q1, Q5,
+Q3), fixed in `config/followup.yaml` before any was computed; results in
+`results/subtype/msi_cis/followup/`. The branch-point test is the one that held.
+
+![U17](figures/subtype/U17_msi_branchpoint.png)
+
+**The branch point sets the direction** (D-63; BP1–BP4 supported in all three cancers and
+pooled).
+- **The branch point.** For each repeat exon, the branch point was read from the reference
+  sequence: the A of a yUnAy motif nearest the 3′ss, upstream of the run. One was found for 83% of
+  1,580 exons, a median 40 nt from the AG.
+- **The test.** An exon whose branch point lies further from the AG is more included in MSI, at
+  the same run length and baseline inclusion. Adjusted ρ = 0.16 (STAD), 0.11 (COAD), 0.11 (UCEC)
+  and 0.16 for exons measured in at least two cancers. Each permutation p sits at its floor of
+  0.001; q = 0.001, family BP.
+- **The reversal.**
+  - Runs of 10–19 nt: 29% of exons with the nearest branch points move up in MSI, against 46% with
+    the farthest.
+  - Runs ≥ 20 nt: 48% against 73%.
+
+  So the long-run reversal of D-53 sits mostly in exons whose branch point is far (U17b; a reading
+  of an exploratory table).
+- **A mechanism that fits** (interpretation). The 3′ss AG is used best 19–23 nt downstream of the
+  branch point (Chua and Reed 2001). Contracting a tract that lies between a distant branch point
+  and the AG brings the two closer, which should help. Where the branch point is already close,
+  contraction can only weaken the U2AF2 binding site.
+- **What it cannot separate.** The run's far end carries almost the same information (ρ 0.12–0.17),
+  because the branch point must lie beyond it. The branch point is a motif call, not a measured
+  position.
+
+![U16](figures/subtype/U16_msi_deletion_load.png)
+
+**Dose shows in one cancer, and the endometrial explanation fails** (D-61; DL1 supported, DL2–DL6
+not resolved). Homopolymer deletions are MC3 deletions of A or T bases in runs of ≥ 5, counted in
+each tumour's exome.
+- **The counts.** MSI tumours carry a median of 90 (COAD), 103 (STAD) and 147 (UCEC); the rest
+  carry 0.
+- **Within STAD MSI tumours**, more deletions go with a lower repeat score: partial ρ = −0.45 given
+  purity, q = 0.005. In COAD (ρ = +0.13) and UCEC (−0.13) this is not resolved.
+- **Endometrium.** A shorter deletion size in endometrial cancer (Wang et al. 2017) would have
+  explained its weak score; it does not.
+  - In every cancer, 98–99% of these deletions remove one base.
+  - UCEC's share of longer deletions is, if anything, the highest: 0.010, against 0.007 (STAD) and
+    0.000 (COAD).
+  - UCEC MSI tumours carry the most deletions and the weakest score (AUROC 0.51).
+- **What the counts measure.** They come from coding runs, mostly shorter than 10, so they measure
+  mismatch-repair damage, not the intronic tracts themselves.
+
+**No NMD signature in gene expression** (D-62; NM1, NM2 and NM4 not resolved, NM3 not testable).
+- **The exons.** 677 coding internal repeat exons (one per gene and cancer), 51% of them
+  frameshifting.
+- **The test.** When MSI skips a frameshifting exon, its gene's mRNA does not fall more than when it
+  skips an in-frame one. AUROC 0.46 (STAD) and 0.64 (COAD); pooled difference in ρ +0.12,
+  p = 0.13.
+- **Shared exons.** Of the 12 repeat exons skipped in all three cancers, 5 are coding internal.
+  Two of those are frameshifting: MRE11 exon 5, the known one, and an exon of GFM1.
+
+**The germline experiment could not be run** (D-64; GL1–GL3 not testable). GTEx v8 significant
+sQTL pairs in transverse colon, stomach and uterus contain no variant of any kind inside any of the
+1,580 runs, although 38–80 runs have one within 50 nt
+(`followup/germline/variant_coverage.csv`). That call set does not genotype long homopolymers.
+The test needs one that does, for instance from long reads or a repeat genotyper.
 
 ## 12. Breast cancer: what the subtype models read beyond the labels
 
@@ -1031,8 +1101,11 @@ Literature used as *context* (never to choose a feature, a model or an event):
 - Cancer Genome Atlas Research Network (2017) Comprehensive and integrated genomic characterization of adult soft tissue sarcomas. *Cell* 171:950.
 - Cancer Genome Atlas Research Network (2017) Integrated genomic characterization of oesophageal carcinoma. *Nature* 541:169.
 - Ceccarelli M et al. (2016) Molecular profiling reveals biologically discrete subsets and pathways of progression in diffuse glioma. *Cell* 164:550.
+- Chu CS et al. (1993) Genetic basis of variable exon 9 skipping in cystic fibrosis transmembrane conductance regulator mRNA. *Nat Genet* 3:151.
+- Chua K, Reed R (2001) An upstream AG determines whether a downstream AG is selected during catalytic step II of splicing. *Mol Cell Biol* 21:1509.
 - Chung Y et al. (2023) Evaluation of an eight marker-panel including long mononucleotide repeat markers to detect microsatellite instability in colorectal, gastric, and endometrial cancers. *BMC Cancer* 23:1100.
 - Ciriello G et al. (2015) Comprehensive molecular portraits of invasive lobular breast cancer. *Cell* 163:506.
+- Collura A et al. (2014) Patients with colorectal tumors with microsatellite instability and large deletions in HSP110 T17 have improved response to 5-fluorouracil–based chemotherapy. *Gastroenterology* 146(2).
 - Darman RB et al. (2015) Cancer-associated SF3B1 hotspot mutations induce cryptic 3′ splice site selection through use of a different branch point. *Cell Rep* 13:1033.
 - DeBoever C et al. (2015) Transcriptome sequencing reveals potential mechanism of cryptic 3′ splice site selection in SF3B1-mutated cancers. *PLoS Comput Biol* 11:e1004105.
 - Dorard C et al. (2011) Expression of a mutant HSP110 sensitizes colorectal cancer cells to chemotherapy and improves disease prognosis. *Nat Med* 17:1283.
@@ -1043,6 +1116,7 @@ Literature used as *context* (never to choose a feature, a model or an event):
 - Gooding C et al. (1994) Smooth muscle-specific switching of α-tropomyosin mutually exclusive exon selection by specific inhibition of the strong default exon. *EMBO J* 13:3861.
 - Gooding C, Roberts GC, Smith CW (1998) Role of an inhibitory pyrimidine element and polypyrimidine tract binding protein in repression of a regulated α-tropomyosin exon. *RNA* 4:85.
 - Gooding C et al. (2013) MBNL1 and PTB cooperate to repress splicing of Tpm1 exon 3. *Nucleic Acids Res* 41:4765.
+- Hause RJ et al. (2016) Classification and characterization of microsatellite instability across 18 cancer types. *Nat Med* 22:1342.
 - Jonchère V et al. (2024) Microsatellite instability at U2AF-binding polypyrimidic tract sites perturbs alternative splicing during colorectal cancer initiation. *Genome Biol* 25:210.
 - Liu J et al. (2018) An integrated TCGA pan-cancer clinical data resource to drive high-quality survival outcome analytics. *Cell* 173:400.
 - Liu Y et al. (2018) Comparative molecular analysis of gastrointestinal adenocarcinomas. *Cancer Cell* 33:721.
@@ -1052,6 +1126,7 @@ Literature used as *context* (never to choose a feature, a model or an event):
 - Parker JS et al. (2009) Supervised risk predictor of breast cancer based on intrinsic subtypes. *J Clin Oncol* 27:1160.
 - Southby J, Gooding C, Smith CWJ (1999) Polypyrimidine tract binding protein functions as a repressor to regulate alternative splicing of α-actinin mutually exclusive exons. *Mol Cell Biol* 19:2699.
 - Vanharanta S et al. (2014) Loss of the multifunctional RNA-binding protein RBM47 as a source of selectable metastatic traits in breast cancer. *eLife* 3:e02734.
+- Wang Y et al. (2017) Differences in microsatellite instability profiles between endometrioid and colorectal cancers: a potential cause for false-negative results? *J Mol Diagn* 19:57.
 - Warzecha CC et al. (2009) ESRP1 and ESRP2 are epithelial cell-type-specific regulators of FGFR2 splicing. *Mol Cell* 33:591.
 - Warzecha CC et al. (2010) An ESRP-regulated splicing programme is abrogated during the epithelial–mesenchymal transition. *EMBO J* 29:3286.
 - Zhang Y et al. (2017) Ribosomal proteins Rpl22 and Rpl22l1 control morphogenesis by regulating pre-mRNA splicing. *Cell Rep* 18:545.
@@ -1065,3 +1140,5 @@ what exposed the R6 misreading (A-5). The five added with §11 (Chung 2023, Gian
 Jonchère 2024, Zarnack 2013) and Dorard 2011 were checked against PubMed, PMC or publisher records
 on 2026-10-12, before they were cited. Darman 2015 (PMID 26565915) and DeBoever 2015 (PMID 25768983),
 added with §12, were checked against PubMed and PMC records on 2026-10-13, before they were cited.
+Chu 1993, Chua and Reed 2001, Collura 2014, Hause 2016 and Wang 2017, added with the §11 follow-up,
+were checked for docs/MSI_REPEATS_LITERATURE.md on 2026-10-13.

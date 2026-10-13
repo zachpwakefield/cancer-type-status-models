@@ -1,0 +1,45 @@
+what,cohort,rho,p,n,run_class,tertile,share_up,median_d_bp,alu_kmer,median_delta_adj
+d_run in place of d_bp,UCEC_TCGA,0.1225,0.004975,1474,,,,,,
+share moving up by d_bp tertile,UCEC_TCGA,,,357,10-19,near,0.4258,24,,
+share moving up by d_bp tertile,UCEC_TCGA,,,357,10-19,middle,0.4762,39,,
+share moving up by d_bp tertile,UCEC_TCGA,,,357,10-19,far,0.5182,72,,
+antisense-Alu k-mer upstream of the run,UCEC_TCGA,,,1263,10-19,,0.4759,,False,-0.002549
+antisense-Alu k-mer upstream of the run,UCEC_TCGA,,,2,10-19,,0.5,,True,-0.02185
+share moving up by d_bp tertile,UCEC_TCGA,,,55,>=20,near,0.6909,31,,
+share moving up by d_bp tertile,UCEC_TCGA,,,54,>=20,middle,0.6481,41.5,,
+share moving up by d_bp tertile,UCEC_TCGA,,,55,>=20,far,0.7273,80,,
+antisense-Alu k-mer upstream of the run,UCEC_TCGA,,,208,>=20,,0.6683,,False,0.03066
+antisense-Alu k-mer upstream of the run,UCEC_TCGA,,,1,>=20,,1,,True,0.07502
+d_run in place of d_bp,STAD_TCGA,0.1737,0.004975,1793,,,,,,
+share moving up by d_bp tertile,STAD_TCGA,,,432,10-19,near,0.294,24,,
+share moving up by d_bp tertile,STAD_TCGA,,,432,10-19,middle,0.4421,39,,
+share moving up by d_bp tertile,STAD_TCGA,,,433,10-19,far,0.4342,72,,
+antisense-Alu k-mer upstream of the run,STAD_TCGA,,,1540,10-19,,0.3929,,False,-0.0171
+antisense-Alu k-mer upstream of the run,STAD_TCGA,,,3,10-19,,0.6667,,True,0.01552
+share moving up by d_bp tertile,STAD_TCGA,,,65,>=20,near,0.3692,31,,
+share moving up by d_bp tertile,STAD_TCGA,,,65,>=20,middle,0.6462,42,,
+share moving up by d_bp tertile,STAD_TCGA,,,65,>=20,far,0.6615,80,,
+antisense-Alu k-mer upstream of the run,STAD_TCGA,,,249,>=20,,0.5663,,False,0.01097
+antisense-Alu k-mer upstream of the run,STAD_TCGA,,,1,>=20,,1,,True,0.07564
+d_run in place of d_bp,COAD_TCGA,0.1427,0.004975,1696,,,,,,
+share moving up by d_bp tertile,COAD_TCGA,,,409,10-19,near,0.2958,24,,
+share moving up by d_bp tertile,COAD_TCGA,,,409,10-19,middle,0.4645,39,,
+share moving up by d_bp tertile,COAD_TCGA,,,410,10-19,far,0.4073,72,,
+antisense-Alu k-mer upstream of the run,COAD_TCGA,,,1453,10-19,,0.3957,,False,-0.015
+antisense-Alu k-mer upstream of the run,COAD_TCGA,,,3,10-19,,0.3333,,True,-0.00408
+share moving up by d_bp tertile,COAD_TCGA,,,62,>=20,near,0.4194,30.5,,
+share moving up by d_bp tertile,COAD_TCGA,,,62,>=20,middle,0.6613,42,,
+share moving up by d_bp tertile,COAD_TCGA,,,63,>=20,far,0.6825,77,,
+antisense-Alu k-mer upstream of the run,COAD_TCGA,,,239,>=20,,0.6151,,False,0.01988
+antisense-Alu k-mer upstream of the run,COAD_TCGA,,,1,>=20,,1,,True,0.06
+d_run in place of d_bp,mean of >= 2 cohorts,0.1705,0.004975,1703,,,,,,
+share moving up by d_bp tertile,mean of >= 2 cohorts,,,412,10-19,near,0.2864,24,,
+share moving up by d_bp tertile,mean of >= 2 cohorts,,,411,10-19,middle,0.438,38,,
+share moving up by d_bp tertile,mean of >= 2 cohorts,,,412,10-19,far,0.4563,72,,
+antisense-Alu k-mer upstream of the run,mean of >= 2 cohorts,,,1462,10-19,,0.4001,,False,-0.009308
+antisense-Alu k-mer upstream of the run,mean of >= 2 cohorts,,,3,10-19,,0.6667,,True,0.005722
+share moving up by d_bp tertile,mean of >= 2 cohorts,,,62,>=20,near,0.4839,30.5,,
+share moving up by d_bp tertile,mean of >= 2 cohorts,,,61,>=20,middle,0.6393,42,,
+share moving up by d_bp tertile,mean of >= 2 cohorts,,,62,>=20,far,0.7258,76.5,,
+antisense-Alu k-mer upstream of the run,mean of >= 2 cohorts,,,237,>=20,,0.6245,,False,0.02382
+antisense-Alu k-mer upstream of the run,mean of >= 2 cohorts,,,1,>=20,,1,,True,0.07022

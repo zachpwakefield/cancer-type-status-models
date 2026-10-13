@@ -97,6 +97,9 @@ is local)*
   - MSI UCEC should carry shorter deletions (more 1 bp, fewer ≥ 2 bp) than STAD and COAD.
   - The splicing shift per unit of load should be similar across the three organs.
 - *Caveat:* MC3 is exome-wide and mostly coding, so it is a proxy for the intronic tracts.
+- *Status (D-61, done):* dose tracks the score in STAD only (ρ −0.45, q = 0.005). UCEC deletions
+  are not shorter, and UCEC MSI tumours carry the most of them, so deletion size does not explain
+  the endometrial gap ([SUBTYPE.md §11](../results/SUBTYPE.md), U16).
 
 **Q2. The reversal: is it branch-point geometry?** *(small download: published branch-point
 annotations)*
@@ -106,12 +109,18 @@ annotations)*
   - Also check whether the long tracts are Alu-derived (antisense Alu poly-A), the setting of
     Zarnack et al. 2013.
 - *Would refute:* reversal exons with branch points already in the window.
+- *Status (D-63, done):* the annotations could not be fetched, so branch points were read from
+  sequence. Supported in all three cancers: a farther branch point means more inclusion in MSI,
+  beyond run length (U17). The Alu k-mer check found almost no exons (≤ 3 per class).
 
 **Q3. A natural experiment in the germline** *(small download: the Hamanaka et al. 2023 catalogue)*
 - *Motivation:* CFTR 5T/7T/9T (Chu et al. 1993); germline splicing tandem repeats.
 - *Test:* are our MSI repeat exons germline splicing QTLs in GTEx? If so, does shorter germline
   length move PSI in the same direction as MSI contraction, including the ≥ 20 nt reversal?
   - This would test causality without any tumour.
+- *Status (D-64, not testable):* the Hamanaka catalogue genotypes no homopolymer, and GTEx v8 sQTL
+  pairs hold no variant inside any of the runs. It needs a call set that genotypes homopolymer
+  length.
 
 **Q4. The deletions themselves** *(pending: the 4-BAM pilot you run with your token; D-56 is
 already pre-specified)*
@@ -125,6 +134,8 @@ already pre-specified)*
   shared shifts.
   - Frameshifting exons that skip in all three organs are candidate shared splice neoantigens.
 - *Motivation:* Vilar et al. 2011; van Wietmarschen et al. 2020; Le et al. 2017; Shen et al. 2019.
+- *Status (D-62, not resolved):* no NMD signature in gene expression. Of the 12 exons skipped in
+  all three cancers, two are frameshifting coding exons: MRE11 exon 5 and an exon of GFM1.
 
 **Q6. Timing and causality in a model** *(external)*
 - *Motivation:* Jonchère et al. 2024 (early, in crypts); Drost et al. 2017 (MLH1-knockout

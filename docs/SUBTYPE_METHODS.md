@@ -506,6 +506,14 @@ Written 2026-10-13, before any of these tests was computed. They follow the ques
 - **D-64, germline indels (GL1–GL3).** Do GTEx v8 germline poly-T indels at the same exons move
   splicing the way MSI contraction does, with the same reversal? The Hamanaka et al. catalogue
   genotypes no homopolymer, so it could not be used.
+- **Data.** GTEx v8 significant sQTL pairs for Colon_Transverse, Stomach and Uterus: three members
+  of `GTEx_Analysis_v8_sQTL.tar` (storage.googleapis.com/adult-gtex/bulk-qtl/v8/single-tissue-cis-qtl),
+  24 MB, fetched 2026-10-13 and pinned by size and md5 in `scripts/50`. The six Hamanaka et al.
+  files (Zenodo record 7086007, the three tissues' `allpairs` and `genes` tables, 146 MB) were
+  fetched and md5-checked the same day, then not used.
+- **Outcome, recorded after running.** GL1–GL3 are not testable: the GTEx pairs hold no variant
+  inside any of the 1,580 runs (`followup/germline/variant_coverage.csv`). No amendment was needed;
+  every other test ran as written.
 
 ---
 

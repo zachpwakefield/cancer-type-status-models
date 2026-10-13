@@ -1,0 +1,16 @@
+panel,set,n,value,p,q,q_family,verdict,statistic,q1,q3
+STAD_TCGA,"DL1: MSI tumours, partial Spearman | purity",54 MSI tumours,-0.4480958830458206,0.0007662372329502,0.0045974233977016,"DL (msi_deletion_load, 6 tests)",supported,,,
+STAD_TCGA,MSI tumours plotted,55,103.0,,,,,median homopolymer deletions,,
+STAD_TCGA,rest tumours plotted,265,0.0,,,,,median homopolymer deletions,,
+COAD_TCGA,"DL2: MSI tumours, partial Spearman | purity",38 MSI tumours,0.1309043770371457,0.4399589417922483,0.5814364502889399,"DL (msi_deletion_load, 6 tests)",not resolved,,,
+COAD_TCGA,MSI tumours plotted,40,90.5,,,,,median homopolymer deletions,,
+COAD_TCGA,rest tumours plotted,195,0.0,,,,,median homopolymer deletions,,
+UCEC_TCGA,"DL3: MSI tumours, partial Spearman | purity",34 MSI tumours,-0.1260601968320049,0.4845303752407832,0.5814364502889399,"DL (msi_deletion_load, 6 tests)",not resolved,,,
+UCEC_TCGA,MSI tumours plotted,34,147.5,,,,,median homopolymer deletions,,
+UCEC_TCGA,rest tumours plotted,111,0.0,,,,,median homopolymer deletions,,
+load by cohort,STAD_TCGA MSI,55,102.99999999999999,,,,,median homopolymer deletions (box on log(1 + count)),71.0,142.9965277359145
+load by cohort,"STAD_TCGA D-52 score AUROC, MSI vs rest",,0.7090909090909091,,,,,AUROC (score lower in MSI),,
+load by cohort,COAD_TCGA MSI,40,90.49863386958299,,,,,median homopolymer deletions (box on log(1 + count)),69.74866862275317,117.2492094133071
+load by cohort,"COAD_TCGA D-52 score AUROC, MSI vs rest",,0.7780769230769231,,,,,AUROC (score lower in MSI),,
+load by cohort,UCEC_TCGA MSI,34,147.4991582467726,,,,,median homopolymer deletions (box on log(1 + count)),85.69841365104442,183.86635524157916
+load by cohort,"UCEC_TCGA D-52 score AUROC, MSI vs rest",,0.5105988341282459,,,,,AUROC (score lower in MSI),,

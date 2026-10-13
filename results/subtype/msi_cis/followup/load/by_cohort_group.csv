@@ -1,0 +1,7 @@
+cohort,group,n,median_n_hp,q1_n_hp,q3_n_hp,median_long_share,partial_rho_score_load,partial_p,rho_unadjusted
+UCEC_TCGA,MSI,34,147.5,85.75,184,0.009616,-0.1261,0.4845,-0.1331
+UCEC_TCGA,rest,111,0,0,1,0,-0.01161,0.9046,-0.01214
+STAD_TCGA,MSI,55,103,71,143,0.007194,-0.4481,0.0007662,-0.427
+STAD_TCGA,rest,265,0,0,0,,0.019,0.7627,0.02578
+COAD_TCGA,MSI,40,90.5,69.75,117.2,0,0.1309,0.44,0.1199
+COAD_TCGA,rest,195,0,0,0,0,0.01302,0.8574,0.01342
