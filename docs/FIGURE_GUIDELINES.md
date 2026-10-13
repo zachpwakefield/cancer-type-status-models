@@ -29,7 +29,7 @@ imports it.
 - **Captions.** Explanations go in `<stem>.caption.md` next to the figure. A caption opens with
   the question the figure answers, in bold, and then gives the method, n, the test and where
   the values are.
-- **Legends (every figure: S, T, U, X).** The caption file is written as a figure legend:
+- **Legends (every figure: S, T, U, X, and M, the manuscript-only figures of `scripts/53`).** The caption file is written as a figure legend:
   - it opens with **Figure Xn. Title.** in bold, where the title states the finding as one
     declarative sentence (kept in a `TITLES` dict in each figure script; the shared conversion is
     `legend()` in `scripts/_figbase.py`);

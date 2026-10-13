@@ -1,0 +1,22 @@
+panel,state,element,from_nt,to_nt
+a,MSS,T-run,2.0,15.0
+a,MSS,branch point A,24.0,24.0
+a,MSS,exon,0.0,-14.0
+a,MSI,T-run,2.0,12.0
+a,MSI,branch point A,21.0,21.0
+a,MSI,exon,0.0,-14.0
+a,MSI,exon inclusion ↓,,
+b,MSS,T-run,2.0,26.0
+b,MSS,branch point A,44.0,44.0
+b,MSS,exon,0.0,-14.0
+b,MSI,T-run,2.0,21.0
+b,MSI,branch point A,39.0,39.0
+b,MSI,exon,0.0,-14.0
+b,MSI,exon inclusion ↑,,
+c,MSS,T-run,30.0,52.0
+c,MSS,branch point A,24.0,24.0
+c,MSS,exon,0.0,-14.0
+c,MSI,T-run,30.0,47.0
+c,MSI,branch point A,24.0,24.0
+c,MSI,exon,0.0,-14.0
+c,MSI,exon inclusion =,,
