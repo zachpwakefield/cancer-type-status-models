@@ -4,7 +4,7 @@ The third task of the repository: **within one cancer, which subtype is a primar
 modelled, like the other two, independently in each of the nine views (AFE, ALE, HIT, SE, A5SS,
 A3SS, MXE, RI, GEX). Decisions are numbered from D-30 (D-48..D-51, which span the three tasks, are in
 [ACROSS_TASKS_METHODS.md](ACROSS_TASKS_METHODS.md), as is amendment A-8; D-52..D-56, the MSI-repeat
-follow-up, and D-57..D-60, the BRCA follow-up, D-61..D-64, the MSI follow-up, and D-65..D-71, the MSI sequence code, are here; D-01..D-12 are in
+follow-up, and D-57..D-60, the BRCA follow-up, D-61..D-64, the MSI follow-up, and D-65..D-72, the MSI sequence code, are here; D-01..D-12 are in
 [DECISIONS.md](DECISIONS.md), D-13..D-29 in [BIOLOGY_METHODS.md](BIOLOGY_METHODS.md)). Values live
 in [config/subtype.yaml](../config/subtype.yaml); this file explains them.
 
@@ -645,6 +645,34 @@ were set on the training cancers (U19a), and no weight is fitted on a held-out t
 
 ---
 
+### D-72 Benchmark against the exome MSI callers · `config/followup.yaml` · `scripts/55`
+Written 2026-10-13, after D-71's E1 results and before any RNA model other than score G was scored
+against MANTIS or MSIsensor. D-71's M5 reads only splicing; MANTIS and MSIsensor (D-69) read
+microsatellites in the exome, as does the MC3 deletion count that defines our label. None is a gold
+standard.
+
+**Design.**
+- **Triangulated references.** Each DNA method is judged against a reference built from the other
+  two: R_MANTIS needs MC3 and MSIsensor to agree, R_MSIsensor needs MC3 and MANTIS, R_MC3 needs
+  MANTIS and MSIsensor. M5 is judged against the same reference on the same tumours.
+- **Common set.** Every method is scored on the tumours that have both exome scores.
+- **Metric.** Within-cancer AUROC: a positive is only ranked against negatives of its own cancer.
+  This needs no calibration across cancers, or across the 33 models of leave-one-cancer-out.
+- **Split.** Leave-one-cancer-out (E2) is primary here. It is the only split with enough reference
+  positives and the only one that scores COAD, STAD and UCEC, where MSI testing is routine. The
+  30 held-out cancers (E1) are secondary.
+
+**Tests.** BM1–BM6 predict that M5 ranks below each DNA tool, in E2 and in E1. The DNA callers
+measure the instability itself and share the exome, with its coverage artefacts, with the
+reference, so correlated errors favour them. A non-inferiority margin of 0.05 AUROC is set here
+and reported descriptively.
+
+**Seen when written.** D-69's call concordance and score G against both callers; D-71's E1 results,
+including M5's per-cancer AUROC, curves and coefficients (A-18). No DNA tool had been scored
+against another, and M5 had not been scored in E2.
+
+---
+
 ## Amendments and deviations
 
 | # | When | What | Why | Informed by results? |
@@ -664,6 +692,8 @@ were set on the training cancers (U19a), and no weight is fitted on a held-out t
 | A-14 | 2026-10-12, after the A-13 germline check was computed | Exploratory, beside the A-13 flip rate: agreement between each normal's group and its own tumour's group (Cohen's kappa over complete pairs, at least 20). It is not a pre-specified filter, and L1–L6 and A3 are not re-run on it | The A-13 rule passed 82 events, but their minor-allele frequency in normals was about half that of all events (median 0.18 vs 0.33). With a rare allele, almost every pair is homozygous for the common one, so a flip can hardly happen, and 42 of the 82 had kappa ≤ 0.2. Kappa does not depend on allele frequency in the same way | Yes: chosen after the A-13 set was seen; it is reported as exploratory, and no verdict uses it |
 | A-15 | 2026-10-13, after PC1–PC8 were computed | Exploratory, beside D-66: the AUROC of each arm of score G alone (R_down against B, R_up against B) in the 30 held-out cancers; the per-tumour arm scores are kept locally. No test, cut or verdict changed (the predictions were re-run and are identical) | PC2 supported score G and PC1 did not support score A; the arm split asks which part carries the held-out signal | Yes: added after the results; reported as exploratory |
 | A-16 | 2026-10-13, after RV1–RV8 were computed | Exploratory checks of the rising arm (`scripts/52 --only posthoc`, `posthoc.csv`): among held-out exons with runs ≥ 20, the share more included by branch-point bin (18–29, 30–35, 36–49, 50–69, 70–101 nt); the shift against run length and exon length; shield exons tested against 0; R_up exons split by the sign of their PTB sensitivity; PTBP1, HNRNPC, U2AF2 and MKI67 expression in MMR-deficient tumours, and the RV2 model with them added. Also, the RV1 contrast table labels its non-MSI rows `other` (pandas reads `null` as missing). No test, cut or verdict changed | RV4 and RV5 did not support the geometry reading, and RV8 came out against its sign; these checks ask what the branch point does inside long runs, and whether the RV8 sign reflects trans regulator levels | Yes: chosen after the results; reported as exploratory |
+| A-17 | 2026-10-13, after the D-71 features were built, before any model was fitted | The per-exon pool is computed over D-71's own tumours (the 8,464 with MC3 calls), as its tumour definition requires: 30,632 exons, 1,562 with an acceptor run ≥ 10. The pre-specification quoted 30,568 and 1,555, a count made beforehand over all 9,034 tumours | The pre-registration's count and its rule disagreed; the rule was followed | No: no model had been fitted and no label was used |
+| A-18 | 2026-10-13, after the E1 AUROCs of M0–M6 were read, before the LR family was computed | Exploratory checks of what the per-exon models learn (`scripts/54 --only posthoc`, `posthoc.csv`, `posthoc_exons.csv`): M4 refitted on the E1 training set at its chosen C, standardised coefficients summarised by sequence class (runs 10–19; runs ≥ 20 with the branch point ≥ 36 nt; other runs ≥ 20) and the 20 largest; the share of M5's top-500 ANOVA exons with a run ≥ 10 against the pool's share, and their genes; M5 refitted on the E1 training set at its chosen K and C, its standardised coefficients by sequence class and the 20 largest; three ablations fitted on E1 with the grid and tuning of the model they modify, described with bootstrap intervals against M2 and no q: M5 on the pool exons without a run ≥ 10 (M5n); M4 on the exons of the 2 arms only (M4a, per-exon weights on the exons score G uses); and M4 on the repeat exons outside the arms (M4x). No test, cut or verdict changed | M4 and M5 beat the 10 bins held out, against LR4 and LR5's predicted sign; these checks ask whether the gain comes from the repeat sequence or from other exons | Yes: chosen after the results; reported as exploratory |
 
 ## Verification that the existing tasks are unchanged
 - `tests/test_subtype.py::TestExistingTasksUnchanged` rebuilds every existing task table from

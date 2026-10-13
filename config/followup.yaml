@@ -1077,3 +1077,68 @@ msi_code_models:                         # D-71 · scripts/54_msi_models.py
                CV AUROC of each chosen setting beside its E1 AUROC; standardised coefficients of M1
                and M2; per-cancer AUROC where >= 3 positives; E1 with MANTIS MSI-H against MSS as
                the test label; per-tumour predictions are kept locally
+
+msi_tool_benchmark:                      # D-72 · scripts/55_msi_benchmark.py
+  # How does the all-exon logistic regression on splicing (D-71 M5) compare with the two exome MSI
+  # callers probed in D-69 (MANTIS, MSIsensor) and with the MC3 homopolymer-deletion count that
+  # defines our label? No tool here is a gold standard, so each DNA tool is judged against a
+  # reference built from the other two, and M5 is judged against the same reference on the same
+  # tumours.
+  tumours: D-71's 8,464 tumours (33 cancers, one per patient, with MC3 calls) that have both a MANTIS
+           and an MSIsensor score in the D-69 table (the common set; every method is scored on the
+           same tumours)
+  splits:
+    E2: D-71's leave-one-cancer-out predictions, all 33 cancers (primary here; the only split with
+        enough reference positives and the one that covers COAD, STAD and UCEC, where MSI testing
+        is routine; every tumour is scored by a model that never saw its cancer)
+    E1: D-71's train COAD, STAD, UCEC / test the other 30 (secondary)
+  methods:
+    dna: MC3 homopolymer-deletion count (n_hp); MANTIS score; MSIsensor score (higher = MSI)
+    rna: M5 (tested); M0 score G, M2 and M4 alongside without tests; M6 in E1 only
+  references:   # positive / negative; tumours in neither are left out of that reference
+    R_MANTIS: MC3 >= 10 and MSIsensor > 10 / MC3 < 10 and MSIsensor < 4 (judges MANTIS)
+    R_MSIsensor: MC3 >= 10 and MANTIS > 0.6 / MC3 < 10 and MANTIS < 0.4 (judges MSIsensor)
+    R_MC3: MANTIS > 0.6 and MSIsensor > 10 / MANTIS < 0.4 and MSIsensor < 4 (judges the MC3 count)
+    R_all: all three agree (exploratory)
+  metric: within-cancer AUROC = the probability that a reference positive outranks a reference
+          negative of the same cancer, over all such pairs (cancers with no positive drop out);
+          it needs no calibration across cancers or across E2's 33 models. Pooled AUROC and
+          AUPRC on native scores are exploratory
+  fdr_family: BM, the 6 tests BM1-BM6; differences by paired bootstrap of reference tumours within
+              cancer x reference-label strata (2,000, seed 0); nothing is refitted
+  predictions:
+    - id: BM1
+      claim: E2, R_MANTIS - within-cancer AUROC(M5) - AUROC(MANTIS) < 0
+      why: the DNA callers measure the instability itself, and they share the exome (and its
+           coverage artefacts) with the reference, so correlated errors favour them
+    - id: BM2
+      claim: E2, R_MSIsensor - AUROC(M5) - AUROC(MSIsensor) < 0
+      why: as BM1
+    - id: BM3
+      claim: E2, R_MC3 - AUROC(M5) - AUROC(MC3 count) < 0
+      why: as BM1
+    - id: BM4
+      claim: as BM1 in E1
+      why: as BM1
+    - id: BM5
+      claim: as BM2 in E1
+      why: as BM1
+    - id: BM6
+      claim: as BM3 in E1
+      why: as BM1
+  descriptive: for each test, M5 is called non-inferior if the lower 95% bound of the difference is
+               above -0.05 AUROC (margin set here, before any comparison; not part of the verdict)
+  exploratory: coverage (share of the 8,464 tumours each method scores); pooled AUROC and AUPRC on
+               native scores; R_all; a matched-volume operating point (in each reference, M5 flags
+               as many tumours as the DNA tool calls MSI-H at its threshold - MANTIS > 0.6,
+               MSIsensor > 10, MC3 >= 10 - by its native score, label-blind; sensitivity and PPV of
+               both; in E2 the native scores come from 33 models); within-cancer AUROC per cancer
+               with >= 3 reference positives; M5's within-cancer percentile in MC3 MMR-deficient
+               tumours by MANTIS and MSIsensor call (both MSI-H, one, neither) and in tumours both
+               callers call MSI-H that MC3 calls proficient (medians blanked below 5 tumours);
+               per-tumour scores are kept locally
+  seen_when_written: D-69's call concordance counts and score G against MANTIS and MSIsensor calls
+                     in the 30 held-out cancers; D-71's E1 AUROC of M0-M6 against the MC3 label,
+                     E2 pooled AUROC of M1 and M2, and M5's E1 per-cancer AUROC, PR curve and
+                     coefficients (A-18). Not seen - any DNA tool scored against another, any RNA
+                     model other than score G against MANTIS or MSIsensor, and M5 in E2
