@@ -18,7 +18,7 @@ is in [ACROSS_TASKS.md](ACROSS_TASKS.md).
   regulator and site analyses; `42`, `43` and `45` the MSI-repeat analysis, its robustness checks and
   the DNA-read genotyping; `50` and `51` its follow-ups and the sequence code; `46`–`49` the BRCA
   follow-ups; `36` draws these figures.
-- **Figures:** U1–U20 in [figures/subtype/](figures/subtype/). Each has a caption file stating the
+- **Figures:** U1–U21 in [figures/subtype/](figures/subtype/). Each has a caption file stating the
   question, the method, n and the test, and a CSV of the plotted values. Each figure below comes
   with a short guide to reading it, then its legend (copied from the caption file), then the
   findings.
@@ -98,6 +98,8 @@ with a distant branch point rise.
 - **Not infiltration.** MSI tumours are heavily infiltrated, yet adjusting for immune and stromal
   expression and an RNA-handling proxy keeps all of the effect. The code separates as well in
   the less-infiltrated half of each cancer (0.84).
+- **Other MSI callers.** Against MANTIS and MSIsensor, which call MSI from the exome reads by other
+  means, the code separates MSI-high from stable tumours at 0.97 and 0.89.
 
 A fourth follow-up brings DNA into breast cancer (§12). Splicing reads HER2 without the amplicon.
 It separates ERBB2-amplified luminal tumours about as well as expression does, and setting the
@@ -155,7 +157,8 @@ transcription read on the other strand (§7).
     0.55 for the one-sided score; 0.85 against hypermutated proficient tumours), and it separates
     endometrial MSI (0.84, in-sample for the rule). It is not an infiltration readout (Figure U20;
     D-68 fixed in advance): adjusting for immune, stromal and RNA-handling covariates keeps the
-    whole effect, and it separates at 0.84 in the less-infiltrated half.
+    whole effect, and it separates at 0.84 in the less-infiltrated half. Against two exome MSI
+    callers it separates MSI-H from MSS at 0.97 (MANTIS) and 0.89 (MSIsensor) (Figure U21; D-69).
 11. **BRCA with DNA** (Figures U12–U15; D-57 to D-60 fixed in advance): the AS ensemble separates
     ERBB2-amplified luminal tumours about as well as GEX (0.81 against 0.75 without the ABSOLUTE
     ceiling; HU2 not resolved, and no gap on the 15 newly amplified tumours), and not through the
@@ -1199,7 +1202,7 @@ upstream of the run. One was found for 83% of 1,580 exons, a median 40 nt from t
 - **Why.** That call set does not genotype long homopolymers. The test needs one that does, for
   instance from long reads or a repeat genotyper.
 
-### The sequence code: thirty other cancers, specificity, endometrium, infiltration (D-65 to D-68, Figures U18–U20)
+### The sequence code: thirty other cancers, specificity, endometrium, infiltration, MSI callers (D-65 to D-69, Figures U18–U21)
 
 D-63 suggested a code: whether an MSI repeat exon falls or rises depends on its tract length and
 on where its branch point lies.
@@ -1209,12 +1212,13 @@ on where its branch point lies.
 - **Score G** reads both arms against matched background exons. Score A, D-52's, reads every
   repeat exon as falling.
 
-Four sets of tests, each written down before it was computed, asked whether the code works
+Five sets of tests, each written down before it was computed, asked whether the code works
 (`results/subtype/msi_cis/code/`):
 - whether it travels to cancers never used to define it (D-66, Figure U18);
 - whether it is about the branch point and about mismatch repair (D-65, Figure U19a–b);
 - whether it rescues endometrium (D-67, Figure U19c);
-- whether it is an infiltration readout (D-68, Figure U20).
+- whether it is an infiltration readout (D-68, Figure U20);
+- whether it agrees with MSI calls that do not come from MC3 (D-69, Figure U21).
 
 #### Thirty cancers never used (D-66, Figure U18)
 
@@ -1389,6 +1393,53 @@ for score A only.
   immune expression goes with a *higher* G, against the MMR effect, so infiltration cannot produce
   the signal.
 
+#### Against two exome MSI callers (D-69, Figure U21)
+
+**Why.** Every held-out test so far took its truth from one source: MC3 homopolymer deletions.
+MANTIS (Bonneville et al. 2017) and MSIsensor call MSI from the exome reads by other means. D-69
+was written down before their scores were downloaded from cBioPortal (6.2 MB, step 00c).
+
+**How to read Figure U21.**
+- **Panel (a)** gives the AUROC of score G against each DNA truth in the 30 held-out cancers: D-66's
+  MC3 call, then MANTIS and MSIsensor MSI-H against MSS. The lower block repeats the two callers in
+  the three training cancers, in-sample for the rule.
+- **Panels (b) and (c)** split the held-out tumours by D-66's call (grey proficient, blue
+  deficient) and by the caller's call; "mid" lies between the caller's two cut-offs. If score G
+  reads mismatch-repair deficiency, every blue box should sit low, whichever caller is used.
+
+![U21](figures/subtype/U21_msi_code_msi_calls.png)
+
+<!-- legend U21: copied from figures/subtype/U21_msi_code_msi_calls.caption.md by scripts/36_subtype_figures.py legends -->
+> **Figure U21. The code finds the tumours that two exome MSI callers call MSI-high.** Pre-specified
+> (config/followup.yaml: msi_code_msi_calls, D-69) before the scores were downloaded. MANTIS (Bonneville et al.
+> 2017) and MSIsensor scores of the TCGA PanCancer Atlas, fetched from cBioPortal (step 00c) and matched by sample
+> barcode. Calls: MANTIS MSI-H > 0.6, MSS < 0.4; MSIsensor MSI-H > 10, MSS < 4; scores in between (mid) are kept
+> apart. Tumours: D-66's 7,685 held-out tumours (30 cancers, none used to define the code); score G as there, a
+> percentile within each cancer, not re-fitted.
+>
+> (a) AUROC for positive tumours scoring lower on G (positives in brackets): D-66's MC3 call (≥ 10 homopolymer
+> deletions) against the rest, MANTIS and MSIsensor MSI-H against MSS; then, in-sample for the rule, MSI-H against
+> MSS in UCEC, STAD and COAD. (b, c) Score G percentile of the held-out tumours by D-66's MC3 call and the caller's
+> call (n in brackets); box = interquartile range, diamond = median, whiskers = 1.5 × IQR, dots = tumours (not drawn
+> for the large MSS group); dashed line = the middle of the cancer.
+>
+> Agreement (exploratory): every MANTIS MSI-H tumour (17) is MC3-deficient; of the 50 MC3-deficient tumours, MANTIS
+> calls 27 mid and 6 MSS, and these still score low on G. MSIsensor calls 4 MC3-proficient tumours MSI-H. q over
+> family MC (3 tests). Per-tumour values are kept locally (D-12).
+<!-- /legend -->
+
+**What it shows** (MC1–MC2 supported, MC3 not resolved; family MC).
+- **Both callers agree with the code.** Score G separates MANTIS MSI-H from MSS tumours at AUROC
+  0.97 (17 MSI-H; MC1) and MSIsensor MSI-H at 0.89 (23; MC2). In the training cancers the same
+  comparisons give 0.87–0.98 (exploratory, in-sample).
+- **Not along the continuous score** (MC3). Over all 7,388 held-out tumours with a score, nearly all
+  MSS, the MANTIS score shows no relation to score G (ρ = +0.01). The code marks the MSI-high state,
+  not the variation of the MANTIS score below it.
+- **Where the calls disagree** (exploratory). Every MANTIS MSI-H tumour is also MC3-deficient. Of
+  the 50 MC3-deficient tumours, MANTIS calls 27 mid and 6 MSS, and these still score low on G
+  (median percentile 0.15 and 0.22). MSIsensor calls 4 MC3-proficient tumours MSI-H; two of them
+  sit above the middle of their cancer and two below.
+
 #### Reading
 
 Mismatch-repair deficiency changes splicing by a rule written in the reference genome, not by a
@@ -1401,8 +1452,9 @@ tissue programme (interpretation).
   cancers.
 
 **What this does not show.**
-- **The DNA truth is a proxy.** MC3 exome calls stand in for an MSI test, not a clinical one. D-69
-  pre-specifies the test against MANTIS and MSIsensor calls; it waits on a download.
+- **No clinical MSI test.** The DNA truths are exome calls (MC3, MANTIS, MSIsensor). They agree
+  with each other and with the code, but no PCR panel or MMR immunohistochemistry was available.
+  An RNA cohort processed elsewhere is the external test the code has not had.
 - **No tract is observed.** No individual intronic tract is seen contracting (D-56 waits on the
   BAM slices).
 - **Few tumours per cancer.** The per-cancer AUROCs rest on 3–11 MMR-deficient tumours each.
@@ -1776,12 +1828,13 @@ tumour–normal pairs could.
 
 Literature used as *context* (never to choose a feature, a model or an event):
 
+- Bonneville R et al. (2017) Landscape of microsatellite instability across 39 cancer types. *JCO Precis Oncol* 2017:PO.17.00073.
 - Brat DJ et al. (2015) Comprehensive, integrative genomic analysis of diffuse lower-grade gliomas. *N Engl J Med* 372:2481.
+- Cancer Genome Atlas Network (2015) Comprehensive genomic characterization of head and neck squamous cell carcinomas. *Nature* 517:576.
 - Cancer Genome Atlas Research Network (2013) Integrated genomic characterization of endometrial carcinoma. *Nature* 497:67.
 - Cancer Genome Atlas Research Network (2014) Comprehensive molecular characterization of gastric adenocarcinoma. *Nature* 513:202.
 - Cancer Genome Atlas Research Network (2014) Integrated genomic characterization of papillary thyroid carcinoma. *Cell* 159:676.
 - Cancer Genome Atlas Research Network (2015) The molecular taxonomy of primary prostate cancer. *Cell* 163:1011.
-- Cancer Genome Atlas Network (2015) Comprehensive genomic characterization of head and neck squamous cell carcinomas. *Nature* 517:576.
 - Cancer Genome Atlas Research Network (2017) Comprehensive and integrated genomic characterization of adult soft tissue sarcomas. *Cell* 171:950.
 - Cancer Genome Atlas Research Network (2017) Integrated genomic characterization of oesophageal carcinoma. *Nature* 541:169.
 - Ceccarelli M et al. (2016) Molecular profiling reveals biologically discrete subsets and pathways of progression in diffuse glioma. *Cell* 164:550.
@@ -1798,13 +1851,14 @@ Literature used as *context* (never to choose a feature, a model or an event):
 - Giannini G et al. (2002) Human MRE11 is inactivated in mismatch repair-deficient cancers. *EMBO Rep* 3:248.
 - Giannini G et al. (2004) Mutations of an intronic repeat induce impaired MRE11 expression in primary human cancer with microsatellite instability. *Oncogene* 23:2640.
 - Gooding C et al. (1994) Smooth muscle-specific switching of α-tropomyosin mutually exclusive exon selection by specific inhibition of the strong default exon. *EMBO J* 13:3861.
-- Gooding C, Roberts GC, Smith CW (1998) Role of an inhibitory pyrimidine element and polypyrimidine tract binding protein in repression of a regulated α-tropomyosin exon. *RNA* 4:85.
 - Gooding C et al. (2013) MBNL1 and PTB cooperate to repress splicing of Tpm1 exon 3. *Nucleic Acids Res* 41:4765.
+- Gooding C, Roberts GC, Smith CW (1998) Role of an inhibitory pyrimidine element and polypyrimidine tract binding protein in repression of a regulated α-tropomyosin exon. *RNA* 4:85.
 - Hause RJ et al. (2016) Classification and characterization of microsatellite instability across 18 cancer types. *Nat Med* 22:1342.
 - Jonchère V et al. (2024) Microsatellite instability at U2AF-binding polypyrimidic tract sites perturbs alternative splicing during colorectal cancer initiation. *Genome Biol* 25:210.
 - Liu J et al. (2018) An integrated TCGA pan-cancer clinical data resource to drive high-quality survival outcome analytics. *Cell* 173:400.
 - Liu Y et al. (2018) Comparative molecular analysis of gastrointestinal adenocarcinomas. *Cancer Cell* 33:721.
 - Louis DN et al. (2016) The 2016 World Health Organization classification of tumors of the central nervous system. *Acta Neuropathol* 131:803.
+- Niu B et al. (2014) MSIsensor: microsatellite instability detection using paired tumor-normal sequence data. *Bioinformatics* 30:1015.
 - Novetsky AP et al. (2013) Frequent mutations in the RPL22 gene and its clinical and functional implications. *Gynecol Oncol* 128:470.
 - O'Leary MN et al. (2013) The ribosomal protein Rpl22 controls ribosome composition by directly repressing expression of its own paralog, Rpl22l1. *PLoS Genet* 9:e1003708.
 - Parker JS et al. (2009) Supervised risk predictor of breast cancer based on intrinsic subtypes. *J Clin Oncol* 27:1160.
@@ -1813,8 +1867,8 @@ Literature used as *context* (never to choose a feature, a model or an event):
 - Wang Y et al. (2017) Differences in microsatellite instability profiles between endometrioid and colorectal cancers: a potential cause for false-negative results? *J Mol Diagn* 19:57.
 - Warzecha CC et al. (2009) ESRP1 and ESRP2 are epithelial cell-type-specific regulators of FGFR2 splicing. *Mol Cell* 33:591.
 - Warzecha CC et al. (2010) An ESRP-regulated splicing programme is abrogated during the epithelial–mesenchymal transition. *EMBO J* 29:3286.
-- Zhang Y et al. (2017) Ribosomal proteins Rpl22 and Rpl22l1 control morphogenesis by regulating pre-mRNA splicing. *Cell Rep* 18:545.
 - Zarnack K et al. (2013) Direct competition between hnRNP C and U2AF65 protects the transcriptome from the exonization of Alu elements. *Cell* 152:453.
+- Zhang Y et al. (2017) Ribosomal proteins Rpl22 and Rpl22l1 control morphogenesis by regulating pre-mRNA splicing. *Cell Rep* 18:545.
 
 The ten citations outside the TCGA marker papers were checked against PubMed, PMC or publisher
 records on 2026-10-12; two were corrected (the title of Eisenhofer 2004, and the year and journal
@@ -1825,4 +1879,5 @@ Jonchère 2024, Zarnack 2013) and Dorard 2011 were checked against PubMed, PMC o
 on 2026-10-12, before they were cited. Darman 2015 (PMID 26565915) and DeBoever 2015 (PMID 25768983),
 added with §12, were checked against PubMed and PMC records on 2026-10-13, before they were cited.
 Chu 1993, Chua and Reed 2001, Collura 2014, Hause 2016 and Wang 2017, added with the §11 follow-up,
-were checked for docs/MSI_REPEATS_LITERATURE.md on 2026-10-13.
+were checked for docs/MSI_REPEATS_LITERATURE.md on 2026-10-13. Bonneville 2017 (PMID 29850653) and Niu 2014
+(PMID 24371154), added with D-69, were checked against PubMed on 2026-10-13, before they were cited.

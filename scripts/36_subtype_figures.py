@@ -21,6 +21,7 @@ One question per figure, in the order the story is told in results/SUBTYPE.md:
     U18 does the sequence code find mismatch-repair-deficient tumours in 30 cancers never used (D-66)?
     U19 is the code about the branch point, and about mismatch repair (D-65, D-67)?
     U20 is the code an infiltration readout (D-68)?
+    U21 does the code follow MSI calls that do not come from MC3: MANTIS, MSIsensor (D-69)?
 
 Captions are figure legends: "**Figure Un. Title.**", then (a), (b) ... for the panels. `legends`
 copies each legend (without its bullet list of tests) under the figure in results/SUBTYPE.md.
@@ -2107,6 +2108,120 @@ the adjusted model more immune expression goes with a higher G, the opposite of 
 tests). Per-tumour values are kept locally (D-12)."""
 
 
+def U21() -> None:
+    pr = pd.read_csv(CODE_DIR / "msicalls" / "predictions.csv").set_index("id")
+    ex = pd.read_csv(CODE_DIR / "msicalls" / "exploratory.csv").set_index("what")
+    sc = pd.read_parquet(MSI_LOCAL / "pancancer_msicalls.parquet")
+    step = _step("51_msi_code.py")
+    fig = plt.figure(figsize=(DOUBLE, 2.3))
+    gs = fig.add_gridspec(1, 3, width_ratios=[1.05, 1.0, 1.0], wspace=0.45)
+    rows, local = [], []
+    rng = np.random.default_rng(0)
+    # a. AUROC of score G against each DNA call
+    ax = fig.add_subplot(gs[0])
+    mm = sc.mmr.to_numpy()
+    sets = [("MC3 deletions", step.auc_lower(sc.pct_G.to_numpy(), mm), int(mm.sum()), ACCENT, "PC2"),
+            ("MANTIS MSI-H", pr.loc["MC1"].effect + 0.5, int(pr.loc["MC1"].n.split()[1].rstrip(",")), ACCENT, "MC1"),
+            ("MSIsensor MSI-H", pr.loc["MC2"].effect + 0.5, int(pr.loc["MC2"].n.split()[1].rstrip(",")), ACCENT, "MC2")]
+    for c in ["UCEC_TCGA", "STAD_TCGA", "COAD_TCGA"]:
+        for col, lab in [("mantis", "MANTIS"), ("msisensor", "MSIsensor")]:
+            r = ex.loc[f"{c} (in-sample for the rule): AUROC(G lower in {col} MSI-H than MSS)"]
+            sets.append((f"{_short(c)}, {lab}", r.value, int(r.n), COH_STYLE[c][0], "exploratory, in-sample"))
+    ys = [0, 1, 2, 3.6, 4.6, 5.6, 6.6, 7.6, 8.6]
+    for y, (lab, v, n, col, test) in zip(ys, sets):
+        ax.scatter(v, y, s=16, color=col, zorder=3)
+        rows.append({"panel": "a", "set": lab, "n_positive": n, "auroc": v, "test": test})
+    ax.axvline(0.5, color=MUTED, linewidth=0.6, linestyle=(0, (3, 2)), zorder=0)
+    rows.append({"panel": "a", "set": "reference line", "auroc": 0.5})
+    ax.set_yticks(ys)
+    ax.set_yticklabels([f"{l} ({n})" for l, _, n, _, _ in sets], fontsize=5.6)
+    ax.set_ylim(max(ys) + 0.6, -0.6)
+    ax.set_xlim(0.4, 1.0)
+    ax.tick_params(axis="y", length=0)
+    ax.spines["left"].set_visible(False)
+    ax.set_xlabel("AUROC, positive tumours lower", fontsize=6)
+    # b, c. score G where the MC3 call and the exome caller agree or disagree (held-out tumours)
+    axes = []
+    for k, (col, lab) in enumerate([("mantis", "MANTIS"), ("msisensor", "MSIsensor")]):
+        bx = fig.add_subplot(gs[k + 1], sharey=axes[0] if axes else None)
+        axes.append(bx)
+        x, ticks = 0, []
+        for mc3, mlab in [(False, "MC3 proficient"), (True, "MC3 deficient")]:
+            x0 = x
+            for call in ["MSS", "between", "MSI-H"]:
+                v = sc.loc[sc.mmr.eq(mc3) & sc[f"call_{col}"].eq(call), "pct_G"].to_numpy()
+                if not len(v):
+                    continue
+                c_ = ACCENT if mc3 else INK2
+                if len(v) >= 5:
+                    st = _box(bx, x, v, c_, dots=len(v) < 200, rng=rng)
+                else:
+                    bx.scatter(x + rng.uniform(-0.12, 0.12, len(v)), v, s=2.2, color=c_, alpha=0.45, linewidths=0)
+                    st = {"n": len(v), "median": np.nan}
+                rows.append({"panel": "bc"[k], "caller": lab, "mc3_call": mlab, "caller_call": call, **st})
+                local.append(pd.DataFrame({"panel": "bc"[k], "caller": lab, "mc3_call": mlab, "caller_call": call,
+                                           "file_id": sc.loc[sc.mmr.eq(mc3) & sc[f"call_{col}"].eq(call), "file_id"],
+                                           "pct_G": v}))
+                ticks.append((x, f"{'mid' if call == 'between' else call}\n({len(v):,})"))
+                x += 1
+            bx.text((x0 + x - 1) / 2, -0.19, mlab, transform=bx.get_xaxis_transform(), ha="center", va="top",
+                    fontsize=5.8)
+            x += 0.6
+        bx.set_xticks([t for t, _ in ticks])
+        bx.set_xticklabels([l for _, l in ticks], fontsize=5.4)
+        bx.tick_params(axis="x", length=0)
+        bx.set_xlim(-0.6, x - 1.0)
+        bx.set_ylim(-0.03, 1.03)
+        bx.set_yticks([0, 0.25, 0.5, 0.75, 1.0])
+        bx.axhline(0.5, color=MUTED, linewidth=0.6, linestyle=(0, (3, 2)), zorder=0)
+        bx.set_title(lab, fontsize=6.2, pad=3)
+        if k == 0:
+            bx.set_ylabel("score G percentile in its cancer", fontsize=6)
+        else:
+            plt.setp(bx.get_yticklabels(), visible=False)
+    rows.append({"panel": "bc", "caller": "reference line", "median": 0.5})
+    for a_, lab, x in [(ax, "a", -0.75), (axes[0], "b", -0.25), (axes[1], "c", -0.12)]:
+        a_.text(x, 1.04, lab, transform=a_.transAxes, fontsize=8, fontweight="bold")
+    save(fig, OUT, "U21_msi_code_msi_calls", data=pd.DataFrame(rows), caption=CAPTIONS["U21"](pr, ex, rows),
+         local_data=(SCFG.base_data_dir / "figure_data", pd.concat(local, ignore_index=True)))
+
+
+def _cap_u21(pr, ex, rows):
+    a = pd.DataFrame([r for r in rows if r["panel"] == "a" and "test" in r]).set_index("set")
+    bc = pd.DataFrame([r for r in rows if r["panel"] in "bc" and r.get("mc3_call")])
+    def cell(caller, mc3, call):
+        r = bc[(bc.caller == caller) & (bc.mc3_call == mc3) & (bc.caller_call == call)]
+        return int(r.n.iloc[0]) if len(r) else 0
+    return f"""**Does score G follow MSI calls that do not come from MC3?**
+
+Pre-specified (config/followup.yaml: msi_code_msi_calls, D-69) before the scores were downloaded. MANTIS (Bonneville
+et al. 2017) and MSIsensor scores of the TCGA PanCancer Atlas, fetched from cBioPortal (step 00c) and matched by
+sample barcode. Calls: MANTIS MSI-H > 0.6, MSS < 0.4; MSIsensor MSI-H > 10, MSS < 4; scores in between (mid) are kept
+apart.
+Tumours: D-66's 7,685 held-out tumours (30 cancers, none used to define the code); score G as there, a percentile
+within each cancer, not re-fitted.
+
+(a) AUROC for positive tumours scoring lower on G (positives in brackets): D-66's MC3 call (≥ 10 homopolymer
+deletions) against the rest, MANTIS and MSIsensor MSI-H against MSS; then, in-sample for the rule, MSI-H against MSS
+in UCEC, STAD and COAD. (b, c) Score G percentile of the held-out tumours by D-66's MC3 call and the caller's call (n
+in brackets); box = interquartile range, diamond = median, whiskers = 1.5 × IQR, dots = tumours (not drawn for the
+large MSS group); dashed line = the middle of the cancer.
+
+- MC1, MANTIS MSI-H against MSS: AUROC {pr.loc['MC1'].effect + 0.5:.2f} ({a.loc['MANTIS MSI-H', 'n_positive']} MSI-H),
+  q = {fp(pr.loc['MC1'].q)}, supported.
+- MC2, MSIsensor: AUROC {pr.loc['MC2'].effect + 0.5:.2f} ({a.loc['MSIsensor MSI-H', 'n_positive']} MSI-H), q =
+  {fp(pr.loc['MC2'].q)}, supported.
+- MC3, Spearman of score G with the MANTIS score (percentile within cancer), all {pr.loc['MC3'].n}:
+  ρ = {signed(pr.loc['MC3'].effect, 3)}, q = {fp(pr.loc['MC3'].q)}, not resolved. Over all tumours, nearly all of them
+  MSS, the MANTIS score shows no relation to score G.
+
+Agreement (exploratory): every MANTIS MSI-H tumour ({cell('MANTIS', 'MC3 deficient', 'MSI-H')}) is MC3-deficient; of
+the {int(a.loc['MC3 deletions', 'n_positive'])} MC3-deficient tumours, MANTIS calls {cell('MANTIS', 'MC3 deficient', 'between')}
+mid and {cell('MANTIS', 'MC3 deficient', 'MSS')} MSS, and these still score low on G. MSIsensor calls
+{cell('MSIsensor', 'MC3 proficient', 'MSI-H')} MC3-proficient tumours MSI-H. q over family MC (3 tests). Per-tumour
+values are kept locally (D-12)."""
+
+
 TITLES = {
     "U1": "Splicing matches expression on lineage and genome-state subtypes, and fusing the two adds little.",
     "U2": "Splicing loses most on small classes defined by one programme.",
@@ -2128,6 +2243,7 @@ TITLES = {
     "U18": "A two-arm sequence code finds mismatch-repair-deficient tumours in 30 cancers never used to define it.",
     "U19": "The code is specific to the branch point and to mismatch repair.",
     "U20": "The code is not an infiltration readout.",
+    "U21": "The code finds the tumours that two exome MSI callers call MSI-high.",
 }
 
 
@@ -2182,9 +2298,10 @@ CAPTIONS = {k: (lambda k, f: (lambda *a: tidy(legend(k, f(*a)))))(k, f) for k, f
             {"U1": _cap_u1, "U2": _cap_u2, "U3": _cap_u3, "U4": _cap_u4, "U5": _cap_u5, "U6": _cap_u6,
              "U7": _cap_u7, "U8": _cap_u8, "U9": _cap_u9,
              "U10": _cap_u10, "U11": _cap_u11, "U12": _cap_u12, "U13": _cap_u13, "U14": _cap_u14, "U15": _cap_u15,
-             "U16": _cap_u16, "U17": _cap_u17, "U18": _cap_u18, "U19": _cap_u19, "U20": _cap_u20}.items()}
+             "U16": _cap_u16, "U17": _cap_u17, "U18": _cap_u18, "U19": _cap_u19, "U20": _cap_u20,
+             "U21": _cap_u21}.items()}
 
 if __name__ == "__main__":
     run({"U1": U1, "U2": U2, "U3": U3, "U4": U4, "U5": U5, "U6": U6, "U7": U7, "U8": U8, "U9": U9, "U10": U10, "U11": U11,
          "U12": U12, "U13": U13, "U14": U14, "U15": U15, "U16": U16, "U17": U17,
-         "U18": U18, "U19": U19, "U20": U20, "legends": legends})
+         "U18": U18, "U19": U19, "U20": U20, "U21": U21, "legends": legends})

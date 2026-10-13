@@ -44,7 +44,7 @@ tasks relate.
 | AS ensemble (8 splicing views) | 0.994; 91 errors | 0.950 | 0.80 / 0.82 / 0.81 |
 | GEX + AS (1:1) | 77 errors (McNemar p = 1.1e-4) | 0.961 (p = 3.9e-9) | −0.04 to +0.04 per cohort; no McNemar p < 0.05 |
 | Headline | splicing is a second, partly independent view of the tumour state | splicing is a lineage code, and fails where a lineage code should | splicing matches expression on lineage and genome-state subtypes and loses where one gene defines the class |
-| Write-up · figures | [TUMOUR_STATUS.md](results/TUMOUR_STATUS.md) · S1–S10 | [CANCER_TYPE.md](results/CANCER_TYPE.md) · T1–T9 | [SUBTYPE.md](results/SUBTYPE.md) · U1–U20 |
+| Write-up · figures | [TUMOUR_STATUS.md](results/TUMOUR_STATUS.md) · S1–S10 | [CANCER_TYPE.md](results/CANCER_TYPE.md) · T1–T9 | [SUBTYPE.md](results/SUBTYPE.md) · U1–U21 |
 
 [**Across the three tasks**](#across-the-three-tasks) ([ACROSS_TASKS.md](results/ACROSS_TASKS.md),
 X1–X4) compares them:
@@ -394,7 +394,7 @@ Not shown here, all in the write-up: per-class recall against expression (T2), p
 
 ## Subtype within a cancer: 22 cohorts in 15 cancers
 
-**Full write-up: [results/SUBTYPE.md](results/SUBTYPE.md)** (Figures U1–U20) — *within a cancer,
+**Full write-up: [results/SUBTYPE.md](results/SUBTYPE.md)** (Figures U1–U21) — *within a cancer,
 splicing recovers lineage and genome state about as well as expression, and loses where a subtype
 is a single gene switched on.* One model per (cohort, view) over 22 subtype cohorts from 15 TCGA
 projects:
@@ -404,8 +404,8 @@ projects:
 Every label map, exclusion and minimum class size (20 patients) was fixed in
 [config/subtype.yaml](config/subtype.yaml) before the first model was fitted
 ([docs/SUBTYPE_METHODS.md](docs/SUBTYPE_METHODS.md), D-30 to D-45); the regulator, site,
-MSI-repeat and BRCA analyses of Figures U8–U20 were fixed in [config/followup.yaml](config/followup.yaml)
-before they were run (D-46, D-47, D-52 to D-68).
+MSI-repeat and BRCA analyses of Figures U8–U21 were fixed in [config/followup.yaml](config/followup.yaml)
+before they were run (D-46, D-47, D-52 to D-69).
 
 ### Performance
 
@@ -744,6 +744,22 @@ fixed in advance; 6 of 6 tests supported).
 - **Infiltration points the other way.** The immune score alone marks MMR deficiency weakly
   (0.59), and in the adjusted model more immune expression goes with a *higher* score G.
 
+<img src="results/figures/subtype/U21_msi_code_msi_calls.png" width="900" alt="U21: AUROC of score G against MC3, MANTIS and MSIsensor calls, and score G of held-out tumours by MC3 call and by each caller's call">
+
+**Figure U21. The code finds the tumours that two exome MSI callers call MSI-high.** (a) AUROC of
+score G against D-66's MC3 call and against MANTIS and MSIsensor MSI-H, held out, then in-sample in
+the three training cancers. (b, c) Score G percentile of the held-out tumours by MC3 call (grey
+proficient, blue deficient) and by the caller's call (mid = between its two cut-offs).
+
+Every earlier held-out test took its truth from MC3 deletions. MANTIS and MSIsensor call MSI from
+the exome reads by other means (D-69, fixed before the 6.2 MB cBioPortal download).
+- **Both callers agree with the code.** Score G separates MSI-H from MSS at 0.97 (MANTIS, 17 MSI-H)
+  and 0.89 (MSIsensor, 23), in 30 cancers it never saw.
+- **It marks the MSI-high state, not the score below it.** Over all 7,388 scored tumours, nearly all
+  MSS, the MANTIS score shows no relation to score G (ρ +0.01; MC3 not resolved).
+- **Where the calls disagree.** All 17 MANTIS MSI-H tumours are MC3-deficient; the 33 MC3-deficient
+  tumours MANTIS calls mid or MSS still score low on G.
+
 [U10 caption](results/figures/subtype/U10_msi_repeats.caption.md) ·
 [U11 caption](results/figures/subtype/U11_msi_long_tracts.caption.md) ·
 [U16 caption](results/figures/subtype/U16_msi_deletion_load.caption.md) ·
@@ -751,6 +767,7 @@ fixed in advance; 6 of 6 tests supported).
 [U18 caption](results/figures/subtype/U18_msi_code_pancancer.caption.md) ·
 [U19 caption](results/figures/subtype/U19_msi_code_specificity.caption.md) ·
 [U20 caption](results/figures/subtype/U20_msi_code_infiltration.caption.md) ·
+[U21 caption](results/figures/subtype/U21_msi_code_msi_calls.caption.md) ·
 [§11](results/SUBTYPE.md#11-the-msi-splicing-marks-are-written-in-the-genome-acceptor-poly-t-repeats)
 
 #### 9. Breast cancer with DNA: two HER2s, splice-site mutations, and what the pair check removed
@@ -1013,7 +1030,7 @@ scripts/      00_register_sources → 01_build_cohort → 02_extract_matrices �
               → 04_run_job (one job) / 05_run_all (all jobs, parallel) → 06_summarise_results
               → 07_shap_importance → 08–19, 22–25 interpretation analyses (tables only)
               → 20_figures_status / 21_figures_type (every figure)
-              subtype task: 00b_fetch_gdc_labels → 30_subtype_labels → 31_subtype_extract
+              subtype task: 00b_fetch_gdc_labels, 00c_fetch_msi_scores → 30_subtype_labels → 31_subtype_extract
               → 32_subtype_run_job / 33_subtype_run_all → 34_subtype_summarise
               → 35_subtype_interpret → 37_subtype_regulators, 38_subtype_site_probe → 36_subtype_figures
               across tasks: 40_cross_task → 41_figures_cross_task
@@ -1061,7 +1078,9 @@ OMP_NUM_THREADS=1 python scripts/04_run_job.py tumor_status se BRCA
   before steps 37, 38 and 40 were first run (2026-10-12). Those steps refit no task model.
 - **Subtype labels:** the TCGA-CDR histology table (path in `config/sources.yaml`) and two
   open-access GDC PanCanAtlas tables (published subtype calls and clinical fields), fetched and
-  MD5-checked by `scripts/00b_fetch_gdc_labels.py` into `data.nosync/`.
+  MD5-checked by `scripts/00b_fetch_gdc_labels.py` into `data.nosync/`. The MANTIS and MSIsensor
+  scores for D-69 come from the public cBioPortal API (`scripts/00c_fetch_msi_scores.py`,
+  6.2 MB, MD5-pinned).
 - **Environment note:** set `OMP_NUM_THREADS` before Python starts. In this environment
   (torch 2.2.2 + conda-forge numpy, macOS), importing numpy before torch with multiple OpenMP
   threads segfaults; `scripts/_common.py` handles it.
