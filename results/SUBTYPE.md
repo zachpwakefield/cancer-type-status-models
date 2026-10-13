@@ -249,7 +249,7 @@ property of the label, not leakage, and it applies equally to every view.
 
 ![U1](figures/subtype/U1_performance.png)
 
-<!-- legend U1: copied from figures/subtype/U1_performance.caption.md by scripts/36_subtype_figures.py legends -->
+<!-- legend U1: copied from figures/subtype/U1_performance.caption.md by the figure script's 'legends' step -->
 > **Figure U1. Splicing matches expression on lineage and genome-state subtypes, and fusing the two adds little.**
 > Out-of-fold balanced accuracy (mean per-class recall) of one model per cohort and view, 22 cohorts and 7,552
 > patient-cohort pairs: the eight splicing views (grey; the bar spans them), expression (GEX, black), the AS
@@ -349,7 +349,7 @@ Macro F1, macro AUROC, accuracy and MCC for every model, with CIs, are in
 
 ![U2](figures/subtype/U2_recall_by_class.png)
 
-<!-- legend U2: copied from figures/subtype/U2_recall_by_class.caption.md by scripts/36_subtype_figures.py legends -->
+<!-- legend U2: copied from figures/subtype/U2_recall_by_class.caption.md by the figure script's 'legends' step -->
 > **Figure U2. Splicing loses most on small classes defined by one programme.** Out-of-fold recall of every class
 > (patients in brackets) for GEX (black), the AS ensemble (blue) and GEX + AS fused 1:1 (dark blue). (a) Histology
 > cohorts. (b) Genomic and IHC cohorts, then the expression-defined ones, in the order of U1. 95% patient-bootstrap
@@ -411,7 +411,7 @@ Recall of every class, GEX against the AS ensemble (result):
 
 ![U3](figures/subtype/U3_histology_errors.png)
 
-<!-- legend U3: copied from figures/subtype/U3_histology_errors.caption.md by scripts/36_subtype_figures.py legends -->
+<!-- legend U3: copied from figures/subtype/U3_histology_errors.caption.md by the figure script's 'legends' step -->
 > **Figure U3. Histology models err in the molecular direction.** Each panel is one histology cohort's expression
 > (GEX) model. Rows: true histology → the model's out-of-fold call, with patients in brackets; columns: the
 > published molecular class of the same patients (PanCanAtlas, D-43); cells: patients, coloured by the share of the
@@ -482,7 +482,7 @@ a property of the label, not a leak, and no molecular label entered any histolog
 
 ![U4](figures/subtype/U4_literature_markers.png)
 
-<!-- legend U4: copied from figures/subtype/U4_literature_markers.caption.md by scripts/36_subtype_figures.py legends -->
+<!-- legend U4: copied from figures/subtype/U4_literature_markers.caption.md by the figure script's 'legends' step -->
 > **Figure U4. The literature's markers are in the data and in the expression models, far less in the splicing
 > models.** Each row is a marker fixed in `config/subtype.yaml` before any model was fitted (D-41, D-45; sources in
 > the CSV), with the class the literature expects it to be higher in. Dot: AUROC of the gene's log2 CPM for that
@@ -552,7 +552,7 @@ splicing ranks are the best of the gene's events across eight views.)
 
 ![U5](figures/subtype/U5_as_vs_gex_genes.png)
 
-<!-- legend U5: copied from figures/subtype/U5_as_vs_gex_genes.caption.md by scripts/36_subtype_figures.py legends -->
+<!-- legend U5: copied from figures/subtype/U5_as_vs_gex_genes.caption.md by the figure script's 'legends' step -->
 > **Figure U5. The splicing and expression models of a cohort read different genes.** For each cohort (patients in
 > brackets) and splicing view: how many genes are in both the top 50 genes of the splicing model (a gene ranked by
 > its best event) and the top 50 of the cohort's GEX model, counted within the genes both views could select in that
@@ -603,7 +603,7 @@ is why fixed fusion gains little here.
 
 ![U6](figures/subtype/U6_event_audit.png)
 
-<!-- legend U6: copied from figures/subtype/U6_event_audit.caption.md by scripts/36_subtype_figures.py legends -->
+<!-- legend U6: copied from figures/subtype/U6_event_audit.caption.md by the figure script's 'legends' step -->
 > **Figure U6. Four of the nineteen strongest splicing events read a neighbouring gene.** For each histology and
 > genomic/IHC cohort, the one splicing event with the largest class-specific mean |SHAP| across the eight splicing
 > models (rule fixed before the audit was run, D-41), labelled by cohort, host gene and view. Dots: the event's
@@ -690,7 +690,7 @@ is in the audit table (D-41, A-2). "Result" is what this data shows; "context" i
 
 ![U7](figures/subtype/U7_msi_events.png)
 
-<!-- legend U7: copied from figures/subtype/U7_msi_events.caption.md by scripts/36_subtype_figures.py legends -->
+<!-- legend U7: copied from figures/subtype/U7_msi_events.caption.md by the figure script's 'legends' step -->
 > **Figure U7. Ten MSI splicing events replicate across endometrial, gastric and colorectal cancer.** Every splicing
 > event in the top 5 of the MSI class of the UCEC, STAD or COAD model (any view) whose AUROC, MSI against the rest
 > of the cohort, is at least 0.25 from 0.5 in the same direction in all three cohorts: 10 events (AUROC in each
@@ -778,7 +778,7 @@ The ten Figure U7 events do not follow the infiltrate:
 
 ![U8](figures/subtype/U8_regulators.png)
 
-<!-- legend U8: copied from figures/subtype/U8_regulators.caption.md by scripts/36_subtype_figures.py legends -->
+<!-- legend U8: copied from figures/subtype/U8_regulators.caption.md by the figure script's 'legends' step -->
 > **Figure U8. Named splicing regulators differ between subtypes as predicted in four of six tests.** Six
 > predictions fixed before the data were looked at by class (config/followup.yaml, D-46). (a) A factor's log2 CPM in
 > each class: dot = median, bar = interquartile range, patients in brackets; blue = the class predicted lower. AUROC
@@ -858,7 +858,7 @@ with the subtype, not that it regulates the subtype's exons.
 
 ![U9](figures/subtype/U9_site_probe.png)
 
-<!-- legend U9: copied from figures/subtype/U9_site_probe.caption.md by scripts/36_subtype_figures.py legends -->
+<!-- legend U9: copied from figures/subtype/U9_site_probe.caption.md by the figure script's 'legends' step -->
 > **Figure U9. Part of the splicing models' subtype signal is tied to the site that sent the sample.** The probe of
 > D-20 on the subtype cohorts (D-47): one untuned classifier per cohort and view (top-2,000 variance, median impute,
 > standardise, L2 logistic regression C = 0.05, balanced), cross-validated with patients grouped and again with
@@ -913,7 +913,7 @@ read by repeat.
 
 ![U10](figures/subtype/U10_msi_repeats.png)
 
-<!-- legend U10: copied from figures/subtype/U10_msi_repeats.caption.md by scripts/36_subtype_figures.py legends -->
+<!-- legend U10: copied from figures/subtype/U10_msi_repeats.caption.md by the figure script's 'legends' step -->
 > **Figure U10. Genome sequence alone says which exons MSI tumours skip.** Pre-specified before any PSI was read by
 > repeat (config/followup.yaml: msi_cis, D-52). For every cassette exon, the longest sense-strand T-run overlapping
 > intron positions −1..−50 before it was read from GRCh38; no label or model chose the exons. MSI against the other
@@ -993,7 +993,7 @@ the fewest MSI patients (34). This reading was formed after the result and was n
 
 ![U11](figures/subtype/U11_msi_long_tracts.png)
 
-<!-- legend U11: copied from figures/subtype/U11_msi_long_tracts.caption.md by scripts/36_subtype_figures.py legends -->
+<!-- legend U11: copied from figures/subtype/U11_msi_long_tracts.caption.md by the figure script's 'legends' step -->
 > **Figure U11. The longest acceptor repeats move toward inclusion in MSI.** (a) Exploratory (read after D-52): SE
 > exons with an acceptor T-run ≥ 10 (the nine MSI events of §8 left out), share whose background-adjusted MSI shift
 > is positive, by run length; bars = Wilson 95% interval. Runs of 10–19 lean toward skipping (share 0.38–0.49), runs
@@ -1099,7 +1099,7 @@ damage the tumour has accumulated.
 
 ![U16](figures/subtype/U16_msi_deletion_load.png)
 
-<!-- legend U16: copied from figures/subtype/U16_msi_deletion_load.caption.md by scripts/36_subtype_figures.py legends -->
+<!-- legend U16: copied from figures/subtype/U16_msi_deletion_load.caption.md by the figure script's 'legends' step -->
 > **Figure U16. Mismatch-repair damage tracks the repeat score in stomach cancer only.** Pre-specified
 > (config/followup.yaml: msi_deletion_load, D-61). Homopolymer deletion = an MC3 deletion (FILTER PASS, wga or
 > native_wga_mix) of A or T bases inside a run of ≥ 5 of that base, counted per tumour in the exome. Score = the
@@ -1153,7 +1153,7 @@ upstream of the run. One was found for 83% of 1,580 exons, a median 40 nt from t
 
 ![U17](figures/subtype/U17_msi_branchpoint.png)
 
-<!-- legend U17: copied from figures/subtype/U17_msi_branchpoint.caption.md by scripts/36_subtype_figures.py legends -->
+<!-- legend U17: copied from figures/subtype/U17_msi_branchpoint.caption.md by the figure script's 'legends' step -->
 > **Figure U17. The branch point's distance from the 3′ splice site sets the direction of the MSI shift.**
 > Pre-specified (config/followup.yaml: msi_branchpoint, D-63). Exons whose acceptor carries a T-run ≥ 10 (R exons,
 > D-52), read from the GRCh38 primary assembly. Branch point = the A nearest the 3′ splice site that lies upstream
@@ -1245,7 +1245,7 @@ Five sets of tests, each written down before it was computed, asked whether the 
 
 ![U18](figures/subtype/U18_msi_code_pancancer.png)
 
-<!-- legend U18: copied from figures/subtype/U18_msi_code_pancancer.caption.md by scripts/36_subtype_figures.py legends -->
+<!-- legend U18: copied from figures/subtype/U18_msi_code_pancancer.caption.md by the figure script's 'legends' step -->
 > **Figure U18. A two-arm sequence code finds mismatch-repair-deficient tumours in 30 cancers never used to define
 > it.** Pre-specified (config/followup.yaml: msi_code_pancancer, D-66) before any tumour outside UCEC, STAD and COAD
 > was read for MSI. Tumours: one per patient in the 30 other TCGA projects of the pan-cancer SE matrix, with MC3
@@ -1304,7 +1304,7 @@ Five sets of tests, each written down before it was computed, asked whether the 
 
 ![U19](figures/subtype/U19_msi_code_specificity.png)
 
-<!-- legend U19: copied from figures/subtype/U19_msi_code_specificity.caption.md by scripts/36_subtype_figures.py legends -->
+<!-- legend U19: copied from figures/subtype/U19_msi_code_specificity.caption.md by the figure script's 'legends' step -->
 > **Figure U19. The code is specific to the branch point and to mismatch repair.** Pre-specified
 > (config/followup.yaml: msi_code_specificity, D-65; msi_code_endometrium, D-67). Exon shift = D-52's
 > background-adjusted difference in inclusion percentile. Adjusted ρ = D-63's: shift and branch-point distance
@@ -1363,7 +1363,7 @@ for score A only.
 
 ![U20](figures/subtype/U20_msi_code_infiltration.png)
 
-<!-- legend U20: copied from figures/subtype/U20_msi_code_infiltration.caption.md by scripts/36_subtype_figures.py legends -->
+<!-- legend U20: copied from figures/subtype/U20_msi_code_infiltration.caption.md by the figure script's 'legends' step -->
 > **Figure U20. The code is not an infiltration readout.** Pre-specified (config/followup.yaml:
 > msi_code_infiltration, D-68). Covariates as in D-55: stromal and immune = mean log2 CPM of eight stromal and eight
 > immune genes (config/biology.yaml); RI = the tumour's mean retained-intron PSI, an RNA-handling proxy; purity =
@@ -1409,7 +1409,7 @@ was written down before their scores were downloaded from cBioPortal (6.2 MB, st
 
 ![U21](figures/subtype/U21_msi_code_msi_calls.png)
 
-<!-- legend U21: copied from figures/subtype/U21_msi_code_msi_calls.caption.md by scripts/36_subtype_figures.py legends -->
+<!-- legend U21: copied from figures/subtype/U21_msi_code_msi_calls.caption.md by the figure script's 'legends' step -->
 > **Figure U21. The code finds the tumours that two exome MSI callers call MSI-high.** Pre-specified
 > (config/followup.yaml: msi_code_msi_calls, D-69) before the scores were downloaded. MANTIS (Bonneville et al.
 > 2017) and MSIsensor scores of the TCGA PanCancer Atlas, fetched from cBioPortal (step 00c) and matched by sample
@@ -1485,7 +1485,7 @@ overlap only in part (context). Amplified means total copy number at ERBB2 ≥ 2
 
 ![U13](figures/subtype/U13_brca_two_her2.png)
 
-<!-- legend U13: copied from figures/subtype/U13_brca_two_her2.caption.md by scripts/36_subtype_figures.py legends -->
+<!-- legend U13: copied from figures/subtype/U13_brca_two_her2.caption.md by the figure script's 'legends' step -->
 > **Figure U13. Splicing reads HER2 through the HER2-enriched programme, not through the 17q12 amplicon.**
 > Pre-specified before any probability was compared with copy number (config/followup.yaml: brca_her2, D-58).
 > P(Her2) is the stored out-of-fold probability of the BRCA_PAM50 models: GEX, and the AS ensemble (mean of the 8
@@ -1531,7 +1531,7 @@ made absolute with ABSOLUTE purity and ploidy, and applies the same rule with no
 
 ![U15](figures/subtype/U15_brca_her2_uncapped.png)
 
-<!-- legend U15: copied from figures/subtype/U15_brca_her2_uncapped.caption.md by scripts/36_subtype_figures.py legends -->
+<!-- legend U15: copied from figures/subtype/U15_brca_her2_uncapped.caption.md by the figure script's 'legends' step -->
 > **Figure U15. Without the ABSOLUTE ceiling, splicing matches expression on ERBB2 amplification but does not beat
 > it.** Pre-specified before the copy-number file was downloaded (config/followup.yaml: brca_her2_uncapped, D-60).
 > D-58 took amplification from ABSOLUTE, which never reports more than 7 copies at ERBB2. Here, the PanCanAtlas SNP6
@@ -1600,7 +1600,7 @@ at high copy number and that some tumours are HER2-positive by IHC with a lower-
 
 ![U14](figures/subtype/U14_brca_mutations.png)
 
-<!-- legend U14: copied from figures/subtype/U14_brca_mutations.caption.md by scripts/36_subtype_figures.py legends -->
+<!-- legend U14: copied from figures/subtype/U14_brca_mutations.caption.md by the figure script's 'legends' step -->
 > **Figure U14. Splice-site mutations skip their exons, and SF3B1 hotspot tumours use cryptic acceptors.**
 > Pre-specified (config/followup.yaml: brca_mutations, D-59). MC3 public calls of the cohort's tumours (FILTER flags
 > within PASS, wga, native_wga_mix). (a) Every splice-site SNV at +1/+2 or −1/−2 whose hit exon (by the MC3
@@ -1672,7 +1672,7 @@ like one between a patient's normal tissue and tumour.
 
 ![U12](figures/subtype/U12_brca_germline_check.png)
 
-<!-- legend U12: copied from figures/subtype/U12_brca_germline_check.caption.md by scripts/36_subtype_figures.py legends -->
+<!-- legend U12: copied from figures/subtype/U12_brca_germline_check.caption.md by the figure script's 'legends' step -->
 > **Figure U12. Most of the BRCA models' genotype-like events are subtype programmes, not inherited alleles.** D-57
 > (config/followup.yaml: brca_germline) called an event genotype-like when, without labels, its PSI fell into three
 > well-separated groups (low, mid, high) with mid-group normals. A-13 adds a check from tumour–normal pairs, and

@@ -1,11 +1,10 @@
-**Do the three tasks' models read the same genes?**
-
-For each subtype cohort, its cancer's tumour-status model (12 cohorts in 8 cancers have one) and the cancer-type
-model's importance over that cancer's own samples: the top 100 genes of each model per view (a gene ranked by its
-best feature's mean |SHAP|), compared within the genes both tasks could select (D-48). a, each dot is one cohort and
-view (comparisons in brackets); bar = median; 0 = the overlap expected by chance (hypergeometric). b, the five
-histology cohorts that have a tumour-status model: Jaccard of the subtype list with the status list and with the
-type list; small dots = views, large = median over views.
+**Figure X1. The three tasks' models read overlapping genes, several-fold more than chance.** For each subtype
+cohort, its cancer's tumour-status model (12 cohorts in 8 cancers have one) and the cancer-type model's importance
+over that cancer's own samples: the top 100 genes of each model per view (a gene ranked by its best feature's mean
+|SHAP|), compared within the genes both tasks could select (D-48). (a) Each dot is one cohort and view (comparisons
+in brackets); bar = median; 0 = the overlap expected by chance (hypergeometric). (b) The five histology cohorts that
+have a tumour-status model: Jaccard of the subtype list with the status list and with the type list; small dots =
+views, large = median over views.
 
 - Status – type (G1): median 7.8-fold the chance overlap over 72 comparisons, 94% with q < 0.05 (Wilcoxon of log2
   fold vs 0, p = 1.7e-13).

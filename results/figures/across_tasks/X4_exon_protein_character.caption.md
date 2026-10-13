@@ -1,5 +1,4 @@
-**Are the exons each task uses alike in what they do to the protein?**
-
+**Figure X4. The subtype models' cassette exons share the protein character of the other two tasks' exons.**
 Cassette exons in the top 100 of any tumour-status model (blue), any cancer-type class (dark blue) or any subtype
 cohort's SE model (amber; D-51), against the random 6,000 measured exons of D-17 (grey). Length divisible by 3 from
 the coordinates; the rest need an exact GENCODE v45 exon and use the best transcript (MANE > canonical > other) with

@@ -85,6 +85,20 @@ lineage gene such as CP in liver, HNF1A in rectum or PAX6 in glioma. Two of the 
 
 ![T1](figures/cancer_type/T1_modality_gain.png)
 
+<!-- legend T1: copied from figures/cancer_type/T1_modality_gain.caption.md by the figure script's 'legends' step -->
+> **Figure T1. No splicing view matches expression alone, but their ensemble does, and fusing the two beats both.**
+> Out-of-fold accuracy over 9,729 samples and 34 classes (33 TCGA projects and a pooled normal class) for each
+> single-view model (grey; GEX in black), the AS ensemble (the mean of the 8 AS views' probabilities, blue), an
+> equal-weight fusion of GEX and the AS ensemble, and a cross-fitted stacker on all 9 views (diamond). The fusion
+> weights were fixed before any result was seen (D-14); the stacker is a ceiling, not a headline (D-23).
+>
+> Whiskers: 95% case-level bootstrap CIs (1,000 resamples). Brackets: exact McNemar on paired per-sample
+> correctness, raw p (two tests; q in the CSV).
+>
+> No single splicing view reaches expression, but their ensemble does. Fused with expression it corrects 109 of its
+> errors and introduces 38. Macro recall and macro F1 are in the CSV.
+<!-- /legend -->
+
 | Model | Accuracy | Macro recall | Errors |
 |---|---|---|---|
 | best single AS view (SE) | 0.941 | 0.923 | 577 |
@@ -114,6 +128,26 @@ lineage-bound of the modalities. That is why the two tasks are written up separa
 
 ![T2](figures/cancer_type/T2_recall_by_class.png)
 
+<!-- legend T2: copied from figures/cancer_type/T2_recall_by_class.caption.md by the figure script's 'legends' step -->
+> **Figure T2. Fusion keeps splicing's gains on the classes expression confuses and repairs most of its losses.**
+> Out-of-fold recall of each of the 34 classes (n in brackets), as a difference from the expression model: the AS
+> ensemble (light blue) and the equal-weight fusion of the two (dark blue). Positive means the model recovers more
+> of that class than expression does.
+>
+> Fusion raises recall for 19 classes and lowers it for 6. It is asymmetric in a useful way: across the 11 classes
+> where splicing alone is worse than expression, the median shortfall shrinks from −0.034 to −0.002, while across
+> the 17 classes where splicing is better it keeps most of the gain (0.016 to 0.012). The pooled normal class is the
+> clearest case: −0.102 for splicing alone, −0.007 fused. So the overall gain (T1) is not bought at the cost of
+> particular classes.
+>
+> Splicing gains most for classes expression confuses with an anatomical neighbour (COAD/READ, ESCA/STAD, GBM/LGG).
+> Of those, only the glioma separation survives holding out whole tissue-source sites (T7): the colon/rectum gain
+> does not and should not be read as biology.
+>
+> Expression is better for the pooled normal class, uterine carcinosarcoma, and squamous and urothelial tumours
+> (BLCA, HNSC, CESC). Every model's per-class recall is in the CSV.
+<!-- /legend -->
+
 **Splicing gains** for classes expression confuses with an anatomical neighbour: COAD (+0.114
 recall), ESCA (+0.093), READ, GBM/LGG, and for CHOL. §7 shows that only some of these gains
 survive held-out sites.
@@ -130,6 +164,20 @@ overall accuracy is not bought at the cost of particular classes.
 ## 3. The two modalities confuse different classes
 
 ![T3](figures/cancer_type/T3_class_confusions.png)
+
+<!-- legend T3: copied from figures/cancer_type/T3_class_confusions.caption.md by the figure script's 'legends' step -->
+> **Figure T3. Expression confuses anatomical neighbours; splicing confuses cell types across organs.** The 16 class
+> pairs with the most out-of-fold confusions (either direction) for the GEX model or the AS ensemble.
+>
+> Expression mixes up anatomical neighbours: colon and rectum, oesophagus and stomach, lung adenocarcinoma and
+> squamous carcinoma, the kidney subtypes, and glioma grades. Splicing makes fewer of these errors; GBM/LGG errors
+> fall from 20 to 0, printed as a number because a zero draws no bar. T7 shows which of these gains survive unseen
+> tissue-source sites: glioma, kidney and lung yes; colon/rectum no.
+>
+> Splicing instead confuses squamous and urothelial carcinomas across organs (CESC/HNSC, HNSC/LUSC, BLCA/CESC,
+> BLCA/HNSC). It also confuses several tumours with normal tissue (PRAD, THCA, LIHC, STAD), as if the splicing state
+> follows the tissue and the cell type more than the tumour.
+<!-- /legend -->
 
 **Expression** confuses anatomical neighbours: colon and rectum (96 errors), oesophagus and
 stomach (40), lung adenocarcinoma and squamous carcinoma (37), the kidney subtypes, and GBM with
@@ -150,6 +198,27 @@ pronounced in expression. That is the confusion matrix here, from the other dire
 
 ![T4](figures/cancer_type/T4_pathway_coherence.png)
 
+<!-- legend T4: copied from figures/cancer_type/T4_pathway_coherence.caption.md by the figure script's 'legends' step -->
+> **Figure T4. The splicing models' genes form fewer pathways than expression's, and part of what they form is
+> ribosomal-protein splicing.** The share of models whose top 200 SHAP genes are enriched (q < 0.05, BH within
+> collection per model; GOseq/Wallenius, D-16) for at least one Hallmark, Reactome or GO-BP term, by view.
+>
+> Open bars use all genes, in each view's colour; a share of zero is printed as a number, because it draws no bar.
+>
+> (a) The 15 tumour-vs-normal models. GEX reaches a pathway in 14 of 15 cancers; SE in 9; MXE in 6; the other AS
+> views in at most 4; RI in none. The tumour signal of splicing is mostly carried by genes that are not members of a
+> common programme.
+>
+> (b) The 34 per-class explanations of the cancer-type models. Many AS hits there came from alternative 5'/3' splice
+> sites in cytosolic ribosomal-protein genes (RPS24, RPL13A, RPL3 and others), which are deeply covered and so
+> measured precisely in every tissue. Filled bars repeat the tests with RPL*/RPS* genes removed from both ranking
+> and universe; that sensitivity test was run only on the cancer-type AS views, so GEX and panel (a) have no filled
+> bar. Most SE, MXE and A3SS classes keep enrichments. The remaining terms are lineage biology (synapse and cell
+> projection in PCPG, smooth-muscle contraction in PRAD, RHO GTPase cycle in DLBC, extracellular matrix in THCA) and
+> the splicing machinery's own transcripts (RNA splicing terms from A3SS in ACC, KICH, LUAD and UVM). Top terms per
+> class: `cancer_type_top_terms_by_class.csv`.
+<!-- /legend -->
+
 The per-class splicing explanations looked pathway-rich at first: 2,390 significant terms, a
 third of them translation-related. That came largely from alternative 5′/3′ splice sites in
 cytosolic ribosomal-protein genes (RPS24, RPL13A, RPL3), which are deeply covered and therefore
@@ -167,6 +236,22 @@ What remains is two kinds of biology:
 
 ![T5](figures/cancer_type/T5_not_expression.png)
 
+<!-- legend T5: copied from figures/cancer_type/T5_not_expression.caption.md by the figure script's 'legends' step -->
+> **Figure T5. The splicing signal for cancer type is not a proxy for expression.** (a) For each AS view, the
+> per-class top 20 events (union over the 34 classes) and 1,000 random measured events. Each event's value is
+> correlated (Spearman, 3,000 random samples) with its host gene's log2 CPM.
+> - Splice-site views (SE, A5SS, A3SS, MXE, RI): the top events correlate with host expression about as much as
+>   random events (median |ρ| 0.13-0.18 vs 0.10-0.15).
+> - Terminal-exon views (AFE, ALE, HIT): the top events track expression more (0.17-0.24 vs 0.03-0.05), as
+>   expected when an alternative promoter or poly(A) site also changes how much of the gene is made.
+>
+> (b) For each class, the overlap between the top 100 GEX genes and the host genes of each AS view's top 100 events,
+> within genes measured by both, summed over the 34 classes. The overlap is 1.3-3.0 times chance but small: about
+> one gene per class. The shared genes are lineage markers that are both expressed and spliced lineage-specifically,
+> such as GFAP and MBP (glioma), DUOXA2 (thyroid), MYH11 (smooth muscle), LGALS4 (gastrointestinal) and FXYD2
+> (kidney). Per-class genes: `top_gene_overlap_gex_vs_as.csv`.
+<!-- /legend -->
+
 - For the splice-site views, top events correlate with their host gene's expression no more than
   random measured events do (median |ρ| 0.13–0.18 against 0.10–0.15).
 - The terminal-exon views track expression more, which is expected: an alternative promoter or
@@ -181,6 +266,19 @@ What remains is two kinds of biology:
 ## 6. Single exons mark single lineages
 
 ![T6](figures/cancer_type/T6_lineage_atlas.png)
+
+<!-- legend T6: copied from figures/cancer_type/T6_lineage_atlas.caption.md by the figure script's 'legends' step -->
+> **Figure T6. Single cassette exons mark single lineages.** Rows: the two cassette exons with the largest per-class
+> SHAP importance for each of the 34 classes (row label: host gene, then the class that ranks the exon). Rows are
+> grouped by that class; columns are classes, ordered by average-linkage clustering.
+>
+> Colour is the exon's median inclusion in a class minus its median over all classes (PSI ×100). Red means the exon
+> is included more in that class, blue that it is skipped more. Dots mark the class that ranks the exon, so a
+> coloured diagonal means each class is recognised by exons switched specifically in it. Off-diagonal blocks show
+> exons shared by related classes.
+>
+> Median PSI, the ranking class and the coordinates are in the CSV.
+<!-- /legend -->
 
 Across the 34 classes, each class's top cassette exons are switched specifically in that class:
 MLANA is skipped in the melanocytic tumours (SKCM, UVM), RAG2 in thymoma; SLC37A2 is included in
@@ -206,6 +304,27 @@ tumour-status side. The grammar is shared; the sentences are not.
 
 ![T7](figures/cancer_type/T7_site_probe.png)
 
+<!-- legend T7: copied from figures/cancer_type/T7_site_probe.caption.md by the figure script's 'legends' step -->
+> **Figure T7. Only the colon–rectum separation, and part of oesophagus–stomach, depends on the tissue-source
+> site.** In TCGA every tissue-source site contributes to exactly one project (COAD and READ share 0 of 38 sites;
+> GBM and LGG 0 of 40), so a model could separate neighbouring projects by site handling. For six pairs of related
+> classes, the same fixed, untuned probe is cross-validated two ways:
+> - by patient (open circles), as in phase 1;
+> - by site (filled), so that every test site is unseen (D-20).
+>
+> The probe is top 2,000 variance → median impute → standardise → L2 logistic regression, all fitted inside training
+> folds. GEX is grey, AS views blue; points are the mean of 3 fold seeds.
+> - **Colon vs rectum:** no AS view separates the two beyond chance at unseen sites (0.48-0.57). GEX keeps 0.66.
+>   The AS ensemble's better colon/rectum calls in the main models (T2, T3) should therefore not be read as
+>   biology.
+> - **Oesophagus vs stomach:** AS views lose 0.08-0.14 of balanced accuracy at unseen sites, GEX 0.06. Part of the
+>   splicing advantage there is site-specific.
+> - **Glioma grade, kidney subtypes and lung histology:** the separation survives unseen sites in every view (drop
+>   ≤ 0.015). The near-perfect splicing separation of GBM from LGG is robust.
+>
+> The probe is diagnostic: it does not re-estimate the phase-1 models. Values per seed: `site_probe_by_seed.csv`.
+<!-- /legend -->
+
 In TCGA every tissue-source site contributes to exactly one project, so separating neighbouring
 projects can exploit site handling rather than biology — and splicing readouts such as intron
 retention are plausibly more sensitive to handling than expression is. A fixed, untuned probe was
@@ -224,6 +343,25 @@ within site, so [TUMOUR_STATUS.md](TUMOUR_STATUS.md) is not exposed to it.
 ## 8. One event per lineage, in detail
 
 ![T8](figures/cancer_type/T8_class_events.png)
+
+<!-- legend T8: copied from figures/cancer_type/T8_class_events.caption.md by the figure script's 'legends' step -->
+> **Figure T8. A single splicing event can name a lineage on its own.** One event per class, picked in two steps
+> (D-26): of the five events with the largest mean |SHAP| in that class's own explanation -- across all 8 splicing
+> views, so this is the models' own ranking -- the one whose class median is furthest from the nearest other class.
+> The ten classes with the clearest such event are drawn, most separated first. The second step chooses which
+> examples to show and nothing else; a feature can rank first for a class and still not separate it alone, because
+> the model reads it together with the others.
+>
+> Each row is one event: the filled dot is the median over the samples of the class it marks, the open dot the
+> nearest other class, and the small dots the remaining 32, spread vertically so that classes sharing a value can be
+> counted. The gap between the two large dots is the margin a single event gives on its own, with no model and no
+> other feature.
+>
+> Medians over all samples of each class, out-of-fold membership not required (this is a description of the data,
+> not of a prediction). The CSV holds every drawn dot, one row per event × class. Per-sample values stay local
+> (D-12); `11_event_cards/cancer_type_cards.csv` adds each event's geometry, protein consequence and regulon
+> membership.
+<!-- /legend -->
 
 §6 showed that single cassette exons mark single lineages. This section asks how far one event
 alone can go, across all eight splicing views, and names ten of them. The rule has two steps
@@ -305,6 +443,27 @@ the tumour programme are different sets of events.
 ## 9. Which class-defining events measure another gene
 
 ![T9](figures/cancer_type/T9_overlap_audit.png)
+
+<!-- legend T9: copied from figures/cancer_type/T9_overlap_audit.caption.md by the figure script's 'legends' step -->
+> **Figure T9. Many of the cancer-type models' terminal exons read a neighbouring lineage gene.** TCGA mRNA
+> libraries are mostly unstranded, and GENCODE readthrough and nested models put exons of one gene inside another,
+> so an event named after one gene can count reads of a neighbour (D-27). (a) The share of events whose segment (the
+> alternative exon, both exons of an MXE pair, the retained intron or the splice-site extension) overlaps an exon of
+> another GENCODE v45 gene by >= 50 bp, on either strand, for every measured event (grey; 6.8% over all 8 views) and
+> for the models' top events (top 30 of each class's explanation, per view; dark). The gap is widest for HIT: 61%
+> against 7%. Odds ratios with the queried length held fixed (Mantel-Haenszel over length deciles, because long
+> terminal exons overlap something more often by chance) are 1.8 to 12.6 across views; every statistic is in
+> `T9_overlap_audit.csv`.
+>
+> (b) Of the top events with such an overlap, how many *track* the other gene — Spearman with its log2 CPM of at
+> least 0.5 in size and larger than with the host gene's own (across all 9,729 samples); the criterion was fixed
+> before any result was seen. 101 of 695 do. Those are better read as a readout of the neighbour's expression than
+> as a splicing choice of the host, whether the coupling is misassigned reads or genuine co-transcription; the two
+> cannot be told apart without stranded libraries. Among the events the narrative names: PLEKHG3 HIT follows SPTB (ρ
+> −0.61, own gene +0.16); BSCL2 HIT follows LRRN4CL (ρ −0.78, own gene −0.03).
+>
+> No model was refitted: the audit changes how events are described, not what the models are.
+<!-- /legend -->
 
 The same audit as [TUMOUR_STATUS.md](TUMOUR_STATUS.md) §10 (D-27), on the cancer-type models'
 top events (top 30 of each class's explanation, per view). Most TCGA mRNA libraries are

@@ -8,7 +8,10 @@
 Reads results/across_tasks/ (step 40). Every figure is SVG + PDF + 400-dpi PNG with `<stem>.csv` of
 the plotted values and `<stem>.caption.md`. Task colours: tumour status blue, cancer type dark blue,
 subtype amber; model colours as in U1 (GEX black, AS ensemble blue, GEX + AS dark blue).
-Usage: python scripts/41_figures_cross_task.py [X1 X2 ...]        (default: all)
+Captions are figure legends ('Figure Xn. Title.', panels (a), (b)); `legends` copies each one under its
+figure in results/ACROSS_TASKS.md.
+
+Usage: python scripts/41_figures_cross_task.py [X1 X2 ... legends]        (default: all)
 """
 from __future__ import annotations
 
@@ -17,7 +20,7 @@ import numpy as np
 import pandas as pd
 import yaml
 from _common import REPO
-from _figbase import run, tidy
+from _figbase import inject_legends, legend, run, tidy
 from matplotlib.lines import Line2D
 
 from ctsm.biology import bh
@@ -360,8 +363,18 @@ domain {m('overlaps a Pfam/CDD domain')}; in a disordered region {m('overlaps a 
 {m('overlaps a TM helix')}. Supported."""
 
 
-CAPTIONS = {k: (lambda f: (lambda *a: tidy(f(*a))))(f) for k, f in
+TITLES = {
+    "X1": "The three tasks' models read overlapping genes, several-fold more than chance.",
+    "X2": "In the cancer-type model, subtypes resemble the cancers the literature predicts.",
+    "X3": "The splicing status models see the six predicted subtypes as less tumour-like.",
+    "X4": "The subtype models' cassette exons share the protein character of the other two tasks' exons.",
+}
+CAPTIONS = {k: (lambda k, f: (lambda *a: tidy(legend(k, TITLES[k], f(*a)))))(k, f) for k, f in
             {"X1": _cap_x1, "X2": _cap_x2, "X3": _cap_x3, "X4": _cap_x4}.items()}
 
+
+def legends() -> None:
+    inject_legends(CFG.results_dir / "ACROSS_TASKS.md")
+
 if __name__ == "__main__":
-    run({"X1": X1, "X2": X2, "X3": X3, "X4": X4})
+    run({"X1": X1, "X2": X2, "X3": X3, "X4": X4, "legends": legends})

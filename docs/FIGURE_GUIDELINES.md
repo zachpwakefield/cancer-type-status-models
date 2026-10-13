@@ -29,16 +29,19 @@ imports it.
 - **Captions.** Explanations go in `<stem>.caption.md` next to the figure. A caption opens with
   the question the figure answers, in bold, and then gives the method, n, the test and where
   the values are.
-- **Legends (subtype figures, U1–U21).** A U caption is written as a figure legend:
-  - it opens with **Figure Un. Title.** in bold, where the title states the finding as one
-    declarative sentence (kept in `TITLES` in `scripts/36_subtype_figures.py`);
+- **Legends (every figure: S, T, U, X).** The caption file is written as a figure legend:
+  - it opens with **Figure Xn. Title.** in bold, where the title states the finding as one
+    declarative sentence (kept in a `TITLES` dict in each figure script; the shared conversion is
+    `legend()` in `scripts/_figbase.py`);
   - the method follows, then each panel as (a), (b), … with a capital after the letter;
   - the tests come last, as a bullet list.
 
-  `36_subtype_figures.py legends` copies each legend, without its bullet list, under the figure
-  in `results/SUBTYPE.md`, between marker comments. In the write-up each figure is preceded by a
-  short "How to read Figure Un" guide and followed by its findings. The S, T and X figures still
-  use the question form.
+  Every figure with more than one panel carries bold panel letters a, b, … (`panel_letters()`), so
+  the legend's (a), (b) match the image; a set of small multiples of one kind (T7) is one panel. The
+  `legends` step of each figure script copies each legend, without its bullet list of tests, under
+  the figure in its write-up, between marker comments. The README gives every figure the same
+  legend, shortened, followed by its findings. In `results/SUBTYPE.md` each figure is also preceded
+  by a short "How to read Figure Un" guide.
 - **Exports.** Final figures are written as SVG, PDF and a 400-dpi PNG, plus `<stem>.csv` with
   the exact plotted values. A separate `<stem>_tests.csv` holds the tests when they are not
   part of the plotted table.

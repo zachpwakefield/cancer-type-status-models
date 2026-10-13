@@ -1,8 +1,7 @@
-**Do tumours shift RNA processing in a common direction relative to their own normal tissue?**
-
-Each cell is the median over matched patients (n in brackets) of the patient's mean paired tumour − normal change,
-averaged over every event measured in that cancer, so there is no SHAP selection and no circularity. The columns
-say what an increase means:
+**Figure S2. Tumours retain more intronic sequence and move their last exons upstream, relative to their own normal
+tissue.** Each cell is the median over matched patients (n in brackets) of the patient's mean paired tumour − normal
+change, averaged over every event measured in that cancer, so there is no SHAP selection and no circularity. The
+columns say what an increase means:
 - RI: more intron retention.
 - A5SS/A3SS: more use of the long exon form, which includes extra intronic sequence.
 - SE: more cassette inclusion.

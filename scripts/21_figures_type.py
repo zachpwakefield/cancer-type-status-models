@@ -11,7 +11,10 @@ One question per figure, in the order the story is told in results/CANCER_TYPE.m
     T8  can a single splicing event name a lineage on its own?
     T9  do the class-defining events measure another gene's expression?
 
-Usage: python scripts/21_figures_type.py [T1 T5 ...]        (default: all)
+Captions are figure legends ('Figure Tn. Title.', panels (a), (b)); `legends` copies each one under its
+figure in results/CANCER_TYPE.md.
+
+Usage: python scripts/21_figures_type.py [T1 T5 ... legends]        (default: all)
 """
 from __future__ import annotations
 
@@ -20,17 +23,41 @@ import re
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-from _figbase import (AS_VIEWS, BIO, CANCERS, CFG, FIGURES, LOCAL, locus_label, log, overlap_caption,
-                      overlap_figure, run, short)
+from _figbase import (AS_VIEWS, BIO, CANCERS, CFG, FIGURES, LOCAL, inject_legends, legend, locus_label, log,
+                      overlap_caption, overlap_figure, panel_letters, run, short, tidy)
 from matplotlib.lines import Line2D
 from scipy.cluster.hierarchy import leaves_list, linkage
 
 from ctsm.biology import bio_config, feature_values, task_table
 from ctsm.config import PAN, load_config
 from ctsm.figstyle import (ACCENT, ACCENT_DARK, DIVERGE, DOUBLE, GRID, INK, INK2, MUTED, NORMAL, SEQ, SINGLE, TUMOUR,
-                           VIEW_NAMES, bracket, colourbar, fp, gene_label, heat_axes, save, stars)
+                           VIEW_NAMES, bracket, colourbar, fp, gene_label, heat_axes, stars)
+from ctsm.figstyle import save as _save
 
 OUT = FIGURES / "cancer_type"
+
+TITLES = {
+    "T1": "No splicing view matches expression alone, but their ensemble does, and fusing the two beats both.",
+    "T2": "Fusion keeps splicing's gains on the classes expression confuses and repairs most of its losses.",
+    "T3": "Expression confuses anatomical neighbours; splicing confuses cell types across organs.",
+    "T4": "The splicing models' genes form fewer pathways than expression's, and part of what they form is "
+          "ribosomal-protein splicing.",
+    "T5": "The splicing signal for cancer type is not a proxy for expression.",
+    "T6": "Single cassette exons mark single lineages.",
+    "T7": "Only the colon–rectum separation, and part of oesophagus–stomach, depends on the tissue-source site.",
+    "T8": "A single splicing event can name a lineage on its own.",
+    "T9": "Many of the cancer-type models' terminal exons read a neighbouring lineage gene.",
+}
+
+
+def save(fig, out, stem, caption=None, **kw):
+    """ctsm.figstyle.save, with the caption written as a figure legend ('Figure Tn. Title.')."""
+    fid = stem.split("_")[0]
+    return _save(fig, out, stem, caption=tidy(legend(fid, TITLES[fid], caption)) if caption else None, **kw)
+
+
+def legends() -> None:
+    inject_legends(CFG.results_dir / "CANCER_TYPE.md")
 
 
 # ============================================================ T1 combining modalities
@@ -176,7 +203,7 @@ def T4() -> None:
     y = np.arange(len(CFG.views))
     cols = [INK2 if v == "gex" else ACCENT for v in CFG.views]
     # open = all genes, filled = the ribosomal-protein sensitivity, which was only run on the
-    # cancer-type AS views; the left panel and GEX have no filled bar rather than a zero one.
+    # cancer-type AS views; panel (a) and GEX have no filled bar rather than a zero one.
     axes[0].barh(y, coh[c_ts], color="none", edgecolor=cols, linewidth=0.6, height=0.65)
     for i, v in enumerate(coh[c_ts]):                       # a zero bar is invisible
         if v == 0:
@@ -193,6 +220,7 @@ def T4() -> None:
     axes[0].set_yticks(y)
     axes[0].set_yticklabels([VIEW_NAMES[v] for v in CFG.views], color=INK)
     axes[0].invert_yaxis()
+    panel_letters([(axes[0], -0.3), (axes[1], -0.08)])
     save(fig, OUT, "T4_pathway_coherence", data=coh.reset_index().rename(columns={"index": "view"}).assign(
         q_family="BH within collection per model (Hallmark, Reactome, GO-BP)"), caption="""
 **Do the genes a splicing model relies on form pathways, as an expression model's do?**
@@ -209,7 +237,7 @@ common programme.
 Right: the 34 per-class explanations of the cancer-type models. Many AS hits there came from alternative 5'/3'
 splice sites in cytosolic ribosomal-protein genes (RPS24, RPL13A, RPL3 and others), which are deeply covered and
 so measured precisely in every tissue. Filled bars repeat the tests with RPL*/RPS* genes removed from both
-ranking and universe; that sensitivity test was run only on the cancer-type AS views, so GEX and the left panel
+ranking and universe; that sensitivity test was run only on the cancer-type AS views, so GEX and panel (a)
 have no filled bar. Most SE, MXE and A3SS classes keep enrichments. The remaining terms are lineage
 biology (synapse and cell projection in PCPG, smooth-muscle contraction in PRAD, RHO GTPase cycle in DLBC,
 extracellular matrix in THCA) and the splicing machinery's own transcripts (RNA splicing terms from A3SS in ACC,
@@ -253,6 +281,7 @@ def T5() -> None:
     ax.legend(loc="upper left", handlelength=1.0)
     rows += [{"panel": "overlap", "view": v, "observed": agg.loc[v, "overlap"], "expected": agg.loc[v, "expected"]}
              for v in AS_VIEWS]
+    panel_letters([(axes[0], -0.3), (axes[1], -0.3)])
     save(fig, OUT, "T5_not_expression", data=pd.DataFrame(rows), caption="""
 **Is the splicing signal for cancer type a proxy for expression?**
 
@@ -451,7 +480,7 @@ def T9() -> None:
     save(fig, OUT, "T9_overlap_audit", data=data, caption=overlap_caption("cancer type", data, "T9"))
 
 
-FIGS = {f.__name__: f for f in [T1, T2, T3, T4, T5, T6, T7, T8, T9]}
+FIGS = {f.__name__: f for f in [T1, T2, T3, T4, T5, T6, T7, T8, T9, legends]}
 
 if __name__ == "__main__":
     run(FIGS)

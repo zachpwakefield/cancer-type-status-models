@@ -12,7 +12,10 @@ One question per figure, in the order the story is told in results/TUMOUR_STATUS
     S9  where in the protein does each of the most shared events sit?
     S10 do the models' events measure another gene's expression?
 
-Usage: python scripts/20_figures_status.py [S1 S5 ...]      (default: all)
+Captions are figure legends ('Figure Sn. Title.', panels (a), (b)); `legends` copies each one under its
+figure in results/TUMOUR_STATUS.md.
+
+Usage: python scripts/20_figures_status.py [S1 S5 ... legends]      (default: all)
 """
 from __future__ import annotations
 
@@ -22,21 +25,46 @@ import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
 import numpy as np
 import pandas as pd
-from _figbase import (AS_VIEWS, BIO, CANCERS, CFG, FIGURES, LOCAL, locus_label, log, overlap_caption,
-                      overlap_figure, run, short)
+from _figbase import (AS_VIEWS, BIO, CANCERS, CFG, FIGURES, LOCAL, inject_legends, legend, locus_label, log,
+                      overlap_caption, overlap_figure, panel_letters, run, short, tidy)
 from matplotlib.lines import Line2D
 from scipy.stats import beta, binomtest
 
 from ctsm.biology import ProteinMap, bio_config, feature_values, gex_by_symbol, task_table
 from ctsm.config import PAN, load_config
 from ctsm.figstyle import (ACCENT, ACCENT_DARK, DIVERGE, DOUBLE, GRID, INK, INK2, MUTED, NORMAL, SEQ, SINGLE,
-                           TN_DIVERGE, TUMOUR, VIEW_NAMES, bracket, colourbar, fp, gene_label, heat_axes, save,
+                           TN_DIVERGE, TUMOUR, VIEW_NAMES, bracket, colourbar, fp, gene_label, heat_axes,
                            stars)
+from ctsm.figstyle import save as _save
 
 OUT = FIGURES / "tumour_status"
 SHIFT_ORDER = ["ri", "a5ss", "a3ss", "se", "mxe", "ale", "afe"]
 SHIFT_LAB = ["RI retained", "A5SS long form", "A3SS long form", "SE included", "MXE upstream exon",
              "ALE downstream", "AFE downstream"]
+
+TITLES = {
+    "S1": "Expression and splicing err on different samples, so their fusion beats expression alone.",
+    "S2": "Tumours retain more intronic sequence and move their last exons upstream, relative to their own normal tissue.",
+    "S3": "Expression models draw on stromal programmes; the splicing models' genes rarely form pathways.",
+    "S4": "The models' events sit in small, specific splicing-factor programmes, not in the large shared one.",
+    "S5": "Different cancers rely on the same events, and those events move the same way across cancers.",
+    "S6": "The models' cassette exons keep the reading frame and avoid folded domains.",
+    "S7": "The most shared events shift the typical tumour, and the models read them as markers.",
+    "S8": "The models' events are modestly enriched for survival associations, more so the more models agree.",
+    "S9": "The most shared events exchange protein segments through mutually exclusive and terminal exons.",
+    "S10": "Some of the models' events, terminal exons above all, read a neighbouring gene's expression.",
+}
+
+
+def save(fig, out, stem, caption=None, **kw):
+    """ctsm.figstyle.save, with the caption written as a figure legend ('Figure Sn. Title.')."""
+    fid = stem.split("_")[0]
+    return _save(fig, out, stem, caption=tidy(legend(fid, TITLES[fid], caption)) if caption else None, **kw)
+
+
+def legends() -> None:
+    inject_legends(CFG.results_dir / "TUMOUR_STATUS.md")
+
 
 
 def wilson(k: int, n: int) -> tuple[float, float]:
@@ -101,6 +129,7 @@ def S1() -> None:
     gain = int(pt.loc["GEX + AS", "only_b_correct"]), int(pt.loc["GEX + AS", "only_a_correct"])
     pooled_p = binomtest(gain[1], sum(gain), 0.5).pvalue
 
+    panel_letters([(axes[0], -0.2), (axes[1], -0.42)])
     data = m.merge(t[["cancer", "model", "only_a_correct", "only_b_correct", "p_mcnemar", "q_mcnemar"]],
                    on=["cancer", "model"], how="left")
     save(fig, OUT, "S1_modality_gain", data=data, caption=f"""
@@ -161,6 +190,7 @@ def S4() -> None:
             ax.annotate(name, (float(r["n_core_events"].iloc[0]), float(r["max_jaccard"].iloc[0])),
                         textcoords="offset points", xytext=off, fontsize=5.5, color=INK)
     colourbar(fig, sc, ax, "log2 odds (model events)", ticks=[-2, 0, 2], shrink=0.7, extend="both")
+    panel_letters([(axes[0], -0.3), (axes[1], -0.3)])
     up = sig[sig.odds_ratio_haldane > 1]["factor"].tolist()
     save(fig, OUT, "S4_regulons", data=fe.merge(ov.drop(columns=["n_core_events"]), on="factor", how="outer"),
          caption=f"""
@@ -237,7 +267,7 @@ def S8() -> None:
     ax.set_xlim(-0.55, 3.55)
     ax.set_ylim(0, None)
     ax.set_ylabel("event × cancer pairs with Cox p < 0.05 (%)")
-    ax.legend(frameon=False, fontsize=5.8, loc="upper right", handletextpad=0.3,
+    ax.legend(frameon=False, fontsize=5.8, loc="lower right", handletextpad=0.3,
               borderpad=0.1, labelspacing=0.25)
 
     ax = axes[1]
@@ -263,14 +293,15 @@ def S8() -> None:
                f"{int(null['cells'].iloc[0]):,} pairs), so both sets sit above what the gates, the host-gene\n"
                f"covariate and the test battery produce on their own.")
     if null is not None:
-        rows.append({"arm": "permuted outcomes", "set": "all candidates", "panel": "left",
+        rows.append({"arm": "permuted outcomes", "set": "all candidates", "panel": "a",
                      "cells": int(null["cells"].iloc[0]), "hits": int(null["hits_p05"].iloc[0]),
                      "rate": float(null["rate"].iloc[0])})
     plotted = pd.concat([
-        pd.DataFrame(rows).assign(panel=lambda z: z["panel"].fillna("left") if "panel" in z else "left"),
-        sub.assign(panel="right")[["panel", "gene", "view", "event_id", "best_cohort", "hits", "cohorts_tested",
+        pd.DataFrame(rows).assign(panel=lambda z: z["panel"].fillna("a") if "panel" in z else "a"),
+        sub.assign(panel="b")[["panel", "gene", "view", "event_id", "best_cohort", "hits", "cohorts_tested",
                                    "hr_per_sd", "ci_low_sd", "ci_high_sd", "cox_p", "cox_q"]],
     ], ignore_index=True)
+    panel_letters([(axes[0], -0.3), (axes[1], -0.62)])
     save(fig, OUT, "S8_survival", data=plotted, caption=f"""
 **Are the events the models rely on associated with how long patients live?**
 
@@ -569,6 +600,7 @@ def S7() -> None:
         ax.set_ylabel("SHAP", fontsize=6)
         local.append(pd.DataFrame({"symbol": r.symbol, "view": r["view"], "cancer": c, "value_x100": v, "shap": s,
                                    "is_tumour": yv}))
+    panel_letters([(axes[0, 0], -0.1), (axes[0, 1], -0.3)], y=1.35)
     save(fig, OUT, "S7_event_portraits", data=pd.concat(meds, ignore_index=True),
          local_data=(LOCAL, pd.concat(local, ignore_index=True)), caption="""
 **What do the most shared tumour events look like, and how does the model read them?**
@@ -679,7 +711,7 @@ def S10() -> None:
     save(fig, OUT, "S10_overlap_audit", data=data, caption=overlap_caption("tumour status", data, "S10"))
 
 
-FIGS = {f.__name__: f for f in [S1, S2, S3, S4, S5, S6, S7, S8, S9, S10]}
+FIGS = {f.__name__: f for f in [S1, S2, S3, S4, S5, S6, S7, S8, S9, S10, legends]}
 
 if __name__ == "__main__":
     run(FIGS)

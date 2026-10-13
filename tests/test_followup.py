@@ -275,6 +275,27 @@ class TestMsiFollowup(unittest.TestCase):
         self.assertGreater(p0, 0.01)
 
 
+class TestFigureLegends(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.m = load_script("_figbase.py")
+
+    def test_question_caption_becomes_a_legend(self):
+        cap = "**Why?**\n\nMethod text.\n\nLeft: errors per cancer. Right: pooled errors.\n\n- T1, a test."
+        out = self.m.legend("S1", "A finding.", cap)
+        self.assertTrue(out.startswith("**Figure S1. A finding.** Method text."))
+        self.assertIn("(a) Errors per cancer. (b) Pooled errors.", out)
+        self.assertIn("- T1, a test.", out)
+
+    def test_letter_markers_become_bracketed(self):
+        out = self.m.legend("X1", "T.", "**Q?**\n\nIntro. a, each dot is one view. b, the five cohorts.")
+        self.assertIn("(a) Each dot is one view. (b) The five cohorts.", out)
+
+    def test_tidy_keeps_an_inner_list(self):
+        out = self.m.tidy("Columns:\n- RI: retention.\n- SE: inclusion,\n  continued.\n\nNext paragraph.")
+        self.assertEqual(out, "Columns:\n- RI: retention.\n- SE: inclusion, continued.\n\nNext paragraph.")
+
+
 class TestMsiCode(unittest.TestCase):
     @classmethod
     def setUpClass(cls):

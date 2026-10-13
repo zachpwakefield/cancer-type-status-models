@@ -34,15 +34,13 @@ Usage: python scripts/36_subtype_figures.py [U1 U3 ... legends]        (default:
 """
 from __future__ import annotations
 
-import re
-import textwrap
-
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from scipy.stats import spearmanr
 from _common import log
-from _figbase import locus_label, run, tidy
+from _figbase import inject_legends, locus_label, run, tidy
+from _figbase import legend as _legend
 
 from ctsm.biology import bh
 from ctsm.figstyle import (ACCENT, ACCENT_DARK, DIVERGE, DOUBLE, GRID, INK, INK2, MUTED, SEQ, SINGLE, colourbar,
@@ -2248,50 +2246,14 @@ TITLES = {
 
 
 def legend(key: str, text: str) -> str:
-    """Caption -> figure legend: the bold question line becomes 'Figure Un. Title.' and panel
-    markers 'a, ' at a sentence start become '(a) '."""
-    body = text.strip().split("\n", 1)[1].lstrip("\n")
-    cap = lambda m: f"{m.group(1)}({m.group(2)}) {m.group(3).upper()}"
-    body = re.sub(r"(?m)(^|\. )([a-f]), ([a-f]), (\w)", lambda m: f"{m.group(1)}({m.group(2)}, {m.group(3)}) "
-                  f"{m.group(4).upper()}", body)
-    body = re.sub(r"(?m)(^|\. )([a-f]), (\w)", cap, body)
-    body = re.sub(r"(?m)(^|\. )\(([a-f])\) (\w)", cap, body)
-    return f"**Figure {key}. {TITLES[key]}** {body}"
+    """Caption -> figure legend ('Figure Un. Title.', panels (a), (b) ...); see _figbase.legend."""
+    return _legend(key, TITLES[key], text)
 
 
 def legends() -> None:
     """Copy each figure's legend (its caption without the bullet list of tests) under the figure in
     results/SUBTYPE.md, between marker comments, so the write-up and the caption files never drift."""
-    md = SCFG.results_dir / "SUBTYPE.md"
-    lines = md.read_text().split("\n")
-    out, i, n = [], 0, 0
-    while i < len(lines):
-        line = lines[i]
-        out.append(line)
-        m = re.match(r"^!\[(U\d+)\]\(figures/subtype/(.+)\.png\)$", line)
-        i += 1
-        if not m:
-            continue
-        j = i
-        while j < len(lines) and lines[j].strip() == "":
-            j += 1
-        if j < len(lines) and lines[j].startswith("<!-- legend"):
-            while not lines[j].startswith("<!-- /legend"):
-                j += 1
-            i = j + 1
-        paras = [p for p in (OUT / f"{m.group(2)}.caption.md").read_text().strip().split("\n\n")
-                 if not p.startswith("- ")]
-        block = [f"<!-- legend {m.group(1)}: copied from figures/subtype/{m.group(2)}.caption.md by "
-                 f"scripts/36_subtype_figures.py legends -->"]
-        for k, p in enumerate(paras):
-            if k:
-                block.append(">")
-            block += ["> " + ln for ln in textwrap.wrap(" ".join(p.split("\n")), 114, break_on_hyphens=False)]
-        block.append("<!-- /legend -->")
-        out += [""] + block
-        n += 1
-    md.write_text("\n".join(out))
-    log(f"legends: {n} figures in {md.name}")
+    inject_legends(SCFG.results_dir / "SUBTYPE.md")
 
 
 CAPTIONS = {k: (lambda k, f: (lambda *a: tidy(legend(k, f(*a)))))(k, f) for k, f in

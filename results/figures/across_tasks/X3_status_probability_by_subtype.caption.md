@@ -1,12 +1,10 @@
-**Does the tumour-status model see some subtypes as less tumour-like?**
-
-The tumour-status model of each cancer scores every sample, out of fold. For the subtype cohorts of the 8 cancers
-with a status model, six predictions (D-50) name the subtype expected to look less tumour-like (row: id, cohort,
-predicted lower vs comparison). a, mean 1 − P(tumour) in the predicted group (filled) and the comparison (open), for
-GEX and the AS ensemble (log scale). b, AUROC = P(comparison patient's P(tumour) > predicted patient's), two-sided
-Mann–Whitney; filled = BH q < 0.05 within the model. c, C1: Spearman ρ of P(tumour) with the stromal and the immune
-score (mean log2 CPM of the D-18 marker genes) over each cancer's tumours, all of them, not only the
-subtype-labelled ones.
+**Figure X3. The splicing status models see the six predicted subtypes as less tumour-like.** The tumour-status
+model of each cancer scores every sample, out of fold. For the subtype cohorts of the 8 cancers with a status model,
+six predictions (D-50) name the subtype expected to look less tumour-like (row: id, cohort, predicted lower vs
+comparison). (a) Mean 1 − P(tumour) in the predicted group (filled) and the comparison (open), for GEX and the AS
+ensemble (log scale). (b) AUROC = P(comparison patient's P(tumour) > predicted patient's), two-sided Mann–Whitney;
+filled = BH q < 0.05 within the model. (c) C1: Spearman ρ of P(tumour) with the stromal and the immune score (mean
+log2 CPM of the D-18 marker genes) over each cancer's tumours, all of them, not only the subtype-labelled ones.
 
 - GEX: 2 supported, 0 against, 4 not resolved. AS ensemble: 6 supported, 0 against, 0 not resolved. GEX + AS: 6
   supported, 0 against, 0 not resolved.

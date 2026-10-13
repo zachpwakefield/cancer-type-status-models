@@ -102,6 +102,21 @@ and the survival result of §8 holds with every overlapping event removed.
 
 ![S1](figures/tumour_status/S1_modality_gain.png)
 
+<!-- legend S1: copied from figures/tumour_status/S1_modality_gain.caption.md by the figure script's 'legends' step -->
+> **Figure S1. Expression and splicing err on different samples, so their fusion beats expression alone.** (a)
+> Out-of-fold errors as a share of each cancer's samples (n in brackets) for the expression model (black), the AS
+> ensemble (the mean of the 8 AS views' probabilities, blue) and an equal-weight fusion of the two (dark blue). The
+> fusion weights were fixed before any result was seen (D-14). Stars: exact McNemar, fusion against GEX, on paired
+> per-sample correctness (* p < 0.05, ** p < 0.01, *** p < 0.001); q (BH over the 45 tests) is in the CSV.
+>
+> (b) Errors pooled over all cancers. 'stacked' is a cross-fitted logistic regression on the 9 views' probabilities
+> (D-23): it is shown as a ceiling, not as the headline, because the base models behind its training probabilities
+> did see the samples it scores.
+>
+> Pooled over the cohort, fusion corrects 27 of the expression model's 99 errors and introduces 5 (exact McNemar p =
+> 1.1e-4). No single cancer has enough errors to reach significance on its own; the per-cancer tests are in the CSV.
+<!-- /legend -->
+
 **Pooled over the 15 cancers** (6,815 out-of-fold samples):
 
 | Model | Errors | Mean AUROC |
@@ -134,6 +149,26 @@ lineage-bound of the modalities. That is why the two tasks are written up separa
 ## 2. Tumours retain more intronic sequence and choose upstream last exons
 
 ![S2](figures/tumour_status/S2_global_shifts.png)
+
+<!-- legend S2: copied from figures/tumour_status/S2_global_shifts.caption.md by the figure script's 'legends' step -->
+> **Figure S2. Tumours retain more intronic sequence and move their last exons upstream, relative to their own
+> normal tissue.** Each cell is the median over matched patients (n in brackets) of the patient's mean paired tumour
+> − normal change, averaged over every event measured in that cancer, so there is no SHAP selection and no
+> circularity. The columns say what an increase means:
+> - RI: more intron retention.
+> - A5SS/A3SS: more use of the long exon form, which includes extra intronic sequence.
+> - SE: more cassette inclusion.
+> - MXE: more of the upstream exon.
+> - ALE/AFE: the used last or first exons move downstream (a 0-1 position index along transcription).
+>
+> Blue is higher in the tumour and orange higher in the normal tissue, the house tumour/normal colours. Stars:
+> two-sided Wilcoxon signed-rank test across patients, raw p (* < 0.05, ** < 0.01, *** < 0.001). BH q (family: 15
+> cancers × 7 views) is in the CSV.
+>
+> Retention and long splice-site forms rise in most cancers. Last exons move upstream and never downstream. BRCA is
+> the exception for RI. Caveat: RNA integrity and nuclear-RNA content also raise intronic reads, and RIN is not
+> available (D-15).
+<!-- /legend -->
 
 This uses **every measured event**, not the models' selections, so the models cannot have biased
 it: in matched tumour-normal pairs from the same patient, does RNA processing move in a common
@@ -169,6 +204,21 @@ alternative last exon is the same choice made between exons rather than within o
 
 ![S3](figures/tumour_status/S3_pathways.png)
 
+<!-- legend S3: copied from figures/tumour_status/S3_pathways.caption.md by the figure script's 'legends' step -->
+> **Figure S3. Expression models draw on stromal programmes; the splicing models' genes rarely form pathways.** For
+> every cancer (columns) and view, the 200 genes with the largest SHAP importance were tested for enrichment of the
+> MSigDB Hallmark sets against all genes measurable in that view and cohort. The test is GOseq/Wallenius, correcting
+> for the number of events per gene (D-16).
+> - A dot marks a significant set in at least one AS view; its size is the number of AS views (of 8).
+> - A ring marks significance in the GEX model.
+> - Significance is q < 0.05, BH within the Hallmark collection of each model.
+>
+> GEX models consistently use stromal and microenvironment programmes (EMT, coagulation, KRAS, myogenesis). The AS
+> models reach the same programmes far less often, mostly through EMT and myogenesis genes. Their top genes form any
+> enriched set in at most 9 of 15 cancers (SE) and in none for RI, so the tumour splicing signal is largely not
+> organised by pathway membership.
+<!-- /legend -->
+
 For each model, the 200 genes with the largest SHAP importance were tested against Hallmark,
 Reactome and GO-BP, correcting for how many events each gene has (GOseq, D-16).
 
@@ -188,6 +238,29 @@ models use is better described event by event (§5–§7) than pathway by pathwa
 ## 4. The models' events live in small, specific splicing-factor programmes
 
 ![S4](figures/tumour_status/S4_regulons.png)
+
+<!-- legend S4: copied from figures/tumour_status/S4_regulons.caption.md by the figure script's 'legends' step -->
+> **Figure S4. The models' events sit in small, specific splicing-factor programmes, not in the large shared one.**
+> A factor's *core regulon* is the events whose PSI tracks its expression within tumours — partial Spearman |rho| >=
+> 0.3 at p < 0.05 after rank-residualising both on a stromal score, an immune score and the sample's own mean PSI in
+> that view — reproducibly, with the same sign, in at least 5 of the 15 cancers (D-24).
+>
+> (a) For every factor with at least 15 marked events, the odds that one of the models' top events is in its core
+> regulon, against the coverage- and spread-matched background of D-22. Only factors with q < 0.05 (BH over the 32
+> factors tested) are shown; the regulon's size is in brackets. Odds ratios use a 0.5 correction so that an empty
+> cell stays finite — PTBP1's 15 candidate events against 0 background events is otherwise infinite.
+>
+> (b) Every factor with at least 20 core events. Large regulons are not separate programmes: they overlap each other
+> heavily (Jaccard up to 0.7), and the 1,074 distinct events carry 7,529 memberships, about 7 factors each.
+>
+> The two panels say the same thing. The models' events avoid the big shared programme of nuclear RNA-processing
+> factors (SRSF6, SRSF4, RBM4, SRSF10, odds 0.26-0.50) and concentrate in the small, distinct regulons of tissue and
+> differentiation regulators (PRPF8, QKI, HNRNPF, HNRNPU, RBM47, PTBP1).
+>
+> These are correlations inside tumours: a factor may be co-regulated with its apparent targets rather than drive
+> them. `regulon_core_events.csv` lists the members, `global_axis_factors.csv` the factors most tied to the
+> per-sample PSI level that was residualised out.
+<!-- /legend -->
 
 A factor's **core regulon** is the set of events whose PSI tracks its expression within tumours —
 partial Spearman |ρ| ≥ 0.3 at p < 0.05, after residualising both on a stromal score, an immune
@@ -234,6 +307,28 @@ rather than drive them.
 
 ![S5](figures/tumour_status/S5_recurrent_events.png)
 
+<!-- legend S5: copied from figures/tumour_status/S5_recurrent_events.caption.md by the figure script's 'legends' step -->
+> **Figure S5. Different cancers rely on the same events, and those events move the same way across cancers.**
+> Across the 8 AS views, 404 events rank in the top 100 (mean |SHAP|) of at least 4 of the 15 tumour-vs-normal
+> models. 3.1 would be expected if the rankings were independent (Poisson-binomial over each event's measured
+> cohorts; `recurrence_vs_chance.csv`).
+>
+> The figure shows the 40 most recurrent events. Rows give the host gene (HGNC), view and coordinates (hg38,
+> 1-based). Colour is the median paired tumour − normal change in every cancer, including cancers where the event
+> did not rank (so the pattern across cancers is not selected on): blue where the event is higher in the tumour,
+> orange where it is higher in the normal tissue, clipped at ±30. Dots mark the cancers whose top 100 contain the
+> event.
+>
+> Recurrent events tend to move the same way across cancers. For the median event, 73% of the cancers where it is
+> measured share its majority direction; 46% of events reach 80%.
+>
+> Several genes appear as switch pairs, with two exons of the same gene moving in opposite directions (EXOSC7 last
+> exons, NDE1 first exons, TPM1 mutually exclusive exons).
+>
+> Recurrent RI and A5SS events mostly rise in tumours (73% and 77%), matching the global shift in S2. The full list
+> with direction consistency is in `recurrent_events.csv`.
+<!-- /legend -->
+
 Across the 8 AS views, 404 events rank in the top 100 (mean |SHAP|) of at least 4 of the 15
 models. About 3 would be expected if the rankings were independent (Poisson-binomial over each
 event's measured cohorts).
@@ -263,6 +358,19 @@ against +0.42 with THRA), while the NR1D1 event follows its own gene (+0.59) mor
 
 ![S6](figures/tumour_status/S6_exon_consequences.png)
 
+<!-- legend S6: copied from figures/tumour_status/S6_exon_consequences.caption.md by the figure script's 'legends' step -->
+> **Figure S6. The models' cassette exons keep the reading frame and avoid folded domains.** Cassette exons in the
+> top 100 of any tumour-vs-normal model (blue) or any class of the cancer-type model (dark blue), compared with a
+> random 6,000 of all measured exons (grey).
+> - Length divisible by 3 is computed from the coordinates.
+> - The remaining features need an exact GENCODE v45 exon. Codons are taken from the best transcript (MANE >
+>   canonical > other) and overlapped with InterPro Pfam/CDD domains, MobiDB-lite disordered regions and TMHMM
+>   helices (D-17).
+>
+> p: two-sided Fisher exact test against all measured exons, raw p. BH q is in the CSV, with its family. Exons
+> skipped or included more in tumours are in `cassette_exon_protein_features.csv`.
+<!-- /legend -->
+
 The top cassette exons of the tumour-status models (n = 1,281) and of the cancer-type classes
 (n = 1,914), against 6,000 random measured exons:
 
@@ -287,8 +395,24 @@ for disorder (24%, OR 1.98).
 
 ![S7](figures/tumour_status/S7_event_portraits.png)
 
+<!-- legend S7: copied from figures/tumour_status/S7_event_portraits.caption.md by the figure script's 'legends' step -->
+> **Figure S7. The most shared events shift the typical tumour, and the models read them as markers.** The six most
+> recurrent events (S5) whose paired change has the same sign in at least 80% of the cancers where measured, one per
+> gene.
+>
+> (a) The median value in matched normal (orange) and tumour (blue) samples of each cancer. Cancers whose top 100
+> contains the event are in black, the others in grey. The heading gives the host gene, view, coordinates and, for
+> cassette exons, the protein consequence (GENCODE v45; D-17).
+>
+> (b) SHAP dependence in the cancer where the event ranks highest. Each held-out sample's event value is plotted
+> against its SHAP value on the tumour log-odds. The value is the PSI; missing values were median-imputed by the
+> model.
+>
+> The CSV gives the per-cancer medians and paired Wilcoxon p (raw). Per-sample values stay local (D-12).
+<!-- /legend -->
+
 Six events are shown: the most recurrent, one per gene, whose paired change has the same sign in
-at least 80% of cancers. Left, each cancer's matched normal and tumour medians; right, the SHAP
+at least 80% of cancers. (a) Each cancer's matched normal and tumour medians; (b) the SHAP
 dependence in the cancer where the event ranks highest.
 
 **The medians say the shift moves the typical tumour, not a subset of them.** Each of the six
@@ -313,6 +437,38 @@ what the error counts show (77 against 76, with a worse mean AUROC for the stack
 ## 8. Do these events carry information about outcome?
 
 ![S8](figures/tumour_status/S8_survival.png)
+
+<!-- legend S8: copied from figures/tumour_status/S8_survival.caption.md by the figure script's 'legends' step -->
+> **Figure S8. The models' events are modestly enriched for survival associations, more so the more models agree.**
+> Every event was tested with splice-assay 0.4.0 in each of the 15 cancers (6,152 tumours, 1,620 deaths): Cox on the
+> event's value with the host gene's own expression in the model, in the pre-specified base form and again with age,
+> sex and stage added (D-25). The models' top events are compared with the coverage- and spread-matched background
+> of D-22, so this is not a comparison of which events are easier to test.
+>
+> (a) The share of testable event × cancer pairs with a nominal Cox p < 0.05, with 95% Clopper-Pearson intervals;
+> the three candidate sets are nested and ordered by how many models agree on the event. Odds ratios against the
+> background of the same arm, base / adjusted: every candidate 1.27 / 1.18, recurrent 1.56 / 1.28, top 10 for two or
+> more cancers 1.62 / 1.21 (Fisher exact, every set q < 0.05). The rate rises along that order.
+>
+> The dashed line is the same pipeline run over outcomes shuffled between patients inside each cancer: 5.6% (1,148
+> of 20,578 pairs), so both sets sit above what the gates, the host-gene covariate and the test battery produce on
+> their own.
+>
+> Candidates inside one of the six regulons the models are enriched for (S4) reach p < 0.05 in 13.3% of their pairs
+> against 10.3% for the rest (OR 1.33, p = 0.005), so the three ways of ranking a candidate -- how many models
+> agree, whether it recurs, whether it sits in a coherent factor programme -- pick out the same events.
+>
+> (b) The 12 candidate events associated in the most cancers, each in its strongest cancer: hazard ratio per SD of
+> PSI (per SD of the HIT index for HIT events) with its 95% CI, and (cancers with p < 0.05 / cancers tested). Red: a
+> higher value goes with worse survival.
+>
+> Nominal p values from observational cohorts. BH inside each cancer's own family of ~1,600 tests (`cox_q_cohort`)
+> leaves 1.2% of candidate cells significant in the adjusted arm, no more than the background's 1.2%, and 94% of
+> them are KIRC or KIRP: the set-level excess is a broad shift of small associations, not an excess of strong ones.
+> `event_survival_cells.csv.gz` holds every statistic with both BH families (keyed by `event_index.csv`), and
+> `event_dossiers.csv` joins each event's recurrence, protein consequence, regulon membership and survival. PSI can
+> reflect tumour purity or composition, so these are associations, not causes, and not therapeutic claims.
+<!-- /legend -->
 
 A classifier that separates tumour from normal tissue is not, by construction, a prognostic
 model. This section asks whether the events it relies on are nonetheless associated with how
@@ -438,6 +594,25 @@ not targets.
 ## 9. The events one by one
 
 ![S9](figures/tumour_status/S9_event_protein.png)
+
+<!-- legend S9: copied from figures/tumour_status/S9_event_protein.caption.md by the figure script's 'legends' step -->
+> **Figure S9. The most shared events exchange protein segments through mutually exclusive and terminal exons.** The
+> 9 recurrent events of S5 whose exon belongs to a protein-coding transcript (of ten, by number of models;
+> `11_event_cards/tumour_status_cards.csv` holds all ten with the rest of what is known about them). Each bar is one
+> protein, scaled to its own length (printed at the right), from its N terminus to its C terminus: grey blocks are
+> Pfam/CDD domains of the chosen transcript, the line underneath marks disordered regions (MobiDB-lite), and the
+> coloured block is the segment the event adds or removes -- blue where the segment is higher in tumours, orange
+> where it is lower (D-17, GENCODE v45). Three of the transcripts have no InterPro annotation at all, which is said
+> so in the margin: a bare bar there means the reference is silent, not that the segment misses every domain.
+>
+> The annotation is what the swap does to the reading frame. For a mutually exclusive pair that is the difference
+> between the two exons, not either length, because the swap replaces one with the other. A first or last exon
+> replaces one end of the protein rather than shifting a frame, so it is annotated by the length of the segment it
+> contributes instead. A retained intron has no protein coordinates and is not drawn.
+>
+> These are annotations of one transcript per gene, not isoform quantification: the models see the event, not the
+> protein, and no protein was measured here.
+<!-- /legend -->
 
 Everything above is about sets of events. This section takes ten of them — the recurrent events
 of §5, most models first, one per gene — and says what the pipeline knows about each: where the
@@ -581,6 +756,28 @@ CLEC3B, PLCG1 → ZHX3, ENOSF1 → TYMS, the last also following proliferation).
 ## 10. Which events measure another gene
 
 ![S10](figures/tumour_status/S10_overlap_audit.png)
+
+<!-- legend S10: copied from figures/tumour_status/S10_overlap_audit.caption.md by the figure script's 'legends' step -->
+> **Figure S10. Some of the models' events, terminal exons above all, read a neighbouring gene's expression.** TCGA
+> mRNA libraries are mostly unstranded, and GENCODE readthrough and nested models put exons of one gene inside
+> another, so an event named after one gene can count reads of a neighbour (D-27). (a) The share of events whose
+> segment (the alternative exon, both exons of an MXE pair, the retained intron or the splice-site extension)
+> overlaps an exon of another GENCODE v45 gene by >= 50 bp, on either strand, for every measured event (grey; 6.8%
+> over all 8 views) and for the models' top events (top 100 of each cancer's model, per view; dark). The gap is
+> widest for HIT: 44% against 7%. Odds ratios with the queried length held fixed (Mantel-Haenszel over length
+> deciles, because long terminal exons overlap something more often by chance) are 1.2 to 6.6 across views; every
+> statistic is in `S10_overlap_audit.csv`.
+>
+> (b) Of the top events with such an overlap, how many *track* the other gene — Spearman with its log2 CPM of at
+> least 0.5 in size and larger than with the host gene's own (within each cancer, median over the cancers whose top
+> 100 holds the event); the criterion was fixed before any result was seen. 163 of 1,105 do. Those are better read
+> as a readout of the neighbour's expression than as a splicing choice of the host, whether the coupling is
+> misassigned reads or genuine co-transcription; the two cannot be told apart without stranded libraries. Among the
+> events the narrative names: PLCG1 MXE follows ZHX3 (ρ −0.60, own gene +0.20); EXOSC7 ALE follows CLEC3B (ρ +0.76,
+> own gene −0.28); ENOSF1 HIT follows TYMS (ρ −0.62, own gene +0.34).
+>
+> No model was refitted: the audit changes how events are described, not what the models are.
+<!-- /legend -->
 
 An event is meant to be a statement about one gene's RNA. Two features of this data can make it
 a statement about another gene instead (D-27). Most TCGA mRNA libraries are unstranded, so where

@@ -80,6 +80,18 @@ disordered segments.
 
 ![X1](figures/across_tasks/X1_gene_overlap.png)
 
+<!-- legend X1: copied from figures/across_tasks/X1_gene_overlap.caption.md by the figure script's 'legends' step -->
+> **Figure X1. The three tasks' models read overlapping genes, several-fold more than chance.** For each subtype
+> cohort, its cancer's tumour-status model (12 cohorts in 8 cancers have one) and the cancer-type model's importance
+> over that cancer's own samples: the top 100 genes of each model per view (a gene ranked by its best feature's mean
+> |SHAP|), compared within the genes both tasks could select (D-48). (a) Each dot is one cohort and view
+> (comparisons in brackets); bar = median; 0 = the overlap expected by chance (hypergeometric). (b) The five
+> histology cohorts that have a tumour-status model: Jaccard of the subtype list with the status list and with the
+> type list; small dots = views, large = median over views.
+>
+> Genes in all three top-100 lists of a cancer are in `results/across_tasks/genes_in_all_three.csv`.
+<!-- /legend -->
+
 For every subtype cohort (22), its cancer's tumour-status model (in 8 cancers, covering 12
 cohorts) and the type model's importance over that cancer's own samples, the top 100 genes of
 each model per view were compared within the genes both tasks could select (D-48).
@@ -112,6 +124,18 @@ stroma — so each task's models pick it up (interpretation).
 ## 2. Which other cancers a subtype resembles
 
 ![X2](figures/across_tasks/X2_type_probability_by_subtype.png)
+
+<!-- legend X2: copied from figures/across_tasks/X2_type_probability_by_subtype.caption.md by the figure script's 'legends' step -->
+> **Figure X2. In the cancer-type model, subtypes resemble the cancers the literature predicts.** The pan-cancer
+> type model gives every tumour a probability for each of 34 classes. Thirteen predictions (D-49, sources in
+> config/followup.yaml) name a subtype, the projects it should resemble and the comparison class(es): row = id,
+> cohort, the predicted-higher vs predicted-lower group, → target projects. Measure: the patient's summed
+> out-of-fold probability over the targets; two-sided Mann–Whitney, AUROC = P(higher-group patient > lower-group
+> patient). (a) The mean of that probability in each group, GEX + AS (log scale). (b) AUROC per model; filled = BH q
+> < 0.05 within the model. T11 (cortical admixture in PCPG → ACC) is a positive control.
+>
+> Group sizes, means, medians, raw p and q for every model and measure are in the CSV.
+<!-- /legend -->
 
 The cancer-type model assigns each tumour probabilities over 34 classes (33 projects and normal
 tissue). The pre-specified test is whether a subtype carries more probability for the projects the
@@ -163,6 +187,20 @@ The other eleven hold on the share.
 
 ![X3](figures/across_tasks/X3_status_probability_by_subtype.png)
 
+<!-- legend X3: copied from figures/across_tasks/X3_status_probability_by_subtype.caption.md by the figure script's 'legends' step -->
+> **Figure X3. The splicing status models see the six predicted subtypes as less tumour-like.** The tumour-status
+> model of each cancer scores every sample, out of fold. For the subtype cohorts of the 8 cancers with a status
+> model, six predictions (D-50) name the subtype expected to look less tumour-like (row: id, cohort, predicted lower
+> vs comparison). (a) Mean 1 − P(tumour) in the predicted group (filled) and the comparison (open), for GEX and the
+> AS ensemble (log scale). (b) AUROC = P(comparison patient's P(tumour) > predicted patient's), two-sided
+> Mann–Whitney; filled = BH q < 0.05 within the model. (c) C1: Spearman ρ of P(tumour) with the stromal and the
+> immune score (mean log2 CPM of the D-18 marker genes) over each cancer's tumours, all of them, not only the
+> subtype-labelled ones.
+>
+> Group sizes, means, medians, raw p and q are in the CSV; the per-class distributions in
+> `status_probability_by_subtype_class.csv`.
+<!-- /legend -->
+
 The tumour-status model of each cancer scores every tumour out of fold. Six predictions name a
 subtype expected to look less tumour-like, because it is closer to the normal tissue or carries
 more of it (D-50).
@@ -199,6 +237,19 @@ So the status models' doubt about these subtypes is not simply their stroma.
 ## 4. The exons each task uses do the same kind of thing to the protein
 
 ![X4](figures/across_tasks/X4_exon_protein_character.png)
+
+<!-- legend X4: copied from figures/across_tasks/X4_exon_protein_character.caption.md by the figure script's 'legends' step -->
+> **Figure X4. The subtype models' cassette exons share the protein character of the other two tasks' exons.**
+> Cassette exons in the top 100 of any tumour-status model (blue), any cancer-type class (dark blue) or any subtype
+> cohort's SE model (amber; D-51), against the random 6,000 measured exons of D-17 (grey). Length divisible by 3
+> from the coordinates; the rest need an exact GENCODE v45 exon and use the best transcript (MANE > canonical >
+> other) with InterPro Pfam/CDD domains, MobiDB-lite disorder and TMHMM helices (D-17). Two-sided Fisher exact tests
+> against the background; BH q over 6 metrics × 3 sets.
+>
+> E1, the subtype exons share the bias of the other two tasks: divisible by 3 49% against 41% (OR 1.39, q = 1.6e-9);
+> in a domain 39% against 51% (OR 0.60, q = 1.3e-10); in a disordered region 18% against 14% (OR 1.35, q = 0.005);
+> in a TM helix 4% against 7% (OR 0.60, q = 0.005). Supported.
+<!-- /legend -->
 
 The union of the subtype models' top-100 cassette exons (1,857), against the 6,000 random measured
 exons of D-17, alongside the tumour-status (1,281) and cancer-type (1,914) sets of S6 (D-51):

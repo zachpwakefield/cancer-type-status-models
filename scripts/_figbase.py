@@ -13,6 +13,7 @@ from __future__ import annotations
 import re
 import sys
 import textwrap
+from pathlib import Path
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -79,7 +80,7 @@ def overlap_figure(task: str) -> tuple[plt.Figure, pd.DataFrame]:
         ax.plot([r.all_share * 100, r.top_share * 100], [y, y], color=GRID, linewidth=1.0, zorder=1)
         ax.scatter(r.all_share * 100, y, s=16, color=MUTED, linewidths=0, zorder=2)
         ax.scatter(r.top_share * 100, y, s=18, color=ACCENT_DARK, linewidths=0, zorder=3)
-        rows.append({"panel": "left", "view": v, "all_events": int(r.all_events),
+        rows.append({"panel": "a", "view": v, "all_events": int(r.all_events),
                      "all_overlapping": int(r.all_overlapping), "all_share": r.all_share,
                      "top_events": int(r.top_events), "top_overlapping": int(r.top_overlapping),
                      "top_share": r.top_share, "odds_ratio": r.odds_ratio, "q_fisher": r.q_fisher,
@@ -111,7 +112,7 @@ def overlap_figure(task: str) -> tuple[plt.Figure, pd.DataFrame]:
             ax.barh(y, k, left=left, height=0.62, color=colr, linewidth=0)
             left += k
         ax.text(left + 4, y, f"{n[0]} of {len(g)}", fontsize=5.6, color=INK2, va="center")
-        rows.append({"panel": "right", "view": v, "top_overlapping_tested": len(g), "tracks": n[0],
+        rows.append({"panel": "b", "view": v, "top_overlapping_tested": len(g), "tracks": n[0],
                      "does_not_track": n[1], "other_gene_not_measured": n[2]})
     ax.tick_params(axis="y", length=0)
     ax.spines["left"].set_visible(False)
@@ -120,6 +121,7 @@ def overlap_figure(task: str) -> tuple[plt.Figure, pd.DataFrame]:
     ax.legend(handles=[plt.Rectangle((0, 0), 1, 1, color=c, linewidth=0) for _, c in parts],
               labels=[lab for lab, _ in parts], frameon=False, fontsize=5.8, loc="lower right",
               handlelength=1.0, handletextpad=0.4)
+    panel_letters([(axes[0], -0.2), (axes[1], -0.04)])
     out = pd.DataFrame(rows)
     counts = ["all_events", "all_overlapping", "top_events", "top_overlapping", "top_overlapping_tested",
               "tracks", "does_not_track", "other_gene_not_measured"]
@@ -129,8 +131,8 @@ def overlap_figure(task: str) -> tuple[plt.Figure, pd.DataFrame]:
 def overlap_caption(task: str, data: pd.DataFrame, fig_id: str) -> str:
     """Caption for S10 / T9, every number read from the audit tables."""
     d = BIO / "12_overlap_audit"
-    left = data[data["panel"] == "left"].set_index("view")
-    right = data[data["panel"] == "right"].set_index("view")
+    left = data[data["panel"] == "a"].set_index("view")
+    right = data[data["panel"] == "b"].set_index("view")
     ann = pd.read_csv(d / "event_overlaps_all_measured.csv.gz", usecols=["overlap_class"])
     base = ann["overlap_class"].isin(["antisense", "same-strand"]).mean()
     named = pd.read_csv(d / "named_events_overlaps.csv")
@@ -171,23 +173,97 @@ No model was refitted: the audit changes how events are described, not what the 
     return "\n\n".join(textwrap.fill(p, width=112, break_on_hyphens=False) for p in paras) + "\n"
 
 
+def panel_letters(pairs, y: float = 1.04) -> None:
+    """Bold panel letters a, b, ... above each axes, at axes-fraction x: pairs = [(ax, x), ...]."""
+    for (ax, x), lab in zip(pairs, "abcdefgh"):
+        ax.text(x, y, lab, transform=ax.transAxes, fontsize=8, fontweight="bold", va="bottom", ha="left")
+
+
+def legend(fig_id: str, title: str, caption: str) -> str:
+    """Question-form caption -> figure legend. The bold question line becomes 'Figure <id>. <title>';
+    the panel markers 'Left:' and 'Right:', or 'a, ' at a sentence start, become (a), (b), ... with a
+    capital after the letter."""
+    body = caption.strip().split("\n", 1)[1].lstrip("\n")
+    cap = lambda m: f"{m.group(1)}({m.group(2)}) {m.group(3).upper()}"
+    body = re.sub(r"(?m)(^|\. )Left: (\w)", lambda m: f"{m.group(1)}(a) {m.group(2).upper()}", body)
+    body = re.sub(r"(?m)(^|\. )Right: (\w)", lambda m: f"{m.group(1)}(b) {m.group(2).upper()}", body)
+    body = re.sub(r"(?m)(^|\. )([a-f]), ([a-f]), (\w)",
+                  lambda m: f"{m.group(1)}({m.group(2)}, {m.group(3)}) {m.group(4).upper()}", body)
+    body = re.sub(r"(?m)(^|\. )([a-f]), (\w)", cap, body)
+    body = re.sub(r"(?m)(^|\. )\(([a-f])\) (\w)", cap, body)
+    return f"**Figure {fig_id}. {title}** {body}"
+
+
+def inject_legends(md: Path) -> int:
+    """Copy each figure's legend (its caption without the bullet lists of tests) under every
+    `![Xn](figures/<dir>/<stem>.png)` in a write-up, between marker comments, replacing any block
+    already there, so the write-up and the caption files never drift. Returns the figures done."""
+    lines = md.read_text().split("\n")
+    out, i, n = [], 0, 0
+    while i < len(lines):
+        line = lines[i]
+        out.append(line)
+        m = re.match(r"^!\[([STUX]\d+)\]\((figures/[a-z_]+)/(.+)\.png\)$", line)
+        i += 1
+        if not m:
+            continue
+        j = i
+        while j < len(lines) and lines[j].strip() == "":
+            j += 1
+        if j < len(lines) and lines[j].startswith("<!-- legend"):
+            while not lines[j].startswith("<!-- /legend"):
+                j += 1
+            i = j + 1
+        rel = f"{m.group(2)}/{m.group(3)}.caption.md"
+        paras = [p for p in (md.parent / rel).read_text().strip().split("\n\n") if not p.startswith("- ")]
+        block = [f"<!-- legend {m.group(1)}: copied from {rel} by the figure script's 'legends' step -->"]
+        for k, p in enumerate(paras):
+            if k:
+                block.append(">")
+            # a list inside a legend paragraph (a key to the columns, say) stays a list
+            segs = []
+            for ln in p.split("\n"):
+                if ln.startswith("- ") or not segs or (segs[-1][0] == "item") != ln.startswith("  "):
+                    segs.append(["item" if ln.startswith("- ") else "text", ln])
+                else:
+                    segs[-1][1] += " " + ln
+            for kind, seg in segs:
+                text = " ".join(seg.split())
+                block += ["> " + ln for ln in textwrap.wrap(text, 112 if kind == "item" else 114, break_on_hyphens=False,
+                                                           subsequent_indent="  " if kind == "item" else "")]
+        block.append("<!-- /legend -->")
+        out += [""] + block
+        n += 1
+    md.write_text("\n".join(out))
+    log(f"legends: {n} figures in {md.name}")
+    return n
+
+
 def tidy(caption: str, width: int = 116) -> str:
-    """Re-wrap every paragraph and bullet of a caption to the house limit (lines <= 120 characters)."""
+    """Re-wrap every paragraph and bullet of a caption to the house limit (lines <= 120 characters).
+    A bullet list inside a paragraph stays a list; a bullet's continuation lines are indented."""
     out = []
     for para in caption.strip().split("\n\n"):
         lines = para.split("\n")
         if para.startswith("**") and len(para) <= 120:
             out.append(para)
-        elif lines[0].startswith("- "):
-            items, cur = [], []
-            for ln in lines:
-                if ln.startswith("- ") and cur:
-                    items.append(" ".join(cur))
+            continue
+        blocks, cur, kind = [], [], None
+        for ln in lines:
+            if ln.startswith("- "):
+                if cur:
+                    blocks.append((kind, cur))
+                cur, kind = [ln.strip()], "item"
+            elif kind == "item" and (ln.startswith("  ") or lines[0].startswith("- ")):
+                cur.append(ln.strip())
+            else:
+                if kind == "item":
+                    blocks.append((kind, cur))
                     cur = []
                 cur.append(ln.strip())
-            items.append(" ".join(cur))
-            out.append("\n".join(textwrap.fill(it, width, subsequent_indent="  ", break_on_hyphens=False)
-                                  for it in items))
-        else:
-            out.append(textwrap.fill(" ".join(ln.strip() for ln in lines), width, break_on_hyphens=False))
+                kind = "text"
+        blocks.append((kind, cur))
+        out.append("\n".join(
+            textwrap.fill(" ".join(b), width, subsequent_indent="  " if k == "item" else "", break_on_hyphens=False)
+            for k, b in blocks))
     return "\n\n".join(out)
