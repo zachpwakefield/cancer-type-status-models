@@ -1,0 +1,6 @@
+what,method,n,value
+coverage: share of D-71's tumours scored,MC3 count,8464,1
+coverage: share of D-71's tumours scored,MANTIS,8153,0.9633
+coverage: share of D-71's tumours scored,MSIsensor,8237,0.9732
+coverage: share of D-71's tumours scored,both exome callers,8153,0.9633
+coverage: share of D-71's tumours scored,RNA (M0-M5),8464,1

@@ -1,0 +1,66 @@
+what,group,n,value,ci_low,ci_high
+M4 standardised coefficient: median,run 10-19 (R_down),1336,-0.0033128027496860685,,
+M4 standardised coefficient: share > 0,run 10-19 (R_down),1336,0.4565868263473054,,
+M4 standardised coefficient: median,"run >=20, bp <36 nt or none",107,0.007354178965484407,,
+M4 standardised coefficient: share > 0,"run >=20, bp <36 nt or none",107,0.5700934579439252,,
+M4 standardised coefficient: median,"run >=20, bp >=36 nt (R_up)",119,0.014403763845248866,,
+M4 standardised coefficient: share > 0,"run >=20, bp >=36 nt (R_up)",119,0.6638655462184874,,
+M4 coefficient against run length: Spearman,all repeat exons,1562,0.0882282776594476,,
+M4 coefficient against branch-point distance: Spearman,runs >= 20 with a branch point,176,0.16380896222593305,,
+M4 share of the summed |coefficient| in the 20 largest,,1562,0.06383649992081387,,
+M4 share of the summed |coefficient| in the 100 largest,,1562,0.21519951543157972,,
+M5 top 500: share with a run >= 10,,500,0.316,,
+pool: share with a run >= 10,,3.063e+04,0.050992426220945415,,
+M5 top 500: share in class,run 10-19 (R_down),123,0.246,,
+pool: share in class,run 10-19 (R_down),1336,0.0436145207626012,,
+M5 top 500: share more included in MMR-deficient training tumours,run 10-19 (R_down),123,0.17886178861788618,,
+M5 top 500: share in class,"run >=20, bp >=36 nt (R_up)",15,0.03,,
+pool: share in class,"run >=20, bp >=36 nt (R_up)",119,0.0038848263254113347,,
+M5 top 500: share more included in MMR-deficient training tumours,"run >=20, bp >=36 nt (R_up)",15,0.8666666666666667,,
+M5 top 500: share in class,"run >=20, bp <36 nt or none",20,0.04,,
+pool: share in class,"run >=20, bp <36 nt or none",107,0.0034930791329328805,,
+M5 top 500: share more included in MMR-deficient training tumours,"run >=20, bp <36 nt or none",20,0.55,,
+M5 top 500: share in class,no run >= 10,342,0.684,,
+pool: share in class,no run >= 10,2.907e+04,0.9490075737790545,,
+M5 top 500: share more included in MMR-deficient training tumours,no run >= 10,342,0.43859649122807015,,
+best ANOVA rank of the gene's exons (pool),EPM2AIP1,0,,,
+best ANOVA rank of the gene's exons (pool),MLH1,23,732,,
+best ANOVA rank of the gene's exons (pool),MSH2,0,,,
+best ANOVA rank of the gene's exons (pool),MSH6,4,23615,,
+best ANOVA rank of the gene's exons (pool),PMS2,3,9839,,
+M5 standardised coefficient: median,no run >= 10,342,-0.002751804814803198,,
+M5 standardised coefficient: share > 0,no run >= 10,342,0.4853801169590643,,
+M5 standardised coefficient: median,run 10-19 (R_down),123,-0.028775395502240612,,
+M5 standardised coefficient: share > 0,run 10-19 (R_down),123,0.34146341463414637,,
+M5 standardised coefficient: median,"run >=20, bp <36 nt or none",20,0.04234408125433989,,
+M5 standardised coefficient: share > 0,"run >=20, bp <36 nt or none",20,0.6,,
+M5 standardised coefficient: median,"run >=20, bp >=36 nt (R_up)",15,0.07023669740649661,,
+M5 standardised coefficient: share > 0,"run >=20, bp >=36 nt (R_up)",15,0.8666666666666667,,
+M5 share of the summed |coefficient| in the 20 largest,,500,0.1271962259519579,,
+ablation: exons,M5n,,29070,,
+ablation: chosen,M5n,,"{'K': 500, 'C': 0.1}",,
+ablation: inner AUROC,M5n,,0.9303338632750398,,
+ablation: exons,M4a,,1455,,
+ablation: chosen,M4a,,{'C': 0.1},,
+ablation: inner AUROC,M4a,,0.9510545839957605,,
+ablation: exons,M4x,,107,,
+ablation: chosen,M4x,,{'C': 0.01},,
+ablation: inner AUROC,M4x,,0.9479385267620561,,
+ablation: held-out AUROC,M5n,7685,0.7772259332023576,0.7201,0.8371
+ablation: held-out AUROC minus M2,M5n,7685,-0.0909600523903078,-0.1516,-0.02651
+ablation: held-out AUROC minus M5,M5n,7685,-0.125011132940406,-0.1652,-0.08277
+ablation: held-out AUPRC,M5n,7685,0.21239262397908334,0.147,0.2908
+ablation: held-out AUPRC minus M2,M5n,7685,-0.04429608473207533,-0.1351,0.03647
+ablation: held-out AUPRC minus M5,M5n,7685,-0.2576043112290002,-0.3482,-0.1753
+ablation: held-out AUROC,M4a,7685,0.8880235756385069,0.8482,0.9271
+ablation: held-out AUROC minus M2,M4a,7685,0.019837590045841513,-0.03528,0.08001
+ablation: held-out AUROC minus M4,M4a,7685,-0.012091683038637835,-0.02937,0.004099
+ablation: held-out AUPRC,M4a,7685,0.3909372562922842,0.3036,0.496
+ablation: held-out AUPRC minus M2,M4a,7685,0.13424854758112553,0.06068,0.2123
+ablation: held-out AUPRC minus M4,M4a,7685,-0.04800613510492413,-0.08626,-0.008155
+ablation: held-out AUROC,M4x,7685,0.7761676489849378,0.7127,0.8386
+ablation: held-out AUROC minus M2,M4x,7685,-0.09201833660772751,-0.1472,-0.03189
+ablation: held-out AUROC minus M4,M4x,7685,-0.12394760969220686,-0.1828,-0.06852
+ablation: held-out AUPRC,M4x,7685,0.2399189075068023,0.1748,0.3307
+ablation: held-out AUPRC minus M2,M4x,7685,-0.016769801204356366,-0.09511,0.05561
+ablation: held-out AUPRC minus M4,M4x,7685,-0.19902448389040603,-0.2748,-0.1266

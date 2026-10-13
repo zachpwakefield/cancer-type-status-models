@@ -1,0 +1,57 @@
+what,project,model,positives,n,value
+"per-cancer AUROC, E1",ACC,M0,3,79,0.7719
+"per-cancer AUROC, E1",ACC,M1,3,79,0.807
+"per-cancer AUROC, E1",ACC,M2,3,79,0.5439
+"per-cancer AUROC, E1",ACC,M3,3,79,0.557
+"per-cancer AUROC, E1",ACC,M4,3,79,0.8421
+"per-cancer AUROC, E1",ACC,M5,3,79,0.7368
+"per-cancer AUROC, E1",ACC,M6,3,79,0.6272
+"per-cancer AUROC, E1",BRCA,M0,11,997,0.747
+"per-cancer AUROC, E1",BRCA,M1,11,997,0.767
+"per-cancer AUROC, E1",BRCA,M2,11,997,0.8114
+"per-cancer AUROC, E1",BRCA,M3,11,997,0.7895
+"per-cancer AUROC, E1",BRCA,M4,11,997,0.9305
+"per-cancer AUROC, E1",BRCA,M5,11,997,0.8445
+"per-cancer AUROC, E1",BRCA,M6,11,997,0.853
+"per-cancer AUROC, E1",CESC,M0,8,273,0.9292
+"per-cancer AUROC, E1",CESC,M1,8,273,0.9226
+"per-cancer AUROC, E1",CESC,M2,8,273,0.958
+"per-cancer AUROC, E1",CESC,M3,8,273,0.9651
+"per-cancer AUROC, E1",CESC,M4,8,273,0.9632
+"per-cancer AUROC, E1",CESC,M5,8,273,0.9476
+"per-cancer AUROC, E1",CESC,M6,8,273,0.9467
+"per-cancer AUROC, E1",HNSC,M0,5,495,0.8608
+"per-cancer AUROC, E1",HNSC,M1,5,495,0.9114
+"per-cancer AUROC, E1",HNSC,M2,5,495,0.9629
+"per-cancer AUROC, E1",HNSC,M3,5,495,0.9576
+"per-cancer AUROC, E1",HNSC,M4,5,495,0.851
+"per-cancer AUROC, E1",HNSC,M5,5,495,0.9347
+"per-cancer AUROC, E1",HNSC,M6,5,495,0.9678
+"per-cancer AUROC, E1",LUSC,M0,3,475,0.8905
+"per-cancer AUROC, E1",LUSC,M1,3,475,0.9484
+"per-cancer AUROC, E1",LUSC,M2,3,475,0.9908
+"per-cancer AUROC, E1",LUSC,M3,3,475,0.9732
+"per-cancer AUROC, E1",LUSC,M4,3,475,0.9986
+"per-cancer AUROC, E1",LUSC,M5,3,475,0.971
+"per-cancer AUROC, E1",LUSC,M6,3,475,0.9866
+"per-cancer AUROC, E1",PRAD,M0,4,494,0.6474
+"per-cancer AUROC, E1",PRAD,M1,4,494,0.5526
+"per-cancer AUROC, E1",PRAD,M2,4,494,0.7061
+"per-cancer AUROC, E1",PRAD,M3,4,494,0.8245
+"per-cancer AUROC, E1",PRAD,M4,4,494,0.8133
+"per-cancer AUROC, E1",PRAD,M5,4,494,0.9158
+"per-cancer AUROC, E1",PRAD,M6,4,494,0.8556
+E1 with MANTIS MSI-H vs MSS as the test label: AUROC,,M0,17,7338,0.9696
+E1 with MANTIS MSI-H vs MSS as the test label: AUPRC,,M0,17,7338,0.1404
+E1 with MANTIS MSI-H vs MSS as the test label: AUROC,,M1,17,7338,0.9704
+E1 with MANTIS MSI-H vs MSS as the test label: AUPRC,,M1,17,7338,0.2535
+E1 with MANTIS MSI-H vs MSS as the test label: AUROC,,M2,17,7338,0.9953
+E1 with MANTIS MSI-H vs MSS as the test label: AUPRC,,M2,17,7338,0.5411
+E1 with MANTIS MSI-H vs MSS as the test label: AUROC,,M3,17,7338,0.9879
+E1 with MANTIS MSI-H vs MSS as the test label: AUPRC,,M3,17,7338,0.5754
+E1 with MANTIS MSI-H vs MSS as the test label: AUROC,,M4,17,7338,0.9997
+E1 with MANTIS MSI-H vs MSS as the test label: AUPRC,,M4,17,7338,0.8975
+E1 with MANTIS MSI-H vs MSS as the test label: AUROC,,M5,17,7338,0.997
+E1 with MANTIS MSI-H vs MSS as the test label: AUPRC,,M5,17,7338,0.8819
+E1 with MANTIS MSI-H vs MSS as the test label: AUROC,,M6,17,7338,0.9986
+E1 with MANTIS MSI-H vs MSS as the test label: AUPRC,,M6,17,7338,0.8802

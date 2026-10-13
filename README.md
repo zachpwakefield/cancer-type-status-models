@@ -44,7 +44,7 @@ tasks relate.
 | AS ensemble (8 splicing views) | 0.994; 91 errors | 0.950 | 0.80 / 0.82 / 0.81 |
 | GEX + AS (1:1) | 77 errors (McNemar p = 1.1e-4) | 0.961 (p = 3.9e-9) | −0.04 to +0.04 per cohort; no McNemar p < 0.05 |
 | Headline | splicing is a second, partly independent view of the tumour state | splicing is a lineage code, and fails where a lineage code should | splicing matches expression on lineage and genome-state subtypes and loses where one gene defines the class |
-| Write-up · figures | [TUMOUR_STATUS.md](results/TUMOUR_STATUS.md) · S1–S10 | [CANCER_TYPE.md](results/CANCER_TYPE.md) · T1–T9 | [SUBTYPE.md](results/SUBTYPE.md) · U1–U22 |
+| Write-up · figures | [TUMOUR_STATUS.md](results/TUMOUR_STATUS.md) · S1–S10 | [CANCER_TYPE.md](results/CANCER_TYPE.md) · T1–T9 | [SUBTYPE.md](results/SUBTYPE.md) · U1–U24 |
 
 [**Across the three tasks**](#across-the-three-tasks) ([ACROSS_TASKS.md](results/ACROSS_TASKS.md),
 X1–X4) compares them:
@@ -59,7 +59,7 @@ exons the MSI models chose sit after long poly-T tracts that mismatch-repair def
 Tract length and the branch point's distance from the splice site say which exons lose and which
 gain inclusion. That two-part code, read in RNA without re-fitting, finds mismatch-repair-deficient
 tumours in 30 cancers never used to define it (AUROC 0.83)
-([U10–U11, U16–U22](#8-msi-splicing-follows-acceptor-poly-t-repeats-in-the-genome)). The MSI line of work
+([U10–U11, U16–U24](#8-msi-splicing-follows-acceptor-poly-t-repeats-in-the-genome)). The MSI line of work
 is written up as a journal-style draft in [manuscript/MSI_SPLICING_CODE.md](manuscript/MSI_SPLICING_CODE.md).
 In breast cancer, splicing reads HER2 through a programme rather than through the amplified genes
 ([U12–U15](#9-breast-cancer-with-dna-two-her2s-splice-site-mutations-and-what-the-pair-check-removed)).
@@ -68,7 +68,7 @@ Full tables, CIs and the top SHAP features of every cohort and view are in
 [results/RESULTS.md](results/RESULTS.md). Methods are in three files:
 - [docs/BIOLOGY_METHODS.md](docs/BIOLOGY_METHODS.md), D-13 to D-29: interpretation of status and
   type;
-- [docs/SUBTYPE_METHODS.md](docs/SUBTYPE_METHODS.md), D-30 to D-47 and D-52 to D-70: the subtype task
+- [docs/SUBTYPE_METHODS.md](docs/SUBTYPE_METHODS.md), D-30 to D-47 and D-52 to D-72: the subtype task
   and its MSI-repeat and BRCA follow-ups;
 - [docs/ACROSS_TASKS_METHODS.md](docs/ACROSS_TASKS_METHODS.md), D-48 to D-51: the cross-task
   layer.
@@ -457,7 +457,7 @@ Not shown here, all in the write-up: per-class recall against expression (T2), p
 
 ## Subtype within a cancer: 22 cohorts in 15 cancers
 
-**Full write-up: [results/SUBTYPE.md](results/SUBTYPE.md)** (Figures U1–U22) — *within a cancer,
+**Full write-up: [results/SUBTYPE.md](results/SUBTYPE.md)** (Figures U1–U24) — *within a cancer,
 splicing recovers lineage and genome state about as well as expression, and loses where a subtype
 is a single gene switched on.* One model per (cohort, view) over 22 subtype cohorts from 15 TCGA
 projects:
@@ -467,8 +467,8 @@ projects:
 Every label map, exclusion and minimum class size (20 patients) was fixed in
 [config/subtype.yaml](config/subtype.yaml) before the first model was fitted
 ([docs/SUBTYPE_METHODS.md](docs/SUBTYPE_METHODS.md), D-30 to D-45); the regulator, site,
-MSI-repeat and BRCA analyses of Figures U8–U22 were fixed in [config/followup.yaml](config/followup.yaml)
-before they were run (D-46, D-47, D-52 to D-70).
+MSI-repeat and BRCA analyses of Figures U8–U24 were fixed in [config/followup.yaml](config/followup.yaml)
+before they were run (D-46, D-47, D-52 to D-72).
 
 ### Performance
 
@@ -851,6 +851,37 @@ tumours. D-70 tested that eight ways, fixed in advance (3 supported, 1 against, 
   exclusion zone does not predict it, runs upstream of the branch point rise too, it does not grow
   with deletion count, and PTB relief runs the wrong way.
 
+<img src="results/figures/subtype/U23_msi_code_models.png" width="900" alt="U23: held-out AUROC and AUPRC of score G and six fitted models, precision-recall curves, and the 10-bin model's coefficients">
+
+**Figure U23. Ten sequence bins beat the two arms held out, and per-exon models did not transfer
+worse.** (a) AUROC in the 30 held-out cancers (filled; bar = 95% bootstrap interval), in the tuning
+loop (hollow) and leaving each cancer out of a model trained on the other 32 (cross). (b) AUPRC
+held out. (c) Precision against recall held out. (d) Coefficients of the 10-bin logistic model.
+
+Fitted on COAD, STAD and UCEC only (D-71):
+- **Weighting the two arms adds nothing** (0.835 against 0.832 for score G).
+- **Ten sequence bins add** (0.868; AUPRC 0.257 against 0.083). Their weights rediscover the code:
+  negative for runs of 10–19 nt and for long runs with a near branch point, positive beyond 30 nt.
+- **Per-exon logistic regression transfers** (0.900 on repeat exons, 0.902 on all exons; AUPRC
+  0.44–0.47), against the prediction that it would learn its training tissues. It works by
+  weighting the code's own exons (exploratory, A-18): without repeat exons it falls to 0.777.
+
+<img src="results/figures/subtype/U24_msi_callers_benchmark.png" width="900" alt="U24: within-cancer AUROC of each exome MSI measure and the splicing models against the other two measures' consensus, per cancer, at matched call volume, and where the DNA measures disagree">
+
+**Figure U24. Within each cancer, the splicing model ranks tumours almost as well as the exome MSI
+callers.** (a) Within-cancer AUROC of each exome measure judged by the other two, and of the
+splicing models on the same tumours (filled: leave one cancer out; hollow: the 30 held-out
+cancers). (b) Per cancer. (c) Sensitivity at each caller's call volume, pooled over cancers. (d)
+MC3-deficient tumours by the callers' calls: share in the all-exon model's top decile.
+
+D-72 compares the all-exon model with MANTIS, MSIsensor and the MC3 count, each judged against
+the tumours on which the other two agree:
+- **Within a cancer, it reaches 0.998–0.999.** That is 0.001–0.002 below MANTIS and MSIsensor (4 of
+  6 tests supported), no different from the MC3 count, and non-inferior at a pre-set 0.05 margin.
+- **Across cancers it is not calibrated.** At each caller's call volume it finds 80–84% of positives
+  against the callers' 94–100%.
+- **It needs no DNA.** RNA alone, with no exome, scores every tumour.
+
 [U10 caption](results/figures/subtype/U10_msi_repeats.caption.md) ·
 [U11 caption](results/figures/subtype/U11_msi_long_tracts.caption.md) ·
 [U16 caption](results/figures/subtype/U16_msi_deletion_load.caption.md) ·
@@ -860,6 +891,8 @@ tumours. D-70 tested that eight ways, fixed in advance (3 supported, 1 against, 
 [U20 caption](results/figures/subtype/U20_msi_code_infiltration.caption.md) ·
 [U21 caption](results/figures/subtype/U21_msi_code_msi_calls.caption.md) ·
 [U22 caption](results/figures/subtype/U22_msi_code_rising_arm.caption.md) ·
+[U23 caption](results/figures/subtype/U23_msi_code_models.caption.md) ·
+[U24 caption](results/figures/subtype/U24_msi_callers_benchmark.caption.md) ·
 [§11](results/SUBTYPE.md#11-the-msi-splicing-marks-are-written-in-the-genome-acceptor-poly-t-repeats)
 
 #### 9. Breast cancer with DNA: two HER2s, splice-site mutations, and what the pair check removed

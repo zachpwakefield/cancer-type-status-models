@@ -23,13 +23,15 @@ One question per figure, in the order the story is told in results/SUBTYPE.md:
     U20 is the code an infiltration readout (D-68)?
     U21 does the code follow MSI calls that do not come from MC3: MANTIS, MSIsensor (D-69)?
     U22 is the rising arm real: specific, not a global axis, tract-dependent, dose, PTB (D-70)?
+    U23 do fitted weights on the code beat it held out, and do per-exon weights transfer (D-71)?
+    U24 how does the splicing model compare with the exome MSI callers (D-72)?
 
 Captions are figure legends: "**Figure Un. Title.**", then (a), (b) ... for the panels. `legends`
 copies each legend (without its bullet list of tests) under the figure in results/SUBTYPE.md.
 
 Reads results/subtype/summary/ (step 34), results/subtype/interpret/ (step 35),
 results/subtype/regulators/ (step 37), results/subtype/site_probe/ (step 38),
-results/subtype/msi_cis/ (steps 42, 50, 51, 52) and results/subtype/brca/ (steps 46-49). Every figure
+results/subtype/msi_cis/ (steps 42, 50, 51, 52, 54, 55) and results/subtype/brca/ (steps 46-49). Every figure
 is SVG + PDF + 400-dpi PNG with `<stem>.csv` of the plotted values and `<stem>.caption.md`.
 Usage: python scripts/36_subtype_figures.py [U1 U3 ... legends]        (default: all, then legends)
 """
@@ -2392,6 +2394,321 @@ move up (n = {int(b.loc['18-29', 'n'])}); from 30–35 nt {b.loc['30-35', 'share
 cohorts (Figure U19a). q over family RV (8 tests). Per-tumour values are kept locally (D-12)."""
 
 
+# ============================================================ D-71 fitted models on the code
+MODEL_LABELS = {"M0": "score G, no fit", "M1": "logistic, 2 arms", "M2": "logistic, 10 sequence bins",
+                "M3": "MLP, 10 sequence bins", "M4": "logistic, repeat exons", "M5": "logistic, all exons",
+                "M6": "MLP, all exons"}
+
+
+def U23() -> None:
+    d = CODE_DIR / "models"
+    pr = pd.read_csv(d / "predictions.csv").set_index("id")
+    met = pd.read_csv(d / "metrics.csv")
+    co = pd.read_csv(d / "coefficients.csv")
+    cur = pd.read_csv(d / "pr_curves.csv")
+    e1 = met[met.split.eq("E1")].set_index("model")
+    e2 = met[met.split.eq("E2, the 30 held-out cancers only")].set_index("model")
+    models = list(MODEL_LABELS)
+    fig = plt.figure(figsize=(DOUBLE - 0.2, 4.2))
+    gs = fig.add_gridspec(2, 2, hspace=0.55, wspace=0.75)
+    rows = []
+    # a. AUROC: held out (E1), inner leave-one-training-cancer-out, and leave-one-cancer-out (E2)
+    ax = fig.add_subplot(gs[0, 0])
+    for y, m in enumerate(models):
+        r = e1.loc[m]
+        col = ACCENT if m == "M2" else (INK2 if m == "M0" else MUTED)
+        ax.hlines(y, r.auroc_lo, r.auroc_hi, color=col, linewidth=0.8)
+        ax.scatter(r.auroc, y, s=16, color=col, zorder=3)
+        if np.isfinite(r.inner_auroc):
+            ax.scatter(r.inner_auroc, y, s=16, facecolors="white", edgecolors=col, linewidths=0.8, zorder=3)
+        if m in e2.index:
+            ax.scatter(e2.loc[m].auroc, y + 0.3, s=12, marker="x", color=col, linewidths=0.8, zorder=3)
+        rows.append({"panel": "a", "model": m, "label": MODEL_LABELS[m], "auroc_heldout": r.auroc, "lo": r.auroc_lo,
+                     "hi": r.auroc_hi, "auroc_inner_training_cancers": r.inner_auroc,
+                     "auroc_leave_one_cancer_out_same_30": e2.loc[m].auroc if m in e2.index else np.nan})
+    ax.axvline(e1.loc["M0"].auroc, color=MUTED, linewidth=0.6, linestyle=(0, (3, 2)), zorder=0)
+    rows.append({"panel": "a", "model": "reference line: score G held out", "auroc_heldout": e1.loc["M0"].auroc})
+    ax.set_yticks(range(len(models)))
+    ax.set_yticklabels([MODEL_LABELS[m] for m in models], fontsize=5.6)
+    ax.set_ylim(len(models) - 0.4, -0.6)
+    ax.set_xlim(0.6, 1.0)
+    ax.tick_params(axis="y", length=0)
+    ax.spines["left"].set_visible(False)
+    ax.set_xlabel("AUROC", fontsize=6)
+    # b. AUPRC held out
+    bx = fig.add_subplot(gs[0, 1])
+    for y, m in enumerate(models):
+        r = e1.loc[m]
+        col = ACCENT if m == "M2" else (INK2 if m == "M0" else MUTED)
+        bx.hlines(y, r.auprc_lo, r.auprc_hi, color=col, linewidth=0.8)
+        bx.scatter(r.auprc, y, s=16, color=col, zorder=3)
+        rows.append({"panel": "b", "model": m, "auprc_heldout": r.auprc, "lo": r.auprc_lo, "hi": r.auprc_hi,
+                     "precision_at_recall_0.5": r["precision_at_recall_0.5"]})
+    prev = float(e1.loc["M0"].prevalence)
+    bx.axvline(prev, color=MUTED, linewidth=0.6, linestyle=(0, (3, 2)), zorder=0)
+    rows.append({"panel": "b", "model": "reference line: prevalence", "auprc_heldout": prev})
+    bx.set_yticks(range(len(models)))
+    bx.set_yticklabels([MODEL_LABELS[m] for m in models], fontsize=5.6)
+    bx.set_ylim(len(models) - 0.4, -0.6)
+    bx.set_xlim(0, max(0.5, float(e1.auprc_hi.max()) + 0.05))
+    bx.tick_params(axis="y", length=0)
+    bx.spines["left"].set_visible(False)
+    bx.set_xlabel("AUPRC", fontsize=6)
+    # c. precision-recall curves, held out
+    cx = fig.add_subplot(gs[1, 0])
+    for m, col, lw in [("M5", MUTED, 0.8), ("M2", ACCENT, 1.1), ("M0", INK2, 0.9)]:
+        c = cur[cur.model.eq(m)].sort_values("recall")
+        short = {"M5": "logistic, all exons", "M2": "logistic, 10 bins", "M0": "score G"}[m]
+        cx.plot(c.recall, c.precision, color=col, linewidth=lw, drawstyle="steps-post", label=short)
+        rows += [{"panel": "c", "model": m, "recall": a, "precision": b_} for a, b_ in zip(c.recall, c.precision)]
+    cx.legend(loc="upper right", bbox_to_anchor=(1.03, 1.0), fontsize=5.4, frameon=False, handlelength=1.2,
+              borderaxespad=0.2)
+    cx.axhline(prev, color=MUTED, linewidth=0.6, linestyle=(0, (3, 2)), zorder=0)
+    cx.set_xlim(0, 1)
+    cx.set_ylim(0, 1)
+    cx.set_xlabel("recall", fontsize=6)
+    cx.set_ylabel("precision", fontsize=6)
+    # d. standardised coefficients of the 10-bin logistic model
+    dx = fig.add_subplot(gs[1, 1])
+    c2 = co[co.model.eq("M2")].reset_index(drop=True)
+    for y, r in c2.iterrows():
+        col = ACCENT if r.coefficient > 0 else INK2
+        dx.barh(y, r.coefficient, height=0.6, color=col)
+        rows.append({"panel": "d", "feature": r.feature, "coefficient": r.coefficient})
+    dx.axvline(0, color=INK2, linewidth=0.6)
+    dx.set_yticks(range(len(c2)))
+    dx.set_yticklabels([f.replace("run >=20, bp ", "run ≥ 20, bp ").replace("run >=20, no bp", "run ≥ 20, no bp")
+                        .replace("-", "–") + (" nt" if "bp " in f else "") for f in c2.feature], fontsize=5.6)
+    dx.set_ylim(len(c2) - 0.4, -0.6)
+    dx.tick_params(axis="y", length=0)
+    dx.spines["left"].set_visible(False)
+    dx.set_xlabel("standardised coefficient", fontsize=6)
+    from _figbase import panel_letters
+    panel_letters([(ax, -0.62), (bx, -0.62), (cx, -0.2), (dx, -0.5)])
+    save(fig, OUT, "U23_msi_code_models", data=pd.DataFrame(rows), caption=CAPTIONS["U23"](pr, met, co))
+
+
+def _cap_u23(pr, met, co):
+    e1 = met[met.split.eq("E1")].set_index("model")
+    e2 = met[met.split.eq("E2")].set_index("model")
+    e30 = met[met.split.eq("E2, the 30 held-out cancers only")].set_index("model")
+    ph = pd.read_csv(CODE_DIR / "models" / "posthoc.csv")
+
+    def abl(m):
+        r = ph[ph.what.eq("ablation: held-out AUROC") & ph.group.eq(m)].iloc[0]
+        return f"AUROC {float(r.value):.3f} ({float(r.ci_low):.3f}–{float(r.ci_high):.3f})"
+    n_tr = int(e2.loc["M0"].n - e1.loc["M0"].n)
+    pos_tr = int(e2.loc["M0"].positives - e1.loc["M0"].positives)
+
+    def line(i):
+        r = pr.loc[i]
+        return f"{signed(r.effect, 3)} (95% CI {signed(r.ci_low, 3)} to {signed(r.ci_high, 3)}), q = {fp(r.q)}, {r.verdict}"
+    return f"""**Do fitted weights on top of the code beat it, and does learning per-exon weights transfer?**
+
+Pre-specified (config/followup.yaml: msi_code_models, D-71) before any model was fitted. Label: ≥ 10 MC3 homopolymer
+deletions. E1: trained on all COAD, STAD and UCEC tumours ({n_tr}; {pos_tr} MMR-deficient), tested on
+the 30 other cancers ({int(e1.loc['M0'].n):,} tumours, {int(e1.loc['M0'].positives)} MMR-deficient, prevalence
+{e1.loc['M0'].prevalence:.4f}). Inputs, all within the tumour's cancer: score G; the two arms and ten sequence bins
+(run-length bins for runs of 10–19 nt; runs ≥ 20 nt by 10-nt branch-point bins), each against matched exons without
+a run, as robust z; and each exon's background-adjusted percentile (repeat exons only, or all 30,632 exons measured
+in ≥ 25 cancers, top K by ANOVA). Hyperparameters chosen by leaving one training cancer out.
+
+(a) AUROC held out (filled; bar = 95% bootstrap interval over tumours within cancer and label), in the inner
+leave-one-training-cancer-out loop (hollow) and on the same 30 cancers when each is left out of a model trained on
+the other 32 (cross; not run for the all-exon MLP); dashed = score G held out. (b) AUPRC held out; dashed = prevalence. (c) Precision against recall held
+out for score G, the 10-bin logistic model and the all-exon logistic model; dashed = prevalence. (d) Standardised
+coefficients of the 10-bin logistic model (blue = more inclusion of the bin's exons raises the odds of MMR
+deficiency).
+
+- LR1, two weighted arms against G: AUROC {line('LR1')}.
+- LR2, ten bins against two arms: {line('LR2')}.
+- LR3, MLP against logistic on the ten bins: {line('LR3')}.
+- LR4, per-exon weights on repeat exons against the bins: {line('LR4')}.
+- LR5, all exons against the bins: {line('LR5')}.
+- LR6, all-exon MLP against the bins: {line('LR6')}.
+- LR7, AUPRC of the bins against G: {line('LR7')}.
+
+Held-out AUROC: {', '.join(f"{m} {e1.loc[m].auroc:.3f}" for m in MODEL_LABELS)}. AUPRC: {', '.join(f"{m} {e1.loc[m].auprc:.3f}" for m in MODEL_LABELS)}.
+Leaving one cancer out (exploratory), AUROC over all 33 cancers ({int(e2.loc['M0'].positives)} MMR-deficient):
+{', '.join(f"{m} {e2.loc[m].auroc:.3f}" for m in e2.index)}; over the 30: {', '.join(f"{m} {e30.loc[m].auroc:.3f}" for m in e30.index)}.
+Exploratory (A-18, chosen after these results): the all-exon model without repeat exons fell to {abl('M5n')}; per-exon
+weights on the two arms' exons alone gave {abl('M4a')}, and on the 107 other repeat exons {abl('M4x')}.
+q over family LR (7 tests). Per-tumour predictions are kept locally (D-12)."""
+
+
+# ============================================================ D-72 benchmark against the exome MSI callers
+BENCH_STYLE = {"dna": ("s", INK, "exome measure judged"), "M5": ("o", ACCENT, "logistic, all exons"),
+               "M4": ("D", MUTED, "logistic, repeat exons"), "M2": ("^", "#b4b2a9", "logistic, 10 bins"),
+               "M0": ("o", "#d3d1c7", "score G")}
+BENCH_REFS = [("MANTIS", "MANTIS", "MC3 + MSIsensor"), ("MSIsensor", "MSIsensor", "MC3 + MANTIS"),
+              ("MC3", "MC3 count", "MANTIS + MSIsensor")]
+
+
+def U24() -> None:
+    d = CODE_DIR / "benchmark"
+    pr = pd.read_csv(d / "predictions.csv").set_index("id")
+    met = pd.read_csv(d / "metrics.csv")
+    op = pd.read_csv(d / "operating_points.csv")
+    pc = pd.read_csv(d / "per_cancer.csv")
+    disc = pd.read_csv(d / "discordance.csv")
+    cov = pd.read_csv(d / "coverage.csv").set_index("method")
+    fig = plt.figure(figsize=(DOUBLE - 0.2, 4.5))
+    outer = fig.add_gridspec(2, 1, hspace=0.62)
+    gs_top = outer[0].subgridspec(1, 3, wspace=0.42)
+    gs_bot = outer[1].subgridspec(1, 3, wspace=0.85, width_ratios=[1.45, 1, 1])
+    rows = []
+    order = ["dna", "M5", "M4", "M2", "M0"]
+    # a. within-cancer AUROC per reference, E2 filled, E1 hollow
+    axes_a = []
+    for j, (ref, name, by) in enumerate(BENCH_REFS):
+        ax = fig.add_subplot(gs_top[0, j])
+        axes_a.append(ax)
+        for y, key in enumerate(order):
+            meth = ref if key == "dna" else key
+            mk, col, _ = BENCH_STYLE[key]
+            for split, off, filled in [("E2", -0.15, True), ("E1", 0.15, False)]:
+                r = met[met.split.eq(split) & met.reference.eq(f"R_{ref}") & met.method.eq(meth)].iloc[0]
+                ax.hlines(y + off, r.lo, r.hi, color=col, linewidth=0.8)
+                ax.scatter(r.auroc_within, y + off, s=14, marker=mk, color=col if filled else "white",
+                           edgecolors=col, linewidths=0.8, zorder=3)
+                rows.append({"panel": "a", "reference": f"R_{ref}", "split": split, "method": meth,
+                             "auroc_within": r.auroc_within, "lo": r.lo, "hi": r.hi, "positives": r.positives,
+                             "negatives": r.negatives})
+        ax.set_yticks(range(len(order)))
+        ax.set_yticklabels([name if k == "dna" else BENCH_STYLE[k][2] for k in order] if j == 0 else
+                           [name] + [""] * (len(order) - 1), fontsize=5.6)
+        if j:
+            ax.get_yticklabels()[0].set_fontsize(5.6)
+        ax.set_ylim(len(order) - 0.5, -0.6)
+        ax.set_xlim(0.90, 1.005)
+        ax.set_xticks([0.9, 0.95, 1.0])
+        ax.tick_params(axis="y", length=0)
+        ax.spines["left"].set_visible(False)
+        ax.set_title(f"{name} judged by {by}", fontsize=6, pad=3)
+        ax.set_xlabel("within-cancer AUROC", fontsize=6)
+    if True:
+        axes_a[0].set_yticklabels(["exome measure judged"] + [BENCH_STYLE[k][2] for k in order[1:]], fontsize=5.6)
+        for ax, (_, name, _) in zip(axes_a[1:], BENCH_REFS[1:]):
+            ax.set_yticklabels([""] * len(order))
+    # b. per cancer, E2, R_MANTIS
+    bx = fig.add_subplot(gs_bot[0, 0])
+    sub = pc[pc.split.eq("E2") & pc.reference.eq("R_MANTIS")]
+    cancers = sorted(sub.project.unique())
+    for i, c in enumerate(cancers):
+        for key, dx in zip(["dna", "M5", "M2", "M0"], [-0.24, -0.08, 0.08, 0.24]):
+            meth = "MANTIS" if key == "dna" else key
+            r = sub[sub.project.eq(c) & sub.method.eq(meth)].iloc[0]
+            mk, col, _ = BENCH_STYLE[key]
+            bx.scatter(i + dx, r.auroc, s=14, marker=mk, color=col, edgecolors=col, linewidths=0.6, zorder=3)
+            rows.append({"panel": "b", "reference": "R_MANTIS", "split": "E2", "project": c, "method": meth,
+                         "auroc": r.auroc, "positives": r.positives, "n": r.n})
+    npos = {c: int(sub[sub.project.eq(c)].positives.iloc[0]) for c in cancers}
+    bx.set_xticks(range(len(cancers)))
+    bx.set_xticklabels([f"{c}\n({npos[c]})" for c in cancers], fontsize=5.6)
+    bx.set_xlim(-0.6, len(cancers) - 0.4)
+    bx.set_ylim(0.85, 1.008)
+    bx.set_ylabel("AUROC within cancer", fontsize=6)
+    # c. matched-volume sensitivity, E2
+    cx = fig.add_subplot(gs_bot[0, 1])
+    for y, (ref, name, _) in enumerate(BENCH_REFS):
+        for key in order:
+            meth = ref if key == "dna" else key
+            r = op[op.split.eq("E2") & op.reference.eq(f"R_{ref}") & op.method.eq(meth)].iloc[0]
+            mk, col, _ = BENCH_STYLE[key]
+            off = {"dna": 0.0, "M5": -0.18, "M4": 0.18, "M2": 0.0, "M0": 0.0}[key]
+            cx.scatter(r.sensitivity, y + off, s=16, marker=mk, color=col, edgecolors=col, linewidths=0.6, zorder=3)
+            rows.append({"panel": "c", "reference": f"R_{ref}", "split": "E2", "method": meth, "flagged": r.flagged,
+                         "sensitivity": r.sensitivity, "ppv": r.ppv})
+    cx.set_yticks(range(len(BENCH_REFS)))
+    cx.set_yticklabels([f"{n}\n({int(op[op.split.eq('E2') & op.reference.eq('R_' + r_) & op.method.eq(r_)].flagged.iloc[0])} flagged)"
+                        for r_, n, _ in BENCH_REFS], fontsize=5.6)
+    cx.set_ylim(len(BENCH_REFS) - 0.5, -0.5)
+    cx.set_xlim(0, 1.03)
+    cx.tick_params(axis="y", length=0)
+    cx.spines["left"].set_visible(False)
+    cx.set_xlabel("sensitivity at the caller's call volume", fontsize=6)
+    # d. M5 in tumours the DNA measures disagree on, E2
+    dx_ = fig.add_subplot(gs_bot[0, 2])
+    groups = [("MC3 MMR-deficient, both callers MSI-H", "both MSI"),
+              ("MC3 MMR-deficient, one caller MSI-H", "one MSI"),
+              ("MC3 MMR-deficient, neither caller MSI-H", "neither"),
+              ("MC3 proficient, neither caller MSI-H", "proficient")]
+    e2d = disc[disc.split.eq("E2")].set_index("group")
+    for y, (g_, lab) in enumerate(groups):
+        r = e2d.loc[g_]
+        dx_.barh(y, r.share_top_decile_M5, height=0.55, color=ACCENT if y < 3 else MUTED)
+        rows.append({"panel": "d", "split": "E2", "group": g_, "n": r.n, "share_top_decile_M5": r.share_top_decile_M5,
+                     "median_pct_M5": r.median_pct_M5})
+    dx_.axvline(0.1, color=MUTED, linewidth=0.6, linestyle=(0, (3, 2)))
+    rows.append({"panel": "d", "group": "reference line: chance (0.1)", "share_top_decile_M5": 0.1})
+    dx_.set_yticks(range(len(groups)))
+    dx_.set_yticklabels([f"{lab} ({int(e2d.loc[g_].n):,})" for g_, lab in groups], fontsize=5.6)
+    dx_.set_ylim(len(groups) - 0.5, -0.5)
+    dx_.set_xlim(0, 1)
+    dx_.tick_params(axis="y", length=0)
+    dx_.spines["left"].set_visible(False)
+    dx_.set_xlabel("share in top decile", fontsize=6)
+    from matplotlib.lines import Line2D
+    handles = [Line2D([], [], marker=BENCH_STYLE[k][0], color=BENCH_STYLE[k][1], linestyle="", markersize=3.5,
+                      label=BENCH_STYLE[k][2]) for k in order]
+    fig.legend(handles=handles, loc="lower center", ncol=5, fontsize=5.6, frameon=False, bbox_to_anchor=(0.5, -0.02),
+               handletextpad=0.3, columnspacing=1.2)
+    from _figbase import panel_letters
+    panel_letters([(axes_a[0], -0.95), (bx, -0.3), (cx, -0.62), (dx_, -0.62)], y=1.08)
+    save(fig, OUT, "U24_msi_callers_benchmark", data=pd.DataFrame(rows),
+         caption=CAPTIONS["U24"](pr, met, op, disc, cov))
+
+
+def _cap_u24(pr, met, op, disc, cov):
+    def line(i):
+        r = pr.loc[i]
+        return (f"{signed(r.effect, 4)} (95% CI {signed(r.ci_low, 4)} to {signed(r.ci_high, 4)}), q = {fp(r.q)}, "
+                f"{r.verdict}; {r.n.split('; ')[1].replace('M5', 'all-exon model')}")
+
+    def a_(split, ref, m):
+        return met[met.split.eq(split) & met.reference.eq(f"R_{ref}") & met.method.eq(m)].iloc[0]
+
+    def o_(ref, m):
+        r = op[op.split.eq("E2") & op.reference.eq(f"R_{ref}") & op.method.eq(m)].iloc[0]
+        return f"{r.sensitivity:.2f} / {r.ppv:.2f}"
+    e2d = disc[disc.split.eq("E2")].set_index("group")
+    nb = lambda g: int(e2d.loc[g].n)
+    md = lambda g: f"{e2d.loc[g].median_pct_M5:.2f}"
+    return f"""**How does the splicing model compare with the exome MSI callers?**
+
+Pre-specified (config/followup.yaml: msi_tool_benchmark, D-72) before any RNA model other than score G was scored
+against MANTIS or MSIsensor. No measure is a gold standard, so each exome measure is judged against the tumours on
+which the other two agree (positive: both call MSI; negative: both call stable; others left out), and the splicing
+models against the same tumours. Calls: MC3 ≥ 10 homopolymer deletions; MANTIS > 0.6 (stable < 0.4); MSIsensor > 10
+(stable < 4). Tumours with both caller scores ({int(cov.loc['both exome callers'].n):,} of {int(cov.loc['RNA (M0-M5)'].n):,}; RNA scores all).
+Within-cancer AUROC ranks each positive only against negatives of its own cancer. Splicing models come from D-71: left
+out of training by cancer (E2, all 33 cancers) or trained on COAD, STAD and UCEC (E1, the other 30).
+
+(a) Within-cancer AUROC in E2 (filled) and E1 (hollow); bars = 95% bootstrap intervals over tumours within cancer and
+reference label. (b) Within-cancer AUROC per cancer with ≥ 3 positives, E2, MANTIS judged by MC3 + MSIsensor
+(positives in brackets). (c) Sensitivity when each splicing model flags as many tumours as the caller calls MSI,
+by its own score pooled over cancers (E2; scores come from 33 models). (d) MC3 MMR-deficient tumours grouped by the
+two callers' calls, and proficient tumours called stable by both: share in the top decile of the all-exon model's
+score within their cancer (E2; n in brackets); dashed = chance.
+
+- BM1, MANTIS, E2: within-cancer AUROC(all-exon model) − AUROC(MANTIS) = {line('BM1')}.
+- BM2, MSIsensor, E2: {line('BM2')}.
+- BM3, MC3 count, E2: {line('BM3')}.
+- BM4, MANTIS, E1: {line('BM4')}.
+- BM5, MSIsensor, E1: {line('BM5')}.
+- BM6, MC3 count, E1: {line('BM6')}.
+
+The all-exon model is non-inferior in all six at the pre-set margin of 0.05 AUROC (lowest bound
+{signed(pr.ci_low.min(), 4)}). E2 positives per reference: {int(a_('E2', 'MANTIS', 'M5').positives)}, {int(a_('E2', 'MSIsensor', 'M5').positives)} and
+{int(a_('E2', 'MC3', 'M5').positives)} (E1: {int(a_('E1', 'MANTIS', 'M5').positives)}, {int(a_('E1', 'MSIsensor', 'M5').positives)}, {int(a_('E1', 'MC3', 'M5').positives)}). Score G: {a_('E2', 'MANTIS', 'M0').auroc_within:.3f}, {a_('E2', 'MSIsensor', 'M0').auroc_within:.3f}, {a_('E2', 'MC3', 'M0').auroc_within:.3f} (E2).
+Panel (c), sensitivity / PPV, E2: MANTIS {o_('MANTIS', 'MANTIS')} against {o_('MANTIS', 'M5')}; MSIsensor {o_('MSIsensor', 'MSIsensor')}
+against {o_('MSIsensor', 'M5')}; MC3 {o_('MC3', 'MC3')} against {o_('MC3', 'M5')} (all-exon model); pooled AUPRC
+{a_('E2', 'MANTIS', 'MANTIS').auprc_pooled:.2f} for MANTIS against {a_('E2', 'MANTIS', 'M5').auprc_pooled:.2f}.
+Panel (d), median within-cancer percentile: {md('MC3 MMR-deficient, both callers MSI-H')} (both callers, {nb('MC3 MMR-deficient, both callers MSI-H')}), {md('MC3 MMR-deficient, one caller MSI-H')} (one, {nb('MC3 MMR-deficient, one caller MSI-H')}),
+{md('MC3 MMR-deficient, neither caller MSI-H')} (neither, {nb('MC3 MMR-deficient, neither caller MSI-H')}), {md('MC3 proficient, neither caller MSI-H')} (proficient). No MC3-proficient tumour was called MSI by both callers.
+q over family BM (6 tests). Per-tumour scores are kept locally (D-12)."""
+
+
 TITLES = {
     "U1": "Splicing matches expression on lineage and genome-state subtypes, and fusing the two adds little.",
     "U2": "Splicing loses most on small classes defined by one programme.",
@@ -2415,6 +2732,8 @@ TITLES = {
     "U20": "The code is not an infiltration readout.",
     "U21": "The code finds the tumours that two exome MSI callers call MSI-high.",
     "U22": "The rising arm is specific to mismatch repair and needs the tract, but its mechanism is not settled.",
+    "U23": "Ten sequence bins beat the two arms held out, and per-exon models did not transfer worse.",
+    "U24": "Within each cancer, the splicing model ranks tumours almost as well as the exome MSI callers.",
 }
 
 
@@ -2434,9 +2753,9 @@ CAPTIONS = {k: (lambda k, f: (lambda *a: tidy(legend(k, f(*a)))))(k, f) for k, f
              "U7": _cap_u7, "U8": _cap_u8, "U9": _cap_u9,
              "U10": _cap_u10, "U11": _cap_u11, "U12": _cap_u12, "U13": _cap_u13, "U14": _cap_u14, "U15": _cap_u15,
              "U16": _cap_u16, "U17": _cap_u17, "U18": _cap_u18, "U19": _cap_u19, "U20": _cap_u20,
-             "U21": _cap_u21, "U22": _cap_u22}.items()}
+             "U21": _cap_u21, "U22": _cap_u22, "U23": _cap_u23, "U24": _cap_u24}.items()}
 
 if __name__ == "__main__":
     run({"U1": U1, "U2": U2, "U3": U3, "U4": U4, "U5": U5, "U6": U6, "U7": U7, "U8": U8, "U9": U9, "U10": U10, "U11": U11,
          "U12": U12, "U13": U13, "U14": U14, "U15": U15, "U16": U16, "U17": U17,
-         "U18": U18, "U19": U19, "U20": U20, "U21": U21, "U22": U22, "legends": legends})
+         "U18": U18, "U19": U19, "U20": U20, "U21": U21, "U22": U22, "U23": U23, "U24": U24, "legends": legends})

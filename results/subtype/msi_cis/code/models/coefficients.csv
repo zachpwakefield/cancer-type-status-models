@@ -1,0 +1,13 @@
+model,feature,coefficient
+M1,falling arm (R_down),-1.587
+M1,rising arm (R_up),1.802
+M2,run 10-11,-0.282
+M2,run 12-13,-0.2824
+M2,run 14-15,-0.378
+M2,run 16-19,-0.287
+M2,"run >=20, bp 20-29",-0.3917
+M2,"run >=20, bp 30-39",0.4382
+M2,"run >=20, bp 40-49",0.4247
+M2,"run >=20, bp 50-69",0.2814
+M2,"run >=20, bp 70-100",0.3385
+M2,"run >=20, no bp",0.3061

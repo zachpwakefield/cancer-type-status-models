@@ -643,6 +643,29 @@ bootstrap of the held-out tumours.
 A-16), and the 10-nt branch-point bins were seen to split held out (A-16). The bins themselves
 were set on the training cancers (U19a), and no weight is fitted on a held-out tumour.
 
+**Outcome (computed 2026-10-13; LR2 and LR7 supported, LR1 and LR3–LR6 not resolved).**
+- **Finer bins help; weighting the arms does not.** Logistic regression on the two arms matched
+  score G held out (AUROC 0.835 against 0.832; LR1). On the ten bins it reached 0.868 (LR2,
+  q = 0.046), and its AUPRC rose from 0.083 to 0.257 (LR7). The bin weights reproduce the code
+  without being told it: every run of 10–19 nt, and runs of 20 or more with the branch point
+  20–29 nt away, get negative weights; runs of 20 or more with the branch point 30 nt or further
+  away, or none found, get positive weights (U23d).
+- **An MLP adds nothing** on the ten bins (0.873; LR3).
+- **Per-exon models did not transfer worse.** This is against the prediction's sign, although not
+  resolved. Repeat-exon logistic regression reached 0.900, all-exon 0.902 and the all-exon MLP
+  0.885, against 0.868 for the bins (LR4–LR6, q ≥ 0.28). Their AUPRC was 0.44–0.49.
+- **Leaving one cancer out (exploratory).** AUROC 0.957 (all-exon) and 0.967 (repeat-exon) over
+  all 33 cancers, and 0.905 and 0.914 on the 30. The MLP on the bins fell to 0.851.
+- **The per-exon gain comes from the code (A-18).**
+  - The all-exon model's 500 exons hold 6 times the pool's share of repeat exons (32% against 5%).
+    82% of its run-10–19 exons fall in MMR-deficient training tumours, and 13 of its 15 rising-arm
+    exons rise. MLH1's best exon ranks 732nd, outside the 500.
+  - Without repeat exons the model falls to 0.777. Per-exon weights on the two arms' exons alone
+    give 0.888; on the 107 other repeat exons, 0.776.
+- **MANTIS labels (exploratory).** With MANTIS MSI-H against MSS as the held-out label (17 against
+  7,321), the AUROC is 0.997 for the all-exon model and 0.970 for score G.
+- Tables: `results/subtype/msi_cis/code/models/`; figure U23.
+
 ---
 
 ### D-72 Benchmark against the exome MSI callers · `config/followup.yaml` · `scripts/55`
@@ -670,6 +693,25 @@ and reported descriptively.
 **Seen when written.** D-69's call concordance and score G against both callers; D-71's E1 results,
 including M5's per-cancer AUROC, curves and coefficients (A-18). No DNA tool had been scored
 against another, and M5 had not been scored in E2.
+
+**Outcome (computed 2026-10-13; BM1, BM2, BM4 and BM5 supported, BM3 and BM6 not resolved).**
+- **The exome measures agree almost perfectly.** Each ranks the other two's consensus at
+  within-cancer AUROC 0.999–1.000. No MC3-proficient tumour is called MSI by both callers.
+- **Within each cancer, the splicing model is close behind.** The all-exon model reaches 0.998–0.999
+  against every reference, in both splits. It ranks below MANTIS and MSIsensor by 0.001–0.002
+  (BM1, BM2, BM4, BM5; q ≤ 0.013) and does not differ from the MC3 count (BM3, BM6). It is
+  non-inferior everywhere at the 0.05 margin (lowest bound −0.006). Per cancer it reaches 1.000 in
+  COAD, STAD and BRCA, 0.995 in UCEC and 0.987 in CESC. Score G reaches 0.955–0.959.
+- **Across cancers it is not calibrated.** Flagging as many tumours as each caller calls MSI, pooled
+  over cancers, the all-exon model finds 80–84% of the reference positives, at PPV 0.80–0.84. The
+  callers find 94–100%, at PPV 0.95–1.00. Its inputs are percentiles within a cancer, so a threshold
+  must be set per cancer.
+- **Where the DNA measures disagree (exploratory).** Of 197 tumours that MC3 calls MMR-deficient
+  with both caller scores, 50 are called MSI by neither caller. The all-exon model still places 42%
+  of them in its top decile within their cancer (median percentile 0.86), against 69% when both
+  callers agree and 9% of proficient tumours.
+- **Coverage.** Both caller scores exist for 96.3% of the 8,464 tumours, against 100% for RNA.
+- Tables: `results/subtype/msi_cis/code/benchmark/`; figure U24.
 
 ---
 

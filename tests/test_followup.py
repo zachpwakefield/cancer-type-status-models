@@ -377,5 +377,86 @@ class TestMsiReversal(unittest.TestCase):
         self.assertTrue(np.isnan(self.m.shield(self.rev(sense))["sh_start"]))
 
 
+class TestMsiModels(unittest.TestCase):
+    """D-71's helpers: robust z, sequence bins, precision at recall, AUROC orientation."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.m = load_script("54_msi_models.py")
+
+    def test_robust_z_ignores_a_minority_of_outliers(self):
+        v = np.r_[np.arange(10.0), 1000.0]
+        z = self.m.robust_z(v)
+        self.assertAlmostEqual(float(np.median(z)), 0.0)
+        self.assertLess(abs(z[:10]).max(), 2.0)
+        self.assertTrue(np.all(self.m.robust_z(np.full(5, 3.0)) == 0))
+        self.assertTrue(np.all(self.m.robust_z(np.full(4, np.nan)) == 0))
+
+    def test_bins_partition_the_repeat_exons(self):
+        at = np.array([10, 13, 15, 19, 20, 25, 30, 21, 22, 40, 5])
+        db = np.array([30, 30, 30, 30, 25, 33, 45, 60, 85, np.nan, 40])
+        m = np.vstack(self.m.bin_masks(at, db))
+        self.assertTrue(np.all(m[:, :10].sum(axis=0) == 1))   # every repeat exon in exactly one bin
+        self.assertEqual(m[:, 10].sum(), 0)                   # a run of 5 is in none
+        self.assertTrue(m[9, 9])                              # run >= 20 without a branch point
+
+    def test_precision_at_recall_counts_tied_negatives_first(self):
+        y = np.array([True, False, True, False, False, True])
+        s = np.array([0.9, 0.9, 0.8, 0.1, 0.05, 0.0])
+        # 2 of 3 positives needed; tied negative at 0.9 ranks first, so the 2nd positive is at rank 3
+        self.assertAlmostEqual(self.m.precision_at_recall(s, y, 0.5), 2 / 3)
+        self.assertAlmostEqual(self.m.auc(np.array([3.0, 2.0, 1.0]), np.array([True, False, False])), 1.0)
+
+
+class TestMsiBenchmark(unittest.TestCase):
+    """D-72's helpers: triangulated references, within-cancer AUROC, matched-volume operating point."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.m = load_script("55_msi_benchmark.py")
+
+    def test_each_reference_leaves_out_the_judged_tool(self):
+        d = pd.DataFrame({"n_hp": [20, 20, 0, 0, 20], "mantis": [0.9, 0.1, 0.1, 0.9, 0.5],
+                          "msisensor": [20.0, 20.0, 1.0, 1.0, 20.0]})
+        r = self.m.references(d)
+        # tumour 1: MANTIS disagrees with the others; it is positive in R_MANTIS, left out of R_MC3.
+        # tumour 3: only MANTIS calls it; R_MANTIS (MC3 and MSIsensor) holds it as a negative
+        self.assertEqual(list(r["MANTIS"]), [1, 1, 0, 0, 1])
+        self.assertEqual(list(r["MSIsensor"]), [1, -1, 0, -1, -1])   # MANTIS 0.5 is between
+        self.assertEqual(list(r["MC3"]), [1, -1, 0, -1, -1])
+        self.assertEqual(list(r["all"]), [1, -1, 0, -1, -1])
+
+    def test_within_cancer_auroc_ignores_pairs_across_cancers(self):
+        # perfect within each cancer, but cancer B's scores all sit below cancer A's
+        s = np.array([10.0, 9.0, 2.0, 1.0])
+        y = np.array([True, False, True, False])
+        g = np.array(["A", "A", "B", "B"])
+        self.assertAlmostEqual(self.m.auc_within(s, y, g), 1.0)
+        self.assertAlmostEqual(self.m.auc_pooled(s, y), 0.75)
+        # a cancer without positives contributes no pairs
+        self.assertAlmostEqual(self.m.auc_within(np.append(s, 100.0), np.append(y, False), np.append(g, "C")), 1.0)
+
+    def test_matched_volume_counts_tied_negatives_first(self):
+        s = np.array([5.0, 5.0, 1.0, 0.0])
+        y = np.array([True, False, True, False])
+        self.assertEqual(self.m.matched_volume(s, y, 1), (0.0, 0.0))
+        self.assertEqual(self.m.matched_volume(s, y, 2), (0.5, 0.5))
+
+    def test_bootstrap_matches_auc_within_on_each_resample(self):
+        rng = np.random.default_rng(1)
+        g = np.repeat(["A", "B", "C"], 30)
+        y = rng.random(90) < 0.3
+        y[60:] = False                                              # cancer C has no positive
+        S = {"x": rng.normal(size=90) + y, "z": rng.normal(size=90)}
+        fast = self.m.paired_bootstrap(S, y, g, np.random.default_rng(0))
+        r2 = np.random.default_rng(0)
+        strata = [np.flatnonzero((g == a) & (y == b)) for a in np.unique(g) for b in (False, True)]
+        strata = [s for s in strata if len(s)]
+        for k in range(5):
+            i = np.concatenate([r2.choice(s, len(s)) for s in strata])
+            for m in S:
+                self.assertAlmostEqual(fast[m][k], self.m.auc_within(S[m][i], y[i], g[i]))
+
+
 if __name__ == "__main__":
     unittest.main()
