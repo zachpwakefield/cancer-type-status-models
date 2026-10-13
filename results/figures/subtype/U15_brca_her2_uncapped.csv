@@ -1,0 +1,16 @@
+panel,group,amplified_n,model,auroc,spearman_rho,n,p,q,q_family
+a,D-58 amplified (ABSOLUTE),31.0,GEX,0.7224,,,,,
+a,D-58 amplified (ABSOLUTE),31.0,AS ensemble,0.8142,,,,,
+a,all amplified (D-60),45.0,GEX,0.7527569548559054,,,,,
+a,all amplified (D-60),45.0,AS ensemble,0.814,,,,,
+a,newly amplified only,15.0,GEX,0.826,,,,,
+a,newly amplified only,15.0,AS ensemble,0.8218,,,,,
+b,,,GEX,,0.46561264822134385,45.0,,,
+b,,,AS ensemble,,0.45335968379446634,45.0,,,
+tests,HU1,,supported,0.2527569548559054,,,1.3427116886226496e-08,9.398981820358549e-08,HU (7 tests)
+tests,HU2,,not resolved,0.0617024820922871,,,0.0499750124937531,0.0874562718640679,HU (7 tests)
+tests,HU3,,not resolved,-0.0042042042042041,,,0.894552723638181,0.9205397301349324,HU (7 tests)
+tests,HU4,,not resolved,-0.0496240601503759,,,0.5397301349325337,0.7556221889055472,HU (7 tests)
+tests,HU5,,supported,0.3514619883040936,,,1.0418028520311336e-05,3.6463099821089674e-05,HU (7 tests)
+tests,HU6,,supported,0.4656126482213438,,,0.0012679947036518,0.0029586543085208,HU (7 tests)
+tests,HU7,,not resolved,0.0122529644268775,,,0.9205397301349324,0.9205397301349324,HU (7 tests)

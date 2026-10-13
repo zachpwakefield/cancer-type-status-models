@@ -15,6 +15,7 @@ One question per figure, in the order the story is told in results/SUBTYPE.md:
     U12 are the BRCA models' genotype-like splicing events inherited? Tumour-normal pairs (D-57, A-13, A-14)
     U13 which HER2 did each modality learn: amplification or the HER2-enriched programme (D-58)?
     U14 do splice-site mutations and SF3B1 hotspots leave their marks in BRCA splicing (D-59)?
+    U15 does splicing's HER2 lead survive ERBB2 copy number without the ABSOLUTE ceiling (D-60)?
 
 Reads results/subtype/summary/ (step 34), results/subtype/interpret/ (step 35),
 results/subtype/regulators/ (step 37), results/subtype/site_probe/ (step 38),
@@ -27,6 +28,7 @@ from __future__ import annotations
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+from scipy.stats import spearmanr
 from _figbase import locus_label, run, tidy
 
 from ctsm.biology import bh
@@ -1377,7 +1379,8 @@ input sets of the same size.
 - H1, GEX P(Her2) is higher in amplified luminal tumours: AUROC {pr.loc['H1'].effect + 0.5:.2f}, q =
   {fp(pr.loc['H1'].q)}, supported.
 - H2, splicing would see amplification less well than GEX: AUROC difference {signed(pr.loc['H2'].effect, 2)}
-  (q = {fp(pr.loc['H2'].q)}), **against**: the AS ensemble separates amplified luminal tumours better.
+  (q = {fp(pr.loc['H2'].q)}), **against**: the AS ensemble separates amplified luminal tumours better. Without the
+  ABSOLUTE ceiling (D-60, U15) this lead is not resolved, and absent on the newly amplified tumours.
 - H3, within PAM50 Her2, neither model separates amplified from non-amplified tumours (difference
   {signed(pr.loc['H3'].effect, 3)}, not resolved).
 - H4, AS P(Her2) is higher in non-amplified Her2 than in amplified luminal tumours: AUROC
@@ -1413,11 +1416,112 @@ form of {len(ev)} A3SS events whose acceptors are 10–30 nt apart and whose ups
 Stars: * p < 0.05, ** p < 0.01, *** p < 0.001. q over family C (3 tests). Per-tumour values are kept locally (D-12)."""
 
 
+def U15() -> None:
+    hd = BRCA_DIR / "her2_uncapped"
+    pr = pd.read_csv(hd / "predictions.csv").set_index("id")
+    ex = pd.read_csv(hd / "exploratory.csv").set_index("what")
+    gt = pd.read_csv(hd / "luminal_amplification_groups.csv").set_index("group")
+    ko = pd.read_csv(hd / "knockout.csv")
+    d = pd.read_parquet(BRCA_LOCAL / "her2_uncapped.parquet")
+    d = d[d.label.isin(["LumA", "LumB"]) & d.amp.notna()].copy()
+    d["amp"] = d.amp.astype(bool)
+    d["new"] = d.amp & ~d.amp_absolute.astype("boolean").fillna(False).astype(bool)
+    fig = plt.figure(figsize=(DOUBLE * 0.74, 2.3))
+    gs = fig.add_gridspec(1, 2, width_ratios=[1.0, 1.25], wspace=0.5)
+    rows = []
+    # a. AUROC of P(Her2), amplified luminal tumours against the rest, by amplification call
+    ax = fig.add_subplot(gs[0])
+    auc_all = {"GEX": pr.loc["HU1"].effect + 0.5,
+               "AS ensemble": float(pr.loc["HU2"].n.split("AS ")[1].split(",")[0])}
+    groups = [("D-58\nnear-diploid", gt.loc["D-58 amplified"], int(gt.loc["D-58 amplified", "n"]), "D-58 amplified (ABSOLUTE)"),
+              ("all\nuncapped", auc_all, int(d.amp.sum()), "all amplified (D-60)"),
+              ("newly\namplified", gt.loc["newly amplified"], int(gt.loc["newly amplified", "n"]), "newly amplified only")]
+    for i, (lab, src, n, name) in enumerate(groups):
+        vals = [src["auroc_gex"] if "auroc_gex" in src else src["GEX"], src["auroc_as"] if "auroc_as" in src else src["AS ensemble"]]
+        ax.plot([i - 0.13, i + 0.13], vals, color=GRID, linewidth=0.8, zorder=1)
+        for k, (m, col, v) in enumerate(zip(["GEX", "AS ensemble"], [INK2, ACCENT], vals)):
+            ax.scatter(i + (k - 0.5) * 0.26, v, s=18, color=col, zorder=2, label=m if i == 0 else None)
+            rows.append({"panel": "a", "group": name, "amplified_n": n, "model": m, "auroc": v})
+    ax.set_xticks(range(3))
+    ax.set_xticklabels([f"{g[0]}\n({g[2]})" for g in groups], fontsize=5.6)
+    ax.tick_params(axis="x", length=0)
+    ax.set_xlim(-0.5, 2.5)
+    ax.set_ylim(0.6, 0.9)
+    ax.set_yticks([0.6, 0.7, 0.8, 0.9])
+    ax.set_ylabel("AUROC, amplified luminal vs rest", fontsize=6)
+    ax.legend(loc="lower right", fontsize=5.4, handletextpad=0.2, borderaxespad=0.1, scatterpoints=1)
+    # b. amplified luminal tumours: P(Her2) against the amplification level
+    bx = fig.add_subplot(gs[1])
+    a = d[d.amp]
+    local = []
+    for m, col, lab in [("p_gex", INK2, "GEX"), ("p_as", ACCENT, "AS ensemble")]:
+        for new, face in [(False, col), (True, "white")]:
+            s = a[a.new.eq(new)]
+            bx.scatter(s.rel, s[m], s=12, facecolor=face, edgecolor=col, linewidth=0.6, zorder=2)
+        r = spearmanr(a[m], a.rel).statistic
+        rows.append({"panel": "b", "model": lab, "spearman_rho": r, "n": len(a)})
+        local.append(a[["rel", m, "new"]].rename(columns={m: "p_her2"}).assign(model=lab))
+    bx.set_yscale("log")
+    bx.set_xlabel("ERBB2 copy number / ploidy (SNP6, uncapped)", fontsize=6)
+    bx.set_ylabel("P(Her2), amplified luminal", fontsize=6)
+    from matplotlib.lines import Line2D
+    bx.legend(handles=[Line2D([], [], marker="o", linestyle="", markersize=3.5, markerfacecolor=INK2, markeredgecolor=INK2,
+                              label="D-58 amplified"),
+                       Line2D([], [], marker="o", linestyle="", markersize=3.5, markerfacecolor="white", markeredgecolor=INK2,
+                              label="newly amplified")],
+              loc="lower right", fontsize=5.4, handletextpad=0.2, borderaxespad=0.1)
+    for a_, lab, x in [(ax, "a", -0.32), (bx, "b", -0.25)]:
+        a_.text(x, 1.04, lab, transform=a_.transAxes, fontsize=8, fontweight="bold")
+    for r in pr.reset_index().itertuples(index=False):
+        rows.append({"panel": "tests", "group": r.id, "auroc": r.effect, "p": r.p, "q": r.q, "q_family": "HU (7 tests)",
+                     "model": r.verdict})
+    save(fig, OUT, "U15_brca_her2_uncapped", data=pd.DataFrame(rows), caption=CAPTIONS["U15"](pr, ex, gt, ko, d),
+         local_data=(SCFG.base_data_dir / "figure_data", pd.concat(local, ignore_index=True)))
+
+
+def _cap_u15(pr, ex, gt, ko, d):
+    g = gt.loc["D-58 amplified"]
+    nw = gt.loc["newly amplified"]
+    gko = ko[ko.view.eq("gex")].iloc[0]
+    as_drop = (ko.loc[ko.view.ne("gex"), "auroc_base"] - ko.loc[ko.view.ne("gex"), "auroc_core"]).abs().max()
+    hu2 = pr.loc["HU2"]
+    as2 = float(hu2.n.split("AS ")[1].split(",")[0])
+    rho_as = float(pr.loc["HU7"].n.split("AS rho ")[1])
+    return f"""**Does splicing's lead on ERBB2-amplified luminal tumours survive without the ABSOLUTE ceiling?**
+
+Pre-specified before the copy-number file was downloaded (config/followup.yaml: brca_her2_uncapped, D-60). D-58 took
+amplification from ABSOLUTE, which never reports more than 7 copies at ERBB2. Here, the PanCanAtlas SNP6 copy ratio
+at ERBB2 is made absolute with ABSOLUTE purity and ploidy, without a ceiling; amplified = copy number ≥ 2 × ploidy,
+D-58's rule. Out-of-fold P(Her2) of the BRCA_PAM50 models; LumA and LumB tumours only.
+
+a, AUROC of P(Her2), GEX (grey) and AS ensemble (blue), for D-58's amplified tumours (median ploidy
+{g.median_ploidy:.2f}), all tumours amplified by the uncapped call, and the newly amplified ones only (median ploidy
+{nw.median_ploidy:.2f}). Each group is compared with the luminal tumours neither call makes amplified; the middle group
+is compared with all non-amplified tumours. b, amplified luminal tumours: P(Her2) against copy number / ploidy;
+filled = amplified by D-58 too, hollow = newly amplified.
+
+- HU1, GEX P(Her2) higher in amplified tumours: AUROC {pr.loc['HU1'].effect + 0.5:.2f}, q = {fp(pr.loc['HU1'].q)},
+  supported.
+- HU2, AS ensemble ahead of GEX: {as2:.2f} against {pr.loc['HU1'].effect + 0.5:.2f} (difference
+  {signed(hu2.effect, 3)}, q = {fp(hu2.q)}), not resolved. D-58 had found the gap with q = 0.016.
+- HU3, the independent part (newly amplified): AS {nw.auroc_as:.2f}, GEX {nw.auroc_gex:.2f}, not resolved. The
+  ceiling could not call any tumour with ploidy above 3.5, where 7 copies are below 2 × ploidy.
+- HU4, within PAM50 Her2, GEX ahead of AS for amplified against not: {signed(pr.loc['HU4'].effect, 3)}, not resolved.
+- HU5, AS P(Her2) higher in non-amplified Her2 than in amplified luminal tumours: AUROC
+  {pr.loc['HU5'].effect + 0.5:.2f}, supported.
+- HU6, GEX P(Her2) rises with the amplification level: ρ = {pr.loc['HU6'].effect:.2f}, supported. HU7, splicing
+  follows it less: AS ρ = {rho_as:.2f}, not resolved.
+- Knockout with this amplified group (exploratory): the 17q12 inputs set to their mean lower GEX from
+  {gko.auroc_base:.3f} to {gko.auroc_core:.3f}; no splicing view moves by more than {as_drop:.3f}.
+
+q over family HU (7 tests). Per-tumour values are kept locally (D-12)."""
+
+
 CAPTIONS = {k: (lambda f: (lambda *a: tidy(f(*a))))(f) for k, f in
             {"U1": _cap_u1, "U2": _cap_u2, "U3": _cap_u3, "U4": _cap_u4, "U5": _cap_u5, "U6": _cap_u6,
              "U7": _cap_u7, "U8": _cap_u8, "U9": _cap_u9,
-             "U10": _cap_u10, "U11": _cap_u11, "U12": _cap_u12, "U13": _cap_u13, "U14": _cap_u14}.items()}
+             "U10": _cap_u10, "U11": _cap_u11, "U12": _cap_u12, "U13": _cap_u13, "U14": _cap_u14, "U15": _cap_u15}.items()}
 
 if __name__ == "__main__":
     run({"U1": U1, "U2": U2, "U3": U3, "U4": U4, "U5": U5, "U6": U6, "U7": U7, "U8": U8, "U9": U9, "U10": U10, "U11": U11,
-         "U12": U12, "U13": U13, "U14": U14})
+         "U12": U12, "U13": U13, "U14": U14, "U15": U15})

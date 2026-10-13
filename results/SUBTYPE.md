@@ -10,14 +10,14 @@ kind of that cancer a tumour is — and whether splicing knows. How the three ta
 is in [ACROSS_TASKS.md](ACROSS_TASKS.md).
 
 - **Methods and decisions:** [docs/SUBTYPE_METHODS.md](../docs/SUBTYPE_METHODS.md) (D-30 to D-47
-  and D-52 to D-59, amendments A-1 to A-7 and A-9 to A-14). Every label map, cohort and threshold was
+  and D-52 to D-60, amendments A-1 to A-7 and A-9 to A-14). Every label map, cohort and threshold was
   fixed in [config/subtype.yaml](../config/subtype.yaml) before the first model was fitted; the
   regulator, site, MSI-repeat and BRCA analyses of §9–§12 were fixed in
   [config/followup.yaml](../config/followup.yaml) before they were run.
 - **Scripts:** `30`–`35` build the labels, matrices, models and tables; `37` and `38` the
   regulator and site analyses; `42`, `43` and `45` the MSI-repeat analysis, its robustness checks and
-  the DNA-read genotyping; `46`–`48` the BRCA follow-ups; `36` draws these figures.
-- **Figures:** U1–U14 in [figures/subtype/](figures/subtype/). Each has a caption file stating the
+  the DNA-read genotyping; `46`–`49` the BRCA follow-ups; `36` draws these figures.
+- **Figures:** U1–U15 in [figures/subtype/](figures/subtype/). Each has a caption file stating the
   question, the method, n and the test, and a CSV of the plotted values.
 - **Tables:** `results/subtype/summary/` (performance, baselines, recall, fusion tests),
   `results/subtype/interpret/` (markers, gene overlap, event audit, cross-family tables),
@@ -78,9 +78,10 @@ only for tracts at the acceptor, and the same exons move in all three organs. Th
 replicated only in part on alternative 3′ splice sites, and the mechanism we wrote down for it
 did not hold (§11).
 
-A fourth follow-up brings DNA into breast cancer (§12). Splicing reads HER2 as a programme, not as
-the amplicon. It separates ERBB2-amplified luminal tumours better than expression does, and setting
-the amplicon's inputs to their mean leaves it unchanged. Splice-site mutations skip their exons, and
+A fourth follow-up brings DNA into breast cancer (§12). Splicing reads HER2 without the amplicon.
+It separates ERBB2-amplified luminal tumours about as well as expression does, and setting the
+amplicon's inputs to their mean leaves it unchanged, while expression loses 0.03. An apparent lead
+over expression did not survive a copy-number call without ABSOLUTE's ceiling. Splice-site mutations skip their exons, and
 SF3B1-hotspot tumours use cryptic acceptors, as they should. The events that looked inherited
 mostly are not. In tumour–normal pairs, the models' top "genotype-like" events often change group
 between a patient's normal tissue and tumour: they are subtype programmes.
@@ -124,9 +125,10 @@ transcription read on the other strand (§7).
     T-run ≥ 10 (5% of exons); a genome-only score ranks MSI at AUROC 0.71 and 0.78 (UCEC 0.51), at
     the acceptor only; MRE11 exon 5 replicates in all three. Runs ≥ 20 move toward inclusion
     (exploratory; 2 of 6 replication tests supported, 6 of 6 in direction).
-11. **BRCA with DNA** (U12–U14; D-57 to D-59 fixed in advance): the AS ensemble separates
-    ERBB2-amplified luminal tumours better than GEX (AUROC 0.81 against 0.72; H2 *against*), and
-    not through the amplicon (knockout ≤ 0.007). 110 of 157 splice-site mutations skip their exon;
+11. **BRCA with DNA** (U12–U15; D-57 to D-60 fixed in advance): the AS ensemble separates
+    ERBB2-amplified luminal tumours about as well as GEX (0.81 against 0.75 without the ABSOLUTE
+    ceiling; HU2 not resolved, and no gap on the 15 newly amplified tumours), and not through the
+    amplicon (knockout ≤ 0.007). 110 of 157 splice-site mutations skip their exon;
     SF3B1-hotspot tumours use cryptic acceptors (AUROC 0.90). Only 3 of 45 of the models' top
     genotype-like events pass a tumour–normal germline check; on the 82 that pass overall, LOH still
     shows (L1–L3).
@@ -772,44 +774,75 @@ site, tumour composition and RNA handling (`results/subtype/msi_cis/robustness/`
 ## 12. Breast cancer: what the subtype models read beyond the labels
 
 Three BRCA follow-ups, each fixed in [config/followup.yaml](../config/followup.yaml) before its
-outcome was compared with any model output (D-57 to D-59): which HER2 the PAM50 models learned,
+outcome was compared with any model output (D-57 to D-59, and D-60 re-testing D-58): which HER2 the PAM50 models learned,
 whether splice-site mutations leave their mark, and whether inherited splicing variation reaches the
 subtypes. They bring in DNA for the first time. Three tables come from the TCGA PanCanAtlas:
 ABSOLUTE purity, ploidy and allele-specific copy-number segments, and the MC3 public mutation
-calls. All are on GRCh37; each gene is placed by its own MC3 calls, since no liftover is used.
+calls; D-60 adds the SNP6 copy-ratio segments. All are on GRCh37; each gene is placed by its own MC3 calls, since no liftover is used.
 Tables are in `results/subtype/brca/`.
 
-### Two HER2s: amplification, and the HER2-enriched programme (D-58, U13)
+### Two HER2s: amplification, and the HER2-enriched programme (D-58, D-60, U13, U15)
 
 PAM50 calls a tumour Her2 from its expression, and ERBB2 amplification is a DNA event. The two
-overlap only in part (context). Here, amplified means ABSOLUTE total copy number at ERBB2 ≥ 2 ×
-ploidy. That holds for 31 of 714 LumA/LumB and 30 of 54 PAM50 Her2 tumours.
+overlap only in part (context). Amplified means total copy number at ERBB2 ≥ 2 × ploidy.
 
+**First reading, with ABSOLUTE copy number (D-58, U13).** 31 of 714 LumA/LumB and 30 of 54 PAM50
+Her2 tumours are amplified.
 - **GEX P(Her2) rises in amplified luminal tumours** (H1, supported): AUROC 0.72, q = 9.3e-5.
-- **Splicing sees it better, not worse** (H2, *against*): the AS ensemble's AUROC is 0.81, 0.09
-  above GEX (q = 0.016). The prediction was the reverse.
-- **Within PAM50 Her2, neither model tells amplified from not** (H3, not resolved): GEX 0.482, AS 0.485.
+- **Splicing seemed to see it better** (H2, *against* the prediction): AS ensemble 0.81, 0.09
+  above GEX (q = 0.016). The re-test below does not hold this up.
+- **Within PAM50 Her2, neither model tells amplified from not** (H3, not resolved): GEX 0.482,
+  AS 0.485.
 - **The AS ensemble ranks non-amplified Her2 tumours above amplified luminal ones** (H4,
   supported): AUROC 0.87 (GEX 0.97). Both models' Her2 is the programme first, the amplicon
   second.
-- **Splicing does not read the amplicon** (A-12, exploratory). In every stored fold model, the
-  inputs from chr17:39.6–39.8 Mb (GRCh38, PPP1R1B to GRB7) were set to their training mean. This
-  lowers the GEX AUROC for amplified luminal tumours from 0.716 to 0.686, against 0.716 for 20
-  random input sets of the same size. No splicing view moves by more than 0.007. The amplicon's
-  own events do separate amplified tumours: an alternative last exon at ERBB2's 3′ end, where it
-  overlaps the co-amplified MIEN1 on the other strand, has median PSI 0 against 0.61. The models
-  hardly use them.
 - **With clinical HER2** (IHC or ISH, the pre-specified second reading): among luminal tumours,
   the AS ensemble ranks HER2-positive above HER2-negative at AUROC 0.71, and GEX at 0.65.
 
-**Reading** (interpretation). In amplified luminal tumours, splicing reads a HER2-enriched-like
-programme spread over the genome, not the amplified genes. The GEX model is trained to reproduce a
-label made from expression (D-44). A luminal call, by construction, keeps its expression close to
-the luminal centroids. Splicing is not held to those genes, and that may be why it moves further.
+**The ceiling, and the re-test (D-60, U15).** ABSOLUTE never reports more than 7 copies at ERBB2.
+With D-58's rule, a tumour of ploidy above 3.5 can therefore never be amplified. D-60 was
+pre-specified before the file was downloaded. It reads the PanCanAtlas SNP6 copy ratio at ERBB2,
+made absolute with ABSOLUTE purity and ploidy, and applies the same rule with no ceiling.
+- **Who was left out.** 45 luminal tumours are amplified; 15 of them are new. The new ones are
+  genome-doubled (median ploidy 3.85, against 2.09 for D-58's 31) and amplified to a similar level
+  (5.7 against 5.3 × ploidy). 92% of all amplified tumours sit at ABSOLUTE's ceiling of 7.
+- **The calls agree where ABSOLUTE is uncapped.** Where ABSOLUTE reports fewer than 7 copies,
+  the two copy numbers agree (Spearman 0.92, 880 tumours). The amplified share of clinically
+  HER2-positive tumours rises from 34% to 46% (0.4% of HER2-negative).
+- **GEX P(Her2) rises in amplified luminal tumours** (HU1, supported): AUROC 0.75.
+- **Splicing's lead does not hold** (HU2, not resolved): AS 0.81, GEX 0.75; difference +0.06,
+  q = 0.087.
+- **The independent part shows no lead at all** (HU3, not resolved). On the 15 newly amplified
+  tumours, AS reaches 0.82 and GEX 0.83.
+- **Programme first holds** (HU5, supported): AS P(Her2) ranks non-amplified Her2 tumours above
+  amplified luminal ones, AUROC 0.85.
+- **Both models follow the dose.** Among amplified luminal tumours, GEX P(Her2) rises with the
+  amplification level (HU6, ρ 0.47, supported). Splicing follows it about as much (ρ 0.45). The
+  prediction that it would follow less (HU7) is not resolved.
 
-**Caveat.** ABSOLUTE does not report ERBB2 copy number above 7 in any tumour. So the rule catches
-the highest-level amplifications only: 34% of clinically HER2-positive tumours meet it, against
-0.7% of HER2-negative.
+**Splicing does not use the amplicon** (A-12 and D-60, exploratory).
+- **The knockout.** In every stored fold model, the inputs from chr17:39.6–39.8 Mb (GRCh38,
+  PPP1R1B to GRB7) were set to their training mean.
+  - **GEX:** with D-58's group, the AUROC for amplified luminal tumours drops from 0.716 to 0.686;
+    20 random input sets of the same size leave it at 0.716. With D-60's group it drops from
+    0.753 to 0.720.
+  - **Splicing:** no view moves by more than 0.007 in either group.
+- **The amplicon's own events are left unused.** They do separate amplified tumours: an
+  alternative last exon at ERBB2's 3′ end, where it overlaps the co-amplified MIEN1 on the other
+  strand, has median PSI 0 against 0.61. The models hardly use them.
+
+**Reading** (interpretation).
+- **No better at amplification.** Splicing detects ERBB2 amplification in luminal tumours about
+  as well as expression, not better. D-58's lead came from a group the ceiling had restricted to
+  near-diploid tumours.
+- **Different route.** Splicing gets there without the amplicon's genes. Its P(Her2) rises with
+  the amplification level as GEX's does, yet loses nothing when the 17q12 inputs are removed. So
+  it reads a programme downstream of HER2 whose strength follows the dose, not the amplified DNA
+  itself.
+
+**Caveat.** Even without the ceiling, the rule finds 46% of clinically HER2-positive tumours. Why
+the rest fall short is not tested here. Two possibilities (context) are that the array saturates
+at high copy number and that some tumours are HER2-positive by IHC with a lower-level gain.
 
 ### Splice-site mutations and SF3B1 hotspots (D-59, U14)
 
@@ -912,10 +945,10 @@ tumour–normal pairs could.
 - **Germline calls at the BRCA events.** §12 infers inheritance from tumour–normal agreement in 112
   pairs. Normal-tissue SNP calls near the 20 high-κ events that matched their PSI groups would make
   them splicing QTLs. More pairs would let L4–L6 be decided on confirmed events alone.
-- **ERBB2 copy number without a ceiling.** ABSOLUTE does not report ERBB2 above 7 copies, so §12's
-  amplified group is a third of the clinically HER2-positive tumours. If splicing's lead in H2
-  vanished with a copy-number source that resolves high-level amplification, the "programme"
-  reading would weaken.
+- **ERBB2 by ISH or sequencing depth.** D-60 removed ABSOLUTE's ceiling, and splicing's lead over
+  expression went with it. The amplified group still holds under half of the clinically
+  HER2-positive tumours. A tumour-level ERBB2 call from ISH ratios or exome depth would show
+  whether the remaining tumours behave like these 45.
 - **Tumour DNA at the repeats.** §11 infers repeat contraction from the reference sequence and the
   MSI label. Reads over these acceptor tracts showing contraction alleles in MSI tumours, with
   each tumour's exon shift tracking its own allele, would make the cis route a result; no
@@ -964,8 +997,8 @@ tumour–normal pairs could.
     partly reading the evidence the label was built from.
   - HNSC HPV status is known for a minority of patients (112 of 501) and is confounded with tumour
     site, since oropharynx tumours are mostly HPV-positive. Site was not modelled.
-- **DNA for BRCA only.** §12 uses the PanCanAtlas MC3 calls and ABSOLUTE segments (GRCh37, each
-  gene placed by its own MC3 calls, no liftover). No mutation, methylation or copy-number data are
+- **DNA for BRCA only.** §12 uses the PanCanAtlas MC3 calls, ABSOLUTE segments and SNP6 copy
+  ratios (GRCh37, each gene placed by its own MC3 calls, no liftover). No mutation, methylation or copy-number data are
   joined for POLE, RPL22 or MLH1, so those mechanisms in §7–§8 are context, not result. §11 tests one mechanism from the reference genome, and its
   repeat exons are a result; the deletions behind them are inferred, not observed.
 - **Unstranded libraries.** The audit can flag but not resolve antisense overlap. 65 top events

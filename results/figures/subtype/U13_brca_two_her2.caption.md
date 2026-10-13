@@ -15,7 +15,8 @@ input sets of the same size.
 
 - H1, GEX P(Her2) is higher in amplified luminal tumours: AUROC 0.72, q = 9.3e-5, supported.
 - H2, splicing would see amplification less well than GEX: AUROC difference −0.09 (q = 0.016), **against**: the AS
-  ensemble separates amplified luminal tumours better.
+  ensemble separates amplified luminal tumours better. Without the ABSOLUTE ceiling (D-60, U15) this lead is not
+  resolved, and absent on the newly amplified tumours.
 - H3, within PAM50 Her2, neither model separates amplified from non-amplified tumours (difference −0.003, not
   resolved).
 - H4, AS P(Her2) is higher in non-amplified Her2 than in amplified luminal tumours: AUROC 0.87, supported; GEX 0.97.
