@@ -7,6 +7,7 @@
 #   msi_robustness                           docs/SUBTYPE_METHODS.md D-55 (after D-54's results)
 #   msi_dna                                  docs/SUBTYPE_METHODS.md D-56 (before any read was fetched)
 #   brca_germline, brca_her2, brca_mutations docs/SUBTYPE_METHODS.md D-57..D-59 (BRCA follow-up)
+#   brca_her2_uncapped                       docs/SUBTYPE_METHODS.md D-60 (after D-58's results)
 #
 # Written 2026-10-12, after every model of the three tasks had been fitted and summarised, and
 # before any analysis below was run. Nothing here refits a model or changes a label, a cohort, a
@@ -558,3 +559,52 @@ brca_mutations:                          # D-59 · scripts/48_brca_mutations.py
       why: mutant SF3B1 selects AGs 10-30 nt upstream of the canonical one (Darman et al. 2015)
   exploratory: SF3B1-hotspot and CDH1-mutant tumours by PAM50 and histology; CDH1 exon PSI in
                lobular tumours by CDH1 status (splice, truncating, none); C1 by mutation side
+
+brca_her2_uncapped:                      # D-60 · scripts/49_brca_her2_uncapped.py
+  # Written 2026-10-13, after D-58's results and before the SNP6 segment file was downloaded. D-58's
+  # amplified group came from ABSOLUTE, whose total copy number at ERBB2 is 7 at most in every
+  # tumour, so it held only 31 LumA/LumB and 30 Her2 tumours and 34% of the clinically HER2-positive
+  # ones. Seen: D-58's H1-H4 (H2 against: AS ensemble 0.81 vs GEX 0.72 in luminal tumours), its
+  # exploratory table and knockout, every tumour's out-of-fold P(Her2), ABSOLUTE ERBB2 copy number,
+  # clinical HER2. Not seen: any SNP6 segment (the file is not on disk when this is written).
+  source: broad.mit.edu_PANCAN_Genome_Wide_SNP_6_whitelisted.seg (PanCanAtlas, GRCh37), the
+          segment holding ERBB2's anchor (as D-58, the midpoint of its MC3 call span); a sample
+          with several aliquots uses the first in sort order of the barcode
+  copy_number: R = 2^Segment_Mean read as the copy ratio to the sample's average, ABSOLUTE's input
+               convention; with ABSOLUTE purity a and ploidy t (call status 'called'),
+               q = (R x (a t + 2 (1 - a)) - 2 (1 - a)) / a; no ceiling
+  amplified: q / t >= 2 (D-58's rule without the ceiling)
+  newly_amplified: amplified here and not amplified by D-58's ABSOLUTE rule
+  probability: out-of-fold P(Her2) of BRCA_PAM50, GEX and the AS ensemble, as D-58
+  fdr_family: HU, the 7 tests HU1-HU7
+  predictions:
+    - id: HU1
+      claim: among LumA and LumB tumours, GEX P(Her2) is higher in amplified tumours (AUROC > 0.5)
+      why: D-58 H1 with the wider group
+    - id: HU2
+      claim: in the same tumours, AUROC(AS ensemble) - AUROC(GEX) > 0 (paired bootstrap, 2,000,
+             seed 0)
+      why: D-58 H2's result. The 31 D-58 tumours are inside this group, so this is not independent
+    - id: HU3
+      claim: as HU2, newly amplified luminal tumours against non-amplified ones (the 31 D-58
+             tumours left out); not testable with fewer than 10 newly amplified tumours
+      why: the independent part of the replication; if the AS lead were a property of the highest
+           amplifications, it would vanish here
+    - id: HU4
+      claim: among PAM50 Her2 tumours, AUROC(GEX) - AUROC(AS ensemble) for amplified against not > 0
+      why: D-58 H3, kept as written (not resolved there)
+    - id: HU5
+      claim: AS ensemble P(Her2) is higher in non-amplified PAM50 Her2 tumours than in amplified LumA
+             and LumB tumours (AUROC > 0.5)
+      why: D-58 H4 with the wider group
+    - id: HU6
+      claim: among amplified luminal tumours, Spearman(GEX P(Her2), q / t) > 0
+      why: the GEX model reads the amplicon genes (D-58 knockout, -0.03), whose expression rises
+           with copy number
+    - id: HU7
+      claim: in the same tumours, Spearman(GEX) - Spearman(AS ensemble) > 0 (paired bootstrap)
+      why: if splicing reads a programme rather than the amplicon, it should follow the dose less
+  exploratory: a raw rule without ABSOLUTE (R >= 2) and HU1-HU5 under it; amplified share among
+               clinically HER2-positive and -negative tumours under both rules; Spearman of q with
+               ABSOLUTE copy number where ABSOLUTE is below 7; the per-sample length-weighted median
+               Segment_Mean (the convention check); the D-58 knockout with this amplified group

@@ -4,7 +4,7 @@ The third task of the repository: **within one cancer, which subtype is a primar
 modelled, like the other two, independently in each of the nine views (AFE, ALE, HIT, SE, A5SS,
 A3SS, MXE, RI, GEX). Decisions are numbered from D-30 (D-48..D-51, which span the three tasks, are in
 [ACROSS_TASKS_METHODS.md](ACROSS_TASKS_METHODS.md), as is amendment A-8; D-52..D-56, the MSI-repeat
-follow-up, and D-57..D-59, the BRCA follow-up, are here; D-01..D-12 are in
+follow-up, and D-57..D-60, the BRCA follow-up, are here; D-01..D-12 are in
 [DECISIONS.md](DECISIONS.md), D-13..D-29 in [BIOLOGY_METHODS.md](BIOLOGY_METHODS.md)). Values live
 in [config/subtype.yaml](../config/subtype.yaml); this file explains them.
 
@@ -481,6 +481,16 @@ amplification from ABSOLUTE copy number at ERBB2 (≥ 2 × ploidy). Family H (4 
 Added with D-57. MC3 splice-site SNVs are mapped to the cassette exon they hit (C1, every gene; C2,
 CDH1, the open item of the lobular event card); SF3B1 hotspot tumours should use cryptic
 acceptors 10–30 nt upstream (C3). Family C (3 tests).
+### D-60 HER2 amplification without the ABSOLUTE ceiling · `config/followup.yaml: brca_her2_uncapped` · `scripts/49`
+Written 2026-10-13, after D-58's results and before the file was downloaded. ABSOLUTE never reports
+more than 7 copies at ERBB2, so D-58's amplified group was a third of the clinically HER2-positive
+tumours. D-60 re-reads amplification from the PanCanAtlas SNP6 copy ratio, made absolute with
+ABSOLUTE purity and ploidy and given no ceiling, and keeps D-58's rule (≥ 2 × ploidy). HU1–HU5
+repeat H1–H4 (HU2 now predicts D-58's result, splicing ahead); HU3 is its independent part, on the
+tumours only the new call makes amplified. HU6–HU7 ask whether P(Her2) follows the amplification
+level, which the amplicon-reading GEX model should and a programme-reading splicing model should
+not. Family HU (7 tests).
+
 ---
 
 ## Amendments and deviations
