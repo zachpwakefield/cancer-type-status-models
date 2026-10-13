@@ -10,17 +10,19 @@ kind of that cancer a tumour is — and whether splicing knows. How the three ta
 is in [ACROSS_TASKS.md](ACROSS_TASKS.md).
 
 - **Methods and decisions:** [docs/SUBTYPE_METHODS.md](../docs/SUBTYPE_METHODS.md) (D-30 to D-47
-  and D-52 to D-54, amendments A-1 to A-7 and A-9). Every label map, cohort and threshold was fixed in
-  [config/subtype.yaml](../config/subtype.yaml) before the first model was fitted; the regulator,
-  site and MSI-repeat analyses of §9–§11 were fixed in [config/followup.yaml](../config/followup.yaml)
-  before they were run.
+  and D-52 to D-59, amendments A-1 to A-7 and A-9 to A-14). Every label map, cohort and threshold was
+  fixed in [config/subtype.yaml](../config/subtype.yaml) before the first model was fitted; the
+  regulator, site, MSI-repeat and BRCA analyses of §9–§12 were fixed in
+  [config/followup.yaml](../config/followup.yaml) before they were run.
 - **Scripts:** `30`–`35` build the labels, matrices, models and tables; `37` and `38` the
-  regulator and site analyses; `42` the MSI-repeat analysis; `36` draws these figures.
-- **Figures:** U1–U11 in [figures/subtype/](figures/subtype/). Each has a caption file stating the
+  regulator and site analyses; `42`, `43` and `45` the MSI-repeat analysis, its robustness checks and
+  the DNA-read genotyping; `46`–`48` the BRCA follow-ups; `36` draws these figures.
+- **Figures:** U1–U14 in [figures/subtype/](figures/subtype/). Each has a caption file stating the
   question, the method, n and the test, and a CSV of the plotted values.
 - **Tables:** `results/subtype/summary/` (performance, baselines, recall, fusion tests),
   `results/subtype/interpret/` (markers, gene overlap, event audit, cross-family tables),
-  `results/subtype/regulators/`, `results/subtype/site_probe/`, `results/subtype/msi_cis/` and one
+  `results/subtype/regulators/`, `results/subtype/site_probe/`, `results/subtype/msi_cis/`,
+  `results/subtype/brca/` and one
   folder per (view, cohort) under `results/subtype/<view>/<cohort>/`.
 - **Statistics in figures:** raw p. Any q is in the CSV with its FDR family named.
 - **Result or context.** Each biological statement is marked as a *result* of this data or as
@@ -76,6 +78,13 @@ only for tracts at the acceptor, and the same exons move in all three organs. Th
 replicated only in part on alternative 3′ splice sites, and the mechanism we wrote down for it
 did not hold (§11).
 
+A fourth follow-up brings DNA into breast cancer (§12). Splicing reads HER2 as a programme, not as
+the amplicon. It separates ERBB2-amplified luminal tumours better than expression does, and setting
+the amplicon's inputs to their mean leaves it unchanged. Splice-site mutations skip their exons, and
+SF3B1-hotspot tumours use cryptic acceptors, as they should. The events that looked inherited
+mostly are not. In tumour–normal pairs, the models' top "genotype-like" events often change group
+between a patient's normal tissue and tumour: they are subtype programmes.
+
 The neighbour-gene audit keeps this honest. Of 2,248 top events, 97 follow an overlapping gene
 more than their own — 62 of them in HIT — and four of the nineteen strongest single events are
 such readouts; the leiomyosarcoma first exon that looks like an NDE1 promoter is MYH11
@@ -115,6 +124,12 @@ transcription read on the other strand (§7).
     T-run ≥ 10 (5% of exons); a genome-only score ranks MSI at AUROC 0.71 and 0.78 (UCEC 0.51), at
     the acceptor only; MRE11 exon 5 replicates in all three. Runs ≥ 20 move toward inclusion
     (exploratory; 2 of 6 replication tests supported, 6 of 6 in direction).
+11. **BRCA with DNA** (U12–U14; D-57 to D-59 fixed in advance): the AS ensemble separates
+    ERBB2-amplified luminal tumours better than GEX (AUROC 0.81 against 0.72; H2 *against*), and
+    not through the amplicon (knockout ≤ 0.007). 110 of 157 splice-site mutations skip their exon;
+    SF3B1-hotspot tumours use cryptic acceptors (AUROC 0.90). Only 3 of 45 of the models' top
+    genotype-like events pass a tumour–normal germline check; on the 82 that pass overall, LOH still
+    shows (L1–L3).
 
 ---
 
@@ -754,18 +769,153 @@ site, tumour composition and RNA handling (`results/subtype/msi_cis/robustness/`
 - **The retained-intron check.** It was too thin to settle that: only 4 repeat exons with runs
   ≥ 20 per cohort have a matching RI event (`ri_check.csv`).
 
+## 12. Breast cancer: what the subtype models read beyond the labels
+
+Three BRCA follow-ups, each fixed in [config/followup.yaml](../config/followup.yaml) before its
+outcome was compared with any model output (D-57 to D-59): which HER2 the PAM50 models learned,
+whether splice-site mutations leave their mark, and whether inherited splicing variation reaches the
+subtypes. They bring in DNA for the first time. Three tables come from the TCGA PanCanAtlas:
+ABSOLUTE purity, ploidy and allele-specific copy-number segments, and the MC3 public mutation
+calls. All are on GRCh37; each gene is placed by its own MC3 calls, since no liftover is used.
+Tables are in `results/subtype/brca/`.
+
+### Two HER2s: amplification, and the HER2-enriched programme (D-58, U13)
+
+PAM50 calls a tumour Her2 from its expression, and ERBB2 amplification is a DNA event. The two
+overlap only in part (context). Here, amplified means ABSOLUTE total copy number at ERBB2 ≥ 2 ×
+ploidy. That holds for 31 of 714 LumA/LumB and 30 of 54 PAM50 Her2 tumours.
+
+- **GEX P(Her2) rises in amplified luminal tumours** (H1, supported): AUROC 0.72, q = 9.3e-5.
+- **Splicing sees it better, not worse** (H2, *against*): the AS ensemble's AUROC is 0.81, 0.09
+  above GEX (q = 0.016). The prediction was the reverse.
+- **Within PAM50 Her2, neither model tells amplified from not** (H3, not resolved): GEX 0.482, AS 0.485.
+- **The AS ensemble ranks non-amplified Her2 tumours above amplified luminal ones** (H4,
+  supported): AUROC 0.87 (GEX 0.97). Both models' Her2 is the programme first, the amplicon
+  second.
+- **Splicing does not read the amplicon** (A-12, exploratory). In every stored fold model, the
+  inputs from chr17:39.6–39.8 Mb (GRCh38, PPP1R1B to GRB7) were set to their training mean. This
+  lowers the GEX AUROC for amplified luminal tumours from 0.716 to 0.686, against 0.716 for 20
+  random input sets of the same size. No splicing view moves by more than 0.007. The amplicon's
+  own events do separate amplified tumours: an alternative last exon at ERBB2's 3′ end, where it
+  overlaps the co-amplified MIEN1 on the other strand, has median PSI 0 against 0.61. The models
+  hardly use them.
+- **With clinical HER2** (IHC or ISH, the pre-specified second reading): among luminal tumours,
+  the AS ensemble ranks HER2-positive above HER2-negative at AUROC 0.71, and GEX at 0.65.
+
+**Reading** (interpretation). In amplified luminal tumours, splicing reads a HER2-enriched-like
+programme spread over the genome, not the amplified genes. The GEX model is trained to reproduce a
+label made from expression (D-44). A luminal call, by construction, keeps its expression close to
+the luminal centroids. Splicing is not held to those genes, and that may be why it moves further.
+
+**Caveat.** ABSOLUTE does not report ERBB2 copy number above 7 in any tumour. So the rule catches
+the highest-level amplifications only: 34% of clinically HER2-positive tumours meet it, against
+0.7% of HER2-negative.
+
+### Splice-site mutations and SF3B1 hotspots (D-59, U14)
+
+- **A mutated splice site skips its exon** (C1, supported). There are 157 MC3 SNVs at +1/+2 or
+  −1/−2 of a cassette exon in the SE matrix. In 110 of them, the exon in the mutated tumour falls
+  below the cohort median: median percentile 0.093, q = 8.0e-7. Donor mutations give 0.047 (68)
+  and acceptor mutations 0.13 (89). This is a positive control, and it passes.
+- **CDH1** (C2, not resolved). All 5 CDH1 splice-site mutations with a cassette exon put their
+  tumour at about the 0.1st percentile, but with five mutations a sign test cannot reach
+  p < 0.05 (p = 0.0625).
+- **SF3B1 hotspots use cryptic acceptors** (C3, supported). The score covers 820 A3SS events whose
+  two acceptors lie 10–30 nt apart and whose upstream acceptor is rarely used in normals. It
+  separates the 14 hotspot tumours (K700E and the other HEAT-repeat codons) from the other 1,059
+  at AUROC 0.90, q = 8.0e-7. All 14 are LumA or LumB. SF3B1 hotspot mutations move the 3′ splice
+  site to a cryptic AG upstream (context; Darman et al. 2015, DeBoever et al. 2015).
+- **The lobular CDH1 tail is not all splice-site mutation** (exploratory). Of the lobular tumours
+  in MC3, 9 carry a CDH1 splice-site mutation, 79 a truncating one and 70 neither. §7 named the
+  lowest decile of CDH1 exon 6 (145 bp). That decile sits at PSI 0.86 with a splice-site mutation,
+  0.95 with a truncating one and 0.96 with neither, against 0.996 in ductal tumours. The
+  splice-site tumours are the extreme of the tail, not all of it.
+
+### Inherited splicing: what the pair check removed (D-57, A-13, A-14, U12)
+
+**Design.** Some splicing events behave like genotypes: PSI falls into three well-separated groups
+(low, mid, high), and the mid group appears in normal tissue too. A label-blind scan found 1,594
+such events in 1,110 genes. In the three BRCA cohorts, 122 of the models' 936 top-event entries
+are of this kind (13%), against 2.6% of all eligible events. That raised two questions:
+- does the tumour's loss of heterozygosity (LOH) show in these events (L1–L6)?
+- does ancestry reach the subtypes through them (A1–A3)?
+
+**As pre-specified, on all 1,110 events:**
+- **LOH** (L1–L4 and L6 supported):
+  - inside ABSOLUTE LOH segments, heterozygous events sit further from the middle: 88 of 101
+    tumour–normal pairs (L1);
+  - the shift grows with purity (ρ 0.22, L2);
+  - it follows each tumour's predicted allelic imbalance (L3);
+  - arm by arm, it tracks ABSOLUTE's LOH in 36 of 37 arms (L6) and the LumA–Basal LOH difference
+    (ρ 0.38, L4).
+- **16q in lobular tumours** (L5, not resolved): AUROC 0.50.
+- **Ancestry**:
+  - GSTM1 null (no expression; the common homozygous deletion, context) is less frequent in Black
+    than in white patients (93 of 181 against 486 of 747; A1, supported);
+  - adjusting the GSTM1–ER association for race made it larger (log OR −0.47 → −0.61), against
+    A2's claim (A-13);
+  - 360 of 1,110 genes differ in allele frequency by race, against at most 6 under permutation
+    (A3, supported).
+
+**The check that changed the reading** (A-13; added after these results). An inherited allele
+cannot turn a homozygous normal into the opposite homozygote in its own tumour. In 112
+tumour–normal pairs, that happened in a median of 20% of homozygous pairs per event.
+- **Few events pass.** Only 82 of 1,110 pass A-13 (≤ 5% flips over at least 20 homozygous pairs).
+- **Rare alleles pass easily** (A-14, exploratory). The 82 have about half the minor-allele
+  frequency of the rest, which makes a flip rare anyway. Tumour–normal agreement (Cohen's κ) is
+  above 0.6 for only 20 events. These include CAST (κ 0.95: 109 of 112 pairs agree, U12a) and the
+  HLA-DRB1/DRB5 region.
+- **Agreement is necessary, not sufficient.** Some high-κ events are interferon-induced (IFI27,
+  IFI44L) or imprinted (H19). They may record a patient-level state rather than a genotype.
+
+**The models' top genotype-like events are subtype programmes** (result).
+- **They fail the check.** 3 of the 45 that could be checked pass A-13, and none has κ above 0.24.
+- **TMEM101 is the clearest case.** Its A5SS event is the most important of them (U12b): 13 of 59
+  normals homozygous for the high group carry a low-group tumour.
+- **Their frequency follows subtype.** The high-group frequency differs between LumA and Basal
+  tumours by a median 0.18, against 0.03 for confirmed germline events (U12d). For TMEM101 it is
+  0.44 against 0.99.
+- **The enrichment is not inherited signal.** The models' "genotype-like" enrichment is a
+  preference for three-level tumour programmes.
+
+**Re-run on the 82 confirmed events** (A-13 sensitivity):
+- **The LOH read-out holds and is larger** (L1–L3 supported): 47 of 64 pairs; median shift
+  0.071, against 0.034 on all events.
+- **The arm tests cannot be run.** Only 4 arms keep at least 5 anchored events: L4 and L6 are not
+  resolved, and L5 is not testable. So the arm-level results above cannot be separated from
+  subtype biology.
+- **Ancestry is stronger** (A3 supported): 45 of 82 confirmed genes differ by race (55%), against
+  32% of all events, as inherited variation should.
+
+**Exploratory: accuracy by race.**
+- **Histology is worse for Black patients.** Balanced accuracy is lower than for white patients
+  in both modalities: GEX 0.76 against 0.88, AS 0.74 against 0.85 (163 and 654 patients).
+- **ER status and PAM50 are not.** They differ by ≤ 0.03.
+- **Not explained here.** Nothing in this section explains the histology gap.
+
+**Reading.** Inherited splicing variants are in the data, and a tumour's LOH is visible in them.
+But the BRCA subtype models do not read them: their three-level events are programmes that change
+with the subtype. The label-blind genotype rule could not tell the two apart. Only the
+tumour–normal pairs could.
+
 ## What would change the reading
 
-- **Mutation and copy-number calls joined to the events.** Three named results in §7–§8 rest on a
-  mechanism this repository cannot see:
-  - CDH1 exon skipping in lobular tumours, if those tumours turn out to carry CDH1 splice-site
-    mutations;
+- **Mutation and copy-number calls joined to the events.** Three named results in §7–§8 rested on a
+  mechanism this repository could not see. §12 joins MC3 calls for BRCA: the lobular CDH1 tail is
+  partly splice-site mutation (its extreme) and partly not. Still open:
   - the RPL22L1 event, if RPL22 frameshift status explains it;
   - the POLE class that splicing misses (§3), if its POLE-mutant tumours share no splicing
     programme at all.
 
-  A finding that the skipping tumours carry no CDH1 lesion, or that the RPL22L1 event is unrelated
-  to RPL22, would remove those mechanisms from the reading.
+  A finding that the RPL22L1 event is unrelated to RPL22 would remove that mechanism from the
+  reading.
+- **Germline calls at the BRCA events.** §12 infers inheritance from tumour–normal agreement in 112
+  pairs. Normal-tissue SNP calls near the 20 high-κ events that matched their PSI groups would make
+  them splicing QTLs. More pairs would let L4–L6 be decided on confirmed events alone.
+- **ERBB2 copy number without a ceiling.** ABSOLUTE does not report ERBB2 above 7 copies, so §12's
+  amplified group is a third of the clinically HER2-positive tumours. If splicing's lead in H2
+  vanished with a copy-number source that resolves high-level amplification, the "programme"
+  reading would weaken.
 - **Tumour DNA at the repeats.** §11 infers repeat contraction from the reference sequence and the
   MSI label. Reads over these acceptor tracts showing contraction alleles in MSI tumours, with
   each tumour's exon shift tracking its own allele, would make the cis route a result; no
@@ -814,8 +964,9 @@ site, tumour composition and RNA handling (`results/subtype/msi_cis/robustness/`
     partly reading the evidence the label was built from.
   - HNSC HPV status is known for a minority of patients (112 of 501) and is confounded with tumour
     site, since oropharynx tumours are mostly HPV-positive. Site was not modelled.
-- **No mutation, methylation or copy-number data locally** for CDH1, POLE, RPL22 or MLH1. Every
-  mechanism in §7–§8 is therefore context, not result. §11 tests one mechanism from the reference genome, and its
+- **DNA for BRCA only.** §12 uses the PanCanAtlas MC3 calls and ABSOLUTE segments (GRCh37, each
+  gene placed by its own MC3 calls, no liftover). No mutation, methylation or copy-number data are
+  joined for POLE, RPL22 or MLH1, so those mechanisms in §7–§8 are context, not result. §11 tests one mechanism from the reference genome, and its
   repeat exons are a result; the deletions behind them are inferred, not observed.
 - **Unstranded libraries.** The audit can flag but not resolve antisense overlap. 65 top events
   overlap a gene the expression matrix does not hold and stay uncleared, including two of U6's
@@ -830,7 +981,8 @@ site, tumour composition and RNA handling (`results/subtype/msi_cis/robustness/`
 - **Exploratory additions.** The error-marker, shared-class and MSI-confound tables and U7 were
   added after results had been read (A-4), as were the R5/R6 sensitivity checks (A-6). In §11,
   D-53 and D-54 were written after D-52's results; the reversal at ≥ 20 nt (U11a, c) is
-  exploratory, and D-54 is its partial replication. They are
+  exploratory, and D-54 is its partial replication. In §12, the knockout (A-12), the germline check
+  and its re-run (A-13), pair κ (A-14) and accuracy by race were added after results. They are
   descriptive, and none feeds a model. A-1 to A-3 changed presentation or widened an audit only.
 
 ## References
@@ -848,6 +1000,8 @@ Literature used as *context* (never to choose a feature, a model or an event):
 - Ceccarelli M et al. (2016) Molecular profiling reveals biologically discrete subsets and pathways of progression in diffuse glioma. *Cell* 164:550.
 - Chung Y et al. (2023) Evaluation of an eight marker-panel including long mononucleotide repeat markers to detect microsatellite instability in colorectal, gastric, and endometrial cancers. *BMC Cancer* 23:1100.
 - Ciriello G et al. (2015) Comprehensive molecular portraits of invasive lobular breast cancer. *Cell* 163:506.
+- Darman RB et al. (2015) Cancer-associated SF3B1 hotspot mutations induce cryptic 3′ splice site selection through use of a different branch point. *Cell Rep* 13:1033.
+- DeBoever C et al. (2015) Transcriptome sequencing reveals potential mechanism of cryptic 3′ splice site selection in SF3B1-mutated cancers. *PLoS Comput Biol* 11:e1004105.
 - Dorard C et al. (2011) Expression of a mutant HSP110 sensitizes colorectal cancer cells to chemotherapy and improves disease prognosis. *Nat Med* 17:1283.
 - Eisenhofer G et al. (2004) Distinct gene expression profiles in norepinephrine- and epinephrine-producing hereditary and sporadic pheochromocytomas: activation of hypoxia-driven angiogenic pathways in von Hippel-Lindau syndrome. *Endocr Relat Cancer* 11:897.
 - Fishbein L et al. (2017) Comprehensive molecular characterization of pheochromocytoma and paraganglioma. *Cancer Cell* 31:181.
@@ -876,4 +1030,5 @@ of Gooding 1994). The five added with §9 (Gooding 1998 and 2013, Vanharanta 201
 and 2010) were checked against the same kinds of record; re-reading the two Gooding abstracts is
 what exposed the R6 misreading (A-5). The five added with §11 (Chung 2023, Giannini 2002 and 2004,
 Jonchère 2024, Zarnack 2013) and Dorard 2011 were checked against PubMed, PMC or publisher records
-on 2026-10-12, before they were cited.
+on 2026-10-12, before they were cited. Darman 2015 (PMID 26565915) and DeBoever 2015 (PMID 25768983),
+added with §12, were checked against PubMed and PMC records on 2026-10-13, before they were cited.

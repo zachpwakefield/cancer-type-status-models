@@ -44,7 +44,7 @@ tasks relate.
 | AS ensemble (8 splicing views) | 0.994; 91 errors | 0.950 | 0.80 / 0.82 / 0.81 |
 | GEX + AS (1:1) | 77 errors (McNemar p = 1.1e-4) | 0.961 (p = 3.9e-9) | −0.04 to +0.04 per cohort; no McNemar p < 0.05 |
 | Headline | splicing is a second, partly independent view of the tumour state | splicing is a lineage code, and fails where a lineage code should | splicing matches expression on lineage and genome-state subtypes and loses where one gene defines the class |
-| Write-up · figures | [TUMOUR_STATUS.md](results/TUMOUR_STATUS.md) · S1–S10 | [CANCER_TYPE.md](results/CANCER_TYPE.md) · T1–T9 | [SUBTYPE.md](results/SUBTYPE.md) · U1–U11 |
+| Write-up · figures | [TUMOUR_STATUS.md](results/TUMOUR_STATUS.md) · S1–S10 | [CANCER_TYPE.md](results/CANCER_TYPE.md) · T1–T9 | [SUBTYPE.md](results/SUBTYPE.md) · U1–U14 |
 
 [**Across the three tasks**](#across-the-three-tasks) ([ACROSS_TASKS.md](results/ACROSS_TASKS.md),
 X1–X4) compares them:
@@ -58,13 +58,15 @@ One subtype result goes furthest. The MSI splicing marks are largely written in 
 exons the MSI models chose sit after long poly-T tracts that mismatch-repair deficiency destabilises.
 A score from the reference sequence alone ranks MSI tumours in stomach and colon
 ([U10–U11](#8-msi-splicing-follows-acceptor-poly-t-repeats-in-the-genome)).
+In breast cancer, splicing reads HER2 as a programme rather than as the amplified genes
+([U12–U14](#9-breast-cancer-with-dna-two-her2s-splice-site-mutations-and-what-the-pair-check-removed)).
 
 Full tables, CIs and the top SHAP features of every cohort and view are in
 [results/RESULTS.md](results/RESULTS.md). Methods are in three files:
 - [docs/BIOLOGY_METHODS.md](docs/BIOLOGY_METHODS.md), D-13 to D-29: interpretation of status and
   type;
-- [docs/SUBTYPE_METHODS.md](docs/SUBTYPE_METHODS.md), D-30 to D-47 and D-52 to D-56: the subtype task
-  and its MSI-repeat follow-up;
+- [docs/SUBTYPE_METHODS.md](docs/SUBTYPE_METHODS.md), D-30 to D-47 and D-52 to D-59: the subtype task
+  and its MSI-repeat and BRCA follow-ups;
 - [docs/ACROSS_TASKS_METHODS.md](docs/ACROSS_TASKS_METHODS.md), D-48 to D-51: the cross-task
   layer.
 
@@ -390,7 +392,7 @@ Not shown here, all in the write-up: per-class recall against expression (T2), p
 
 ## Subtype within a cancer: 22 cohorts in 15 cancers
 
-**Full write-up: [results/SUBTYPE.md](results/SUBTYPE.md)** (figures U1–U11) — *within a cancer,
+**Full write-up: [results/SUBTYPE.md](results/SUBTYPE.md)** (figures U1–U14) — *within a cancer,
 splicing recovers lineage and genome state about as well as expression, and loses where a subtype
 is a single gene switched on.* One model per (cohort, view) over 22 subtype cohorts from 15 TCGA
 projects:
@@ -399,9 +401,9 @@ projects:
 
 Every label map, exclusion and minimum class size (20 patients) was fixed in
 [config/subtype.yaml](config/subtype.yaml) before the first model was fitted
-([docs/SUBTYPE_METHODS.md](docs/SUBTYPE_METHODS.md), D-30 to D-45); the regulator, site
-and MSI-repeat analyses of U8–U11 were fixed in [config/followup.yaml](config/followup.yaml) before
-they were run (D-46, D-47, D-52 to D-56).
+([docs/SUBTYPE_METHODS.md](docs/SUBTYPE_METHODS.md), D-30 to D-45); the regulator, site,
+MSI-repeat and BRCA analyses of U8–U14 were fixed in [config/followup.yaml](config/followup.yaml)
+before they were run (D-46, D-47, D-52 to D-59).
 
 ### Performance
 
@@ -638,6 +640,49 @@ in all three cancers (56–67% move up, against 38–49% for runs of 10–19). T
 [U10 caption](results/figures/subtype/U10_msi_repeats.caption.md) ·
 [U11 caption](results/figures/subtype/U11_msi_long_tracts.caption.md) ·
 [§11](results/SUBTYPE.md#11-the-msi-splicing-marks-are-written-in-the-genome-acceptor-poly-t-repeats)
+
+#### 9. Breast cancer with DNA: two HER2s, splice-site mutations, and what the pair check removed
+
+<img src="results/figures/subtype/U13_brca_two_her2.png" width="900" alt="U13: PAM50 Her2 probability by ERBB2 amplification for GEX and the AS ensemble, AUROCs for each comparison, and the amplicon knockout">
+
+**U13.** Which HER2 did the PAM50 models learn? ERBB2 amplification was taken from ABSOLUTE copy
+number (D-58).
+- **Splicing sees amplification better.** In luminal tumours, the AS ensemble separates amplified
+  from not at AUROC 0.81, against 0.72 for GEX. We had predicted the reverse (H2, *against*).
+- **It reads a programme, not the amplicon.** Setting the 17q12 amplicon's inputs to their mean
+  costs GEX 0.03 and no splicing view more than 0.007 (A-12, exploratory).
+- **Within PAM50 Her2, neither model tells amplified from not** (0.48).
+- **Caveat:** ABSOLUTE does not report ERBB2 above 7 copies, so the rule finds a third of the
+  clinically HER2-positive tumours.
+
+<img src="results/figures/subtype/U14_brca_mutations.png" width="620" alt="U14: PSI percentile of exons next to splice-site mutations, and a cryptic A3SS score in SF3B1-hotspot tumours">
+
+**U14.** Mutations leave the expected marks (D-59).
+- **Splice-site mutations skip their exon.** 110 of 157 put it below the cohort median (median
+  percentile 0.09).
+- **SF3B1-hotspot tumours use cryptic acceptors.** The score separates them at AUROC 0.90, and all
+  14 are luminal.
+- **CDH1 explains part of the lobular tail.** Its 9 splice-mutant lobular tumours are the extreme
+  of the lobular CDH1 skipping tail, not all of it.
+
+<img src="results/figures/subtype/U12_brca_germline_check.png" width="900" alt="U12: tumour-normal pair tables for CAST and TMEM101, tumour-normal agreement across events, and high-group frequency in LumA against Basal tumours">
+
+**U12.** Are the models' "genotype-like" splicing events inherited? A label-blind scan found 1,594
+events whose PSI falls into three genotype-like groups, and the BRCA models favour them (D-57). The
+pre-specified LOH and ancestry tests mostly held. Then a check from 112 tumour–normal pairs was
+added (A-13): an inherited allele cannot turn a homozygous normal into the opposite homozygote.
+- **Most events change group in their own tumour.** Only 82 of 1,110 pass the check, and 20
+  agree at κ > 0.6. CAST is one of them (a).
+- **The models' top events are not inherited.** 3 of 45 pass, and none agrees above κ 0.24
+  (TMEM101, b). Their frequency differs between LumA and Basal tumours (d): they are subtype
+  programmes.
+- **On the confirmed events, LOH still shows** (L1–L3), and ancestry differences are commoner
+  (55% of genes, against 32%).
+
+[U12 caption](results/figures/subtype/U12_brca_germline_check.caption.md) ·
+[U13 caption](results/figures/subtype/U13_brca_two_her2.caption.md) ·
+[U14 caption](results/figures/subtype/U14_brca_mutations.caption.md) ·
+[§12](results/SUBTYPE.md#12-breast-cancer-what-the-subtype-models-read-beyond-the-labels)
 
 ### Checks and caveats
 

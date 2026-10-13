@@ -12,10 +12,13 @@ One question per figure, in the order the story is told in results/SUBTYPE.md:
     U9  is the subtype signal tied to the tissue-source site (D-47)?
     U10 does genome sequence say which exons MSI tumours skip (D-52)?
     U11 do the longest acceptor repeats move the other way (D-53, D-54)?
+    U12 are the BRCA models' genotype-like splicing events inherited? Tumour-normal pairs (D-57, A-13, A-14)
+    U13 which HER2 did each modality learn: amplification or the HER2-enriched programme (D-58)?
+    U14 do splice-site mutations and SF3B1 hotspots leave their marks in BRCA splicing (D-59)?
 
 Reads results/subtype/summary/ (step 34), results/subtype/interpret/ (step 35),
-results/subtype/regulators/ (step 37), results/subtype/site_probe/ (step 38) and
-results/subtype/msi_cis/ (step 42). Every figure
+results/subtype/regulators/ (step 37), results/subtype/site_probe/ (step 38),
+results/subtype/msi_cis/ (step 42) and results/subtype/brca/ (steps 46-48). Every figure
 is SVG + PDF + 400-dpi PNG with `<stem>.csv` of the plotted values and `<stem>.caption.md`.
 Usage: python scripts/36_subtype_figures.py [U1 U3 ...]        (default: all)
 """
@@ -1045,10 +1048,376 @@ cohort. What the data show is a length rule, not its cause. Whether the rMATS PS
 recorded; if it does, unspliced pre-mRNA could add to an apparent increase. Stars: * p < 0.05, ** p < 0.01,
 *** p < 0.001, ns otherwise; q in the CSV."""
 
+# ============================================================ BRCA follow-up (D-57..D-59)
+BRCA_DIR = SCFG.results_dir / TASK / "brca"
+BRCA_LOCAL = SCFG.base_data_dir / "brca"
+
+
+def _step(name: str):
+    import importlib.util
+    from pathlib import Path
+    spec = importlib.util.spec_from_file_location(name[:2], Path(__file__).with_name(name))
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+def _box(ax, x, v, col, width=0.32, dots=True, rng=None, s=2.2):
+    q1, med, q3 = np.percentile(v, [25, 50, 75])
+    lo, hi = v[v >= q1 - 1.5 * (q3 - q1)].min(), v[v <= q3 + 1.5 * (q3 - q1)].max()
+    ax.add_patch(plt.Rectangle((x - width / 2, q1), width, q3 - q1, facecolor="white", edgecolor=col, linewidth=0.7,
+                               zorder=2))
+    ax.vlines(x, lo, q1, color=col, linewidth=0.6, zorder=1)
+    ax.vlines(x, q3, hi, color=col, linewidth=0.6, zorder=1)
+    if dots:
+        ax.scatter(x + rng.uniform(-width / 2.6, width / 2.6, len(v)), v, s=s, color=col, alpha=0.45, linewidths=0, zorder=3)
+    ax.scatter(x, med, marker="D", s=10, color=col, edgecolors="white", linewidths=0.4, zorder=4)
+    return {"n": len(v), "median": med, "q1": q1, "q3": q3, "whisker_low": lo, "whisker_high": hi}
+
+
+GROUP_NAMES = ["low", "mid", "high"]
+
+
+def U12() -> None:
+    gd = BRCA_DIR / "germline"
+    chk = pd.read_csv(gd / "germline_check.csv")
+    prof = pd.read_csv(gd / "top_events_genotype_like_profile.csv")
+    pt = pd.read_csv(gd / "pair_tables_examples.csv")
+    pr = pd.read_csv(gd / "predictions.csv").set_index("id")
+    pc = pd.read_csv(gd / "predictions_germline_confirmed.csv").set_index("id")
+    top = chk.gene_id.isin(prof.gene_id)
+    fig = plt.figure(figsize=(DOUBLE, 2.15))
+    gs = fig.add_gridspec(1, 4, width_ratios=[1, 1, 1, 1], wspace=0.75)
+    rows = []
+    # a, b. pair tables: each normal's PSI group against its own tumour's
+    axes = []
+    for i, sym in enumerate(["CAST", "TMEM101"]):
+        ax = fig.add_subplot(gs[i])
+        sub = pt[pt.symbol.eq(sym)]
+        n = sub.pivot(index="normal_group", columns="tumour_group", values="pairs").to_numpy()
+        frac = n / n.sum(1, keepdims=True).clip(min=1)
+        ax.imshow(frac, cmap=SEQ, vmin=0, vmax=1, aspect="equal")
+        for r_ in range(3):
+            for c_ in range(3):
+                ax.text(c_, r_, f"{n[r_, c_]}", ha="center", va="center", fontsize=6,
+                        color="white" if frac[r_, c_] > 0.55 else INK)
+                rows.append({"panel": "ab"[i], "symbol": sym, "event": f"{VIEW_LABEL[sub.view.iat[0]]} {sub.region.iat[0]}",
+                             "normal_group": GROUP_NAMES[r_], "tumour_group": GROUP_NAMES[c_], "pairs": int(n[r_, c_]),
+                             "share_of_normal_group": frac[r_, c_]})
+        heat_axes(ax, GROUP_NAMES, GROUP_NAMES, row_size=6, col_size=6)
+        k = float(chk.loc[chk.symbol.eq(sym), "pair_kappa"].iat[0])
+        ax.set_xlabel(f"own tumour's group\n{sym} {VIEW_LABEL[sub.view.iat[0]]}, κ = {k:.2f}", fontsize=6)
+        if i == 0:
+            ax.set_ylabel("normal's PSI group", fontsize=6)
+        rows.append({"panel": "ab"[i], "symbol": sym, "pair_kappa": k})
+        axes.append(ax)
+    # c. pair agreement over events
+    cx = fig.add_subplot(gs[2])
+    sets = [("all", chk.pair_kappa, MUTED), ("A-13", chk.pair_kappa[chk.confirmed], INK),
+            ("top", chk.pair_kappa[top], ACCENT)]
+    for lab, v, col in sets:
+        v = np.sort(v.dropna().to_numpy())
+        y = np.arange(1, len(v) + 1) / len(v)
+        cx.step(v, y, where="post", color=col, linewidth=1.0, label=f"{lab} ({len(v)})")
+        rows += [{"panel": "c", "set": lab, "pair_kappa": float(a), "ecdf": float(b)} for a, b in zip(v, y)]
+    cx.set_xlim(-0.25, 1.0)
+    cx.set_ylim(0, 1.02)
+    cx.set_xlabel("tumour–normal agreement (κ)", fontsize=6)
+    cx.set_ylabel("share of events", fontsize=6)
+    cx.set_xticks([0, 0.5, 1])
+    cx.set_box_aspect(1)
+    cx.legend(loc="lower right", fontsize=5.2, handlelength=1.0, handletextpad=0.4, borderaxespad=0.0,
+              bbox_to_anchor=(1.02, 0.0))
+    # d. high-allele frequency in LumA against Basal tumours
+    dx = fig.add_subplot(gs[3])
+    dx.plot([0, 1], [0, 1], color=MUTED, linewidth=0.6, linestyle=(0, (3, 2)), zorder=0)
+    rows.append({"panel": "d", "set": "reference line (equal frequency)", "af_LumA": 0.0, "af_Basal": 0.0,
+                 "af_LumA_end": 1.0, "af_Basal_end": 1.0})
+    for lab, k, col, s in [("all", ~chk.confirmed & ~top, GRID, 3), ("A-13", chk.confirmed, INK, 5),
+                           ("top", top, ACCENT, 7)]:
+        sub = chk[k]
+        dx.scatter(sub.af_LumA, sub.af_Basal, s=s, color=col, linewidth=0, zorder=2 if col != GRID else 1)
+        rows += [{"panel": "d", "set": lab, "symbol": r.symbol, "view": r.view, "region": r.region,
+                  "af_LumA": r.af_LumA, "af_Basal": r.af_Basal, "pair_kappa": r.pair_kappa}
+                 for r in sub.itertuples(index=False)]
+    for sym, xy in [("CAST", (0.97, 0.1)), ("TMEM101", (0.02, 0.8))]:
+        r = chk[chk.symbol.eq(sym)].iloc[0]
+        dx.scatter([r.af_LumA], [r.af_Basal], s=26, facecolor="none", edgecolor=INK, linewidth=0.6, zorder=3,
+                   clip_on=False)
+        dx.annotate(sym, (r.af_LumA, r.af_Basal), xytext=xy, textcoords="data", fontsize=5.6, color=INK,
+                    ha="right" if xy[0] > 0.5 else "left", va="center",
+                    arrowprops=dict(arrowstyle="-", color=INK2, linewidth=0.5, shrinkA=1, shrinkB=3))
+    dx.set_xlim(0, 1)
+    dx.set_ylim(0, 1)
+    dx.set_box_aspect(1)
+    dx.set_xticks([0, 0.5, 1])
+    dx.set_yticks([0, 0.5, 1])
+    dx.set_xlabel("high group, LumA", fontsize=6)
+    dx.set_ylabel("high group, Basal", fontsize=6)
+    for a_, lab, x in [(axes[0], "a", -0.5), (axes[1], "b", -0.5), (cx, "c", -0.42), (dx, "d", -0.42)]:
+        a_.text(x, 1.06, lab, transform=a_.transAxes, fontsize=8, fontweight="bold")
+    save(fig, OUT, "U12_brca_germline_check", data=pd.DataFrame(rows),
+         caption=CAPTIONS["U12"](chk, prof, pr, pc, int(pt[pt.symbol.eq("CAST")].pairs.sum()), top))
+
+
+def _cap_u12(chk, prof, pr, pc, n_pairs, top):
+    gap = (chk.af_LumA - chk.af_Basal).abs()
+    k6 = chk.pair_kappa > 0.6
+    verdicts = lambda d: ", ".join(f"{i} {d.loc[i, 'verdict']}" for i in ["L1", "L2", "L3", "L4", "L5", "L6", "A3"]
+                                   if i in d.index)
+    return f"""**Are the BRCA models' genotype-like splicing events inherited?**
+
+D-57 (config/followup.yaml: brca_germline) called an event genotype-like when, without labels, its PSI fell into three
+well-separated groups (low, mid, high) with mid-group normals. A-13 adds a check from tumour–normal pairs, and A-14
+(exploratory) adds pair agreement. One tumour and one normal per patient ({n_pairs} pairs). An inherited event keeps its group in the tumour, apart from loss of heterozygosity (mid to low or high);
+a homozygous normal cannot become the opposite homozygote.
+
+a, b, each normal's group against its own tumour's group (counts; shade = share of the normal's row) for CAST SE, a
+germline event, and TMEM101 A5SS, the genotype-like event with the largest importance in the BRCA models.
+c, cumulative distribution of Cohen's κ between normal and tumour group, for all {len(chk)} checked events (one per
+gene), the {int(chk.confirmed.sum())} that pass A-13 (opposite-homozygote flips in ≤ 5% of at least 20 homozygous
+pairs) and the {int(top.sum())} that rank among the models' top events (legend: all, A-13, top). d, share of tumours in the high group, LumA
+(x) against Basal (y), per event, coloured as in c (grey = the rest); dashed line = equal frequency. An inherited allele differs between subtypes only
+through ancestry.
+
+- Only {int(chk.confirmed.sum())} of {len(chk)} events pass A-13 (median flip rate {chk.flip_rate.median():.2f}), and
+  {int(k6.sum())} have κ > 0.6. Of the {int(top.sum())} genotype-like events among the models' top events,
+  {int((top & chk.confirmed).sum())} pass A-13, and their κ is at most {chk.pair_kappa[top].max():.2f}.
+- Median |LumA − Basal| frequency: top events {gap[top].median():.2f}, A-13 confirmed
+  {gap[chk.confirmed].median():.2f}, all {gap.median():.2f}. The models' genotype-like events behave as subtype programmes, not as inherited alleles.
+- D-57, all events: {verdicts(pr)}. Germline-confirmed only (A-13): {verdicts(pc)}."""
+
+
+def U13() -> None:
+    m47 = _step("47_brca_her2.py")
+    pr = pd.read_csv(BRCA_DIR / "her2" / "predictions.csv").set_index("id")
+    ex = pd.read_csv(BRCA_DIR / "her2" / "exploratory.csv").set_index("what")
+    ko = pd.read_csv(BRCA_DIR / "her2" / "knockout.csv")
+    d = m47.oof_her2()
+    d["s15"] = d.sample_id.str[:15]
+    d = d.join(m47.erbb2_copy_number(), on="s15")
+    d["clin"] = d.case_id.map(m47.clinical_her2())
+    d = d[d.amplified.notna() & d.label.isin(["LumA", "LumB", "Her2"])].copy()
+    d["amplified"] = d.amplified.astype(bool)
+    d["grp"] = np.where(d.label.eq("Her2"), "Her2", "LumA/LumB")
+    fig = plt.figure(figsize=(DOUBLE, 2.55))
+    gs = fig.add_gridspec(1, 3, width_ratios=[1.35, 0.95, 0.85], wspace=1.05)
+    rows, local = [], []
+    rng = np.random.default_rng(0)
+    # a. P(Her2) by PAM50 group and ERBB2 amplification, GEX and AS ensemble
+    ax = fig.add_subplot(gs[0])
+    groups = [("LumA/LumB", False), ("LumA/LumB", True), ("Her2", False), ("Her2", True)]
+    ticks, labs = [], []
+    for i, (g, a) in enumerate(groups):
+        sub = d[d.grp.eq(g) & d.amplified.eq(a)]
+        for k, (m, col) in enumerate([("p_gex", INK2), ("p_as", ACCENT)]):
+            x = i * 1.0 + (k - 0.5) * 0.36
+            st = _box(ax, x, sub[m].to_numpy(), col, width=0.3, rng=rng, s=1.6 if len(sub) > 100 else 3)
+            rows.append({"panel": "a", "group": g, "erbb2": "amplified" if a else "not amplified",
+                         "model": "GEX" if m == "p_gex" else "AS ensemble", **st})
+        local.append(sub[["grp", "amplified", "p_gex", "p_as"]])
+        ticks.append(i)
+        labs.append(f"{'LumA/B' if g == 'LumA/LumB' else g}\n{'amp.' if a else 'not amp.'}\n({len(sub)})")
+    ax.set_xticks(ticks)
+    ax.set_xticklabels(labs, fontsize=5.4)
+    ax.tick_params(axis="x", length=0)
+    ax.set_xlim(-0.6, 3.6)
+    ax.set_ylim(-0.03, 1.03)
+    ax.set_ylabel("out-of-fold P(Her2)", fontsize=6)
+    ax.scatter([], [], marker="D", s=10, color=INK2, label="GEX")
+    ax.scatter([], [], marker="D", s=10, color=ACCENT, label="AS ensemble")
+    ax.legend(loc="upper left", fontsize=5.4, handletextpad=0.2, borderaxespad=0.1)
+    # b. AUROC, GEX against AS, for each comparison
+    bx = fig.add_subplot(gs[1])
+    comp = [("H1, H2", "LumA/B: amp. vs not", pr.loc["H1"].effect + 0.5,
+             pr.loc["H1"].effect + 0.5 - pr.loc["H2"].effect),
+            ("expl.", "LumA/B: clin. HER2+ vs −", ex.loc["LumA/LumB: AUROC(p_gex, clinical HER2 positive against negative)", "value"],
+             ex.loc["LumA/LumB: AUROC(p_as, clinical HER2 positive against negative)", "value"]),
+            ("H3", "Her2: amp. vs not", None, None),
+            ("H4", "Her2 not amp. vs LumA/B amp.", ex.loc[[i for i in ex.index if i.startswith("H4 counterpart")][0], "value"],
+             pr.loc["H4"].effect + 0.5)]
+    h3 = [float(s.split()[-1].rstrip(",")) for s in pr.loc["H3"].n.split(";")[2].replace("GEX", "").replace("AS", "").split(",")]
+    comp[2] = ("H3", comp[2][1], h3[0], h3[1])
+    for j, (pid, lab, g_, a_) in enumerate(comp):
+        bx.plot([g_, a_], [j, j], color=GRID, linewidth=1.2, zorder=1)
+        bx.scatter(g_, j, s=16, color=INK2, zorder=2)
+        bx.scatter(a_, j, s=16, color=ACCENT, zorder=3)
+        p_ = pr.loc[pid].p if pid in pr.index else np.nan
+        rows.append({"panel": "b", "comparison": lab.replace("\n", " "), "test": pid, "auroc_gex": g_, "auroc_as": a_,
+                     "p": p_, "q": pr.loc[pid].q if pid in pr.index else np.nan,
+                     "verdict": pr.loc[pid].verdict if pid in pr.index else "exploratory"})
+    bx.axvline(0.5, color=MUTED, linewidth=0.6, linestyle=(0, (3, 2)), zorder=0)
+    bx.set_yticks(range(len(comp)))
+    bx.set_yticklabels([f"{c[1]}\n({c[0]})" for c in comp], fontsize=5.4)
+    bx.set_ylim(len(comp) - 0.5, -0.5)
+    bx.set_xlim(0.3, 1.02)
+    bx.set_xticks([0.4, 0.6, 0.8, 1.0])
+    bx.tick_params(axis="y", length=0)
+    bx.spines["left"].set_visible(False)
+    bx.set_xlabel("AUROC", fontsize=6)
+    # c. knockout of the 17q12 amplicon inputs in the stored fold models
+    cx = fig.add_subplot(gs[2])
+    order = ["gex"] + [v for v in ["afe", "ale", "hit", "se", "a5ss", "a3ss", "mxe", "ri"]]
+    for j, v in enumerate(order):
+        r = ko[ko.view.eq(v)].iloc[0]
+        col = INK2 if v == "gex" else ACCENT
+        cx.plot([r.auroc_base, r.auroc_core], [j, j], color=GRID, linewidth=1.2, zorder=1)
+        cx.scatter(r.auroc_base, j, s=14, color=col, zorder=3)
+        cx.scatter(r.auroc_core, j, s=14, facecolors="white", edgecolors=col, linewidths=0.8, zorder=4)
+        cx.scatter(r.auroc_random, j, marker="|", s=20, color=MUTED, linewidths=0.7, zorder=2)
+        rows.append({"panel": "c", "view": VIEW_LABEL.get(v, v), "inputs_per_fold": r.amplicon_inputs_per_fold,
+                     "auroc_intact": r.auroc_base, "auroc_amplicon_removed": r.auroc_core,
+                     "auroc_random_removed": r.auroc_random})
+    cx.set_yticks(range(len(order)))
+    cx.set_yticklabels([VIEW_LABEL.get(v, v) for v in order], fontsize=5.6)
+    cx.set_ylim(len(order) - 0.5, -0.5)
+    cx.set_xlim(0.64, 0.82)
+    cx.set_xticks([0.65, 0.7, 0.75, 0.8])
+    cx.tick_params(axis="y", length=0)
+    cx.spines["left"].set_visible(False)
+    cx.set_xlabel("AUROC, amp. LumA/B", fontsize=6)
+    cx.scatter([], [], s=14, color=INK2, label="intact")
+    cx.scatter([], [], s=14, facecolors="white", edgecolors=INK2, linewidths=0.8, label="17q12 removed")
+    cx.scatter([], [], marker="|", s=20, color=MUTED, label="random removed")
+    cx.legend(loc="lower left", fontsize=5.2, handletextpad=0.1, borderaxespad=0.1, bbox_to_anchor=(0, 1.0), ncol=1)
+    for a_, lab, x in [(ax, "a", -0.2), (bx, "b", -0.98), (cx, "c", -0.36)]:
+        a_.text(x, 1.04, lab, transform=a_.transAxes, fontsize=8, fontweight="bold")
+    rows += [{"panel": "b", "comparison": "reference line (chance)", "auroc_gex": 0.5, "auroc_as": 0.5}]
+    save(fig, OUT, "U13_brca_two_her2", data=pd.DataFrame(rows), caption=CAPTIONS["U13"](pr, ex, ko, d),
+         local_data=(SCFG.base_data_dir / "figure_data", pd.concat(local, ignore_index=True)))
+
+
+VIEW_LABEL = {"afe": "AFE", "ale": "ALE", "hit": "HIT", "se": "SE", "a5ss": "A5SS", "a3ss": "A3SS", "mxe": "MXE",
+              "ri": "RI", "gex": "GEX"}
+
+
+def U14() -> None:
+    m48 = _step("48_brca_mutations.py")
+    pr = pd.read_csv(BRCA_DIR / "mutations" / "predictions.csv").set_index("id")
+    sp = pd.read_parquet(BRCA_LOCAL / "splice_site_mutations.parquet")
+    from ctsm.config import load_config
+    score, ev = m48.cryptic_a3ss(load_config())
+    pam = pd.read_parquet(SCFG.data_dir / "tasks" / "subtype__BRCA_PAM50.parquet")
+    samples = set(pam.sample_id.str[:15])
+    calls = m48.cohort_calls(samples)
+    sf = calls[calls.Hugo_Symbol.eq("SF3B1") & calls.Variant_Classification.eq("Missense_Mutation")].copy()
+    sf["codon"] = sf.HGVSp_Short.str.extract(r"p\.[A-Z](\d+)")[0].astype(float)
+    hot = set(sf.loc[sf.codon.isin(m48.HOTSPOT), "s15"])
+    score = score[score.index.isin(samples)]
+    fig = plt.figure(figsize=(DOUBLE * 0.72, 2.3))
+    gs = fig.add_gridspec(1, 2, width_ratios=[1.6, 1.0], wspace=0.45)
+    rows = []
+    # a. splice-site mutations: percentile of the hit exon's PSI in the mutated tumour
+    ax = fig.add_subplot(gs[0])
+    bins = np.linspace(0, 1, 11)
+    bottom = np.zeros(10)
+    for side, col in [("donor", ACCENT_DARK), ("acceptor", ACCENT)]:
+        h, _ = np.histogram(sp.loc[sp.side.eq(side), "percentile"], bins=bins)
+        ax.bar(bins[:-1] + 0.05, h, width=0.092, bottom=bottom, color=col, linewidth=0, label=f"{side} (+1/+2)" if side == "donor" else "acceptor (−1/−2)")
+        for b0, n in zip(bins[:-1], h):
+            rows.append({"panel": "a", "side": side, "bin_low": b0, "bin_high": b0 + 0.1, "mutations": int(n)})
+        bottom += h
+    exp = len(sp) / 10
+    ax.axhline(exp, color=MUTED, linewidth=0.6, linestyle=(0, (3, 2)), zorder=0)
+    rows.append({"panel": "a", "side": "reference line (no effect, uniform)", "mutations": exp})
+    cd = sp[sp.symbol.eq("CDH1")]
+    ax.scatter(cd.percentile, np.full(len(cd), bottom.max() * 1.08), marker="v", s=14, color=INK, zorder=4, label="CDH1")
+    rows += [{"panel": "a", "side": "CDH1 mutation", "percentile_marker": float(v)} for v in cd.percentile]
+    ax.set_xlim(0, 1)
+    ax.set_xticks([0, 0.25, 0.5, 0.75, 1])
+    ax.set_xlabel("PSI percentile of the hit exon in the mutated tumour", fontsize=6)
+    ax.set_ylabel("splice-site mutations", fontsize=6)
+    ax.legend(loc="upper right", fontsize=5.4, handletextpad=0.3, borderaxespad=0.1)
+    # b. SF3B1 hotspot tumours: cryptic A3SS score
+    bx = fig.add_subplot(gs[1])
+    rng = np.random.default_rng(0)
+    y = score.index.isin(hot)
+    local = []
+    for i, (lab, v, col) in enumerate([("rest", score[~y].to_numpy(), MUTED), ("SF3B1\nhotspot", score[y].to_numpy(), ACCENT)]):
+        st = _box(bx, i, v, col, width=0.5, rng=rng, s=1.6 if len(v) > 100 else 5)
+        rows.append({"panel": "b", "group": lab.replace("\n", " "), **st})
+        local.append(pd.DataFrame({"group": lab.replace("\n", " "), "cryptic_a3ss_score": v}))
+    bx.set_xticks([0, 1])
+    bx.set_xticklabels([f"rest\n({int((~y).sum())})", f"SF3B1 hotspot\n({int(y.sum())})"], fontsize=5.6)
+    bx.tick_params(axis="x", length=0)
+    bx.set_xlim(-0.6, 1.6)
+    bx.set_ylabel("cryptic A3SS score (percentile)", fontsize=6)
+    top = score.max()
+    bx.plot([0, 0, 1, 1], [top + 0.01, top + 0.02, top + 0.02, top + 0.01], color=INK2, linewidth=0.5)
+    bx.text(0.5, top + 0.025, _stars(pr.loc["C3"].p), ha="center", va="bottom", fontsize=6)
+    rows.append({"panel": "b", "group": "hotspot vs rest (C3)", "auroc": pr.loc["C3"].effect + 0.5, "p": pr.loc["C3"].p,
+                 "q": pr.loc["C3"].q, "q_family": "C (brca_mutations, 3 tests)"})
+    for a_, lab, x in [(ax, "a", -0.14), (bx, "b", -0.42)]:
+        a_.text(x, 1.04, lab, transform=a_.transAxes, fontsize=8, fontweight="bold")
+    save(fig, OUT, "U14_brca_mutations", data=pd.DataFrame(rows), caption=CAPTIONS["U14"](pr, sp, ev, y),
+         local_data=(SCFG.base_data_dir / "figure_data", pd.concat(local, ignore_index=True)))
+
+
+def _cap_u13(pr, ex, ko, d):
+    lum = d[d.grp.eq("LumA/LumB")]
+    her = d[d.grp.eq("Her2")]
+    gex_ko = ko[ko.view.eq("gex")].iloc[0]
+    as_ko = ko[ko.view.ne("gex")]
+    return f"""**Which HER2 did each modality learn: ERBB2 amplification or the HER2-enriched programme?**
+
+Pre-specified before any probability was compared with copy number (config/followup.yaml: brca_her2, D-58). P(Her2)
+is the stored out-of-fold probability of the BRCA_PAM50 models: GEX, and the AS ensemble (mean of the 8 splicing
+views). ERBB2 amplified = ABSOLUTE total copy number at ERBB2 ≥ 2 × ploidy ({int(lum.amplified.sum())} of {len(lum)}
+LumA/LumB and {int(her.amplified.sum())} of {len(her)} PAM50 Her2 tumours). ABSOLUTE's copy number at ERBB2 does not
+exceed 7 in any tumour, so the rule catches the highest-level amplifications only:
+{ex.loc['amplified among clinical HER2 positive', 'value'] * 100:.0f}% of clinically HER2-positive tumours meet it.
+Clinical HER2 (IHC or ISH) is the pre-specified second reading.
+
+a, P(Her2) by PAM50 group and amplification; box = interquartile range, diamond = median, whiskers = 1.5 × IQR, dots =
+tumours (n under each group). b, AUROC of P(Her2) for each comparison, GEX (grey) and AS ensemble (blue).
+c, in-silico knockout (exploratory, A-12): in each stored fold model the inputs from chr17:39.6–39.8 Mb (GRCh38;
+PPP1R1B to GRB7) are set to their training mean, and the LumA/LumB AUROC is recomputed (hollow); tick = 20 random
+input sets of the same size.
+
+- H1, GEX P(Her2) is higher in amplified luminal tumours: AUROC {pr.loc['H1'].effect + 0.5:.2f}, q =
+  {fp(pr.loc['H1'].q)}, supported.
+- H2, splicing would see amplification less well than GEX: AUROC difference {signed(pr.loc['H2'].effect, 2)}
+  (q = {fp(pr.loc['H2'].q)}), **against**: the AS ensemble separates amplified luminal tumours better.
+- H3, within PAM50 Her2, neither model separates amplified from non-amplified tumours (difference
+  {signed(pr.loc['H3'].effect, 3)}, not resolved).
+- H4, AS P(Her2) is higher in non-amplified Her2 than in amplified luminal tumours: AUROC
+  {pr.loc['H4'].effect + 0.5:.2f}, supported; GEX {ex.loc[[i for i in ex.index if i.startswith('H4 counterpart')][0], 'value']:.2f}.
+- c, removing the amplicon inputs lowers the GEX AUROC from {gex_ko.auroc_base:.3f} to {gex_ko.auroc_core:.3f}; in the
+  splicing views the change is at most {(as_ko.auroc_base - as_ko.auroc_core).max():.3f}. The splicing models do not
+  reach these tumours through the amplicon; they give them part of the HER2-enriched splicing programme.
+
+q over family H (4 tests). Per-tumour probabilities are kept locally (D-12)."""
+
+
+def _cap_u14(pr, sp, ev, y):
+    side = sp.groupby("side").percentile.median()
+    return f"""**Do splice-site mutations and SF3B1 hotspots leave the expected marks in BRCA splicing?**
+
+Pre-specified (config/followup.yaml: brca_mutations, D-59). MC3 public calls of the cohort's tumours (FILTER flags
+within PASS, wga, native_wga_mix). a, every splice-site SNV at +1/+2 or −1/−2 whose hit exon (by the MC3 transcript's
+intron number, located in GENCODE v45) is a cassette exon of the main SE matrix: the exon's PSI percentile in the
+mutated tumour among the other cohort tumours (ties count half, so an exon near 100% inclusion in almost every
+tumour ranks at 0.5), stacked by side; dashed line = the count per bin with no effect;
+triangles = the {int(sp.symbol.eq('CDH1').sum())} CDH1 mutations. b, SF3B1 hotspot tumours (codons 622, 625, 626,
+662, 663, 666, 700, 741, 742) against the rest on a cryptic A3SS score: mean within-cohort percentile of the long
+form of {len(ev)} A3SS events whose acceptors are 10–30 nt apart and whose upstream acceptor is rarely used in normals
+(median PSI < 0.2). Box = interquartile range, diamond = median, whiskers = 1.5 × IQR, dots = tumours.
+
+- C1, the hit exon is skipped: {pr.loc['C1'].n}; q = {fp(pr.loc['C1'].q)}, supported. Median percentile: donor
+  {side.get('donor', np.nan):.2f}, acceptor {side.get('acceptor', np.nan):.2f}.
+- C2, CDH1 alone: {pr.loc['C2'].n}; with five mutations the sign test cannot pass (p = {fp(pr.loc['C2'].p)}), not
+  resolved.
+- C3, cryptic acceptors in SF3B1-hotspot tumours: AUROC {pr.loc['C3'].effect + 0.5:.2f} ({int(y.sum())} against
+  {int((~y).sum())}), q = {fp(pr.loc['C3'].q)}, supported. All {int(y.sum())} hotspot tumours are LumA or LumB.
+
+Stars: * p < 0.05, ** p < 0.01, *** p < 0.001. q over family C (3 tests). Per-tumour values are kept locally (D-12)."""
+
+
 CAPTIONS = {k: (lambda f: (lambda *a: tidy(f(*a))))(f) for k, f in
             {"U1": _cap_u1, "U2": _cap_u2, "U3": _cap_u3, "U4": _cap_u4, "U5": _cap_u5, "U6": _cap_u6,
              "U7": _cap_u7, "U8": _cap_u8, "U9": _cap_u9,
-             "U10": _cap_u10, "U11": _cap_u11}.items()}
+             "U10": _cap_u10, "U11": _cap_u11, "U12": _cap_u12, "U13": _cap_u13, "U14": _cap_u14}.items()}
 
 if __name__ == "__main__":
-    run({"U1": U1, "U2": U2, "U3": U3, "U4": U4, "U5": U5, "U6": U6, "U7": U7, "U8": U8, "U9": U9, "U10": U10, "U11": U11})
+    run({"U1": U1, "U2": U2, "U3": U3, "U4": U4, "U5": U5, "U6": U6, "U7": U7, "U8": U8, "U9": U9, "U10": U10, "U11": U11,
+         "U12": U12, "U13": U13, "U14": U14})
