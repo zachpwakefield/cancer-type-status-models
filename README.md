@@ -44,7 +44,7 @@ tasks relate.
 | AS ensemble (8 splicing views) | 0.994; 91 errors | 0.950 | 0.80 / 0.82 / 0.81 |
 | GEX + AS (1:1) | 77 errors (McNemar p = 1.1e-4) | 0.961 (p = 3.9e-9) | −0.04 to +0.04 per cohort; no McNemar p < 0.05 |
 | Headline | splicing is a second, partly independent view of the tumour state | splicing is a lineage code, and fails where a lineage code should | splicing matches expression on lineage and genome-state subtypes and loses where one gene defines the class |
-| Write-up · figures | [TUMOUR_STATUS.md](results/TUMOUR_STATUS.md) · S1–S10 | [CANCER_TYPE.md](results/CANCER_TYPE.md) · T1–T9 | [SUBTYPE.md](results/SUBTYPE.md) · U1–U24 |
+| Write-up · figures | [TUMOUR_STATUS.md](results/TUMOUR_STATUS.md) · S1–S10 | [CANCER_TYPE.md](results/CANCER_TYPE.md) · T1–T9 | [SUBTYPE.md](results/SUBTYPE.md) · U1–U25 |
 
 [**Across the three tasks**](#across-the-three-tasks) ([ACROSS_TASKS.md](results/ACROSS_TASKS.md),
 X1–X4) compares them:
@@ -59,7 +59,7 @@ exons the MSI models chose sit after long poly-T tracts that mismatch-repair def
 Tract length and the branch point's distance from the splice site say which exons lose and which
 gain inclusion. That two-part code, read in RNA without re-fitting, finds mismatch-repair-deficient
 tumours in 30 cancers never used to define it (AUROC 0.83)
-([U10–U11, U16–U24](#8-msi-splicing-follows-acceptor-poly-t-repeats-in-the-genome)). The MSI line of work
+([U10–U11, U16–U25](#8-msi-splicing-follows-acceptor-poly-t-repeats-in-the-genome)). The MSI line of work
 is written up as a journal-style draft in [manuscript/MSI_SPLICING_CODE.md](manuscript/MSI_SPLICING_CODE.md).
 In breast cancer, splicing reads HER2 through a programme rather than through the amplified genes
 ([U12–U15](#9-breast-cancer-with-dna-two-her2s-splice-site-mutations-and-what-the-pair-check-removed)).
@@ -68,7 +68,7 @@ Full tables, CIs and the top SHAP features of every cohort and view are in
 [results/RESULTS.md](results/RESULTS.md). Methods are in three files:
 - [docs/BIOLOGY_METHODS.md](docs/BIOLOGY_METHODS.md), D-13 to D-29: interpretation of status and
   type;
-- [docs/SUBTYPE_METHODS.md](docs/SUBTYPE_METHODS.md), D-30 to D-47 and D-52 to D-72: the subtype task
+- [docs/SUBTYPE_METHODS.md](docs/SUBTYPE_METHODS.md), D-30 to D-47 and D-52 to D-73: the subtype task
   and its MSI-repeat and BRCA follow-ups;
 - [docs/ACROSS_TASKS_METHODS.md](docs/ACROSS_TASKS_METHODS.md), D-48 to D-51: the cross-task
   layer.
@@ -457,7 +457,7 @@ Not shown here, all in the write-up: per-class recall against expression (T2), p
 
 ## Subtype within a cancer: 22 cohorts in 15 cancers
 
-**Full write-up: [results/SUBTYPE.md](results/SUBTYPE.md)** (Figures U1–U24) — *within a cancer,
+**Full write-up: [results/SUBTYPE.md](results/SUBTYPE.md)** (Figures U1–U25) — *within a cancer,
 splicing recovers lineage and genome state about as well as expression, and loses where a subtype
 is a single gene switched on.* One model per (cohort, view) over 22 subtype cohorts from 15 TCGA
 projects:
@@ -467,8 +467,8 @@ projects:
 Every label map, exclusion and minimum class size (20 patients) was fixed in
 [config/subtype.yaml](config/subtype.yaml) before the first model was fitted
 ([docs/SUBTYPE_METHODS.md](docs/SUBTYPE_METHODS.md), D-30 to D-45); the regulator, site,
-MSI-repeat and BRCA analyses of Figures U8–U24 were fixed in [config/followup.yaml](config/followup.yaml)
-before they were run (D-46, D-47, D-52 to D-72).
+MSI-repeat and BRCA analyses of Figures U8–U25 were fixed in [config/followup.yaml](config/followup.yaml)
+before they were run (D-46, D-47, D-52 to D-73).
 
 ### Performance
 
@@ -884,6 +884,18 @@ agree (D-72):
 - **Pre-registered tests.** These were on the all-exon model (4 of 6 supported, small deficits);
   the repeat-exon numbers are exploratory.
 
+<img src="results/figures/subtype/U25_msi_model_vs_callers.png" width="900" alt="U25: tumours called MSI by each combination of the repeat-exon model, MC3, MANTIS and MSIsensor; calls per cancer; and the model's score against each exome measure">
+
+**Figure U25. The model agrees with the exome measures on its confident calls; its own extra calls
+are borderline.** (a) Tumours called MSI by each combination of the model, MC3, MANTIS and
+MSIsensor. (b) Calls per cancer by agreement. (c–e) The model's score against each exome measure;
+red = model only, black = exome only, rings = three possible missed cases.
+
+Of the model's 168 calls, 115 are confirmed by all three exome measures (D-73):
+- **Extra calls.** The 32 it makes alone sit just above its threshold, show no MMR-gene silencing,
+  and mostly look like false calls.
+- **Clear misses.** Of the tumours all three exome measures call, it misses 20; 19 are endometrial.
+
 [U10 caption](results/figures/subtype/U10_msi_repeats.caption.md) ·
 [U11 caption](results/figures/subtype/U11_msi_long_tracts.caption.md) ·
 [U16 caption](results/figures/subtype/U16_msi_deletion_load.caption.md) ·
@@ -895,6 +907,7 @@ agree (D-72):
 [U22 caption](results/figures/subtype/U22_msi_code_rising_arm.caption.md) ·
 [U23 caption](results/figures/subtype/U23_msi_code_models.caption.md) ·
 [U24 caption](results/figures/subtype/U24_msi_callers_benchmark.caption.md) ·
+[U25 caption](results/figures/subtype/U25_msi_model_vs_callers.caption.md) ·
 [§11](results/SUBTYPE.md#11-the-msi-splicing-marks-are-written-in-the-genome-acceptor-poly-t-repeats)
 
 #### 9. Breast cancer with DNA: two HER2s, splice-site mutations, and what the pair check removed

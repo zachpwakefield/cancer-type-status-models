@@ -9,6 +9,7 @@ instability) or like false calls. config/followup.yaml: msi_rna_only.
 Inputs:  data.nosync/ctsm_v1/msi/models_{tumours,e2_predictions}.parquet (step 54), the D-69 caller
          table, MC3, ABSOLUTE purity and gene expression (all local)
 Outputs: results/subtype/msi_cis/code/rna_only/ (aggregates); data.nosync/ctsm_v1/msi/rna_only_tumours.parquet
+         and rna_dna_calls.parquet (every tumour, for figure U25)
 Usage: python scripts/56_msi_rna_only.py
 """
 from __future__ import annotations
@@ -165,7 +166,9 @@ def main() -> None:
             "purity", *[f"{g_}_pct" for g_ in MMR_GENES], "min_mmr_pct", *[f"mut_{g_}" for g_ in MUT_GENES]]
     t[t.rna | t.n_dna.ge(1)][keep].sort_values(["group", "M4"], ascending=[True, False]).to_parquet(
         LOCAL / "rna_only_tumours.parquet", index=False)
-    log(f"per-tumour rows written locally: {LOCAL / 'rna_only_tumours.parquet'}")
+    allc = ["dna_mc3", "dna_mantis", "dna_msisensor", "rna", "both_scored", "n_dna"]
+    t[[*keep, *allc]].to_parquet(LOCAL / "rna_dna_calls.parquet", index=False)      # all tumours, for U25
+    log(f"per-tumour rows written locally: {LOCAL / 'rna_only_tumours.parquet'}, {LOCAL / 'rna_dna_calls.parquet'}")
 
 
 if __name__ == "__main__":

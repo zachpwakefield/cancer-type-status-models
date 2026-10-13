@@ -1,8 +1,8 @@
 # Mismatch-repair deficiency moves splicing by a two-arm code written in acceptor poly-T tracts
 
-*Working draft, 13 October 2026. Every analysis is in this repository (`scripts/42`–`55`). Each was
+*Working draft, 13 October 2026. Every analysis is in this repository (`scripts/42`–`56`). Each was
 pre-specified in [`config/followup.yaml`](../config/followup.yaml) before it was computed, with
-decisions D-52 to D-72 and amendments A-9 to A-18 in
+decisions D-52 to D-73 and amendments A-9 to A-19 in
 [`docs/SUBTYPE_METHODS.md`](../docs/SUBTYPE_METHODS.md). Figure files carry fuller legends with
 every test; this text gives the journal version.*
 
@@ -379,6 +379,18 @@ of the model's score within their cancer; dashed line = chance.
   MSIsensor (q ≤ 0.013), no different from the MC3 count, non-inferior at a margin of 0.05 set in
   advance.
 
+**Where they disagree (D-73; Supplementary Fig. S5).** At its own threshold, the model called 168
+tumours MSI when each cancer was left out of training.
+- **Confirmed.** 115 were called by all three exome measures.
+- **Model only.** 32 were called by none. They sat just above the model's threshold and were
+  scattered over 18 cancers where MSI is rare. Against tumours of the same cancer that no measure
+  called, their MLH1 and other MMR-gene expression was not detectably lower, and their MANTIS scores
+  and deletion counts were not detectably higher. Only their MSIsensor scores were slightly higher
+  (AUROC 0.65, q = 0.019), and these were far below its stable cut. Most are therefore false calls, though a stomach tumour one deletion short of the
+  MC3 cut and a hypermutated pancreatic tumour with MMR-gene and POLE mutations may be real.
+- **Missed by the model.** Of the tumours all three exome measures called, the model missed 20; 19
+  were endometrial.
+
 ### What the data did not support
 
 Several pre-registered tests failed or could not be run:
@@ -617,6 +629,18 @@ bars show 95% HC3 intervals.
 (a) AUROC of score G against the MC3 call and against MANTIS and MSIsensor MSI-high calls, held out,
 then in-sample in the training cancers. (b, c) Score G of held-out tumours by MC3 call and by each
 caller's call (mid = between the caller's two cut-offs).
+
+---
+
+![Supplementary Figure S5](../results/figures/subtype/U25_msi_model_vs_callers.png)
+
+**Supplementary Figure S5. The repeat-exon model agrees with the exome measures on its confident
+calls; its own extra calls are borderline.** (a) Tumours called MSI by each combination of the
+model (decision function above 0, each cancer left out of training), MC3 (10 or more homopolymer
+deletions), MANTIS (above 0.6) and MSIsensor (above 10), among the 8,153 tumours with both caller
+scores. (b) Calls per cancer, by agreement. (c–e) The model's score against each exome measure.
+Dashed lines are calling thresholds. Red points are model-only calls and black points exome-only
+calls. Rings mark three model-only tumours discussed in the text.
 
 ---
 

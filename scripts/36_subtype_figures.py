@@ -25,6 +25,7 @@ One question per figure, in the order the story is told in results/SUBTYPE.md:
     U22 is the rising arm real: specific, not a global axis, tract-dependent, dose, PTB (D-70)?
     U23 does logistic regression on the repeat exons, fitted in three cancers, transfer (D-71, A-19)?
     U24 how does the repeat-exon model compare with the exome MSI callers (D-72, A-19)?
+    U25 where do the model and the exome measures agree and disagree (D-73)?
 
 Captions are figure legends: "**Figure Un. Title.**", then (a), (b) ... for the panels. `legends`
 copies each legend (without its bullet list of tests) under the figure in results/SUBTYPE.md.
@@ -2706,6 +2707,177 @@ sensitivity / PPV: MANTIS {o_('MANTIS', 'MANTIS')} against {o_('MANTIS', 'M4')};
 locally (D-12)."""
 
 
+# ============================================================ D-73 agreement with the exome measures
+AGREE = [("model + all three", ACCENT), ("model + one or two", ACCENT_LIGHT), ("model only", "#b0412c"),
+         ("exome only", INK), ("no call", "#d3d1c7")]
+TOOLS = [("rna", "model"), ("dna_mc3", "MC3"), ("dna_mantis", "MANTIS"), ("dna_msisensor", "MSIsensor")]
+
+
+def _agree_class(d: pd.DataFrame) -> pd.Series:
+    return pd.Series(np.select([d.rna & d.n_dna.eq(3), d.rna & d.n_dna.between(1, 2), d.rna & d.n_dna.eq(0),
+                                ~d.rna & d.n_dna.ge(1)], [a for a, _ in AGREE[:4]], "no call"), index=d.index)
+
+
+def U25() -> None:
+    d = pd.read_parquet(MSI_LOCAL / "rna_dna_calls.parquet")
+    d = d[d.both_scored].reset_index(drop=True)
+    d["agree"] = _agree_class(d)
+    col = dict(AGREE)
+    fig = plt.figure(figsize=(DOUBLE - 0.2, 5.4))
+    outer = fig.add_gridspec(2, 1, height_ratios=[1.05, 1], hspace=0.42)
+    top = outer[0].subgridspec(1, 2, width_ratios=[1.25, 1], wspace=0.45)
+    up = top[0].subgridspec(2, 1, height_ratios=[1.6, 1], hspace=0.08)
+    rows, local = [], []
+    # a. UpSet: every combination of calls with at least one call
+    key = d[[c for c, _ in TOOLS]].astype(int).astype(str).agg("".join, axis=1)
+    combos = key[key.ne("0000")].value_counts()
+    ax = fig.add_subplot(up[0])
+    mx = fig.add_subplot(up[1], sharex=ax)
+    for i, (k, n) in enumerate(combos.items()):
+        sub = d[key.eq(k)]
+        cls = sub.agree.iloc[0]
+        ax.bar(i, n, width=0.62, color=col[cls])
+        ax.text(i, n + 2, str(n), ha="center", va="bottom", fontsize=5.2, color=INK2)
+        on = [j for j, ch in enumerate(k) if ch == "1"]
+        for j in range(len(TOOLS)):
+            mx.scatter(i, j, s=10, color=INK if j in on else GRID, zorder=3)
+        if len(on) > 1:
+            mx.plot([i, i], [min(on), max(on)], color=INK, linewidth=0.8, zorder=2)
+        rows.append({"panel": "a", "combination": "+".join(TOOLS[j][1] for j in on), "class": cls, "n": int(n)})
+    rows.append({"panel": "a", "combination": "none", "class": "no call", "n": int(key.eq("0000").sum())})
+    ax.set_ylabel("tumours", fontsize=6)
+    ax.set_ylim(0, combos.max() * 1.15)
+    ax.tick_params(axis="x", bottom=False, labelbottom=False)
+    ax.spines["bottom"].set_visible(False)
+    mx.set_yticks(range(len(TOOLS)))
+    mx.set_yticklabels([n for _, n in TOOLS], fontsize=5.6)
+    mx.set_ylim(len(TOOLS) - 0.5, -0.5)
+    mx.set_xlim(-0.6, len(combos) - 0.4)
+    mx.tick_params(axis="both", length=0, labelbottom=False)
+    for sp in mx.spines.values():
+        sp.set_visible(False)
+    # b. per cancer: tumours called by anyone, by agreement class
+    bx = fig.add_subplot(top[1])
+    called = d[d.agree.ne("no call")]
+    tab = called.groupby(["project", "agree"]).size().unstack(fill_value=0)
+    tot = tab.sum(axis=1)
+    keep = tot[tot >= 3].sort_values(ascending=False).index.tolist()
+    rest = tab.loc[~tab.index.isin(keep)].sum()
+    n_rest = int((~tab.index.isin(keep)).sum())
+    tab = tab.loc[keep].copy()
+    if n_rest:
+        tab.loc[f"{n_rest} others"] = rest
+    for yy, (proj, r) in enumerate(tab.iterrows()):
+        left = 0
+        for cls, c_ in AGREE[:4]:
+            v = int(r.get(cls, 0))
+            if v:
+                bx.barh(yy, v, left=left, height=0.65, color=c_)
+                left += v
+            rows.append({"panel": "b", "project": proj, "class": cls, "n": v})
+    bx.set_yticks(range(len(tab)))
+    bx.set_yticklabels(tab.index, fontsize=5.4)
+    bx.set_ylim(len(tab) - 0.4, -0.6)
+    bx.set_xscale("symlog", linthresh=10)
+    bx.set_xlim(0, tab.sum(axis=1).max() * 1.3)
+    bx.set_xticks([0, 5, 10, 50, 100])
+    bx.set_xticklabels(["0", "5", "10", "50", "100"])
+    bx.tick_params(axis="y", length=0)
+    bx.spines["left"].set_visible(False)
+    bx.set_xlabel("tumours", fontsize=6)
+    # c-e. model score against each exome measure; every tumour, coloured by agreement
+    bot = outer[1].subgridspec(1, 3, wspace=0.12)
+    ro = d[d.agree.eq("model only")]
+    cand = {"highest score": ro.M4.idxmax(),
+            "MMR and POLE mutations": ro[ro.mut_POLE & ro[[f"mut_{g}" for g in ["MLH1", "MSH2", "MSH6", "PMS2"]]].any(axis=1)].index[0],
+            "lowest MLH1": ro.MLH1_pct.idxmin()}
+    panels = [("n_hp", "MC3 homopolymer deletions", [10], "symlog"), ("mantis", "MANTIS score", [0.4, 0.6], "linear"),
+              ("msisensor", "MSIsensor score", [4, 10], "symlog")]
+    axes = []
+    for j, (c, lab, cuts, scale) in enumerate(panels):
+        a_ = fig.add_subplot(bot[0, j], sharey=axes[0] if axes else None)
+        axes.append(a_)
+        for cls, c_ in AGREE[::-1]:
+            m = d.agree.eq(cls)
+            a_.scatter(d.loc[m, c], d.loc[m, "M4"], s=1.5 if cls == "no call" else 5, color=c_, linewidths=0,
+                       rasterized=cls == "no call", zorder=1 if cls == "no call" else 3)
+        for name, i in cand.items():
+            a_.scatter(d.at[i, c], d.at[i, "M4"], s=34, facecolors="none", edgecolors=INK, linewidths=0.7, zorder=4)
+            if j == 0:
+                local.append({"panel": "c-e", "candidate": name, "project": d.at[i, "project"], "M4": d.at[i, "M4"]})
+        for x in cuts:
+            a_.axvline(x, color=MUTED, linewidth=0.6, linestyle=(0, (3, 2)), zorder=0)
+            rows.append({"panel": "cde"[j], "reference line": f"{lab} cut", "x": x})
+        a_.axhline(0, color=MUTED, linewidth=0.6, linestyle=(0, (3, 2)), zorder=0)
+        if scale == "symlog":
+            a_.set_xscale("symlog", linthresh=1)
+            a_.set_xlim(-0.2, d[c].max() * 1.5)
+        a_.set_xlabel(lab, fontsize=6)
+        if j:
+            a_.tick_params(axis="y", labelleft=False)
+        local += [{"panel": "cde"[j], "file_id": f, "project": pj, "x": x, "model_score": y_, "class": k}
+                  for f, pj, x, y_, k in zip(d.file_id, d.project, d[c], d.M4, d.agree)]
+    rows.append({"panel": "c-e", "reference line": "model call", "y": 0.0})
+    spots = {"highest score": (2.2, 13.0), "MMR and POLE mutations": (2.2, 7.5), "lowest MLH1": None}
+    for name, i in cand.items():
+        xy = (d.at[i, "n_hp"], d.at[i, "M4"])
+        if spots[name] is None:
+            axes[0].annotate(d.at[i, "project"], xy, xytext=(4, 3), textcoords="offset points", fontsize=5.2, color=INK)
+        else:
+            axes[0].annotate(d.at[i, "project"], xy, xytext=spots[name], textcoords="data", fontsize=5.2, color=INK,
+                             ha="center", arrowprops={"arrowstyle": "-", "color": INK2, "linewidth": 0.5,
+                                                      "shrinkA": 1, "shrinkB": 4})
+    axes[0].set_ylabel("model score (decision function)", fontsize=6)
+    from matplotlib.lines import Line2D
+    handles = [Line2D([], [], marker="o", color=c_, linestyle="", markersize=3.5, label=f"{a} ({int(d.agree.eq(a).sum()):,})")
+               for a, c_ in AGREE]
+    fig.legend(handles=handles, loc="lower center", ncol=5, fontsize=5.6, frameon=False, bbox_to_anchor=(0.5, -0.025),
+               handletextpad=0.2, columnspacing=1.1)
+    from _figbase import panel_letters
+    panel_letters([(ax, -0.16), (bx, -0.35), (axes[0], -0.3), (axes[1], -0.08), (axes[2], -0.08)], y=1.04)
+    save(fig, OUT, "U25_msi_model_vs_callers", data=pd.DataFrame(rows), caption=CAPTIONS["U25"](d, combos, cand),
+         local_data=(SCFG.base_data_dir / "figure_data", pd.DataFrame(local)))
+
+
+def _cap_u25(d, combos, cand):
+    n = lambda a: int(d.agree.eq(a).sum())
+    ro = d[d.agree.eq("model only")]
+    ex = d[d.agree.eq("exome only")]
+    tri = ex[ex.n_dna.eq(3)]
+    c = {k: d.loc[i] for k, i in cand.items()}
+    mc3o = ex[ex.n_dna.eq(1) & ex.dna_mc3]
+    tri3 = d[d.n_dna.eq(3)]
+    pc = round(float(c['lowest MLH1'].MLH1_pct) * 100)
+    ordinal = f"{pc}{'st' if pc % 10 == 1 and pc != 11 else 'nd' if pc % 10 == 2 and pc != 12 else 'rd' if pc % 10 == 3 and pc != 13 else 'th'}"
+    return f"""**Where do the repeat-exon model and the exome MSI measures agree and disagree?**
+
+Exploratory view of D-73 (config/followup.yaml: msi_rna_only; tests RO1–RO5 in the table). The model is D-71's
+repeat-exon logistic regression (A-19), each cancer scored by a model trained on the other 32; it calls MSI when its
+decision function is above 0. Exome calls: MC3 ≥ 10 homopolymer deletions, MANTIS > 0.6, MSIsensor > 10. The
+{len(d):,} tumours with both caller scores.
+
+(a) Tumours called MSI by each combination of the four (dots below; bars coloured by agreement class); {n('no call'):,}
+tumours are called by none. (b) Tumours called by anyone, per cancer with ≥ 3 such tumours, by class. (c–e) The
+model's score against MC3 homopolymer deletions, the MANTIS score and the MSIsensor score (deletions and MSIsensor
+on a symmetric log axis); dashed = calling thresholds (MANTIS and MSIsensor: stable below the lower, MSI above the
+upper). Rings = three model-only tumours named in D-73: the highest score ({c['highest score'].project}), MC3 calls in all four MMR
+genes and POLE ({c['MMR and POLE mutations'].project}) and the lowest MLH1 expression ({c['lowest MLH1'].project}).
+
+- Agreement: the model and all three exome measures call {n('model + all three')} tumours; the model and one or two call
+  {n('model + one or two')}; the model alone {n('model only')}; exome measures alone {n('exome only')}.
+- Model-only calls sit just above the model's threshold (median score {ro.M4.median():.1f}, against
+  {d[d.agree.eq('model + all three')].M4.median():.1f} when all agree), and below every exome threshold (median MANTIS {ro.mantis.median():.2f},
+  MSIsensor {ro.msisensor.median():.2f}, MC3 deletions {ro.n_hp.median():.0f}).
+- Exome-only calls: {len(tri)} by all three measures, {(tri.project == 'UCEC').sum()} of them UCEC; {int(ex.n_dna.eq(1).sum())} by one measure alone,
+  {len(mc3o)} of them by MC3 alone. Those are hypermutated (median {mc3o.n_snv.median():,.0f} SNVs, against {d[d.agree.eq('no call')].n_snv.median():.0f} in tumours no one
+  calls) with half the deletions per SNV of triple calls ({(mc3o.n_hp / (mc3o.n_snv + 1)).median():.3f} against {(tri3.n_hp / (tri3.n_snv + 1)).median():.3f}), and both
+  callers place them in their between zones (median MANTIS {mc3o.mantis.median():.2f}, MSIsensor {mc3o.msisensor.median():.1f}).
+- Candidates: {c['highest score'].project} score {c['highest score'].M4:.1f}, {int(c['highest score'].n_hp)} deletions, MANTIS {c['highest score'].mantis:.2f}; {c['MMR and POLE mutations'].project} score {c['MMR and POLE mutations'].M4:.1f}, MSIsensor
+  {c['MMR and POLE mutations'].msisensor:.1f}, {int(c['MMR and POLE mutations'].n_snv):,} SNVs; {c['lowest MLH1'].project} score {c['lowest MLH1'].M4:.1f}, MLH1 at the {ordinal} percentile, MSIsensor {c['lowest MLH1'].msisensor:.1f}.
+
+Per-tumour points are kept locally (D-12)."""
+
+
 TITLES = {
     "U1": "Splicing matches expression on lineage and genome-state subtypes, and fusing the two adds little.",
     "U2": "Splicing loses most on small classes defined by one programme.",
@@ -2731,6 +2903,7 @@ TITLES = {
     "U22": "The rising arm is specific to mismatch repair and needs the tract, but its mechanism is not settled.",
     "U23": "Logistic regression on repeat exons, fitted in three cancers, finds MMR deficiency in 30 others.",
     "U24": "Within each cancer, the repeat-exon model ranks tumours almost as well as the exome MSI callers.",
+    "U25": "The model agrees with the exome measures on its confident calls; its own extra calls are borderline.",
 }
 
 
@@ -2750,9 +2923,9 @@ CAPTIONS = {k: (lambda k, f: (lambda *a: tidy(legend(k, f(*a)))))(k, f) for k, f
              "U7": _cap_u7, "U8": _cap_u8, "U9": _cap_u9,
              "U10": _cap_u10, "U11": _cap_u11, "U12": _cap_u12, "U13": _cap_u13, "U14": _cap_u14, "U15": _cap_u15,
              "U16": _cap_u16, "U17": _cap_u17, "U18": _cap_u18, "U19": _cap_u19, "U20": _cap_u20,
-             "U21": _cap_u21, "U22": _cap_u22, "U23": _cap_u23, "U24": _cap_u24}.items()}
+             "U21": _cap_u21, "U22": _cap_u22, "U23": _cap_u23, "U24": _cap_u24, "U25": _cap_u25}.items()}
 
 if __name__ == "__main__":
     run({"U1": U1, "U2": U2, "U3": U3, "U4": U4, "U5": U5, "U6": U6, "U7": U7, "U8": U8, "U9": U9, "U10": U10, "U11": U11,
          "U12": U12, "U13": U13, "U14": U14, "U15": U15, "U16": U16, "U17": U17,
-         "U18": U18, "U19": U19, "U20": U20, "U21": U21, "U22": U22, "U23": U23, "U24": U24, "legends": legends})
+         "U18": U18, "U19": U19, "U20": U20, "U21": U21, "U22": U22, "U23": U23, "U24": U24, "U25": U25, "legends": legends})

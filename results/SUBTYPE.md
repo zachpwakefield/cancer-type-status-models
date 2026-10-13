@@ -1206,7 +1206,7 @@ upstream of the run. One was found for 83% of 1,580 exons, a median 40 nt from t
 - **Why.** That call set does not genotype long homopolymers. The test needs one that does, for
   instance from long reads or a repeat genotyper.
 
-### The sequence code: thirty other cancers, specificity, endometrium, infiltration, MSI callers, the rising arm, fitted models (D-65 to D-72, Figures U18–U24)
+### The sequence code: thirty other cancers, specificity, endometrium, infiltration, MSI callers, the rising arm, fitted models (D-65 to D-73, Figures U18–U25)
 
 D-63 suggested a code: whether an MSI repeat exon falls or rises depends on its tract length and
 on where its branch point lies.
@@ -1216,7 +1216,7 @@ on where its branch point lies.
 - **Score G** reads both arms against matched background exons. Score A, D-52's, reads every
   repeat exon as falling.
 
-Eight sets of tests, each written down before it was computed, asked whether the code works
+Nine sets of tests, each written down before it was computed, asked whether the code works
 (`results/subtype/msi_cis/code/`):
 - whether it travels to cancers never used to define it (D-66, Figure U18);
 - whether it is about the branch point and about mismatch repair (D-65, Figure U19a–b);
@@ -1225,7 +1225,8 @@ Eight sets of tests, each written down before it was computed, asked whether the
 - whether it agrees with MSI calls that do not come from MC3 (D-69, Figure U21);
 - whether its rising arm is real, and why (D-70, Figure U22);
 - whether a model fitted on its exons transfers to cancers never used (D-71, Figure U23);
-- how that model compares with the exome MSI callers (D-72, Figure U24).
+- how that model compares with the exome MSI callers (D-72, Figure U24);
+- where the model and the exome measures disagree (D-73, Figure U25).
 
 #### Thirty cancers never used (D-66, Figure U18)
 
@@ -1654,20 +1655,59 @@ all-exon model; the repeat-exon numbers below are exploratory (A-19).
   0.001–0.002 below MANTIS and MSIsensor. It does not differ from the MC3 count, and it is
   non-inferior at the pre-set 0.05 margin in all six.
 
-**What the model calls that the exome does not** (D-73, pre-registered; no figure).
-- **Most calls are confirmed.** The repeat-exon model calls 168 tumours MSI (decision function > 0,
-  each cancer left out of training). 115 are called by all three exome measures; 32 by none.
-- **Those 32 look mostly like false calls.**
-  - They sit just above the threshold (median 1.0 against 8.9 for confirmed calls).
+#### Where the model and the exome measures disagree (D-73, Figure U25)
+
+The model calls a tumour MSI when its decision function is above 0. Leaving each cancer out of
+training, it calls 168 tumours. D-73 asked, in tests written down before they were computed,
+whether the calls no exome measure makes look like missed MMR deficiency or like false calls
+(`results/subtype/msi_cis/code/rna_only/`).
+
+**How to read Figure U25.**
+- **Panel (a)** counts the tumours each combination of the four calls MSI.
+- **Panel (b)** splits the calls by cancer.
+- **Panels (c–e)** place every tumour by the model's score (up) and each exome measure (across).
+  Model-only calls are red; exome-only calls are black.
+
+![U25](figures/subtype/U25_msi_model_vs_callers.png)
+
+<!-- legend U25: copied from figures/subtype/U25_msi_model_vs_callers.caption.md by the figure script's 'legends' step -->
+> **Figure U25. The model agrees with the exome measures on its confident calls; its own extra calls are
+> borderline.** Exploratory view of D-73 (config/followup.yaml: msi_rna_only; tests RO1–RO5 in the table). The model
+> is D-71's repeat-exon logistic regression (A-19), each cancer scored by a model trained on the other 32; it calls
+> MSI when its decision function is above 0. Exome calls: MC3 ≥ 10 homopolymer deletions, MANTIS > 0.6, MSIsensor >
+> 10. The 8,153 tumours with both caller scores.
+>
+> (a) Tumours called MSI by each combination of the four (dots below; bars coloured by agreement class); 7,920
+> tumours are called by none. (b) Tumours called by anyone, per cancer with ≥ 3 such tumours, by class. (c–e) The
+> model's score against MC3 homopolymer deletions, the MANTIS score and the MSIsensor score (deletions and MSIsensor
+> on a symmetric log axis); dashed = calling thresholds (MANTIS and MSIsensor: stable below the lower, MSI above the
+> upper). Rings = three model-only tumours named in D-73: the highest score (STAD), MC3 calls in all four MMR genes
+> and POLE (PAAD) and the lowest MLH1 expression (BLCA).
+>
+> Per-tumour points are kept locally (D-12).
+<!-- /legend -->
+
+**What it shows** (RO4 supported; RO1–RO3 and RO5 not resolved; family RO).
+- **Confident calls agree.** 115 of the 168 are called by all three exome measures, and their scores
+  sit well above the threshold (median 9.4).
+- **The model's own 32 extra calls look mostly like false calls.**
+  - They sit just above its threshold (median 1.0).
   - They are spread thinly over 18 cancers where MSI is rare.
-  - Their MLH1 and other MMR-gene expression is not low (RO1, RO2), and their MANTIS scores and
-    deletion counts are not raised (RO3, RO5).
-- **Their MSIsensor scores are slightly higher** (RO4 supported), but far below the stable cut.
-- **A few are plausible missed cases:** a STAD tumour one deletion short of the MC3 cut with a
-  between-zone MANTIS score, and a hypermutated PAAD tumour with MC3 calls in all four MMR genes
-  and POLE.
-- **The reverse.** The model misses 20 tumours that all three exome measures call; 19 are UCEC,
-  where the code was always weakest. Tables: `results/subtype/msi_cis/code/rna_only/`.
+  - Against tumours of the same cancer that no one calls, their MLH1 and other MMR-gene expression
+    is not detectably lower (RO1, RO2), and their MANTIS scores and deletion counts are not
+    detectably higher (RO3, RO5).
+  - Their MSIsensor scores are slightly higher (RO4, AUROC 0.65), but far below the stable cut
+    (median 0.16 against < 4).
+- **A few are plausible missed cases** (ringed):
+  - a STAD tumour one deletion short of the MC3 cut, with a between-zone MANTIS score;
+  - a hypermutated PAAD tumour with MC3 calls in all four MMR genes and POLE;
+  - a BLCA tumour with MLH1 at the 1st percentile but no DNA instability.
+- **What the model misses.**
+  - **Clear misses.** 20 tumours are called by all three exome measures; 19 of them are UCEC, where
+    the code was always weakest.
+  - **Borderline cases.** 38 more are called by MC3 alone. These are hypermutated, with half the
+    deletions per SNV of clear MSI, and both callers put them in their between zones. They are as
+    much borderline for the exome as for the model.
 
 #### Reading
 
