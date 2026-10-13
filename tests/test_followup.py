@@ -306,6 +306,14 @@ class TestMsiCode(unittest.TestCase):
         raw = np.corrcoef(np.argsort(np.argsort(x)), np.argsort(np.argsort(y)))[0, 1]
         self.assertGreater(raw, 0.5)                       # the bins alone make x and y agree
 
+    def test_msi_calls_use_the_prespecified_cuts(self):
+        import pandas as pd
+        x = pd.Series([0.3, 0.4, 0.5, 0.6, 0.61, np.nan])
+        self.assertEqual(self.m.msi_call(x, "mantis").tolist(),
+                         ["MSS", "between", "between", "between", "MSI-H", "no score"])
+        y = pd.Series([3.9, 4.0, 10.0, 10.1])
+        self.assertEqual(self.m.msi_call(y, "msisensor").tolist(), ["MSS", "between", "between", "MSI-H"])
+
 
 if __name__ == "__main__":
     unittest.main()

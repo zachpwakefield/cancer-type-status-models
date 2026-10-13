@@ -67,6 +67,10 @@ run scripts/51_msi_code.py --only specificity
 run scripts/51_msi_code.py --only pancancer
 run scripts/51_msi_code.py --only endometrium
 run scripts/51_msi_code.py --only infiltration    # D-68
+if [ -f data.nosync/ctsm_v1/external/cbioportal_msi/tcga_pancan_msi_scores.tsv ]; then
+  run scripts/00c_fetch_msi_scores.py              # D-69: verifies the pinned TSV (fetching needs approval)
+  run scripts/51_msi_code.py --only msicalls
+fi
 run scripts/44_repeat_dna.py --only loci    # D-56: loci and the BAM manifest; the slices are fetched
 run scripts/44_repeat_dna.py --only manifest #   by the data user with their own GDC token (see step 44)
 if [ -d data.nosync/ctsm_v1/msi/slices ]; then

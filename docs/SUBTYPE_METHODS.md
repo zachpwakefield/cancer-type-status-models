@@ -561,6 +561,14 @@ Written 2026-10-13, after D-65..D-67 and before either was computed.
   and HC3 errors, the MSI coefficient keeps 1.01–1.07 of its site-only value (IF4–IF6). The
   immune score alone gives AUROC 0.59, and its adjusted coefficient on G is positive (+0.055),
   against the MMR effect. Tables: `results/subtype/msi_cis/code/infiltration/`; figure U20.
+- **Outcome, D-69 (computed 2026-10-13; MC1–MC2 supported, MC3 not resolved).** Download
+  approved by the data user: 64 cBioPortal REST requests, 6.2 MB of JSON (above the 5 MB first
+  sized), kept as a 320 KB TSV pinned by MD5 (step 00c). Of the 7,685 held-out tumours, 7,388
+  have a MANTIS and 7,470 an MSIsensor score. Score G separates MANTIS MSI-H from MSS at AUROC
+  0.97 (17 MSI-H; MC1) and MSIsensor MSI-H at 0.89 (23; MC2). Its Spearman with the MANTIS
+  percentile over all scored tumours is +0.011 (MC3, not resolved). All 17 MANTIS MSI-H tumours
+  are MC3-deficient; MANTIS calls 27 of the 50 MC3-deficient tumours mid and 6 MSS. Tables:
+  `results/subtype/msi_cis/code/msicalls/`; figure U21.
 
 ---
 

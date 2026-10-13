@@ -1,0 +1,26 @@
+what,n,value,value_is
+"mantis MSS, MC3 proficient",7315,0.5025,median G percentile (blank below 5 tumours)
+"mantis between, MC3 proficient",23,0.6124,median G percentile (blank below 5 tumours)
+"mantis no score, MC3 proficient",297,0.5496,median G percentile (blank below 5 tumours)
+"mantis MSI-H, MC3 MMR-deficient",17,0.01875,median G percentile (blank below 5 tumours)
+"mantis MSS, MC3 MMR-deficient",6,0.2184,median G percentile (blank below 5 tumours)
+"mantis between, MC3 MMR-deficient",27,0.1465,median G percentile (blank below 5 tumours)
+"msisensor MSI-H, MC3 proficient",4,,median G percentile (blank below 5 tumours)
+"msisensor MSS, MC3 proficient",7385,0.503,median G percentile (blank below 5 tumours)
+"msisensor between, MC3 proficient",31,0.6562,median G percentile (blank below 5 tumours)
+"msisensor no score, MC3 proficient",215,0.5326,median G percentile (blank below 5 tumours)
+"msisensor MSI-H, MC3 MMR-deficient",19,0.02266,median G percentile (blank below 5 tumours)
+"msisensor MSS, MC3 MMR-deficient",11,0.2035,median G percentile (blank below 5 tumours)
+"msisensor between, MC3 MMR-deficient",20,0.2204,median G percentile (blank below 5 tumours)
+UCEC_TCGA (in-sample for the rule): AUROC(G lower in mantis MSI-H than MSS),36,0.8689,AUROC; MSS 121
+UCEC_TCGA: mantis MSI-H among the subtype's MSI class,34,29,count
+UCEC_TCGA (in-sample for the rule): AUROC(G lower in msisensor MSI-H than MSS),34,0.8883,AUROC; MSS 128
+UCEC_TCGA: msisensor MSI-H among the subtype's MSI class,34,27,count
+STAD_TCGA (in-sample for the rule): AUROC(G lower in mantis MSI-H than MSS),49,0.9699,AUROC; MSS 265
+STAD_TCGA: mantis MSI-H among the subtype's MSI class,55,49,count
+STAD_TCGA (in-sample for the rule): AUROC(G lower in msisensor MSI-H than MSS),46,0.9726,AUROC; MSS 265
+STAD_TCGA: msisensor MSI-H among the subtype's MSI class,55,46,count
+COAD_TCGA (in-sample for the rule): AUROC(G lower in mantis MSI-H than MSS),35,0.9816,AUROC; MSS 188
+COAD_TCGA: mantis MSI-H among the subtype's MSI class,40,35,count
+COAD_TCGA (in-sample for the rule): AUROC(G lower in msisensor MSI-H than MSS),37,0.9759,AUROC; MSS 197
+COAD_TCGA: msisensor MSI-H among the subtype's MSI class,40,37,count

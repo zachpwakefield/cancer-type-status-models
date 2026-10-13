@@ -12,10 +12,12 @@ reads both arms; score A is D-52's, which reads all repeat exons as falling.
   pancancer    D-66 (PC1-PC8): the 30 TCGA projects other than COAD, STAD and UCEC
   endometrium  D-67 (EG1-EG2)
   infiltration D-68 (IF1-IF6): score G against stromal, immune, retained-intron and purity covariates
+  msicalls     D-69 (MC1-MC3): score G against MANTIS and MSIsensor calls (step 00c fetches them)
 
 Outputs: data.nosync/ctsm_v1/msi/ (per-tumour scores, kept local)
          results/subtype/msi_cis/code/ (aggregates)
-Usage: python scripts/51_msi_code.py --only annotate|geometry|specificity|pancancer|endometrium
+Usage: python scripts/51_msi_code.py --only annotate|geometry|specificity|pancancer|endometrium|
+                                             infiltration|msicalls
 """
 from __future__ import annotations
 
@@ -524,14 +526,76 @@ def infiltration() -> None:
     log(f"infiltration exploratory:\n{ex.round(4).to_string(index=False)}")
 
 
+# ---------------------------------------------------------------- D-69 MSI calls not from MC3
+
+MSI_TSV = DATA / "external" / "cbioportal_msi" / "tcga_pancan_msi_scores.tsv"
+CALLS = {"mantis": (0.4, 0.6), "msisensor": (4.0, 10.0)}   # MSS below the first, MSI-H above the second
+
+
+def msi_call(x: pd.Series, col: str) -> pd.Series:
+    lo, hi = CALLS[col]
+    return pd.Series(np.select([x > hi, x < lo], ["MSI-H", "MSS"], np.where(x.notna(), "between", "no score")),
+                     index=x.index)
+
+
+def msicalls() -> None:
+    scores = pd.read_csv(MSI_TSV, sep="\t").drop_duplicates("sample_id").set_index("sample_id")[list(CALLS)]
+    tab = pd.read_parquet(DATA / "tasks" / "cancer_type__PANCAN.parquet")[["file_id", "sample_id"]]
+    sc = pd.read_parquet(LOCAL / "pancancer_scores.parquet").merge(tab, on="file_id")
+    sc = sc.join(scores, on=sc.sample_id.str[:15])
+    for col in CALLS:
+        sc[f"call_{col}"] = msi_call(sc[col], col)
+    log(f"held-out tumours {len(sc):,}; with a MANTIS score {int(sc.mantis.notna().sum()):,}, "
+        f"MSIsensor {int(sc.msisensor.notna().sum()):,}")
+    pred, ex = [], []
+    for pid, col in [("MC1", "mantis"), ("MC2", "msisensor")]:
+        c = sc[f"call_{col}"]
+        hi, ms = sc.loc[c.eq("MSI-H"), "pct_G"].to_numpy(), sc.loc[c.eq("MSS"), "pct_G"].to_numpy()
+        au, p = m42.auroc_lower(hi, ms) if len(hi) and len(ms) else (np.nan, np.nan)
+        pred.append({"id": pid, "what": f"pooled held-out AUROC(G percentile lower in {col} MSI-H than MSS) - 0.5",
+                     "effect": au - 0.5, "predicted_sign": 1, "p": p if len(hi) >= 10 else np.nan,
+                     "n": f"MSI-H {len(hi)}, MSS {len(ms)}" + ("" if len(hi) >= 10 else "; fewer than 10 MSI-H")})
+    k = sc.mantis.notna()
+    mp = sc[k].groupby("project").mantis.rank(pct=True)
+    r = spearmanr(sc.loc[k, "pct_G"], mp)
+    pred.append({"id": "MC3", "what": "Spearman(G percentile, MANTIS score as a percentile within cancer), held-out",
+                 "effect": float(r.statistic), "predicted_sign": -1, "p": float(r.pvalue), "n": f"{int(k.sum()):,} tumours"})
+    predictions(pred, "msicalls")
+    # exploratory: agreement with D-66's MC3 call, and score G where the calls disagree
+    for col in CALLS:
+        for mc3, d in sc.groupby("mmr"):
+            for call, v in d.groupby(f"call_{col}"):
+                ex.append({"what": f"{col} {call}, MC3 {'MMR-deficient' if mc3 else 'proficient'}", "n": len(v),
+                           "value": float(v.pct_G.median()) if len(v) >= 5 else np.nan,
+                           "value_is": "median G percentile (blank below 5 tumours)"})
+    three = pd.read_parquet(LOCAL / "code_scores_three.parquet")
+    for cohort in ["UCEC_TCGA", "STAD_TCGA", "COAD_TCGA"]:
+        t = pd.read_parquet(DATA / "subtype" / "tasks" / f"subtype__{cohort}.parquet")[["file_id", "sample_id"]]
+        s = three[three.cohort.eq(cohort)].merge(t, on="file_id")
+        s = s.join(scores, on=s.sample_id.str[:15])
+        for col in CALLS:
+            c = msi_call(s[col], col)
+            hi, ms = s.loc[c.eq("MSI-H"), "score_G"].to_numpy(), s.loc[c.eq("MSS"), "score_G"].to_numpy()
+            ex.append({"what": f"{cohort} (in-sample for the rule): AUROC(G lower in {col} MSI-H than MSS)",
+                       "value": m42.auroc_lower(hi, ms)[0], "n": len(hi), "value_is": f"AUROC; MSS {len(ms)}"})
+            ex.append({"what": f"{cohort}: {col} MSI-H among the subtype's MSI class", "n": int(s.group.eq("MSI").sum()),
+                       "value": int((c.eq("MSI-H") & s.group.eq("MSI")).sum()), "value_is": "count"})
+    ex = pd.DataFrame(ex)
+    ex.to_csv(OUT / "msicalls" / "exploratory.csv", index=False, float_format="%.4g")
+    sc[["file_id", "project", "mmr", "pct_G", "mantis", "msisensor", "call_mantis", "call_msisensor"]].to_parquet(
+        LOCAL / "pancancer_msicalls.parquet", index=False)
+    log(f"msicalls exploratory:\n{ex.round(4).to_string(index=False)}")
+
+
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--only", required=True,
-                    choices=["annotate", "geometry", "specificity", "pancancer", "endometrium", "infiltration"])
+                    choices=["annotate", "geometry", "specificity", "pancancer", "endometrium", "infiltration",
+                             "msicalls"])
     a = ap.parse_args()
     OUT.mkdir(parents=True, exist_ok=True)
     {"annotate": annotate, "geometry": geometry, "specificity": specificity, "pancancer": pancancer,
-     "endometrium": endometrium, "infiltration": infiltration}[a.only]()
+     "endometrium": endometrium, "infiltration": infiltration, "msicalls": msicalls}[a.only]()
 
 
 if __name__ == "__main__":

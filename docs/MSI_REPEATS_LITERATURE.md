@@ -150,11 +150,14 @@ already pre-specified)*
 - Its value would be transparency and organ-independence, not raw accuracy.
 - *Status (D-66, done within TCGA):* the two-arm sequence code finds MMR-deficient tumours, called
   from MC3 homopolymer deletions, in 30 cancers never used to define it (AUROC 0.83; 0.85 against
-  hypermutated proficient tumours). An external cohort and a non-MC3 MSI call are still to come.
+  hypermutated proficient tumours). An external cohort is still to come.
 - *Status (D-68, done):* the code is not an infiltration readout. Adjusting for stromal and
   immune expression and the retained-intron level keeps the whole MMR effect (1.01 held out,
-  1.01–1.07 in the training cancers), and the lower-immune half separates at 0.84. D-69, the test
-  against MANTIS and MSIsensor calls, is pre-specified and waits on a download.
+  1.01–1.07 in the training cancers), and the lower-immune half separates at 0.84.
+- *Status (D-69, done):* against two exome callers that do not use MC3, score G separates MSI-H
+  from MSS in the 30 held-out cancers at AUROC 0.97 (MANTIS, 17 MSI-H) and 0.89 (MSIsensor, 23).
+  It does not follow the continuous MANTIS score below MSI-H (ρ +0.01). An RNA cohort processed
+  elsewhere is still to come.
 
 **Start with Q1 and Q5:** both use only local data, and Q1 directly tests the endometrium
 explanation. **Q2 and Q3 each need one small download**, which would be stated and approved first.

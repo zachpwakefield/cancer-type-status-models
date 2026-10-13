@@ -1,0 +1,4 @@
+id,what,effect,predicted_sign,p,n,q,verdict
+MC1,pooled held-out AUROC(G percentile lower in mantis MSI-H than MSS) - 0.5,0.4696401166668006,1,2.0911301447371516e-11,"MSI-H 17, MSS 7321",6.273390434211455e-11,supported
+MC2,pooled held-out AUROC(G percentile lower in msisensor MSI-H than MSS) - 0.5,0.3905665812307475,1,9.292864582360053e-11,"MSI-H 23, MSS 7396",1.3939296873540082e-10,supported
+MC3,"Spearman(G percentile, MANTIS score as a percentile within cancer), held-out",0.01145944265316494,-1,0.32470041145187123,"7,388 tumours",0.32470041145187123,not resolved
