@@ -44,7 +44,7 @@ tasks relate.
 | AS ensemble (8 splicing views) | 0.994; 91 errors | 0.950 | 0.80 / 0.82 / 0.81 |
 | GEX + AS (1:1) | 77 errors (McNemar p = 1.1e-4) | 0.961 (p = 3.9e-9) | −0.04 to +0.04 per cohort; no McNemar p < 0.05 |
 | Headline | splicing is a second, partly independent view of the tumour state | splicing is a lineage code, and fails where a lineage code should | splicing matches expression on lineage and genome-state subtypes and loses where one gene defines the class |
-| Write-up · figures | [TUMOUR_STATUS.md](results/TUMOUR_STATUS.md) · S1–S10 | [CANCER_TYPE.md](results/CANCER_TYPE.md) · T1–T9 | [SUBTYPE.md](results/SUBTYPE.md) · U1–U21 |
+| Write-up · figures | [TUMOUR_STATUS.md](results/TUMOUR_STATUS.md) · S1–S10 | [CANCER_TYPE.md](results/CANCER_TYPE.md) · T1–T9 | [SUBTYPE.md](results/SUBTYPE.md) · U1–U22 |
 
 [**Across the three tasks**](#across-the-three-tasks) ([ACROSS_TASKS.md](results/ACROSS_TASKS.md),
 X1–X4) compares them:
@@ -59,7 +59,8 @@ exons the MSI models chose sit after long poly-T tracts that mismatch-repair def
 Tract length and the branch point's distance from the splice site say which exons lose and which
 gain inclusion. That two-part code, read in RNA without re-fitting, finds mismatch-repair-deficient
 tumours in 30 cancers never used to define it (AUROC 0.83)
-([U10–U11, U16–U19](#8-msi-splicing-follows-acceptor-poly-t-repeats-in-the-genome)).
+([U10–U11, U16–U22](#8-msi-splicing-follows-acceptor-poly-t-repeats-in-the-genome)). The MSI line of work
+is written up as a journal-style draft in [manuscript/MSI_SPLICING_CODE.md](manuscript/MSI_SPLICING_CODE.md).
 In breast cancer, splicing reads HER2 through a programme rather than through the amplified genes
 ([U12–U15](#9-breast-cancer-with-dna-two-her2s-splice-site-mutations-and-what-the-pair-check-removed)).
 
@@ -67,7 +68,7 @@ Full tables, CIs and the top SHAP features of every cohort and view are in
 [results/RESULTS.md](results/RESULTS.md). Methods are in three files:
 - [docs/BIOLOGY_METHODS.md](docs/BIOLOGY_METHODS.md), D-13 to D-29: interpretation of status and
   type;
-- [docs/SUBTYPE_METHODS.md](docs/SUBTYPE_METHODS.md), D-30 to D-47 and D-52 to D-69: the subtype task
+- [docs/SUBTYPE_METHODS.md](docs/SUBTYPE_METHODS.md), D-30 to D-47 and D-52 to D-70: the subtype task
   and its MSI-repeat and BRCA follow-ups;
 - [docs/ACROSS_TASKS_METHODS.md](docs/ACROSS_TASKS_METHODS.md), D-48 to D-51: the cross-task
   layer.
@@ -456,7 +457,7 @@ Not shown here, all in the write-up: per-class recall against expression (T2), p
 
 ## Subtype within a cancer: 22 cohorts in 15 cancers
 
-**Full write-up: [results/SUBTYPE.md](results/SUBTYPE.md)** (Figures U1–U21) — *within a cancer,
+**Full write-up: [results/SUBTYPE.md](results/SUBTYPE.md)** (Figures U1–U22) — *within a cancer,
 splicing recovers lineage and genome state about as well as expression, and loses where a subtype
 is a single gene switched on.* One model per (cohort, view) over 22 subtype cohorts from 15 TCGA
 projects:
@@ -466,8 +467,8 @@ projects:
 Every label map, exclusion and minimum class size (20 patients) was fixed in
 [config/subtype.yaml](config/subtype.yaml) before the first model was fitted
 ([docs/SUBTYPE_METHODS.md](docs/SUBTYPE_METHODS.md), D-30 to D-45); the regulator, site,
-MSI-repeat and BRCA analyses of Figures U8–U21 were fixed in [config/followup.yaml](config/followup.yaml)
-before they were run (D-46, D-47, D-52 to D-69).
+MSI-repeat and BRCA analyses of Figures U8–U22 were fixed in [config/followup.yaml](config/followup.yaml)
+before they were run (D-46, D-47, D-52 to D-70).
 
 ### Performance
 
@@ -683,6 +684,9 @@ association (Cramér's V).
 
 #### 8. MSI splicing follows acceptor poly-T repeats in the genome
 
+*A journal-style account of this subsection, with its own legends and a model schematic (Figure M1):
+[manuscript/MSI_SPLICING_CODE.md](manuscript/MSI_SPLICING_CODE.md).*
+
 <img src="results/figures/subtype/U10_msi_repeats.png" width="900" alt="U10: share of MSI-model top events with an acceptor poly-T run, a genome-only repeat score by MSI status, and its AUROC by run length">
 
 **Figure U10. Genome sequence alone says which exons MSI tumours skip.** (a) Share of exons with an
@@ -822,6 +826,31 @@ the exome reads by other means (D-69, fixed before the 6.2 MB cBioPortal downloa
 - **Where the calls disagree.** All 17 MANTIS MSI-H tumours are MC3-deficient; the 33 MC3-deficient
   tumours MANTIS calls mid or MSS still score low on G.
 
+<img src="results/figures/subtype/U22_msi_code_rising_arm.png" width="900" alt="U22: the held-out rise of R_up exons against other subtype contrasts, exon shifts by class, long runs by branch-point distance, the R_up arm by DNA class, and against deletion count">
+
+**Figure U22. The rising arm is specific to mismatch repair and needs the tract, but its mechanism
+is not settled.** (a) Mean shift of R_up exons in 20 against 20 tumours: 57 other subtype contrasts
+(grey, absolute value; dashed = their 95th percentile), held-out MMR-deficient tumours (blue; bar =
+95% of draws) and, in-sample, MSI in the three training cohorts (hollow). (b) Held-out exon shifts
+by class. (c) Exploratory: long runs (≥ 20 nt), share more included by branch-point distance. (d)
+The R_up arm of held-out tumours by DNA class. (e) The R_up arm against homopolymer deletions in
+MMR-deficient and MSI tumours.
+
+Long tracts should weaken a splice site, yet the R_up exons are included *more* in MMR-deficient
+tumours. D-70 tested that eight ways, fixed in advance (3 supported, 1 against, 4 not resolved).
+- **The rise is real.** In 30 cancers never used, 98 of 135 R_up exons rise (median +0.028).
+- **Not a tumour-wide shift.** Adjusting for each tumour's average inclusion, infiltration and
+  retained-intron level leaves the effect unchanged (+0.236 against +0.237).
+- **It needs the tract.** Exons with an equally far branch point but no run do not move.
+- **Mismatch repair, not mutation burden.** Hypermutated proficient tumours do not show it
+  (AUROC 0.74).
+- **Not unique to MSI.** The rise beats 55 of 57 other subtype contrasts, but two sarcoma contrasts
+  move the same exons as much (not resolved).
+- **Mechanism open.** The rise follows the branch point's distance (panel c, exploratory: within 30
+  nt of the AG only 5 of 25 long-run exons rise, beyond it 60–84%). But the branch-point-free AG
+  exclusion zone does not predict it, runs upstream of the branch point rise too, it does not grow
+  with deletion count, and PTB relief runs the wrong way.
+
 [U10 caption](results/figures/subtype/U10_msi_repeats.caption.md) ·
 [U11 caption](results/figures/subtype/U11_msi_long_tracts.caption.md) ·
 [U16 caption](results/figures/subtype/U16_msi_deletion_load.caption.md) ·
@@ -830,6 +859,7 @@ the exome reads by other means (D-69, fixed before the 6.2 MB cBioPortal downloa
 [U19 caption](results/figures/subtype/U19_msi_code_specificity.caption.md) ·
 [U20 caption](results/figures/subtype/U20_msi_code_infiltration.caption.md) ·
 [U21 caption](results/figures/subtype/U21_msi_code_msi_calls.caption.md) ·
+[U22 caption](results/figures/subtype/U22_msi_code_rising_arm.caption.md) ·
 [§11](results/SUBTYPE.md#11-the-msi-splicing-marks-are-written-in-the-genome-acceptor-poly-t-repeats)
 
 #### 9. Breast cancer with DNA: two HER2s, splice-site mutations, and what the pair check removed

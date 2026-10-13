@@ -1,0 +1,29 @@
+what,n,share_up,median,p,bin,value
+runs >= 20 by branch-point distance,25,0.2,-0.03747,0.004077,18-29,
+runs >= 20 by branch-point distance,37,0.7297,0.04231,0.007632,30-35,
+runs >= 20 by branch-point distance,61,0.7049,0.0304,0.001868,36-49,
+runs >= 20 by branch-point distance,30,0.6,0.008137,0.3616,50-69,
+runs >= 20 by branch-point distance,44,0.8409,0.03918,5.3e-06,70-101,
+"runs >= 20, no branch point found within 100 nt",59,0.6271,0.02281,0.06744,none,
+runs >= 20: AUROC(shift higher with the branch point >= 36 nt than < 36 nt),62,,,0.02763,,0.5978
+all repeat exons by run length,629,0.469,-0.003725,0.1297,10-11,
+all repeat exons by run length,323,0.452,-0.004859,0.09492,12-13,
+all repeat exons by run length,295,0.4271,-0.01066,0.01433,14-15,
+all repeat exons by run length,336,0.4732,-0.003807,0.3537,16-19,
+all repeat exons by run length,177,0.6215,0.01834,0.001522,20-24,
+all repeat exons by run length,62,0.7258,0.03725,0.0004971,25-29,
+all repeat exons by run length,17,0.7059,0.05626,0.1435,30-99,
+"runs >= 20: Spearman(shift, run length)",256,,,0.0001735,,0.2326
+shield exons against 0,42,0.619,0.02099,0.1641,shield,
+R_up exons against 0,135,0.7259,0.02774,1.502e-07,R_up,
+"R_up: Spearman(shift, exon length)",135,,,0.01881,,0.202
+"B_far: Spearman(shift, exon length)",7688,,,0.1834,,0.01518
+R_up exons with PTB sensitivity <= 0,53,0.6604,0.01519,0.02701,ptb<=0,
+R_up exons with PTB sensitivity > 0,82,0.7683,0.03703,1.147e-06,ptb>0,
+PTBP1 expression (percentile in cancer): AUROC higher in MMR-deficient,50,,,0.003343,,0.6202
+HNRNPC expression (percentile in cancer): AUROC higher in MMR-deficient,50,,,0.003274,,0.6205
+U2AF2 expression (percentile in cancer): AUROC higher in MMR-deficient,50,,,0.0868,,0.5701
+MKI67 expression (percentile in cancer): AUROC higher in MMR-deficient,50,,,6.935e-05,,0.663
+RV2 model: coefficient of MMR deficiency,7685,,,1.483e-08,,0.2359
+RV2 model + PTBP1 + HNRNPC: coefficient of MMR deficiency,7685,,,4.976e-09,,0.2415
+RV2 model + PTBP1 + HNRNPC + U2AF2 + MKI67: coefficient of MMR deficiency,7685,,,1.813e-09,,0.2483

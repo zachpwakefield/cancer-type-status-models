@@ -18,7 +18,7 @@ is in [ACROSS_TASKS.md](ACROSS_TASKS.md).
   regulator and site analyses; `42`, `43` and `45` the MSI-repeat analysis, its robustness checks and
   the DNA-read genotyping; `50` and `51` its follow-ups and the sequence code; `46`–`49` the BRCA
   follow-ups; `36` draws these figures.
-- **Figures:** U1–U21 in [figures/subtype/](figures/subtype/). Each has a caption file stating the
+- **Figures:** U1–U22 in [figures/subtype/](figures/subtype/). Each has a caption file stating the
   question, the method, n and the test, and a CSV of the plotted values. Each figure below comes
   with a short guide to reading it, then its legend (copied from the caption file), then the
   findings.
@@ -159,6 +159,10 @@ transcription read on the other strand (§7).
     D-68 fixed in advance): adjusting for immune, stromal and RNA-handling covariates keeps the
     whole effect, and it separates at 0.84 in the less-infiltrated half. Against two exome MSI
     callers it separates MSI-H from MSS at 0.97 (MANTIS) and 0.89 (MSIsensor) (Figure U21; D-69).
+    The rising arm (Figure U22; D-70) is held out, needs the tract and is specific to mismatch repair
+    against mutation burden. It is not unique to MSI among subtype contrasts, and its cause is open:
+    it follows the branch point's distance but not the AG exclusion zone, the run's side of the
+    branch point or deletion dose, and PTB relief runs the wrong way.
 11. **BRCA with DNA** (Figures U12–U15; D-57 to D-60 fixed in advance): the AS ensemble separates
     ERBB2-amplified luminal tumours about as well as GEX (0.81 against 0.75 without the ABSOLUTE
     ceiling; HU2 not resolved, and no gap on the 15 newly amplified tumours), and not through the
@@ -1202,7 +1206,7 @@ upstream of the run. One was found for 83% of 1,580 exons, a median 40 nt from t
 - **Why.** That call set does not genotype long homopolymers. The test needs one that does, for
   instance from long reads or a repeat genotyper.
 
-### The sequence code: thirty other cancers, specificity, endometrium, infiltration, MSI callers (D-65 to D-69, Figures U18–U21)
+### The sequence code: thirty other cancers, specificity, endometrium, infiltration, MSI callers, the rising arm (D-65 to D-70, Figures U18–U22)
 
 D-63 suggested a code: whether an MSI repeat exon falls or rises depends on its tract length and
 on where its branch point lies.
@@ -1212,13 +1216,14 @@ on where its branch point lies.
 - **Score G** reads both arms against matched background exons. Score A, D-52's, reads every
   repeat exon as falling.
 
-Five sets of tests, each written down before it was computed, asked whether the code works
+Six sets of tests, each written down before it was computed, asked whether the code works
 (`results/subtype/msi_cis/code/`):
 - whether it travels to cancers never used to define it (D-66, Figure U18);
 - whether it is about the branch point and about mismatch repair (D-65, Figure U19a–b);
 - whether it rescues endometrium (D-67, Figure U19c);
 - whether it is an infiltration readout (D-68, Figure U20);
-- whether it agrees with MSI calls that do not come from MC3 (D-69, Figure U21).
+- whether it agrees with MSI calls that do not come from MC3 (D-69, Figure U21);
+- whether its rising arm is real, and why (D-70, Figure U22).
 
 #### Thirty cancers never used (D-66, Figure U18)
 
@@ -1440,6 +1445,88 @@ was written down before their scores were downloaded from cBioPortal (6.2 MB, st
   (median percentile 0.15 and 0.22). MSIsensor calls 4 MC3-proficient tumours MSI-H; two of them
   sit above the middle of their cancer and two below.
 
+#### Is the rising arm real? (D-70, Figure U22)
+
+The rising arm is the surprising half of the code. Long tracts should weaken a splice site, yet
+these exons are included more. D-70 tested it eight ways, fixed before any test was computed
+(`results/subtype/msi_cis/code/reversal/`).
+
+**How to read Figure U22.**
+- **Panel (a)** asks whether MSI is special. Each grey dot is another pair of subtypes, drawn at 20
+  against 20 tumours. The blue dot is MMR-deficient against proficient tumours of the same cancers,
+  held out.
+- **Panel (b)** compares exon classes. The rising exons sit above zero; exons with a far branch
+  point but no tract do not.
+- **Panel (c)** (exploratory) splits the long runs by where their branch point lies.
+- **Panels (d) and (e)** are tumours. Panel (d) compares DNA classes; panel (e) asks whether the
+  rise grows with deletion count.
+
+![U22](figures/subtype/U22_msi_code_rising_arm.png)
+
+<!-- legend U22: copied from figures/subtype/U22_msi_code_rising_arm.caption.md by the figure script's 'legends' step -->
+> **Figure U22. The rising arm is specific to mismatch repair and needs the tract, but its mechanism is not
+> settled.** Pre-specified (config/followup.yaml: msi_code_reversal, D-70) before any test was computed; panel (c)
+> is exploratory (A-16), added after the tests were read. Exon shift = D-66's background-adjusted difference in
+> inclusion percentile, MMR-deficient minus other tumours, pooled over the 30 held-out cancers (×100 = percentile
+> points). R_up = acceptor T-run ≥ 20 nt with the sequence-predicted branch point ≥ 36 nt from the AG; R_down = runs
+> of 10–19 nt; B_far = no run (≤ 5) with the branch point ≥ 36 nt; shield = a run ≥ 20 nt lying upstream of a branch
+> point, so that contracting it cannot move the branch point. R_up arm = each tumour's mean R_up percentile against
+> matched exons without a run, as a percentile within its cancer.
+>
+> (a) Mean R_up shift in 20 against 20 tumours (50 draws): every pair of subtypes in the 22 cohorts with MSI, POLE
+> and MC3-deficient tumours removed (grey, absolute value; dashed = their 95th percentile), the held-out
+> MMR-deficient tumours each paired with a proficient tumour of the same cancer (blue; bar = 95% of draws) and,
+> in-sample for the rule, MSI in the three training cohorts (hollow). (b) Held-out exon shifts by class (n in
+> brackets); box = interquartile range, diamond = median, whiskers = 1.5 × IQR, dots = exons (not drawn for the
+> large B_far set); the axis is clipped to −16 to 21. (c) Exploratory: exons with a run ≥ 20 nt, share more included
+> in MMR-deficient tumours by branch-point distance (n in brackets); bars = Wilson 95% interval. (d) R_up arm of
+> held-out tumours by DNA class; dots = tumours (not drawn for the proficient group). (e) R_up arm against
+> homopolymer deletions in MMR-deficient tumours (blue, held-out) and MSI tumours of the three cohorts (grey).
+>
+> Panel (c), exploratory: with the branch point 18–29 nt from the AG, 0.20 of long-run exons move up (n = 25); from
+> 30–35 nt 0.73, the shape seen in the training cohorts (Figure U19a). q over family RV (8 tests). Per-tumour values
+> are kept locally (D-12).
+<!-- /legend -->
+
+**What holds** (RV2, RV3, RV7 supported; family RV).
+- **The rise is real and held out.** In the 30 cancers never used, 98 of 135 R_up exons are more
+  included in MMR-deficient tumours (median +0.028).
+- **Not a tumour-wide shift** (RV2). Adjusting for each tumour's average inclusion, stromal, immune
+  and retained-intron levels leaves the MMR coefficient unchanged (+0.236 against +0.237).
+  Adding PTBP1, HNRNPC, U2AF2 and MKI67 expression leaves it at +0.248 (exploratory, A-16).
+- **It needs the tract** (RV3). Exons whose branch point is just as far but that have no run do
+  not move (median −0.0004; AUROC 0.69).
+- **Mismatch repair, not mutation burden** (RV7). Hypermutated proficient tumours sit at the middle
+  of their cancers; MMR-deficient ones near the top (AUROC 0.74; 0.87 for MANTIS MSI-H).
+
+**What does not hold.**
+- **Not unique to MSI** (RV1, not resolved). The held-out rise, +3.5 percentile points, beats 55 of
+  57 other subtype contrasts. Two sarcoma contrasts move the same exons as much (LMS against MFS
+  4.2, against UPS 3.6). These long-tract exons respond to other biology too. MSI sits at the top
+  of that range, not outside it.
+- **The geometry reading is not confirmed.**
+  - The AG exclusion zone, a branch-point-free bound on where the branch point can lie, does not
+    predict the rise (RV4).
+  - Long runs that lie upstream of a branch point, where contraction cannot move it, rise in 26 of
+    42 (RV5, not resolved).
+- **No dose** (RV6). Within MMR-deficient tumours the rise does not grow with the deletion count
+  (ρ +0.08). Score G's dose relation (U18c) comes from the falling arm.
+- **Not PTB relief** (RV8, against). Exons that PTBP1 represses rise *less*, not more.
+
+**What the branch point does do** (exploratory, A-16, panel c). Among long runs held out, the
+branch point's distance splits the direction sharply.
+- **Within 30 nt of the AG:** 5 of 25 exons rise (median −0.038).
+- **From 30 nt on:** 0.60–0.84 rise in every bin.
+
+This is the same switch seen in the training cancers (U19a: 0.12 against 0.73), now in tumours
+never used to find it. A contraction of a few nucleotides would take a 20–29 nt distance below the
+19–23 nt optimum (Chua and Reed 2001), and a 30+ nt distance toward it. So geometry stays the best
+single reading of panel (c), but RV4 and RV5 do not back it, and that leaves it open.
+- **Longer runs rise more.** Among runs ≥ 20 the shift grows with run length (ρ +0.23).
+- **Longer exons rise more.** Within R_up, the shift also grows with exon length (ρ +0.20; no such
+  relation in B_far). If the PSI counts exon-body reads, unspliced RNA could add to it; whether
+  rMATS was run with junction counts only is not recorded.
+
 #### Reading
 
 Mismatch-repair deficiency changes splicing by a rule written in the reference genome, not by a
@@ -1450,6 +1537,9 @@ tissue programme (interpretation).
 - **Why the earlier score failed.** It assumed every repeat exon falls. The long tracts with
   distant branch points rise, which cancelled the signal in endometrium and in the 30 other
   cancers.
+- **The rise is real; its cause is open.** It is held out, specific to mismatch repair against
+  mutation burden, and needs the tract (D-70). It follows the branch point's distance, but not
+  the AG exclusion zone, not the run's side of the branch point, and not deletion dose.
 
 **What this does not show.**
 - **No clinical MSI test.** The DNA truths are exome calls (MC3, MANTIS, MSIsensor). They agree

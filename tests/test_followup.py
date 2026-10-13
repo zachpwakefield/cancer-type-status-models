@@ -336,5 +336,46 @@ class TestMsiCode(unittest.TestCase):
         self.assertEqual(self.m.msi_call(y, "msisensor").tolist(), ["MSS", "between", "between", "MSI-H"])
 
 
+class TestMsiReversal(unittest.TestCase):
+    """D-70's label-blind annotation: the AG exclusion zone and the shield class."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.m = load_script("52_msi_reversal.py")
+
+    @staticmethod
+    def rev(sense: str) -> str:
+        """Intron sense sequence ending at the exon -> position order (index 0 = position 1)."""
+        return sense[::-1]
+
+    def test_agez_ignores_the_3ss_and_near_ags(self):
+        # positions from the exon: the 3'ss AG has its G at 1; an AG with its G at 6 is ignored (< 12);
+        # the next AG upstream has its G at 15
+        sense = "CCCC" + "AG" + "TTTTTTT" + "AG" + "TTT" + "AG"
+        z, cens = self.m.agez(self.rev(sense))
+        self.assertEqual((z, cens), (15, False))
+
+    def test_agez_is_censored_without_an_upstream_ag(self):
+        sense = "C" * 40 + "AG"
+        self.assertEqual(self.m.agez(self.rev(sense)), (42, True))
+
+    def test_shield_needs_a_branch_point_between_the_run_and_the_ag(self):
+        # positions 19..1 are C17 + AG; the yUnAy motif CTCAC sits at 24..20 with its A at 21;
+        # a T22 run lies at 50..29, upstream of that branch point
+        tail = "C" * 17 + "AG"
+        bp = "CTCAC"
+        sense = "G" * 30 + "T" * 22 + "GGGG" + bp + tail
+        r = self.m.shield(self.rev(sense))
+        self.assertEqual(r["sh_len"], 22)
+        self.assertEqual(r["sh_bp"], 21)
+        # without the branch point there is no shield
+        r2 = self.m.shield(self.rev("G" * 30 + "T" * 22 + "GGGG" + "GGGGG" + tail))
+        self.assertTrue(np.isnan(r2["sh_start"]))
+
+    def test_shield_ignores_runs_at_the_acceptor(self):
+        sense = "G" * 40 + "CTCAC" + "T" * 22 + "AG"  # run at positions 1-24: an acceptor run, not a shield
+        self.assertTrue(np.isnan(self.m.shield(self.rev(sense))["sh_start"]))
+
+
 if __name__ == "__main__":
     unittest.main()

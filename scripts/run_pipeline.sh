@@ -71,6 +71,9 @@ if [ -f data.nosync/ctsm_v1/external/cbioportal_msi/tcga_pancan_msi_scores.tsv ]
   run scripts/00c_fetch_msi_scores.py              # D-69: verifies the pinned TSV (fetching needs approval)
   run scripts/51_msi_code.py --only msicalls
 fi
+run scripts/52_msi_reversal.py --only annotate  # D-70, label-blind
+run scripts/52_msi_reversal.py --only test
+run scripts/52_msi_reversal.py --only posthoc   # A-16, exploratory
 run scripts/44_repeat_dna.py --only loci    # D-56: loci and the BAM manifest; the slices are fetched
 run scripts/44_repeat_dna.py --only manifest #   by the data user with their own GDC token (see step 44)
 if [ -d data.nosync/ctsm_v1/msi/slices ]; then
@@ -86,6 +89,7 @@ run scripts/47_brca_her2.py
 run scripts/48_brca_mutations.py
 run scripts/49_brca_her2_uncapped.py       # D-60: needs the SNP6 segments from step 00b
 run scripts/36_subtype_figures.py
+run scripts/53_msi_manuscript_figures.py   # M1, the MSI manuscript's schematic
 # across the three tasks (docs/ACROSS_TASKS_METHODS.md D-48..D-51): nothing refitted
 run scripts/40_cross_task.py
 run scripts/41_figures_cross_task.py

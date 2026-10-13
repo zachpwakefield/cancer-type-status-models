@@ -593,6 +593,26 @@ that is too long.
 - **Not testable here.** The public MC3 file holds almost no intronic deletions (458 A/T deletions
   within 50 nt of any exon), so the tumour's own allele at each locus cannot be read. Only 2 R_up
   introns have a retained-intron event, so a read-out from intronic reads is not possible either.
+- **Outcome (computed 2026-10-13; RV2, RV3 and RV7 supported, RV8 against, RV1 and RV4–RV6 not
+  resolved).**
+  - **The rise is real.** Held out, R_up exons move up in 98 of 135; the median shift is +0.028.
+  - **Not a tumour-wide axis or infiltration.** The MMR coefficient on the R_up arm is +0.236 with
+    the global inclusion axis, stromal, immune and RI levels in the model, against +0.237 with
+    cancer alone (RV2).
+  - **It needs the tract.** Exons with a far branch point but no run do not move (median −0.0004;
+    AUROC 0.69; RV3).
+  - **Mismatch repair, not burden.** Against hypermutated proficient tumours the AUROC is 0.74
+    (RV7); with MANTIS MSI-H it is 0.87 (exploratory).
+  - **Not unique to MSI.** The held-out rise (+3.5 percentile points at 20 against 20) beats 55 of
+    57 other subtype contrasts (RV1, q = 0.083). Sarcoma LMS against MFS (4.2) and LMS against
+    UPS (3.6) move these exons as much.
+  - **Geometry not confirmed.** The AG exclusion zone does not predict the rise (ρ −0.04; RV4), and
+    it does not track the predicted branch point either (ρ −0.04). Runs upstream of a branch point
+    rise about as often (26 of 42; RV5). Within MMR-deficient tumours the rise does not follow
+    deletion load (ρ +0.08; RV6).
+  - **PTB relief is ruled out.** The more PTBP1 represses an exon, the *less* it rises (ρ +0.20
+    against the predicted negative; RV8).
+  - Tables: `results/subtype/msi_cis/code/reversal/`; figure U22.
 
 ---
 
@@ -614,6 +634,7 @@ that is too long.
 | A-13 | 2026-10-12, after L1–L6 and A1–A3 were computed and the models' top genotype-like events were profiled by class | (1) A germline check of the genotype-like events, using tumour–normal pairs only: a homozygous normal cannot flip to the opposite homozygote in its own tumour, so an event is kept as confirmed germline when such flips occur in ≤ 5% of at least 20 homozygous pairs; L1–L6 and A3 are re-run on the confirmed events as a sensitivity analysis. (2) A2's test (crude minus race-stratified log odds ratio > 0) assumed the crude log odds ratio was positive, as the SHAP direction suggested; it is negative (GSTM1 present goes with ER-positive status), so a positive difference means the association grew, not shrank; A2 is read by its claim, as against it. (3) Bootstrap p-values are floored at 1/(B + 1) instead of reading 0 | The class profile showed allele frequencies that no inherited allele could have (TMEM101 high group: LumA 0.44, Basal 0.99); in pairs, the median flip rate of the 1,110 events is 0.20 and 82 pass the check | Yes: added after the results; the pre-specified verdicts are kept and reported with these readings |
 | A-14 | 2026-10-12, after the A-13 germline check was computed | Exploratory, beside the A-13 flip rate: agreement between each normal's group and its own tumour's group (Cohen's kappa over complete pairs, at least 20). It is not a pre-specified filter, and L1–L6 and A3 are not re-run on it | The A-13 rule passed 82 events, but their minor-allele frequency in normals was about half that of all events (median 0.18 vs 0.33). With a rare allele, almost every pair is homozygous for the common one, so a flip can hardly happen, and 42 of the 82 had kappa ≤ 0.2. Kappa does not depend on allele frequency in the same way | Yes: chosen after the A-13 set was seen; it is reported as exploratory, and no verdict uses it |
 | A-15 | 2026-10-13, after PC1–PC8 were computed | Exploratory, beside D-66: the AUROC of each arm of score G alone (R_down against B, R_up against B) in the 30 held-out cancers; the per-tumour arm scores are kept locally. No test, cut or verdict changed (the predictions were re-run and are identical) | PC2 supported score G and PC1 did not support score A; the arm split asks which part carries the held-out signal | Yes: added after the results; reported as exploratory |
+| A-16 | 2026-10-13, after RV1–RV8 were computed | Exploratory checks of the rising arm (`scripts/52 --only posthoc`, `posthoc.csv`): among held-out exons with runs ≥ 20, the share more included by branch-point bin (18–29, 30–35, 36–49, 50–69, 70–101 nt); the shift against run length and exon length; shield exons tested against 0; R_up exons split by the sign of their PTB sensitivity; PTBP1, HNRNPC, U2AF2 and MKI67 expression in MMR-deficient tumours, and the RV2 model with them added. Also, the RV1 contrast table labels its non-MSI rows `other` (pandas reads `null` as missing). No test, cut or verdict changed | RV4 and RV5 did not support the geometry reading, and RV8 came out against its sign; these checks ask what the branch point does inside long runs, and whether the RV8 sign reflects trans regulator levels | Yes: chosen after the results; reported as exploratory |
 
 ## Verification that the existing tasks are unchanged
 - `tests/test_subtype.py::TestExistingTasksUnchanged` rebuilds every existing task table from

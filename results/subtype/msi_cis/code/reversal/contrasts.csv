@@ -1,0 +1,61 @@
+kind,cohort,a,b,n_a,n_b,r_up_exons,stat
+other,BRCA,Ductal,Lobular,750,192,131,-0.0092738
+other,BRCA_ER,ER-negative,ER-positive,231,783,131,-0.014022
+other,BRCA_PAM50,Basal,Her2,183,77,131,0.012779
+other,BRCA_PAM50,Basal,LumA,183,554,131,-0.011665
+other,BRCA_PAM50,Basal,LumB,183,209,131,-0.010638
+other,BRCA_PAM50,Basal,Normal-like,183,39,131,-0.0032506
+other,BRCA_PAM50,Her2,LumA,77,554,131,-0.023625
+other,BRCA_PAM50,Her2,LumB,77,209,131,-0.021135
+other,BRCA_PAM50,Her2,Normal-like,77,39,131,-0.016984
+other,BRCA_PAM50,LumA,LumB,554,209,131,-0.0004503
+other,BRCA_PAM50,LumA,Normal-like,554,39,131,0.0099135
+other,BRCA_PAM50,LumB,Normal-like,209,39,131,0.0059886
+other,CESC,Adenocarcinoma,Squamous,45,233,126,-0.018362
+other,COAD_TCGA,CIN,GS,162,33,128,0.01245
+msi,COAD_TCGA,MSI,rest,40,195,128,0.045075
+other,ESCA,Adenocarcinoma,Squamous,79,80,140,-0.029012
+other,HNSC_HPV,HPV-negative,HPV-positive,79,33,128,-0.013289
+other,HNSC_mRNA,Atypical,Basal,67,85,131,0.010476
+other,HNSC_mRNA,Atypical,Classical,67,49,131,-0.010587
+other,HNSC_mRNA,Atypical,Mesenchymal,67,75,131,-0.0082487
+other,HNSC_mRNA,Basal,Classical,85,49,131,-0.023268
+other,HNSC_mRNA,Basal,Mesenchymal,85,75,131,-0.014403
+other,HNSC_mRNA,Classical,Mesenchymal,49,75,131,0.0066769
+other,LGG,Astrocytoma,Oligodendroglioma,189,187,134,0.0025113
+other,LGG_IDH,IDHmut-codel,IDHmut-non-codel,171,242,134,-0.013052
+other,LGG_IDH,IDHmut-codel,IDHwt,171,92,134,0.00069471
+other,LGG_IDH,IDHmut-non-codel,IDHwt,242,92,134,0.010739
+other,MESO,Biphasic,Epithelioid,21,55,124,-0.00023946
+other,PCPG,Paraganglioma,Pheochromocytoma,30,148,119,0.0035495
+other,PCPG_mRNA,Cortical admixture,Kinase signaling,22,68,119,-0.012737
+other,PCPG_mRNA,Cortical admixture,Pseudohypoxia,22,61,119,-0.0098787
+other,PCPG_mRNA,Cortical admixture,Wnt-altered,22,22,119,-0.012573
+other,PCPG_mRNA,Kinase signaling,Pseudohypoxia,68,61,119,0.0048306
+other,PCPG_mRNA,Kinase signaling,Wnt-altered,68,22,119,0.0018109
+other,PCPG_mRNA,Pseudohypoxia,Wnt-altered,61,22,119,-0.0013537
+other,PRAD_ETS,ERG,ETV1,152,28,131,-0.0060893
+other,PRAD_ETS,ERG,Other,152,86,131,4.8709e-05
+other,PRAD_ETS,ERG,SPOP,152,36,131,0.023845
+other,PRAD_ETS,ETV1,Other,28,86,131,0.003019
+other,PRAD_ETS,ETV1,SPOP,28,36,131,0.031625
+other,PRAD_ETS,Other,SPOP,86,36,131,0.024899
+other,SARC,DDLPS,LMS,57,100,118,-0.026401
+other,SARC,DDLPS,MFS,57,24,118,0.019028
+other,SARC,DDLPS,UPS,57,47,118,0.013309
+other,SARC,LMS,MFS,100,24,118,0.041953
+other,SARC,LMS,UPS,100,47,118,0.036256
+other,SARC,MFS,UPS,24,47,118,-0.0039454
+other,STAD,Diffuse,Intestinal,57,132,131,0.001051
+other,STAD_TCGA,CIN,EBV,196,26,130,0.011683
+other,STAD_TCGA,CIN,GS,196,43,130,0.0062844
+other,STAD_TCGA,EBV,GS,26,43,130,-0.0057544
+msi,STAD_TCGA,MSI,rest,55,265,130,0.045239
+other,TGCT,Non-seminoma,Seminoma,50,64,129,0.014113
+other,THCA,Classical,Follicular,351,100,129,0.0073345
+other,THCA,Classical,Tall cell,351,35,129,0.0012149
+other,THCA,Follicular,Tall cell,100,35,129,-0.0075673
+other,THYM,A/AB,B1-B3,51,57,106,0.011004
+other,UCEC,Endometrioid,Serous,66,55,112,-0.0025155
+other,UCEC_TCGA,CN-high,CN-low,82,27,114,0.0038314
+msi,UCEC_TCGA,MSI,rest,34,109,114,0.039108

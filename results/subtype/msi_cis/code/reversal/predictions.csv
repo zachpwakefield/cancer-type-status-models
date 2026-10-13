@@ -1,0 +1,9 @@
+id,what,effect,predicted_sign,p,n,ci_low,ci_high,q,verdict
+RV1,"held-out R_up statistic (20 v 20, 50 draws) against every-pair non-MSI subtype contrasts' |statistic|",0.034943449994396344,1,0.05172413793103448,"57 null contrasts, largest |s| 0.0420, 95th pct 0.0295",,,0.08275862068965517,not resolved
+RV2,"OLS coefficient of MMR deficiency on the R_up arm percentile, cancer fixed effects, global axis, stromal, immune, ri_mean (HC3)",0.23593341469429965,1,1.4831060668889357e-08,"7,685 tumours, 50 MMR-deficient; cancer only +0.237",0.1542841747908102,0.3175826545977891,5.932424267555743e-08,supported
+RV3,AUROC(held-out delta_adj higher for R_up than B_far) - 0.5,0.19118202489690528,1,2.389094784269493e-14,"R_up 135 (median +0.0277), B_far 7688 (median -0.0004)",,,1.9112758274155945e-13,supported
+RV5,AUROC(held-out delta_adj higher for R_up than shield) - 0.5,0.058730158730158744,1,0.2515810315074686,"R_up 135 (median +0.0277), shield 42 (median +0.0210)",,,0.33544137534329144,not resolved
+RV4,"adjusted rho(held-out delta_adj, AGEZ | run bins, mean PSI)",-0.040930274384088645,1,0.5114885114885115,256 exons with a run >= 20,,,0.5114885114885115,not resolved
+RV6,"partial Spearman(R_up arm percentile, log(1 + homopolymer deletions) | purity)",0.07658129108815415,1,0.3151996809694604,"175 tumours (50 held-out, 129 in the three cohorts)",,,0.36022820682224044,not resolved
+RV7,AUROC(R_up arm higher in MMR-deficient than hypermutated proficient) - 0.5,0.23691176470588238,1,4.4831499167774274e-08,"MMR-deficient 50, hypermutated proficient 408",,,1.1955066444739807e-07,supported
+RV8,"Spearman(held-out delta_adj, PTB sensitivity); negative = PTB relief",0.19998426413366902,-1,0.0012969911132495802,256 exons with a run >= 20,,,0.0025939822264991605,against

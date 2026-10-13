@@ -112,6 +112,11 @@ annotations)*
 - *Status (D-63, done):* the annotations could not be fetched, so branch points were read from
   sequence. Supported in all three cancers: a farther branch point means more inclusion in MSI,
   beyond run length (U17). The Alu k-mer check found almost no exons (≤ 3 per class).
+- *Status (D-70, done):* the rise is real, held out and specific to mismatch repair against
+  mutation burden, and it needs the tract. Its cause is open: it follows the predicted branch
+  point (within 30 nt of the AG long-run exons fall, beyond 30 they rise), but not the AG exclusion
+  zone, not the run's side of the branch point, and not deletion dose; PTB relief runs the wrong
+  way (U22; §4 below).
 
 **Q3. A natural experiment in the germline** *(small download: the Hamanaka et al. 2023 catalogue)*
 - *Motivation:* CFTR 5T/7T/9T (Chu et al. 1993); germline splicing tandem repeats.
@@ -162,6 +167,63 @@ already pre-specified)*
 **Start with Q1 and Q5:** both use only local data, and Q1 directly tests the endometrium
 explanation. **Q2 and Q3 each need one small download**, which would be stated and approved first.
 
+## 4. Prior work on the rising arm (literature search, 2026-10-13)
+
+A search of PubMed and Europe PMC full text asked whether anyone has reported that MSI makes
+exons after long poly-T tracts *more* included. Every reference below was opened and checked
+against PubMed (PMIDs given).
+
+**No report of the effect.**
+- **Jonchère et al. 2024** (PMID 39107855) is the only genome-wide MSI splicing study at these
+  sites. Most changes it reports are exon exclusion, and larger intronic deletions go with more
+  exclusion. Inclusion gains appear only in a supplementary panel and are not analysed. It does not
+  stratify by tract length or branch-point distance.
+- **Reviews and tools** treat tract contraction as a cause of skipping only (Corcos et al. 2023,
+  PMID 36833239).
+- **One MSI inclusion effect is known, but it acts in trans.** RPL22 frameshifts raise MDM4 exon 6
+  inclusion (Weinstein et al. 2024, PMID 39146182).
+
+**Evidence for the geometry reading.**
+- **The optimum.** Step II of splicing works best with the branch point 19–23 nt from the AG and
+  falls off progressively beyond (Chua and Reed 2001, PMID 11238888).
+- **Distance and skipping.** Genome-wide, exons with distant predicted branch points are skipped
+  more (Corvelo et al. 2010, PMID 21124863). Distance weakens AG recognition in mapped branch points
+  (Taggart et al. 2017, PMID 28119336). 90% of mapped branch points lie 19–37 nt upstream (Mercer et
+  al. 2015, PMID 25561518), so our ≥ 36 nt cut sits at the far edge of normal.
+- **A repeat that moves a branch point.** In NARS2, a germline (GTTTTTT)n expansion pushes the
+  branch point from 35 to 49 nt from a pseudoexon's 3′ss and stops its splicing in minigenes
+  (Hamanaka et al. 2023, PMID 37307504). That is our model run in the other direction.
+- **Contraction by deletion.** In PTS, a deletion that removes an antisense Alu's poly(T) tail
+  brings a favourable branch point close to a pseudoexon's 3′ss and activates it (Meili et al.
+  2009, PMID 19280650). The deletion also removes a repressive AG, so the case is not clean.
+
+**Evidence against it, or for something else.**
+- **Long tracts do not care where they sit.** With 11 or more continuous uridines, the tract's
+  position between branch point and AG does not matter (Coolidge et al. 1997, PMID 9016643). A
+  26-nt tract allows lariat formation with the branch point over 100 nt away (Reed 1989,
+  PMID 2628164). Both argue that runs ≥ 20 should be the *least* distance-sensitive.
+- **Branch-point spacing failed where it was tested.** At CFTR's (TG)m(T)n locus, mutating the
+  candidate branch points did not explain the repeat-length effect (Hefferon et al. 2004,
+  PMID 14993601).
+- **hnRNP C.** hnRNP C binds U-tracts of 9 U or more and competes with U2AF65; weakening a long
+  U-tract raises inclusion (Zarnack et al. 2013, PMID 23374342). A recurrent F8 deletion of part of
+  an Alu poly(T) tail exonizes the Alu, and hnRNP C knockdown reproduces it (Jourdy et al. 2018,
+  PMID 29357978). Our D-53 test of hnRNP C (baseline dependence) was not supported, but that test
+  did not rule hnRNP C out.
+- **PTB.** Long tracts with long AG exclusion zones mark PTB-repressed exons (Gooding et al. 2006,
+  PMID 16507133; Llorian et al. 2010, PMID 20711188), and U2AF35-dependent ones (Kralovicova et al.
+  2015, PMID 25779042). D-70's RV8 found the opposite of the PTB-relief prediction.
+- **Many branch points per intron.** Most introns use several branch points, often by tissue
+  (Pineda and Bradley 2018, PMID 29666160). One sequence-predicted branch point per exon is a weak
+  proxy.
+
+**What would decide it.**
+- **Minigenes** that shorten the tract of an R_up exon by 2–5 nt:
+  - with the branch point intact, then moved;
+  - with a long run placed upstream of the branch point, as RV5 asks.
+- **The tumours' own alleles** at the R_up loci (D-56's slices).
+- **hnRNP C occupancy.** hnRNP C eCLIP at the R_up tracts against R_down tracts.
+
 ## References
 
 - Alexandrov LB et al. (2020) The repertoire of mutational signatures in human cancer. *Nature* 578:94. — [COSMIC ID2](https://cancer.sanger.ac.uk/signatures/id/id2/)
@@ -170,21 +232,33 @@ explanation. **Q2 and Q3 each need one small download**, which would be stated a
 - Chung Y et al. (2023) Evaluation of an eight marker-panel including long mononucleotide repeat markers to detect microsatellite instability in colorectal, gastric, and endometrial cancers. *BMC Cancer* 23:1100.
 - Collura A et al. (2014) Patients with colorectal tumors with microsatellite instability and large deletions in HSP110 T17 have improved response to 5-fluorouracil–based chemotherapy. *Gastroenterology* 146(2).
 - Coolidge CJ, Seely RJ, Patton JG (1997) Functional analysis of the polypyrimidine tract in pre-mRNA splicing. *Nucleic Acids Res* 25:888. — [PMC146492](https://pmc.ncbi.nlm.nih.gov/articles/PMC146492)
+- Corcos L et al. (2023) Microsatellite instability and aberrant pre-mRNA splicing: how intimate is it? *Genes* 14:311. — [PMID 36833239](https://pubmed.ncbi.nlm.nih.gov/36833239/)
 - Cortes-Ciriano I et al. (2017) A molecular portrait of microsatellite instability across multiple cancers. *Nat Commun* 8:15180. — [PMC5467167](https://pmc.ncbi.nlm.nih.gov/articles/PMC5467167)
+- Corvelo A et al. (2010) Genome-wide association between branch point properties and alternative splicing. *PLoS Comput Biol* 6:e1001016. — [PMID 21124863](https://pubmed.ncbi.nlm.nih.gov/21124863/)
 - Dorard C et al. (2011) Expression of a mutant HSP110 sensitizes colorectal cancer cells to chemotherapy and improves disease prognosis. *Nat Med* 17:1283.
 - Drost J et al. (2017) Use of CRISPR-modified human stem cell organoids to study the origin of mutational signatures in cancer. *Science* 358:234. — [PMC6038908](https://pmc.ncbi.nlm.nih.gov/articles/PMC6038908)
 - Giannini G et al. (2002) Human MRE11 is inactivated in mismatch repair-deficient cancers. *EMBO Rep* 3:248.
 - Giannini G et al. (2004) Mutations of an intronic repeat induce impaired MRE11 expression in primary human cancer with microsatellite instability. *Oncogene* 23:2640.
+- Gooding C et al. (2006) A class of human exons with predicted distant branch points revealed by analysis of AG dinucleotide exclusion zones. *Genome Biol* 7:R1. — [PMID 16507133](https://pubmed.ncbi.nlm.nih.gov/16507133/)
 - Hamanaka K et al. (2023) Genome-wide identification of tandem repeats associated with splicing variation across 49 tissues in humans. *Genome Res* 33:435. — [PMC10078293](https://pmc.ncbi.nlm.nih.gov/articles/PMC10078293)
 - Hause RJ et al. (2016) Classification and characterization of microsatellite instability across 18 cancer types. *Nat Med* 22:1342. — [PMID 27694933](https://pubmed.ncbi.nlm.nih.gov/27694933/)
+- Hefferon TW et al. (2004) A variable dinucleotide repeat in the CFTR gene contributes to phenotype diversity by forming RNA secondary structures that alter splicing. *Proc Natl Acad Sci USA* 101:3504. — [PMID 14993601](https://pubmed.ncbi.nlm.nih.gov/14993601/)
 - Jia P et al. (2024) MSIsensor-RNA: microsatellite instability detection for bulk and single-cell gene expression data. *Genomics Proteomics Bioinformatics*. — [PMC12016039](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC12016039/)
 - Jonchère V et al. (2024) Microsatellite instability at U2AF-binding polypyrimidic tract sites perturbs alternative splicing during colorectal cancer initiation. *Genome Biol* 25:210. — [PubMed 39107855](https://pubmed.ncbi.nlm.nih.gov/39107855/)
+- Jourdy Y et al. (2018) Reccurrent F8 intronic deletion found in mild hemophilia A causes Alu exonization. *Am J Hum Genet* 102:199. — [PMID 29357978](https://pubmed.ncbi.nlm.nih.gov/29357978/)
 - Kim TM, Laird PW, Park PJ (2013) The landscape of microsatellite instability in colorectal and endometrial cancer genomes. *Cell* 155:858. — [PMC3871995](https://pmc.ncbi.nlm.nih.gov/articles/PMC3871995)
+- Kralovicova J et al. (2015) Identification of U2AF(35)-dependent exons by RNA-Seq reveals a link between 3′ splice-site organization and activity of U2AF-related proteins. *Nucleic Acids Res* 43:3747. — [PMID 25779042](https://pubmed.ncbi.nlm.nih.gov/25779042/)
 - Le DT et al. (2017) Mismatch repair deficiency predicts response of solid tumors to PD-1 blockade. *Science* 357:409. — [PubMed 28596308](https://pubmed.ncbi.nlm.nih.gov/28596308/)
+- Llorian M et al. (2010) Position-dependent alternative splicing activity revealed by global profiling of alternative splicing events regulated by PTB. *Nat Struct Mol Biol* 17:1114. — [PMID 20711188](https://pubmed.ncbi.nlm.nih.gov/20711188/)
+- Meili D et al. (2009) Disease-causing mutations improving the branch site and polypyrimidine tract: pseudoexon activation of LINE-2 and antisense Alu lacking the poly(T)-tail. *Hum Mutat* 30:823. — [PMID 19280650](https://pubmed.ncbi.nlm.nih.gov/19280650/)
 - Mercer TR et al. (2015) Genome-wide discovery of human splicing branchpoints. *Genome Res* 25:290. — [PMC4315302](https://pmc.ncbi.nlm.nih.gov/articles/4315302)
 - MSI expresso: a software for determining MSI status and detecting MSI-related transcription events from RNA sequencing data. — [PMC12058494](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC12058494/)
+- Pineda JMB, Bradley RK (2018) Most human introns are recognized via multiple and tissue-specific branchpoints. *Genes Dev* 32:577. — [PMID 29666160](https://pubmed.ncbi.nlm.nih.gov/29666160/)
+- Reed R (1989) The organization of 3′ splice-site sequences in mammalian introns. *Genes Dev* 3:2113. — [PMID 2628164](https://pubmed.ncbi.nlm.nih.gov/2628164/)
 - Shen L et al. (2019) RNA transcription and splicing errors as a source of cancer frameshift neoantigens for vaccines. *Sci Rep* 9, doi:10.1038/s41598-019-50738-4. — [PMC6775166](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6775166/)
+- Taggart AJ et al. (2017) Large-scale analysis of branchpoint usage across species and cell lines. *Genome Res* 27:639. — [PMID 28119336](https://pubmed.ncbi.nlm.nih.gov/28119336/)
 - van Wietmarschen N et al. (2020) Repeat expansions confer WRN dependence in microsatellite-unstable cancers. *Nature* 586:292.
 - Vilar E et al. (2011) MRE11 deficiency increases sensitivity to poly(ADP-ribose) polymerase inhibition in microsatellite unstable colorectal cancers. *Cancer Res* 71:2632. — [PMC3407272](https://pmc.ncbi.nlm.nih.gov/articles/PMC3407272)
 - Wang Y et al. (2017) Differences in microsatellite instability profiles between endometrioid and colorectal cancers: a potential cause for false-negative results? *J Mol Diagn* 19:57. — [PMC5225298](https://pmc.ncbi.nlm.nih.gov/articles/PMC5225298)
+- Weinstein HNW et al. (2024) RPL22 is a tumor suppressor in MSI-high cancers and a splicing regulator of MDM4. *Cell Rep* 43:114622. — [PMID 39146182](https://pubmed.ncbi.nlm.nih.gov/39146182/)
 - Zarnack K et al. (2013) Direct competition between hnRNP C and U2AF65 protects the transcriptome from the exonization of Alu elements. *Cell* 152:453.

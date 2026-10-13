@@ -1,0 +1,25 @@
+what,value,n,lo,hi,p,median
+RV1 z: held-out statistic / SD of the null (both orientations),2.33,57,,,,
+"RV1 held-out statistic, 2.5-97.5% over draws",0.03494,50,0.01626,0.05422,,
+training MSI contrast COAD_TCGA (in-sample): statistic and share of null |s| below it,0.04508,57,,,1,
+training MSI contrast STAD_TCGA (in-sample): statistic and share of null |s| below it,0.04524,57,,,1,
+training MSI contrast UCEC_TCGA (in-sample): statistic and share of null |s| below it,0.03911,57,,,0.9825,
+RV2 without the global axis: coefficient of mmr,0.2399,7685,,,,
+RV2: coefficient of the global axis,-0.08679,7685,,,9.604e-09,
+RV2 with MANTIS MSI-H vs MSS in place of MMR deficiency: coefficient,0.3667,17,,,1.129e-23,
+RV7 with MANTIS MSI-H: AUROC(R_up arm higher than hypermutated proficient),0.8703,17,,,2.277e-07,
+"held-out share more included, B_far",0.4912,7688,,,,-0.0003757
+"held-out share more included, B_near",0.5031,21582,,,,0.0001519
+"held-out share more included, R_down",0.4586,1583,,,,-0.004842
+"held-out share more included, R_up",0.7259,135,,,,0.02774
+"held-out share more included, other",0.4964,4962,,,,-0.0002232
+"held-out share more included, shield",0.619,42,,,,0.02099
+RV3 within exons whose length is a multiple of 3: AUROC,0.6561,40,,,0.0006777,
+"arm coupling: Spearman(R_up arm, minus R_down arm), MMR-deficient",-0.6216,50,,,1.453e-06,
+"arm coupling: Spearman(R_up arm, minus R_down arm), proficient",-0.6063,7635,,,0,
+"RV3 on the three cohorts' mean shift: AUROC (R_up 125, B_far 7028)",0.6628,7028,,,4.164e-10,
+"RV5 on the three cohorts' mean shift: AUROC (R_up 125, shield 39)",0.4864,39,,,0.7988,
+RV4 on the three cohorts' mean shift: adjusted rho,-0.02895,238,,,0.6513,
+"Spearman(AGEZ, d_bp), held-out exons with a run >= 20",-0.04422,197,,,,
+"median PTB sensitivity, R_up",0.01034,135,,,,
+"median PTB sensitivity, runs >= 20",0.01144,256,,,,

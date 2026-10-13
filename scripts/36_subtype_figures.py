@@ -22,13 +22,14 @@ One question per figure, in the order the story is told in results/SUBTYPE.md:
     U19 is the code about the branch point, and about mismatch repair (D-65, D-67)?
     U20 is the code an infiltration readout (D-68)?
     U21 does the code follow MSI calls that do not come from MC3: MANTIS, MSIsensor (D-69)?
+    U22 is the rising arm real: specific, not a global axis, tract-dependent, dose, PTB (D-70)?
 
 Captions are figure legends: "**Figure Un. Title.**", then (a), (b) ... for the panels. `legends`
 copies each legend (without its bullet list of tests) under the figure in results/SUBTYPE.md.
 
 Reads results/subtype/summary/ (step 34), results/subtype/interpret/ (step 35),
 results/subtype/regulators/ (step 37), results/subtype/site_probe/ (step 38),
-results/subtype/msi_cis/ (steps 42, 50, 51) and results/subtype/brca/ (steps 46-49). Every figure
+results/subtype/msi_cis/ (steps 42, 50, 51, 52) and results/subtype/brca/ (steps 46-49). Every figure
 is SVG + PDF + 400-dpi PNG with `<stem>.csv` of the plotted values and `<stem>.caption.md`.
 Usage: python scripts/36_subtype_figures.py [U1 U3 ... legends]        (default: all, then legends)
 """
@@ -2220,6 +2221,177 @@ mid and {cell('MANTIS', 'MC3 deficient', 'MSS')} MSS, and these still score low 
 values are kept locally (D-12)."""
 
 
+# ============================================================ D-70 the rising arm
+def _wilson(k: int, n: int) -> tuple[float, float]:
+    if n == 0:
+        return np.nan, np.nan
+    z, ph = 1.96, k / n
+    c = (ph + z * z / (2 * n)) / (1 + z * z / n)
+    h = z * np.sqrt(ph * (1 - ph) / n + z * z / (4 * n * n)) / (1 + z * z / n)
+    return c - h, c + h
+
+
+def U22() -> None:
+    d = CODE_DIR / "reversal"
+    pr = pd.read_csv(d / "predictions.csv").set_index("id")
+    ex = pd.read_csv(d / "exploratory.csv").set_index("what")
+    ph = pd.read_csv(d / "posthoc.csv")
+    con = pd.read_csv(d / "contrasts.csv")
+    draws = pd.read_csv(d / "held_out_draws.csv")
+    el = pd.read_csv(d / "exon_shifts.csv")
+    tu = pd.read_parquet(MSI_LOCAL / "reversal_tumours.parquet")
+    dose = pd.read_parquet(MSI_LOCAL / "reversal_dose.parquet")
+    fig = plt.figure(figsize=(DOUBLE - 0.2, 4.3))
+    gs = fig.add_gridspec(2, 6, height_ratios=[1, 1], hspace=0.62, wspace=1.2)
+    rows, local = [], []
+    rng = np.random.default_rng(0)
+    # a. the held-out rise against every other subtype contrast (20 v 20 tumours, 50 draws)
+    ax = fig.add_subplot(gs[0, :3])
+    null = con[con.kind.eq("other")]
+    v = null.stat.abs().to_numpy() * 100
+    ax.scatter(v, rng.uniform(-0.18, 0.18, len(v)), s=7, color=MUTED, alpha=0.8, linewidths=0, zorder=2)
+    for r in null.itertuples():
+        rows.append({"panel": "a", "set": "other subtype contrast", "cohort": r.cohort, "contrast": f"{r.a} vs {r.b}",
+                     "abs_shift_pct_points": abs(r.stat) * 100})
+    lo, hi = np.percentile(draws.stat * 100, [2.5, 97.5])
+    s_h = pr.loc["RV1"].effect * 100
+    ax.hlines(1, lo, hi, color=ACCENT, linewidth=0.9)
+    ax.scatter(s_h, 1, s=18, color=ACCENT, zorder=3)
+    rows.append({"panel": "a", "set": "MMR-deficient, 30 held-out cancers", "shift_pct_points": s_h,
+                 "draw_2.5": lo, "draw_97.5": hi})
+    for k, r in enumerate(con[con.kind.eq("msi")].itertuples()):
+        y = 2 + k
+        ax.scatter(r.stat * 100, y, s=16, facecolors="white", edgecolors=COH_STYLE[r.cohort][0], linewidths=0.9, zorder=3)
+        rows.append({"panel": "a", "set": f"MSI, {_short(r.cohort)} (in-sample)", "shift_pct_points": r.stat * 100})
+    q95 = np.quantile(v, 0.95)
+    ax.axvline(q95, color=MUTED, linewidth=0.6, linestyle=(0, (3, 2)), zorder=0)
+    ax.axvline(0, color=INK2, linewidth=0.6, zorder=0)
+    rows.append({"panel": "a", "set": "reference line: 95th percentile of the other contrasts", "shift_pct_points": q95})
+    labs = [f"other subtype contrasts ({len(null)})", "MMR-deficient, held-out"] + \
+           [f"MSI, {_short(c)} (in-sample)" for c in con[con.kind.eq("msi")].cohort]
+    ax.set_yticks(range(len(labs)))
+    ax.set_yticklabels(labs, fontsize=5.6)
+    ax.set_ylim(len(labs) - 0.4, -0.6)
+    ax.set_xlim(-0.3, 6.2)
+    ax.tick_params(axis="y", length=0)
+    ax.spines["left"].set_visible(False)
+    ax.set_xlabel("R_up shift, percentile points", fontsize=6)
+    # b. held-out exon shifts by class
+    bx = fig.add_subplot(gs[0, 3:])
+    order = [("R_down", "runs 10–19", INK2), ("R_up", "runs ≥ 20,\nbranch point ≥ 36", ACCENT),
+             ("B_far", "no run,\nbranch point ≥ 36", MUTED), ("shield", "run upstream\nof branch point", ACCENT_DARK)]
+    for x, (c, lab, col) in enumerate(order):
+        w = el.loc[el.cls.eq(c), "delta_adj"].to_numpy() * 100
+        st = _box(bx, x, w, col, dots=len(w) < 300, rng=rng)
+        rows.append({"panel": "b", "class": c, **st})
+    bx.axhline(0, color=MUTED, linewidth=0.6, linestyle=(0, (3, 2)), zorder=0)
+    bx.set_xticks(range(len(order)))
+    bx.set_xticklabels([f"{lab}\n({int(el.cls.eq(c).sum()):,})" for c, lab, _ in order], fontsize=5.4)
+    bx.tick_params(axis="x", length=0)
+    bx.set_ylim(-16, 21)
+    bx.set_ylabel("exon shift, percentile points", fontsize=6)
+    # c. runs >= 20 by branch-point distance (A-16, exploratory)
+    cx = fig.add_subplot(gs[1, :2])
+    b = ph[ph.what.eq("runs >= 20 by branch-point distance")].reset_index(drop=True)
+    for x, r in b.iterrows():
+        k = int(round(r.share_up * r.n))
+        l_, h_ = _wilson(k, int(r.n))
+        col = ACCENT if r.bin != "18-29" else INK2
+        cx.vlines(x, l_, h_, color=col, linewidth=0.8)
+        cx.scatter(x, r.share_up, s=16, color=col, zorder=3)
+        rows.append({"panel": "c", "branch_point_nt": r.bin, "n": int(r.n), "share_up": r.share_up, "wilson_low": l_,
+                     "wilson_high": h_, "median_shift": r["median"]})
+    cx.axhline(0.5, color=MUTED, linewidth=0.6, linestyle=(0, (3, 2)), zorder=0)
+    cx.set_xticks(range(len(b)))
+    cx.set_xticklabels([f"{r.bin.replace('-', '–')}\n({int(r.n)})" for r in b.itertuples()], fontsize=5.4)
+    cx.tick_params(axis="x", length=0)
+    cx.set_ylim(0, 1)
+    cx.set_xlabel("branch point to AG, nt", fontsize=6)
+    cx.set_ylabel("share more included", fontsize=6)
+    # d. the R_up arm by DNA class (held-out tumours)
+    dx = fig.add_subplot(gs[1, 2:4])
+    grp = [("proficient", (~tu.mmr & ~tu.hyper), MUTED), ("hypermutated\nproficient", tu.hyper, INK2),
+           ("MMR-\ndeficient", tu.mmr, ACCENT)]
+    for x, (lab, k, col) in enumerate(grp):
+        w = tu.loc[k, "pct_up"].to_numpy()
+        st = _box(dx, x, w, col, dots=len(w) < 600, rng=rng)
+        rows.append({"panel": "d", "group": lab.replace("\n", " "), **st})
+        local.append(pd.DataFrame({"panel": "d", "group": lab.replace("\n", " "), "file_id": tu.loc[k, "file_id"],
+                                   "pct_up": w}))
+    dx.axhline(0.5, color=MUTED, linewidth=0.6, linestyle=(0, (3, 2)), zorder=0)
+    dx.set_xticks(range(3))
+    dx.set_xticklabels([f"{lab}\n({int(k.sum()):,})" for lab, k, _ in grp], fontsize=5.4)
+    dx.tick_params(axis="x", length=0)
+    dx.set_ylim(-0.03, 1.03)
+    dx.set_ylabel("R_up arm, percentile in cancer", fontsize=6)
+    # e. dose: R_up arm against homopolymer deletions in MMR-deficient / MSI tumours
+    exx = fig.add_subplot(gs[1, 4:])
+    for src, col, mk in [("three cohorts", MUTED, "o"), ("held-out", ACCENT, "o")]:
+        w = dose[dose.source.eq(src)]
+        exx.scatter(np.log1p(w.n_hp), w.pct_up, s=5, color=col, alpha=0.7, linewidths=0, marker=mk)
+        local.append(pd.DataFrame({"panel": "e", "source": src, "n_hp": w.n_hp, "pct_up": w.pct_up}))
+    exx.set_xticks(np.log1p([10, 30, 100, 300, 1000]))
+    exx.set_xticklabels(["10", "30", "100", "300", "1000"], fontsize=5.6)
+    exx.set_ylim(-0.03, 1.03)
+    exx.set_xlabel("homopolymer deletions", fontsize=6)
+    exx.set_ylabel("R_up arm, percentile in cancer", fontsize=6)
+    rows.append({"panel": "e", "partial_spearman_given_purity": pr.loc["RV6"].effect, "p": pr.loc["RV6"].p,
+                 "q": pr.loc["RV6"].q, "n": pr.loc["RV6"].n})
+    from _figbase import panel_letters
+    panel_letters([(ax, -0.5), (bx, -0.16), (cx, -0.3), (dx, -0.3), (exx, -0.3)])
+    save(fig, OUT, "U22_msi_code_rising_arm", data=pd.DataFrame(rows), caption=CAPTIONS["U22"](pr, ex, ph, rows),
+         local_data=(SCFG.base_data_dir / "figure_data", pd.concat(local, ignore_index=True)))
+
+
+def _cap_u22(pr, ex, ph, rows):
+    def line(i):
+        r = pr.loc[i]
+        return f"q = {fp(r.q)}, {r.verdict}"
+    g = lambda w: ph[ph.what.eq(w)].iloc[0]
+    b = ph[ph.what.eq("runs >= 20 by branch-point distance")].set_index("bin")
+    oth = [r["abs_shift_pct_points"] for r in rows if r.get("set") == "other subtype contrast"]
+    n_below = int(sum(v < pr.loc['RV1'].effect * 100 for v in oth))
+    return f"""**Is the rising arm of the code real?**
+
+Pre-specified (config/followup.yaml: msi_code_reversal, D-70) before any test was computed; panel (c) is exploratory
+(A-16), added after the tests were read. Exon shift = D-66's background-adjusted difference in inclusion percentile,
+MMR-deficient minus other tumours, pooled over the 30 held-out cancers (×100 = percentile points). R_up = acceptor
+T-run ≥ 20 nt with the sequence-predicted branch point ≥ 36 nt from the AG; R_down = runs of 10–19 nt; B_far = no run
+(≤ 5) with the branch point ≥ 36 nt; shield = a run ≥ 20 nt lying upstream of a branch point, so that contracting it
+cannot move the branch point. R_up arm = each tumour's mean R_up percentile against matched exons without a run, as a
+percentile within its cancer.
+
+(a) Mean R_up shift in 20 against 20 tumours (50 draws): every pair of subtypes in the 22 cohorts with MSI, POLE and
+MC3-deficient tumours removed (grey, absolute value; dashed = their 95th percentile), the held-out MMR-deficient tumours
+each paired with a proficient tumour of the same cancer (blue; bar = 95% of draws) and, in-sample for the rule, MSI in
+the three training cohorts (hollow). (b) Held-out exon shifts by class (n in brackets); box = interquartile range,
+diamond = median, whiskers = 1.5 × IQR, dots = exons (not drawn for the large B_far set); the axis is clipped to
+−16 to 21. (c) Exploratory: exons with a run ≥ 20 nt, share more included in MMR-deficient tumours by branch-point
+distance (n in brackets); bars = Wilson 95% interval. (d) R_up arm of held-out tumours by DNA class; dots = tumours
+(not drawn for the proficient group). (e) R_up arm against homopolymer deletions in MMR-deficient tumours (blue,
+held-out) and MSI tumours of the three cohorts (grey).
+
+- RV1, specificity: held-out {signed(pr.loc['RV1'].effect * 100, 2)} points, above {n_below} of the {len(oth)} other contrasts
+  (largest {float(pr.loc['RV1'].n.split('largest |s| ')[1].split(',')[0]) * 100:.1f}, sarcoma LMS against MFS);
+  {line('RV1')}. The three in-sample MSI contrasts lie above all or all but one.
+- RV2, a tumour-wide inclusion axis: the MMR coefficient on the R_up arm is {signed(pr.loc['RV2'].effect, 3)} adjusted
+  for it, stromal, immune and retained-intron levels (cancer only +0.237); {line('RV2')}.
+- RV3, the tract is needed: R_up above B_far, AUROC {pr.loc['RV3'].effect + 0.5:.2f}; {line('RV3')}.
+- RV4, AG exclusion zone in place of the branch point, runs ≥ 20: adjusted ρ = {signed(pr.loc['RV4'].effect, 3)};
+  {line('RV4')}.
+- RV5, R_up above shield exons: AUROC {pr.loc['RV5'].effect + 0.5:.2f}; {line('RV5')}. Shield exons move up in
+  {int(round(g('shield exons against 0').share_up * 42))} of 42 (exploratory).
+- RV6, dose (panel e): partial ρ = {signed(pr.loc['RV6'].effect, 3)} given purity; {line('RV6')}.
+- RV7, mismatch repair, not mutation burden (panel d): AUROC {pr.loc['RV7'].effect + 0.5:.2f} against hypermutated
+  proficient tumours; {line('RV7')}.
+- RV8, PTB relief: Spearman of the shift with PTB sensitivity {signed(pr.loc['RV8'].effect, 3)}, opposite to the
+  sign PTB relief predicts; {line('RV8')}.
+
+Panel (c), exploratory: with the branch point 18–29 nt from the AG, {b.loc['18-29', 'share_up']:.2f} of long-run exons
+move up (n = {int(b.loc['18-29', 'n'])}); from 30–35 nt {b.loc['30-35', 'share_up']:.2f}, the shape seen in the training
+cohorts (Figure U19a). q over family RV (8 tests). Per-tumour values are kept locally (D-12)."""
+
+
 TITLES = {
     "U1": "Splicing matches expression on lineage and genome-state subtypes, and fusing the two adds little.",
     "U2": "Splicing loses most on small classes defined by one programme.",
@@ -2242,6 +2414,7 @@ TITLES = {
     "U19": "The code is specific to the branch point and to mismatch repair.",
     "U20": "The code is not an infiltration readout.",
     "U21": "The code finds the tumours that two exome MSI callers call MSI-high.",
+    "U22": "The rising arm is specific to mismatch repair and needs the tract, but its mechanism is not settled.",
 }
 
 
@@ -2261,9 +2434,9 @@ CAPTIONS = {k: (lambda k, f: (lambda *a: tidy(legend(k, f(*a)))))(k, f) for k, f
              "U7": _cap_u7, "U8": _cap_u8, "U9": _cap_u9,
              "U10": _cap_u10, "U11": _cap_u11, "U12": _cap_u12, "U13": _cap_u13, "U14": _cap_u14, "U15": _cap_u15,
              "U16": _cap_u16, "U17": _cap_u17, "U18": _cap_u18, "U19": _cap_u19, "U20": _cap_u20,
-             "U21": _cap_u21}.items()}
+             "U21": _cap_u21, "U22": _cap_u22}.items()}
 
 if __name__ == "__main__":
     run({"U1": U1, "U2": U2, "U3": U3, "U4": U4, "U5": U5, "U6": U6, "U7": U7, "U8": U8, "U9": U9, "U10": U10, "U11": U11,
          "U12": U12, "U13": U13, "U14": U14, "U15": U15, "U16": U16, "U17": U17,
-         "U18": U18, "U19": U19, "U20": U20, "U21": U21, "legends": legends})
+         "U18": U18, "U19": U19, "U20": U20, "U21": U21, "U22": U22, "legends": legends})
