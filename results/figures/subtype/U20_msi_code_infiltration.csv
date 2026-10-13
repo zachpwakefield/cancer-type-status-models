@@ -1,0 +1,16 @@
+panel,set,n_mmr_deficient_or_msi,auroc,test,coef_adjusted,coef_unadjusted,share_kept,share_ci_low,share_ci_high,p,q,q_family,verdict
+a,"30 cancers, all",50.0,0.8318166339227243,PC2,,,,,,,,,
+a,lower-immune half,21.0,0.8414770607982096,IF3,,,,,,,,,
+a,upper-immune half,29.0,0.8282522996057818,exploratory,,,,,,,,,
+a,immune score alone,50.0,0.5862,exploratory,,,,,,,,,
+a,"UCEC, lower-immune half",14.0,0.8462,exploratory,,,,,,,,,
+a,"STAD, lower-immune half",21.0,0.9788,exploratory,,,,,,,,,
+a,"COAD, lower-immune half",12.0,0.9819,exploratory,,,,,,,,,
+a,reference line,,0.5,,,,,,,,,,
+b,"30 cancers: stromal, immune, RI",,,IF1,-0.3393298359123559,-0.3345,1.0144389713373867,0.827506950913478,1.2013709917612954,2.0200584307393155e-26,4.040116861478631e-26,"IF (msi_code_infiltration, 6 tests)",supported
+b,30 cancers: + ABSOLUTE purity,,,IF2,-0.3344027572671273,-0.3302,1.0127279141948131,0.8204755018579561,1.2049803265316705,5.460192903971599e-25,8.190289355957397e-25,"IF (msi_code_infiltration, 6 tests)",supported
+b,"UCEC: site, stromal, immune, RI",,,IF4,-0.0426149872999019,-0.04,1.0653746824975476,0.53963088368433,1.5911184813107624,7.136191630808945e-05,7.136191630808945e-05,"IF (msi_code_infiltration, 6 tests)",supported
+b,"STAD: site, stromal, immune, RI",,,IF5,-0.0793762651575398,-0.0786,1.009876147042491,0.8803352595871831,1.1394170344978003,1.0473024931394381e-52,6.283814958836628e-52,"IF (msi_code_infiltration, 6 tests)",supported
+b,"COAD: site, stromal, immune, RI",,,IF6,-0.0803245476358066,-0.0784,1.024547801477125,0.866049220030273,1.1830463829239757,8.74162895055012e-37,2.622488685165036e-36,"IF (msi_code_infiltration, 6 tests)",supported
+b,reference line: unadjusted,,,,,,1.0,,,,,,
+b,reference line: none kept,,,,,,0.0,,,,,,

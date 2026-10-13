@@ -1,13 +1,13 @@
-**Do splice-site mutations and SF3B1 hotspots leave the expected marks in BRCA splicing?**
-
+**Figure U14. Splice-site mutations skip their exons, and SF3B1 hotspot tumours use cryptic acceptors.**
 Pre-specified (config/followup.yaml: brca_mutations, D-59). MC3 public calls of the cohort's tumours (FILTER flags
-within PASS, wga, native_wga_mix). a, every splice-site SNV at +1/+2 or −1/−2 whose hit exon (by the MC3
+within PASS, wga, native_wga_mix). (a) Every splice-site SNV at +1/+2 or −1/−2 whose hit exon (by the MC3
 transcript's intron number, located in GENCODE v45) is a cassette exon of the main SE matrix: the exon's PSI
-percentile in the mutated tumour among the other cohort tumours, stacked by side; dashed line = the count per bin
-with no effect; triangles = the 5 CDH1 mutations. b, SF3B1 hotspot tumours (codons 622, 625, 626, 662, 663, 666,
-700, 741, 742) against the rest on a cryptic A3SS score: mean within-cohort percentile of the long form of 820 A3SS
-events whose acceptors are 10–30 nt apart and whose upstream acceptor is rarely used in normals (median PSI < 0.2).
-Box = interquartile range, diamond = median, whiskers = 1.5 × IQR, dots = tumours.
+percentile in the mutated tumour among the other cohort tumours (ties count half, so an exon near 100% inclusion in
+almost every tumour ranks at 0.5), stacked by side; dashed line = the count per bin with no effect; triangles = the
+5 CDH1 mutations. (b) SF3B1 hotspot tumours (codons 622, 625, 626, 662, 663, 666, 700, 741, 742) against the rest on
+a cryptic A3SS score: mean within-cohort percentile of the long form of 820 A3SS events whose acceptors are 10–30 nt
+apart and whose upstream acceptor is rarely used in normals (median PSI < 0.2). Box = interquartile range, diamond =
+median, whiskers = 1.5 × IQR, dots = tumours.
 
 - C1, the hit exon is skipped: 110 of 157 mutations below the median; median percentile 0.093; q = 8.0e-7,
   supported. Median percentile: donor 0.05, acceptor 0.13.

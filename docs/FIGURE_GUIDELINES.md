@@ -29,6 +29,16 @@ imports it.
 - **Captions.** Explanations go in `<stem>.caption.md` next to the figure. A caption opens with
   the question the figure answers, in bold, and then gives the method, n, the test and where
   the values are.
+- **Legends (subtype figures, U1–U20).** A U caption is written as a figure legend:
+  - it opens with **Figure Un. Title.** in bold, where the title states the finding as one
+    declarative sentence (kept in `TITLES` in `scripts/36_subtype_figures.py`);
+  - the method follows, then each panel as (a), (b), … with a capital after the letter;
+  - the tests come last, as a bullet list.
+
+  `36_subtype_figures.py legends` copies each legend, without its bullet list, under the figure
+  in `results/SUBTYPE.md`, between marker comments. In the write-up each figure is preceded by a
+  short "How to read Figure Un" guide and followed by its findings. The S, T and X figures still
+  use the question form.
 - **Exports.** Final figures are written as SVG, PDF and a 400-dpi PNG, plus `<stem>.csv` with
   the exact plotted values. A separate `<stem>_tests.csv` holds the tests when they are not
   part of the plotted table.

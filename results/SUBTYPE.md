@@ -10,15 +10,18 @@ kind of that cancer a tumour is — and whether splicing knows. How the three ta
 is in [ACROSS_TASKS.md](ACROSS_TASKS.md).
 
 - **Methods and decisions:** [docs/SUBTYPE_METHODS.md](../docs/SUBTYPE_METHODS.md) (D-30 to D-47
-  and D-52 to D-60, amendments A-1 to A-7 and A-9 to A-14). Every label map, cohort and threshold was
+  and D-52 to D-69, amendments A-1 to A-7 and A-9 to A-15). Every label map, cohort and threshold was
   fixed in [config/subtype.yaml](../config/subtype.yaml) before the first model was fitted; the
   regulator, site, MSI-repeat and BRCA analyses of §9–§12 were fixed in
   [config/followup.yaml](../config/followup.yaml) before they were run.
 - **Scripts:** `30`–`35` build the labels, matrices, models and tables; `37` and `38` the
   regulator and site analyses; `42`, `43` and `45` the MSI-repeat analysis, its robustness checks and
-  the DNA-read genotyping; `46`–`49` the BRCA follow-ups; `36` draws these figures.
-- **Figures:** U1–U15 in [figures/subtype/](figures/subtype/). Each has a caption file stating the
-  question, the method, n and the test, and a CSV of the plotted values.
+  the DNA-read genotyping; `50` and `51` its follow-ups and the sequence code; `46`–`49` the BRCA
+  follow-ups; `36` draws these figures.
+- **Figures:** U1–U20 in [figures/subtype/](figures/subtype/). Each has a caption file stating the
+  question, the method, n and the test, and a CSV of the plotted values. Each figure below comes
+  with a short guide to reading it, then its legend (copied from the caption file), then the
+  findings.
 - **Tables:** `results/subtype/summary/` (performance, baselines, recall, fusion tests),
   `results/subtype/interpret/` (markers, gene overlap, event audit, cross-family tables),
   `results/subtype/regulators/`, `results/subtype/site_probe/`, `results/subtype/msi_cis/`,
@@ -92,6 +95,9 @@ with a distant branch point rise.
   (0.85). There, the one-sided score fails (0.55).
 - **The exons and the dose.** The same exons move (ρ 0.51), and within those 50 tumours the
   signal deepens with the deletion count (§11).
+- **Not infiltration.** MSI tumours are heavily infiltrated, yet adjusting for immune and stromal
+  expression and an RNA-handling proxy keeps all of the effect. The code separates as well in
+  the less-infiltrated half of each cancer (0.84).
 
 A fourth follow-up brings DNA into breast cancer (§12). Splicing reads HER2 without the amplicon.
 It separates ERBB2-amplified luminal tumours about as well as expression does, and setting the
@@ -108,47 +114,49 @@ transcription read on the other strand (§7).
 
 ## Summary
 
-1. **Splicing matches expression on lineage and genome-state subtypes** (U1): ESCA, CESC, TGCT,
+1. **Splicing matches expression on lineage and genome-state subtypes** (Figure U1): ESCA, CESC, TGCT,
    LGG_IDH, STAD_TCGA and BRCA_ER within 0.015 balanced accuracy; LGG histology +0.026 for
    splicing (CI −0.002 to +0.054). In AUROC the AS ensemble equals or beats expression in 7 of 22
    cohorts.
 2. **It falls behind where one gene defines the class**: PCPG site −0.174 (CI −0.267 to −0.089;
    McNemar p = 1.1e-5, 21 against 1 discordant patients), PRAD ETS class −0.145 (p = 2.5e-5),
    UCEC molecular class −0.117 (CI −0.205 to −0.029). The losses concentrate in small classes
-   (recall: POLE 0.54 → 0.08, myxofibrosarcoma 0.67 → 0.29, ETV1 0.93 → 0.57; U2).
+   (recall: POLE 0.54 → 0.08, myxofibrosarcoma 0.67 → 0.29, ETV1 0.93 → 0.57; Figure U2).
 3. **Fixed 1:1 fusion adds little**: between −0.042 and +0.036 in every cohort; CI above zero only
    for LGG (+0.023) and UCEC_TCGA (+0.036), with McNemar p 0.064 and 0.070.
-4. **Histology errors are molecularly coherent** (U3): codeletion in glioma, copy-number class in
+4. **Histology errors are molecularly coherent** (Figure U3): codeletion in glioma, copy-number class in
    endometrial cancer, genomic stability in gastric cancer, pseudohypoxia and PNMT loss in PCPG.
 5. **The literature's markers are in the data and in the expression models, rarely in the
-   splicing models** (U4), and the two modalities' top-50 genes share a median of one gene (U5).
-6. **Named splicing biology, audited** (U6): smooth-muscle ACTN1/TPM1 exons in leiomyosarcoma; a
+   splicing models** (Figure U4), and the two modalities' top-50 genes share a median of one gene (Figure U5).
+6. **Named splicing biology, audited** (Figure U6): smooth-muscle ACTN1/TPM1 exons in leiomyosarcoma; a
    CDH1 skipping tail in lobular breast cancer; the p16INK4a first exon in HPV-positive HNSC; the
    NDE1 "promoter" of leiomyosarcoma is MYH11; 97 of 2,248 top events read a neighbour.
-7. **MSI leaves the same splicing marks in three cancers** (U7, exploratory): 10 events separate
+7. **MSI leaves the same splicing marks in three cancers** (Figure U7, exploratory): 10 events separate
    MSI from the rest in UCEC, STAD and COAD alike (AUROC ≥ 0.75 or ≤ 0.25 in all three), 7 of
    them chosen by at least two of the three models independently.
-8. **Regulators** (U8; R1–R6 fixed in advance): ESRP2 lower in biphasic mesothelioma (AUROC
+8. **Regulators** (Figure U8; R1–R6 fixed in advance): ESRP2 lower in biphasic mesothelioma (AUROC
    0.82), ESRP1 lower in mesenchymal HNSC (0.76), PTBP1 lower in leiomyosarcoma (0.66) and moving
    the ACTN1 smooth-muscle exon against the leiomyosarcoma pattern (partial ρ +0.43). ESRP1 in
    mesothelioma is not resolved, and TPM1 runs against the published mechanism (A-5).
-9. **Site** (U9): holding tissue-source sites out costs GEX ≤ 0.035 in 20 of 21 cohorts, but the
+9. **Site** (Figure U9): holding tissue-source sites out costs GEX ≤ 0.035 in 20 of 21 cohorts, but the
    splicing views 0.056–0.098 in HNSC_HPV, CESC, THCA, HNSC_mRNA, TGCT and STAD_TCGA. "Splicing
    loses more than GEX in most cohorts" holds in 16 of 21 (q = 0.080): not resolved.
-10. **MSI splicing follows acceptor poly-T repeats** (U10–U11; M1–M7, N1–N3, Q1–Q2 fixed in
+10. **MSI splicing follows acceptor poly-T repeats** (Figures U10–U11; M1–M7, N1–N3, Q1–Q2 fixed in
     advance): 80% and 68% of the STAD and COAD MSI models' top 50 SE events carry an acceptor
     T-run ≥ 10 (5% of exons); a genome-only score ranks MSI at AUROC 0.71 and 0.78 (UCEC 0.51), at
     the acceptor only; MRE11 exon 5 replicates in all three. Runs ≥ 20 move toward inclusion
-    (exploratory; 2 of 6 replication tests supported, 6 of 6 in direction). Followed up (U16–U17;
+    (exploratory; 2 of 6 replication tests supported, 6 of 6 in direction). Followed up (Figures U16–U17;
     D-61 to D-64 fixed in advance): an exon whose branch point lies further from the AG gains
     inclusion in MSI, beyond its run length, in all three cancers (adjusted ρ 0.11–0.16). Deletion
     dose tracks the score in STAD only, and does not explain the weak endometrial score. No NMD
     signature shows in gene expression. GTEx genotypes no variant inside the runs. The resulting
-    two-arm code (U18–U19; D-65 to D-67 fixed in advance) is specific to the branch point and to
+    two-arm code (Figures U18–U19; D-65 to D-67 fixed in advance) is specific to the branch point and to
     mismatch repair. It finds MMR-deficient tumours in 30 cancers never used (AUROC 0.83 against
     0.55 for the one-sided score; 0.85 against hypermutated proficient tumours), and it separates
-    endometrial MSI (0.84, in-sample for the rule).
-11. **BRCA with DNA** (U12–U15; D-57 to D-60 fixed in advance): the AS ensemble separates
+    endometrial MSI (0.84, in-sample for the rule). It is not an infiltration readout (Figure U20;
+    D-68 fixed in advance): adjusting for immune, stromal and RNA-handling covariates keeps the
+    whole effect, and it separates at 0.84 in the less-infiltrated half.
+11. **BRCA with DNA** (Figures U12–U15; D-57 to D-60 fixed in advance): the AS ensemble separates
     ERBB2-amplified luminal tumours about as well as GEX (0.81 against 0.75 without the ABSOLUTE
     ceiling; HU2 not resolved, and no gap on the 15 newly amplified tumours), and not through the
     amplicon (knockout ≤ 0.007). 110 of 157 splice-site mutations skip their exon;
@@ -226,7 +234,38 @@ property of the label, not leakage, and it applies equally to every view.
 
 ## 2. How well each modality recovers the subtype
 
+**How to read Figure U1.**
+- **Rows are cohorts**, grouped by how the label was made; the tick on each row is chance.
+- **Compare the blue dot with the black one.** Blue is the AS ensemble, black is GEX. A blue dot
+  at or beyond the black one means splicing recovers the subtype as well as expression. The grey
+  bar shows how far the eight single splicing views spread.
+- **The dark-blue dot is the 1:1 fusion.** The columns at right say whether it beats GEX on the
+  same patients.
+- **Read the bottom block apart.** Its labels were made from mRNA clusters, so GEX is near-circular
+  there (D-44) and splicing is the independent test.
+
 ![U1](figures/subtype/U1_performance.png)
+
+<!-- legend U1: copied from figures/subtype/U1_performance.caption.md by scripts/36_subtype_figures.py legends -->
+> **Figure U1. Splicing matches expression on lineage and genome-state subtypes, and fusing the two adds little.**
+> Out-of-fold balanced accuracy (mean per-class recall) of one model per cohort and view, 22 cohorts and 7,552
+> patient-cohort pairs: the eight splicing views (grey; the bar spans them), expression (GEX, black), the AS
+> ensemble (the mean of the eight splicing views' class probabilities, blue) and GEX + AS fused 1:1 (dark blue).
+> Fusion weights were fixed before any result (D-40). Tick: chance, 1/classes, which is also the majority-class
+> predictor's balanced accuracy. Rows: cohorts, patients in brackets, grouped by how the label was made: histology
+> (weak = a poorly reproducible label, control = a lineage or site contrast), genomic or IHC (DNA, protein), and
+> expression-defined (mRNA clusters, so GEX is near-circular there; D-44).
+>
+> Columns at right: fused minus GEX balanced accuracy, and the exact McNemar test of fused against GEX on paired
+> per-patient correctness, raw p. McNemar weighs classes by their size and balanced accuracy weighs them equally, so
+> the two can disagree (THCA). The CSV holds every point's 95% patient-bootstrap CI, macro F1, macro AUROC, the
+> paired-bootstrap CI of the fused − GEX difference and BH q (family: the subtype cohorts, per comparison).
+>
+> Outside the expression-defined labels the AS ensemble is within 0.03 of GEX in 11 of 19 cohorts and above it in 4:
+> LGG (+0.026), CESC (+0.011), STAD (+0.006), ESCA (+0.006). It falls more than 0.10 short in 3: PCPG (−0.17),
+> PRAD_ETS (−0.15), UCEC_TCGA (−0.12). Fusing helps balanced accuracy with a CI above zero only in LGG (+0.023,
+> McNemar p = 0.064) and UCEC_TCGA (+0.036, McNemar p = 0.070).
+<!-- /legend -->
 
 Balanced accuracy (the mean of per-class recall) is the headline metric because most cohorts are
 imbalanced; chance and the majority-class predictor both score 1/classes on it. "Majority acc."
@@ -298,7 +337,27 @@ Macro F1, macro AUROC, accuracy and MCC for every model, with CIs, are in
 
 ## 3. Which subtypes splicing loses
 
+**How to read Figure U2.**
+- **One row per class**, patients in brackets; the x axis is the class's out-of-fold recall.
+- **Look for rows where the blue dot sits far left of the black one.** Those are the classes
+  splicing loses. Then read the class size: the large losses sit in small classes.
+- **(a)** holds the histology cohorts; **(b)** the genomic, IHC and expression-defined ones, in the
+  order of Figure U1.
+
 ![U2](figures/subtype/U2_recall_by_class.png)
+
+<!-- legend U2: copied from figures/subtype/U2_recall_by_class.caption.md by scripts/36_subtype_figures.py legends -->
+> **Figure U2. Splicing loses most on small classes defined by one programme.** Out-of-fold recall of every class
+> (patients in brackets) for GEX (black), the AS ensemble (blue) and GEX + AS fused 1:1 (dark blue). (a) Histology
+> cohorts. (b) Genomic and IHC cohorts, then the expression-defined ones, in the order of U1. 95% patient-bootstrap
+> CIs and every single view are in the CSV and in `recall_by_class.csv`.
+>
+> Splicing's five largest losses against expression (recall, GEX → AS ensemble) are all in classes of fewer than 40
+> patients: UCEC_TCGA POLE (24): 0.54 → 0.08; SARC MFS (24): 0.67 → 0.29; PRAD_ETS ETV1 (28): 0.93 → 0.57; PCPG
+> Paraganglioma (30): 0.83 → 0.57; THCA Tall cell (35): 0.71 → 0.51. Its largest gains: UCEC_TCGA CN-high (83): 0.84
+> → 0.94; THCA Classical (351): 0.56 → 0.66; SARC UPS (47): 0.64 → 0.72; STAD Intestinal (157): 0.64 → 0.71. Over
+> the 12 classes with fewer than 40 patients, the AS ensemble's recall is lower than GEX's in 9.
+<!-- /legend -->
 
 Recall of every class, GEX against the AS ensemble (result):
 
@@ -335,7 +394,30 @@ Recall of every class, GEX against the AS ensemble (result):
 
 ## 4. When a histology model is wrong, its error is molecularly coherent
 
+**How to read Figure U3.**
+- **Each panel is one cohort's GEX histology model.** Rows pair the true histology with the
+  model's out-of-fold call; columns are the published molecular class of the same patients.
+- **Compare an error row with the correct rows above and below it.** If errors were random, a
+  misclassified tumour would look molecularly like its true histology. Instead it looks like the
+  class it was called.
+  - LGG: oligodendrogliomas called astrocytoma are mostly IDH-mutant without codeletion (28 of
+    43), like true astrocytomas.
+  - UCEC: endometrioid tumours called serous are mostly copy-number high (9 of 12), like true
+    serous tumours (45 of 48).
+- **Counts only.** No test was pre-specified (D-41).
+
 ![U3](figures/subtype/U3_histology_errors.png)
+
+<!-- legend U3: copied from figures/subtype/U3_histology_errors.caption.md by scripts/36_subtype_figures.py legends -->
+> **Figure U3. Histology models err in the molecular direction.** Each panel is one histology cohort's expression
+> (GEX) model. Rows: true histology → the model's out-of-fold call, with patients in brackets; columns: the
+> published molecular class of the same patients (PanCanAtlas, D-43); cells: patients, coloured by the share of the
+> row. Only patients with both labels are counted. Counts only, no test (D-41). The AS ensemble's table is in the
+> CSV (`plotted` = False); it shows the same pattern.
+>
+> The labels here were assigned by other groups over the full TCGA cohort; that is a property of the label, not a
+> leak, and no molecular label entered any histology model.
+<!-- /legend -->
 
 Four histology cohorts have a published molecular classification of the same patients.
 Cross-tabulating each histology model's out-of-fold calls against it (counts only, no test; D-41)
@@ -385,9 +467,36 @@ a property of the label, not a leak, and no molecular label entered any histolog
 
 ## 5. The literature's biology, in the data and in the models
 
+**How to read Figure U4.**
+- **One row per marker** fixed before any model was fitted, with the class it should be higher in.
+- **The dot asks whether the marker is in the data.** It is the AUROC of the gene's expression for
+  its class against the other, with no model involved: 0.5 = no difference, filled = p < 0.05.
+- **The two columns at right ask whether the models use it.** They give the gene's best rank in
+  the GEX model, and the best rank of any of its events in a splicing model; a dash means never
+  selected.
+- **The pattern to look for** is a dot far from 0.5, a GEX rank, and a dash or a low rank in the
+  splicing column.
+
 ![U4](figures/subtype/U4_literature_markers.png)
 
-The 42 markers of U4 were written into `config/subtype.yaml`, with their sources, before any model
+<!-- legend U4: copied from figures/subtype/U4_literature_markers.caption.md by scripts/36_subtype_figures.py legends -->
+> **Figure U4. The literature's markers are in the data and in the expression models, far less in the splicing
+> models.** Each row is a marker fixed in `config/subtype.yaml` before any model was fitted (D-41, D-45; sources in
+> the CSV), with the class the literature expects it to be higher in. Dot: AUROC of the gene's log2 CPM for that
+> class over the other (0.5 = no difference), computed on all patients of the two classes with no model involved;
+> filled = Mann-Whitney raw p < 0.05, open = not. Columns: the gene's best rank in the GEX model (over all patients
+> or within either class) and the best rank of any of its events across the eight splicing models, with the view (–
+> = no event of the gene was selected). For LGG and LGG_IDH, "1p/19q dosage" is the median over the arm's genes of
+> each gene's log2 CPM minus its cohort median, 1p and 19q averaged; the GEX column counts the model's top 100 genes
+> that lie on 1p or 19q.
+>
+> 39 of 40 gene markers differ in the expected direction (p < 0.05). 27 rank in the top 100 of their GEX model; 8
+> have an event in the top 100 of a splicing model. LGG: 7 of the top 100 GEX genes on 1p or 19q against 9.4
+> expected (hypergeometric p = 0.84); LGG_IDH: 33 of the top 100 GEX genes on 1p or 19q against 9.4 expected
+> (hypergeometric p = 5.3e-11).
+<!-- /legend -->
+
+The 42 markers of Figure U4 were written into `config/subtype.yaml`, with their sources, before any model
 was fitted (D-41, D-45). For each the question is twofold: is the expected difference in the data
 (AUROC of the gene's expression between the two named classes; no model), and does a model use it?
 
@@ -432,7 +541,25 @@ splicing ranks are the best of the gene's events across eight views.)
 
 ## 6. Splicing and expression read different genes
 
+**How to read Figure U5.**
+- **Each cell** counts the genes in both the top 50 of one splicing view (columns) and the top 50
+  of the same cohort's GEX model (rows; patients in brackets).
+- **Chance is 0.2–1.6 genes per cell.** Most cells hold 0–2: within a cohort, the two modalities
+  lean on different genes. The few dark cells are named in the legend.
+
 ![U5](figures/subtype/U5_as_vs_gex_genes.png)
+
+<!-- legend U5: copied from figures/subtype/U5_as_vs_gex_genes.caption.md by scripts/36_subtype_figures.py legends -->
+> **Figure U5. The splicing and expression models of a cohort read different genes.** For each cohort (patients in
+> brackets) and splicing view: how many genes are in both the top 50 genes of the splicing model (a gene ranked by
+> its best event) and the top 50 of the cohort's GEX model, counted within the genes both views could select in that
+> cohort (D-41). Under independent draws the expected count is 0.2–1.6 (median 0.5); the CSV holds it with the fold
+> enrichment, the hypergeometric raw p and BH q (family named in the CSV).
+>
+> The median overlap is 1 gene of 50 and 55 of 176 pairs share none; 7 pairs exceed chance at q < 0.05. The largest
+> overlaps are ESCA RI: 8 (ATP7B, ERN2, HNF1A, IKBKB-DT, IL17RB, KIF12, LGALS4, MYO7B); HNSC_HPV RI: 6 (CBARP,
+> KLHL35, MIR9-3HG, MSL3, STAG3, TMEM161B-DT); SARC MXE: 6 (ACTN1, LDB3, PDLIM7, SNAP25, TPM1, TPM2).
+<!-- /legend -->
 
 For each cohort and splicing view, the top 50 genes of the splicing model (a gene ranked by its
 best event) against the top 50 of the cohort's expression model, within the genes both could
@@ -461,7 +588,34 @@ is why fixed fusion gains little here.
 
 ## 7. The strongest single events, and which of them measure a neighbouring gene
 
+**How to read Figure U6.**
+- **One row per cohort**: the single splicing event with the largest class-specific importance,
+  labelled by host gene and view.
+- **The dots are class medians** on the event's own scale; the filled, named dot is the class the
+  event ranks for. The further it sits from the hollow ones, the better the event separates that
+  class.
+- **The text at right is the overlap audit.** It names any other gene the event's segment
+  overlaps, and correlates the event with that gene and with its host. Red means the event follows
+  the neighbour rather than its host: it is a readout of another gene's expression.
+
 ![U6](figures/subtype/U6_event_audit.png)
+
+<!-- legend U6: copied from figures/subtype/U6_event_audit.caption.md by scripts/36_subtype_figures.py legends -->
+> **Figure U6. Four of the nineteen strongest splicing events read a neighbouring gene.** For each histology and
+> genomic/IHC cohort, the one splicing event with the largest class-specific mean |SHAP| across the eight splicing
+> models (rule fixed before the audit was run, D-41), labelled by cohort, host gene and view. Dots: the event's
+> median over the patients of each class, PSI or usage (0 to 1) or HIT index (−1 to 1); filled and named = the class
+> the event ranks for. Columns at right: the D-27 audit. The event's segment is intersected with every other GENCODE
+> v45 gene's exons (≥ 50 bp): antisense, same-strand, inside a readthrough model, or no overlap. ρ: Spearman
+> correlation over the cohort's patients with the other gene's log2 CPM and with the host's. An overlapping event
+> that follows the other gene (|ρ| ≥ 0.5 and above |ρ host|) is a readout of it (red). "Not measured": the other
+> gene is not in the expression matrix, so the audit cannot clear the event.
+>
+> 4 of 19 are readouts of a neighbour (BRCA ZNF276 → FANCA, UCEC ERCC2 → KLC3, UCEC_TCGA ERCC2 → KLC3, HNSC_HPV VRK2
+> → FANCL); 2 overlap a gene the audit cannot measure; 7 follow their own gene's expression with |ρ| ≥ 0.5. The full
+> audit of the top 5 events per class and view, and of every literature marker's best event, is
+> `results/subtype/interpret/event_audit.csv`.
+<!-- /legend -->
 
 Before an event is named here it is audited as in D-27 (D-41). Its segment is intersected with
 every other GENCODE v45 gene's exons (≥ 50 bp); the segment is the exon, both exons of an MXE, the
@@ -482,7 +636,7 @@ antisense or same-strand, because its long terminal metaexons meet the 3′ ends
 genes, and 62 of 272 track the neighbour. The internal views sit at 4–10% (A3SS, A5SS, MXE, RI, SE),
 with 1–5 tracking events each; AFE and ALE are at 14% and 21%.
 
-**U6** applies the pre-specified rule: for each histology and genomic/IHC cohort, take the one event
+**Figure U6** applies the pre-specified rule: for each histology and genomic/IHC cohort, take the one event
 with the largest class-specific importance across the eight views, and print every audit result.
 - **Readouts of a neighbour (4 of 19):**
   - the BRCA HIT event of ZNF276 follows FANCA (ρ −0.66, host +0.16);
@@ -509,7 +663,7 @@ is in the audit table (D-41, A-2). "Result" is what this data shows; "context" i
 | THCA · follicular | DUOXA1 HIT; follicular HIT rank 2 | median −0.02 in follicular vs 0.44 in classical and 0.65 in tall cell | **antisense DUOXA2, ρ −0.82 vs host −0.36: a readout of DUOXA2**; the same event is the HNSC_mRNA atypical class's HIT rank 2 (ρ −0.75) | DUOXA2 belongs to the thyroid-hormone synthesis machinery; higher expression in the more differentiated, RAS-like follicular variant is *consistent* with TCGA 2014 |
 | HNSC_HPV · HPV-positive | CDKN2A first exon 1α, the p16INK4a promoter (AFE event rank 11; gene rank 9) | usage 0.36 in HPV-positive vs 0 in HPV-negative; observed in 94% vs 47% | no overlap; host ρ +0.67 | E7 inactivates RB and p16INK4a rises, which is why p16 is the clinical HPV surrogate. The model reads p16's exon, not ARF's exon 1β. *Consistent* |
 | PRAD_ETS · ERG | ERG 95-bp cassette exon (chr21:38.47 Mb); ERG SE rank 2 | 0.38 in ERG-fused tumours, 0 elsewhere | no overlap; host ρ +0.64 | the exon is seen only where ERG is transcribed, so this is the fusion read through splicing |
-| UCEC, STAD, COAD · MSI | CCNDBP1 57-bp exon and nine more (§8) | see U7 | no overlap; host ρ −0.72 to +0.25 | see §8 |
+| UCEC, STAD, COAD · MSI | CCNDBP1 57-bp exon and nine more (§8) | see Figure U7 | no overlap; host ρ −0.72 to +0.25 | see §8 |
 
 **Leiomyosarcoma** is the clearest case here of splicing carrying biology of its own.
 - **Result.** The class's top two MXE events are exon switches in the contractile apparatus, which
@@ -524,7 +678,28 @@ is in the audit table (D-41, A-2). "Result" is what this data shows; "context" i
 
 ## 8. MSI leaves the same splicing marks in three cancers (exploratory)
 
+**How to read Figure U7.**
+- **Rows are the 10 events; columns are the three cancers.** Each cell is the event's AUROC for MSI
+  against the rest of its cohort, with no model involved; red = higher in MSI.
+- **A dot (•) marks that the cohort's own model picked the event.** A cell without one is a
+  replication in a cohort whose model did not need it.
+- **The columns at right** are the overlap audit of Figure U6.
+
 ![U7](figures/subtype/U7_msi_events.png)
+
+<!-- legend U7: copied from figures/subtype/U7_msi_events.caption.md by scripts/36_subtype_figures.py legends -->
+> **Figure U7. Ten MSI splicing events replicate across endometrial, gastric and colorectal cancer.** Every splicing
+> event in the top 5 of the MSI class of the UCEC, STAD or COAD model (any view) whose AUROC, MSI against the rest
+> of the cohort, is at least 0.25 from 0.5 in the same direction in all three cohorts: 10 events (AUROC in each
+> cell; red = higher in MSI). • = in that cohort's MSI top 5; a cell without • is a replication in a cohort whose
+> model did not pick the event. No model is involved in the AUROC; the patients with a value in each cell (MSI and
+> rest) are in the CSV. Columns at right: the D-27 audit, as in U6. Exploratory (A-4): the step was added after the
+> same CCNDBP1 exon was seen in the MSI top 5 of all three models; it then tests every event of every shared class.
+>
+> 7 of the 10 events were chosen independently by at least two of the three models. CCNDBP1's 57-bp exon is included
+> at a median UCEC 0.20 vs 0.06; STAD 0.28 vs 0.04; COAD 0.28 vs 0.04 (MSI vs rest). All 10 replication cells have
+> Mann-Whitney raw p < 7.3e-05; BH q over every cross-cohort test of every shared class is in the CSV.
+<!-- /legend -->
 
 **Status.** This section is exploratory (A-4). The same 57-bp CCNDBP1 exon turned up in the MSI
 top 5 of three models trained separately on three cancers. The analysis was added after that was
@@ -539,7 +714,7 @@ in the other two cancers. No model is involved, only the event's values and the 
 - Squamous and adenocarcinoma, between ESCA and CESC, replicate as much as MSI: 55 of 74 (31 strong)
   and 61 of 74 (39 strong).
 
-**U7** keeps the events that are ≥ 0.25 from 0.5 in the same direction in all three cancers. There
+**Figure U7** keeps the events that are ≥ 0.25 from 0.5 in the same direction in all three cancers. There
 are 10 events at 9 loci; CCNDBP1 counts twice, because its exon is read both as a cassette (SE)
 and as an alternative 3′ splice site (A3SS).
 - **Chosen independently:** 7 of the 10 were chosen by at least two of the three models, and three
@@ -552,7 +727,7 @@ and as an alternative 3′ splice site (A3SS).
   expression (|ρ| ≤ 0.30). The exception is RPL22L1, whose A3SS value falls as RPL22L1 expression
   rises (ρ −0.72 in UCEC, −0.70 in STAD).
 - **Splicing as a detector:** the AS ensemble recalls MSI about as well as expression does. UCEC
-  0.65 against 0.65, STAD 0.95 against 0.91, COAD 0.93 against 0.95 (U2).
+  0.65 against 0.65, STAD 0.95 against 0.91, COAD 0.93 against 0.95 (Figure U2).
 - **MSI, not mutation load:** in UCEC_TCGA the POLE-ultramutated tumours are hypermutated but
   mismatch-repair proficient, and on these events they sit with the non-MSI classes (CCNDBP1 0.08
   against 0.20 in MSI and 0.06 in CN-low and CN-high; TMX3 1.00 against 0.89; RPL22L1 0.16 against
@@ -560,9 +735,9 @@ and as an alternative 3′ splice site (A3SS).
   rather than mutation load alone (interpretation).
 
 **Is it MSI, or the immune infiltrate that comes with MSI?** (Result; `interpret/msi_event_confounds.csv`,
-added under A-4 after U7 was drawn.) MSI tumours are immune-rich, and in COAD the immune genes
+added under A-4 after Figure U7 was drawn.) MSI tumours are immune-rich, and in COAD the immune genes
 themselves separate MSI from the rest (AUROC 0.66 for PTPRC, 0.74 for CD8A and 0.83 for CIITA).
-The ten U7 events do not follow the infiltrate:
+The ten Figure U7 events do not follow the infiltrate:
 - **Correlation with immune genes:** in all three cancers, |ρ| ≤ 0.28 with PTPRC, ≤ 0.32 with CD8A
   and ≤ 0.37 with CIITA.
 - **Low-infiltrate half:** within the half of each cohort with the lower PTPRC (11 to 24 MSI
@@ -590,7 +765,30 @@ The ten U7 events do not follow the infiltrate:
 
 ## 9. Splicing regulators of the subtypes
 
+**How to read Figure U8.**
+- **Panel (a)** tests whether a factor's expression differs between subtypes as predicted. One row
+  per class: dot = median, bar = interquartile range, blue = the class predicted lower.
+- **Panel (b)** asks whether PTBP1 tracks its target exons within a class, not only between
+  classes. Quintiles of PTBP1 are cut within leiomyosarcoma (blue) and within the other sarcomas
+  (grey) separately. A slope inside a group is what a regulator would produce; a step between
+  the groups is not enough.
+
 ![U8](figures/subtype/U8_regulators.png)
+
+<!-- legend U8: copied from figures/subtype/U8_regulators.caption.md by scripts/36_subtype_figures.py legends -->
+> **Figure U8. Named splicing regulators differ between subtypes as predicted in four of six tests.** Six
+> predictions fixed before the data were looked at by class (config/followup.yaml, D-46). (a) A factor's log2 CPM in
+> each class: dot = median, bar = interquartile range, patients in brackets; blue = the class predicted lower. AUROC
+> = P(predicted-higher patient > predicted-lower patient), two-sided Mann–Whitney.
+>
+> (b) The event's PSI by PTBP1 quintile, the quintiles cut within LMS and within the other sarcomas separately (dot
+> = median, bar = interquartile range, about 20–26 patients per point). Test: partial Spearman of PTBP1 with the PSI
+> over all 230 sarcomas, adjusting for class, stromal and immune scores; predicted sign = opposite to the LMS shift.
+>
+> Sensitivity (A-6, exploratory): adding each sample's mean MXE PSI (D-24) leaves ρ at +0.43 and −0.22; PTBP1 ranks
+> 2 of 70 factors for ACTN1 and 12 of 70 for TPM1, where MBNL1 leads (MBNL1 +0.35). BH q over R1–R6 is in the CSV.
+> The scan of all 70 factors in every cohort is `results/subtype/regulators/factor_by_class.csv`.
+<!-- /legend -->
 
 Six predictions were written into `config/followup.yaml` (D-46) before any splicing factor was
 looked at by subtype. Then all 70 factors of D-18 were scanned in every cohort
@@ -648,7 +846,28 @@ with the subtype, not that it regulates the subtype's exons.
 
 ## 10. Is the subtype signal tied to the site that sent the sample?
 
+**How to read Figure U9.**
+- **Panel (a)** gives each cohort's loss of balanced accuracy when the tissue-source sites of the
+  test patients are kept out of training (patients and sites in brackets). 0 means the classifier
+  does not lean on the site; grey dots are single splicing views, blue their median, black GEX.
+- **Panel (b)** asks whether the loss is larger where site and class are confounded in the labels
+  themselves (Cramér's V). It is not: the four largest splicing losses sit at modest V.
+
 ![U9](figures/subtype/U9_site_probe.png)
+
+<!-- legend U9: copied from figures/subtype/U9_site_probe.caption.md by scripts/36_subtype_figures.py legends -->
+> **Figure U9. Part of the splicing models' subtype signal is tied to the site that sent the sample.** The probe of
+> D-20 on the subtype cohorts (D-47): one untuned classifier per cohort and view (top-2,000 variance, median impute,
+> standardise, L2 logistic regression C = 0.05, balanced), cross-validated with patients grouped and again with
+> tissue-source sites held out (5 folds, 3 seeds, pooled out-of-fold calls). (a) The loss of balanced accuracy,
+> grouped minus site-held-out, per cohort (patients; sites): grey = each splicing view, blue = their median, black =
+> GEX. Ordered by the splicing median. SARC is not probed: myxofibrosarcoma comes from 4 sites (rule ≥ 5). (b) The
+> loss against Cramér's V between site and class, computed from the labels alone.
+>
+> Largest splicing losses: HNSC_HPV +0.098 (GEX +0.014), CESC +0.077 (GEX −0.001), THCA +0.077 (GEX +0.116),
+> HNSC_mRNA +0.073 (GEX +0.008). The probe's accuracies are those of the untuned classifier, not of the subtype
+> models; per view, scheme and seed in `results/subtype/site_probe/`.
+<!-- /legend -->
 
 In TCGA each tissue-source site sends one project, and within a project sites differ in which
 subtypes they send: Cramér's V between site and class is 0.21 (BRCA_ER) to 0.80 (ESCA). The probe
@@ -678,7 +897,36 @@ those of a simple classifier, not of the subtype models (D-20).
 
 ## 11. The MSI splicing marks are written in the genome: acceptor poly-T repeats
 
+**How to read Figure U10.** The exons were chosen by genome sequence alone, before any PSI was
+read by repeat.
+- **Panel (a)**: how much more often the MSI model's top exons carry an acceptor T-run ≥ 10 than
+  exons at large (5% in every cohort).
+- **Panel (b)**: each patient's repeat score, the inclusion of exons with a run ≥ 10 relative to
+  exons without one. Lower means the repeat exons are skipped; MSI patients sit lower in STAD and
+  COAD, not in UCEC.
+- **Panel (c)**: the same score built from each run-length bin. If the tract causes the skipping,
+  the AUROC should rise with run length near the acceptor and vanish for runs deep in the intron
+  (hollow).
+
 ![U10](figures/subtype/U10_msi_repeats.png)
+
+<!-- legend U10: copied from figures/subtype/U10_msi_repeats.caption.md by scripts/36_subtype_figures.py legends -->
+> **Figure U10. Genome sequence alone says which exons MSI tumours skip.** Pre-specified before any PSI was read by
+> repeat (config/followup.yaml: msi_cis, D-52). For every cassette exon, the longest sense-strand T-run overlapping
+> intron positions −1..−50 before it was read from GRCh38; no label or model chose the exons. MSI against the other
+> classes (POLE apart) of UCEC_TCGA, STAD_TCGA and COAD_TCGA.
+>
+> (a) Share of exons with a run ≥ 10 among all exons measured in the cohort and among the top 50 SE events of the
+> cohort's MSI model (mean |SHAP| over MSI patients); Fisher exact (M6). (b) The repeat score of each patient: each
+> exon's PSI as a percentile within the cohort, mean over exons with a run ≥ 10 minus the mean over exons with ≤ 5
+> (weighted to the same mean-PSI deciles, which cancels the global PSI axis of D-24). Box = interquartile range,
+> diamond = median, whiskers = 1.5 × IQR, dots = patients (n under each box); Mann–Whitney (M1, M5). (c) AUROC of
+> the same score built from each run-length bin, and (hollow) from T-runs ≥ 10 at −201..−400, deep in the intron,
+> with the acceptor ≤ 6.
+>
+> Stars: * p < 0.05, ** p < 0.01, *** p < 0.001, ns otherwise. q over family M (19 tests) is in the CSV with every
+> verdict in `results/subtype/msi_cis/predictions.csv`. Per-patient scores are kept locally (D-12).
+<!-- /legend -->
 
 **Why.** §8 found MSI splicing marks shared by three cancers but could not say where they come
 from. Mismatch-repair-deficient cells cannot correct slippage at mononucleotide repeats. A
@@ -732,21 +980,49 @@ tumours show smaller allele shifts at mononucleotide repeats than colorectal and
 (Chung et al. 2023; context). Smaller shifts would mean a weaker cis effect, and UCEC also has
 the fewest MSI patients (34). This reading was formed after the result and was not tested.
 
+**How to read Figure U11.**
+- **Panel (a)**: the share of repeat exons more included in MSI, by run length; 0.5 = no
+  direction. Below 0.5 means skipping, above means inclusion.
+- **Panel (b)**: the replication on A3SS events, where the run sits at one of two acceptors. Below
+  0 means that acceptor is used less in MSI.
+- **Panel (c)**: the exons with the largest shared shifts in all three cancers, each labelled with
+  its run length and exon length. The increases carry the longest runs.
+
 ![U11](figures/subtype/U11_msi_long_tracts.png)
+
+<!-- legend U11: copied from figures/subtype/U11_msi_long_tracts.caption.md by scripts/36_subtype_figures.py legends -->
+> **Figure U11. The longest acceptor repeats move toward inclusion in MSI.** (a) Exploratory (read after D-52): SE
+> exons with an acceptor T-run ≥ 10 (the nine MSI events of §8 left out), share whose background-adjusted MSI shift
+> is positive, by run length; bars = Wilson 95% interval. Runs of 10–19 lean toward skipping (share 0.38–0.49), runs
+> ≥ 20 toward inclusion (0.56–0.67) in all three cancers. (b) The replication fixed after that (D-54) on A3SS
+> events, which this analysis had not read: one acceptor with the run, the other ≤ 6; shift in the use of the
+> acceptor carrying the run (negative = used less in MSI); marker = median, bar = interquartile range; Wilcoxon
+> signed-rank against 0.
+>
+> (c) Exons measured in all three cohorts with the largest mean shift, one per gene: the 7 largest increases (top
+> block) and the 9 largest decreases, then MRE11 exon 5, the known MSI target. Label = gene · acceptor T-run · exon
+> length. The increases carry runs of 21–32 nt; the decreases 14–21 nt.
+>
+> The pre-specified mechanism was not supported: D-53 predicted that the shift would depend on the exon's baseline
+> inclusion, as hnRNP C repression of long U-tracts would make it (Zarnack et al. 2013), and N1–N3 are not resolved
+> in any cohort. What the data show is a length rule, not its cause. Whether the rMATS PSI here counts exon-body
+> reads is not recorded; if it does, unspliced pre-mRNA could add to an apparent increase. Stars: * p < 0.05, ** p <
+> 0.01, *** p < 0.001, ns otherwise; q in the CSV.
+<!-- /legend -->
 
 **The longest runs go the other way.** The two §8 loci that are *more* included in MSI, CCNDBP1
 and ANXA7, carry the two longest runs of the set (30 and 29 nt).
 - **Exploratory, after D-52.** Among all repeat exons (§8's nine left out), runs of 10–19 lean
   toward skipping in MSI: 38–49% move up. Runs ≥ 20 lean toward inclusion: 56–67% move up, in all
-  three cancers (U11a).
+  three cancers (Figure U11a).
 - **The extremes split by length.** The exons with the largest shared increase carry runs of
   21–32 nt (ANXA7, CCNDBP1, TBK1, CDC42EP1, ELOF1, EPN2, BOD1L1). The largest decreases carry
-  14–21 nt (U11c).
+  14–21 nt (Figure U11c).
 - **A mechanism, pre-specified and not supported** (D-53). hnRNP C binds long U-tracts and
   competes with U2AF65, repressing the acceptor (Zarnack et al. 2013; context). That predicts an
   increase mainly for exons at low baseline inclusion. N1–N3 test that dependence on baseline,
   and all nine tests are not resolved. The direction follows run length, not baseline inclusion.
-- **A replication on events not read before** (D-54, U11b). An A3SS event has two acceptors, so
+- **A replication on events not read before** (D-54, Figure U11b). An A3SS event has two acceptors, so
   a run at the distal and at the proximal one predicts opposite signs. Runs of 10–19 make their
   acceptor used less in MSI; supported in STAD (median −0.017, p = 0.009, n = 85). Runs ≥ 20 make
   it used more; supported in UCEC (+0.044, p = 0.016, n = 16). The other four tests are not
@@ -762,7 +1038,7 @@ exons shift together in stomach, colon and endometrium.
   than less. That reversal is a length rule we can describe (exploratory, partly replicated in
   A3SS), not one we can explain. The hnRNP C version we wrote down did not hold.
 
-**Not the hospital, the infiltrate or RNA handling** (D-55; family S, 6 of 7 supported). U9
+**Not the hospital, the infiltrate or RNA handling** (D-55; family S, 6 of 7 supported). Figure U9
 showed that splicing models can learn the hospital, so the score was checked against the sending
 site, tumour composition and RNA handling (`results/subtype/msi_cis/robustness/`).
 - **Within hospital** (S1). Using only MSI and other tumours from the same tissue-source site, the
@@ -795,55 +1071,117 @@ site, tumour composition and RNA handling (`results/subtype/msi_cis/robustness/`
 - **The retained-intron check.** It was too thin to settle that: only 4 repeat exons with runs
   ≥ 20 per cohort have a matching RI event (`ri_check.csv`).
 
-### Followed up: branch point, dose, frame and germline (D-61 to D-64, U16, U17)
+### Followed up: dose, branch point, frame and germline (D-61 to D-64, Figures U16–U17)
 
-Four questions from [MSI_REPEATS_LITERATURE.md](../docs/MSI_REPEATS_LITERATURE.md) (Q2, Q1, Q5,
-Q3), fixed in `config/followup.yaml` before any was computed; results in
-`results/subtype/msi_cis/followup/`. The branch-point test is the one that held.
+Four questions from [MSI_REPEATS_LITERATURE.md](../docs/MSI_REPEATS_LITERATURE.md) (Q1, Q2, Q5,
+Q3), each fixed in `config/followup.yaml` before it was computed; results are in
+`results/subtype/msi_cis/followup/`. Dose (Figure U16) held in one cancer and did not explain the
+weak endometrial score. The branch point (Figure U17) held in all three cancers and became the
+basis of the next round.
 
-![U17](figures/subtype/U17_msi_branchpoint.png)
+#### Is the shift a dose response? (D-61, Figure U16)
 
-**The branch point sets the direction** (D-63; BP1–BP4 supported in all three cancers and
-pooled).
-- **The branch point.** For each repeat exon, the branch point was read from the reference
-  sequence: the A of a yUnAy motif nearest the 3′ss, upstream of the run. One was found for 83% of
-  1,580 exons, a median 40 nt from the AG.
-- **The test.** An exon whose branch point lies further from the AG is more included in MSI, at
-  the same run length and baseline inclusion. Adjusted ρ = 0.16 (STAD), 0.11 (COAD), 0.11 (UCEC)
-  and 0.16 for exons measured in at least two cancers. Each permutation p sits at its floor of
-  0.001; q = 0.001, family BP.
-- **The reversal.**
-  - Runs of 10–19 nt: 29% of exons with the nearest branch points move up in MSI, against 46% with
-    the farthest.
-  - Runs ≥ 20 nt: 48% against 73%.
+If contracting tracts cause the skipping, a tumour with more mismatch-repair damage should skip
+more. MC3 has no reads at the intronic tracts, but it does count each tumour's homopolymer
+deletions in the exome: deletions of A or T bases in runs of ≥ 5. That count measures how much
+damage the tumour has accumulated.
 
-  So the long-run reversal of D-53 sits mostly in exons whose branch point is far (U17b; a reading
-  of an exploratory table).
-- **A mechanism that fits** (interpretation). The 3′ss AG is used best 19–23 nt downstream of the
-  branch point (Chua and Reed 2001). Contracting a tract that lies between a distant branch point
-  and the AG brings the two closer, which should help. Where the branch point is already close,
-  contraction can only weaken the U2AF2 binding site.
-- **What it cannot separate.** The run's far end carries almost the same information (ρ 0.12–0.17),
-  because the branch point must lie beyond it. The branch point is a motif call, not a measured
-  position.
+**How to read Figure U16.**
+- **Panel (a)**, one plot per cancer: each tumour's D-52 repeat score against its deletion count,
+  on a log scale. Lower scores mean the repeat exons are less included.
+  - The grey column on the left is the rest of each cohort, with almost no homopolymer deletions.
+  - The coloured cloud is the MSI tumours. A dose response would make it slope down.
+- **Panel (b)** compares the MSI tumours of the three cancers: their deletion counts, with each
+  cancer's D-52 AUROC under its name.
 
 ![U16](figures/subtype/U16_msi_deletion_load.png)
 
-**Dose shows in one cancer, and the endometrial explanation fails** (D-61; DL1 supported, DL2–DL6
-not resolved). Homopolymer deletions are MC3 deletions of A or T bases in runs of ≥ 5, counted in
-each tumour's exome.
-- **The counts.** MSI tumours carry a median of 90 (COAD), 103 (STAD) and 147 (UCEC); the rest
-  carry 0.
-- **Within STAD MSI tumours**, more deletions go with a lower repeat score: partial ρ = −0.45 given
-  purity, q = 0.005. In COAD (ρ = +0.13) and UCEC (−0.13) this is not resolved.
-- **Endometrium.** A shorter deletion size in endometrial cancer (Wang et al. 2017) would have
-  explained its weak score; it does not.
-  - In every cancer, 98–99% of these deletions remove one base.
-  - UCEC's share of longer deletions is, if anything, the highest: 0.010, against 0.007 (STAD) and
-    0.000 (COAD).
-  - UCEC MSI tumours carry the most deletions and the weakest score (AUROC 0.51).
-- **What the counts measure.** They come from coding runs, mostly shorter than 10, so they measure
-  mismatch-repair damage, not the intronic tracts themselves.
+<!-- legend U16: copied from figures/subtype/U16_msi_deletion_load.caption.md by scripts/36_subtype_figures.py legends -->
+> **Figure U16. Mismatch-repair damage tracks the repeat score in stomach cancer only.** Pre-specified
+> (config/followup.yaml: msi_deletion_load, D-61). Homopolymer deletion = an MC3 deletion (FILTER PASS, wga or
+> native_wga_mix) of A or T bases inside a run of ≥ 5 of that base, counted per tumour in the exome. Score = the
+> D-52 per-tumour repeat-exon score: mean inclusion percentile of exons whose acceptor carries a T-run ≥ 10, minus
+> that of matched exons without one (lower = repeat exons less included). Partial Spearman of score and log(1 +
+> count), adjusted for ABSOLUTE purity, within MSI tumours.
+>
+> (a) One panel per cancer: score against homopolymer deletions (x on a log(1 + count) scale); MSI tumours in
+> colour, the rest grey. The rest carry a median of 0 homopolymer deletions in every cancer (upper quartile ≤ 1);
+> MSI tumours a median of 90 (COAD) to 147 (UCEC). (b) MSI tumours' homopolymer deletions by cancer (box =
+> interquartile range, diamond = median, whiskers 1.5 × IQR, points = tumours), with each cancer's D-52 score AUROC
+> for MSI against the rest (second line of each label).
+>
+> Dose tracks the score within STAD only. Between cancers it runs the other way: UCEC MSI tumours carry the most
+> deletions and the D-52 score does not separate them from the rest (AUROC 0.51). The exome counts coding runs,
+> mostly shorter than 10; the intronic tracts themselves were not measured. q over family DL (6 tests); per-tumour
+> values are kept locally (D-12).
+<!-- /legend -->
+
+**What it shows** (DL1 supported; DL2–DL6 not resolved).
+- **Only stomach slopes.** Partial ρ = −0.45 given purity, q = 0.005. Colon (+0.13) and
+  endometrium (−0.13) are not resolved.
+- **Endometrium does not lack damage** (panel b). Its MSI tumours carry the most deletions: median
+  147, against 103 in STAD and 90 in COAD. Yet the D-52 score separates them least (AUROC 0.51).
+- **Its deletions are not shorter either.** In every cancer, 98–99% of these deletions remove one
+  base. UCEC's share of longer ones is, if anything, the highest: 0.010, against 0.007 (STAD) and
+  0.000 (COAD).
+- **So the weak endometrial score needed another explanation.** It is found below (Figure U19c).
+- **What the counts measure.** They come from coding runs, mostly shorter than 10 nt. They measure
+  damage, not the intronic tracts themselves.
+
+#### Does the branch point set the direction? (D-63, Figure U17)
+
+**Why.** A branch-point A cannot sit inside a pure T run, so a long run pushes the branch point away
+from the AG. The AG is used best 19–23 nt downstream of the branch point (Chua and Reed 2001).
+Contracting a tract that lies between a distant branch point and the AG brings the two closer.
+D-63 asked whether this geometry explains why the longest runs gain inclusion in MSI (Figure U11).
+The branch point was read from the reference sequence: the A of a yUnAy motif nearest the 3′ss,
+upstream of the run. One was found for 83% of 1,580 exons, a median 40 nt from the AG.
+
+**How to read Figure U17.**
+- **Panel (a)** shows where the branch points lie. For runs of 10–19 nt the distance peaks just
+  beyond the 19–23 nt optimum (grey band); runs ≥ 20 nt push it further out.
+- **Panel (b)** is the test in raw form. Within each run class, exons are split into thirds by
+  branch-point distance. The y axis is the share of each third more included in MSI; 0.5 means no
+  direction. A line that rises from near to far means the distance, not only the run length,
+  decides the direction.
+- **Panel (c)** gives the formal tests. Filled points: Spearman of the MSI shift with the
+  branch-point distance, both adjusted for run length and baseline inclusion. Hollow points: the
+  same with the run's far end.
+
+![U17](figures/subtype/U17_msi_branchpoint.png)
+
+<!-- legend U17: copied from figures/subtype/U17_msi_branchpoint.caption.md by scripts/36_subtype_figures.py legends -->
+> **Figure U17. The branch point's distance from the 3′ splice site sets the direction of the MSI shift.**
+> Pre-specified (config/followup.yaml: msi_branchpoint, D-63). Exons whose acceptor carries a T-run ≥ 10 (R exons,
+> D-52), read from the GRCh38 primary assembly. Branch point = the A nearest the 3′ splice site that lies upstream
+> of the run, within 100 nt, and matches yUnAy; found for 83% of 1,580 exons. MSI shift = D-52's background-adjusted
+> difference in inclusion percentile, MSI minus the rest.
+>
+> (a) Distance from the branch point to the 3′ss, by run length (1,133 exons with runs of 10–19 nt, 179 with ≥ 20
+> nt); grey band = 19–23 nt, the optimum for a 3′ss AG (Chua and Reed 2001). (b) Share of R exons more included in
+> MSI, by tertile of that distance within run classes, per cancer; bars = Wilson 95% interval. (c) The tests:
+> Spearman of the MSI shift with the branch-point distance after both are rank-residualised on run-length bins
+> (10–11, 12–13, 14–15, 16–19, 20–24, ≥ 25) and mean inclusion; p by permuting the distance within run-length bins
+> (1,000; the floor is 0.001). Hollow = the same with the run's far end in place of the branch point (exploratory).
+>
+> The run's far end carries nearly the same information as the branch point, because the branch point must lie
+> beyond it; these tests cannot separate the two. The branch point is a motif call, not a measured position. q over
+> family BP (4 tests).
+<!-- /legend -->
+
+**What it shows** (BP1–BP4 supported).
+- **In all three cancers** (panel c), an exon whose branch point lies further from the AG gains
+  inclusion in MSI beyond its run length. Adjusted ρ = 0.16 (STAD), 0.11 (COAD), 0.11 (UCEC) and
+  0.16 pooled; each permutation p sits at its floor of 0.001.
+- **The reversal of D-53 sits in the far-branch-point exons** (panel b; a reading of an
+  exploratory table).
+  - Runs ≥ 20: 48% of the nearest third move up, against 73% of the farthest.
+  - Runs of 10–19: 29% against 46%.
+- **What it could not separate.** The run's far end carries almost the same information (hollow
+  points, ρ 0.12–0.17), because the branch point must lie beyond it. D-65 separates the two
+  (Figure U19). The branch point is a motif call, not a measured position.
+
+#### Frame, NMD and the germline (D-62, D-64; no figure)
 
 **No NMD signature in gene expression** (D-62; NM1, NM2 and NM4 not resolved, NM3 not testable).
 - **The exons.** 677 coding internal repeat exons (one per gene and cancer), 51% of them
@@ -854,90 +1192,220 @@ each tumour's exome.
 - **Shared exons.** Of the 12 repeat exons skipped in all three cancers, 5 are coding internal.
   Two of those are frameshifting: MRE11 exon 5, the known one, and an exon of GFM1.
 
-**The germline experiment could not be run** (D-64; GL1–GL3 not testable). GTEx v8 significant
-sQTL pairs in transverse colon, stomach and uterus contain no variant of any kind inside any of the
-1,580 runs, although 38–80 runs have one within 50 nt
-(`followup/germline/variant_coverage.csv`). That call set does not genotype long homopolymers.
-The test needs one that does, for instance from long reads or a repeat genotyper.
+**The germline experiment could not be run** (D-64; GL1–GL3 not testable).
+- **No variants at the runs.** GTEx v8 significant sQTL pairs in transverse colon, stomach and
+  uterus contain no variant of any kind inside any of the 1,580 runs, although 38–80 runs have one
+  within 50 nt (`followup/germline/variant_coverage.csv`).
+- **Why.** That call set does not genotype long homopolymers. The test needs one that does, for
+  instance from long reads or a repeat genotyper.
 
-### The sequence code: specificity, endometrium and thirty other cancers (D-65 to D-67, U18, U19)
+### The sequence code: thirty other cancers, specificity, endometrium, infiltration (D-65 to D-68, Figures U18–U20)
 
 D-63 suggested a code: whether an MSI repeat exon falls or rises depends on its tract length and
-on where its branch point lies. Three sets of tests, written down before any was computed, asked
-whether that code is specific and whether it travels (`results/subtype/msi_cis/code/`).
+on where its branch point lies.
 - **Runs of 10–19 nt fall.** These are R_down.
 - **Runs ≥ 20 nt rise when the branch point lies ≥ 36 nt from the AG.** These are R_up. 36 nt is
   the first tertile of that distance, a label-blind cut.
 - **Score G** reads both arms against matched background exons. Score A, D-52's, reads every
   repeat exon as falling.
 
-![U19](figures/subtype/U19_msi_code_specificity.png)
+Four sets of tests, each written down before it was computed, asked whether the code works
+(`results/subtype/msi_cis/code/`):
+- whether it travels to cancers never used to define it (D-66, Figure U18);
+- whether it is about the branch point and about mismatch repair (D-65, Figure U19a–b);
+- whether it rescues endometrium (D-67, Figure U19c);
+- whether it is an infiltration readout (D-68, Figure U20).
 
-**It is the branch point, and it is mismatch repair** (D-65; BS1–BS4 supported, family BS).
-- **Beyond the run.** The distance from the run's far end to the branch point adds beyond the run
-  itself: ρ = 0.12, q = 0.001 (BS1). This answers the caveat of D-63.
-- **No tract, no effect.** Exons without a tract (acceptor T-run ≤ 5, 22,100 exons) show no
-  relation between branch-point distance and MSI shift (ρ = −0.000, against 0.156; BS2).
-- **Not in proficient tumours.** The relation is absent from contrasts that are hypermutated or
-  aneuploid but mismatch-repair proficient:
-  - POLE against the rest in UCEC: ρ 0.03, against 0.11 for MSI (q = 0.012; BS3);
-  - CIN against GS in STAD: ρ −0.09, against 0.16 (q = 0.001; BS4).
-- **The switch** (exploratory, U19a). It lies near 30 nt. Of exons with runs ≥ 20 and a branch
-  point 20–29 nt from the AG, 13% (3 of 24) move up in MSI. From 30–39 nt, 73% move up. For runs of
-  10–19 the share is 28–30% below 30 nt and 35–51% beyond.
-- **A reading** (interpretation). A contraction that brings a distant branch point toward the AG
-  helps. One that squeezes an already close branch point, below the space U2AF needs, harms.
+#### Thirty cancers never used (D-66, Figure U18)
 
-**Endometrium** (D-67; EG1–EG2 supported, family EG). Score G separates UCEC MSI tumours from the
-rest with AUROC 0.84, where score A gave 0.51 (difference +0.33, bootstrap 95% CI 0.21 to 0.45).
-- **The two arms cancelled.** The falling arm alone gives 0.60 and the rising arm 0.77 in the
-  opposite direction. Score A read both as falling, so in UCEC they cancelled.
-- **In-sample.** The rule was read partly from these three cohorts (D-53, U17b), so this is
-  in-sample at the level of the rule. Score G reaches 0.96 in STAD and COAD (exploratory). The
-  out-of-sample test is below.
+**The test set.**
+- **Tumours.** One per patient in the 30 other TCGA projects of the pan-cancer SE matrix with MC3
+  calls: 7,685.
+- **DNA truth.** Mismatch-repair deficient (MMR-deficient) means ≥ 10 MC3 homopolymer deletions.
+  The cut was fixed from the three training cohorts, where it puts 129 of 129 MSI tumours above it
+  and 2 of 571 others. 50 tumours qualify:
+  - BRCA 11, CESC 8, HNSC 5, PRAD 4, ACC 3, LUSC 3;
+  - one or two in each of ten more cancers.
+- **Scores.** Neither score was re-fitted. Each was computed and ranked within each cancer.
+
+**How to read Figure U18.**
+- **Panel (a).** Each row is an AUROC: how well a score ranks a cancer's MMR-deficient tumours
+  below its other tumours; 0.5, the dashed line, is chance. Hollow is score A, filled is score G.
+  - Top block: pooled over the 30 cancers; without the three tissue relatives of the training
+    cancers; against hypermutated proficient tumours only.
+  - Lower block: each cancer with ≥ 3 MMR-deficient tumours.
+- **Panel (b).** Exon by exon: each dot is a repeat exon. Its MSI shift in the three training
+  cancers is on the x axis, its shift in the MMR-deficient tumours of the 30 others on the y axis.
+  Blue marks R_up.
+- **Panel (c).** Within the 50 MMR-deficient tumours: score G against the deletion count.
 
 ![U18](figures/subtype/U18_msi_code_pancancer.png)
 
-**Thirty cancers never used** (D-66; PC2–PC8 supported, PC1 not resolved, family PC).
-- **The tumours.** One per patient in the 30 other TCGA projects of the pan-cancer SE matrix with
-  MC3 calls: 7,685.
-- **The DNA truth.** Mismatch-repair deficient (MMR-deficient) means ≥ 10 MC3 homopolymer
-  deletions, a cut fixed from the three cohorts (129 of 129 MSI tumours against 2 of 571 others).
-  50 tumours qualify:
-  - BRCA 11, CESC 8, HNSC 5, PRAD 4, ACC 3, LUSC 3;
-  - one or two in each of ten more cancers.
-- **The scores.** Neither was re-fitted; each was computed and ranked within each cancer.
-- **Detection.** Score G is lower in MMR-deficient tumours: pooled AUROC 0.83 (PC2), against 0.55
-  for score A (PC1, not resolved). The difference is +0.28 (PC3).
-- **Organ independence.** Without READ, ESCA and UCS, the tissue relatives of the training cohorts,
-  the AUROC is 0.81 (PC4).
+<!-- legend U18: copied from figures/subtype/U18_msi_code_pancancer.caption.md by scripts/36_subtype_figures.py legends -->
+> **Figure U18. A two-arm sequence code finds mismatch-repair-deficient tumours in 30 cancers never used to define
+> it.** Pre-specified (config/followup.yaml: msi_code_pancancer, D-66) before any tumour outside UCEC, STAD and COAD
+> was read for MSI. Tumours: one per patient in the 30 other TCGA projects of the pan-cancer SE matrix, with MC3
+> calls (7,685). Mismatch-repair deficient (MMR-deficient) = ≥ 10 MC3 homopolymer deletions, the D-61 count; in the
+> three training cohorts that cut separates MSI from the rest almost perfectly (129 of 129 against 2 of 571). 50
+> tumours qualify. Hypermutated proficient = fewer than 10 such deletions and ≥ 500 SNVs (408). Score A = D-52's
+> repeat-exon score; score G = the code: exons after a T-run of 10–19 nt (R_down, read as falling) against exons
+> after a run ≥ 20 nt whose branch point lies ≥ 36 nt from the AG (R_up, read as rising), each against matched
+> background exons. Neither score was re-fitted; each was computed within each cancer and ranked there.
+>
+> (a) AUROC for MMR-deficient tumours scoring lower (score A hollow, G filled): pooled over the 30 cancers, without
+> the three tissue relatives of the training cohorts, against hypermutated proficient tumours only, and per cancer
+> with ≥ 3 MMR-deficient tumours (MMR-deficient of all tumours in brackets). (b) Per-exon shift (MMR-deficient minus
+> the rest, background-adjusted percentile) in the 30 cancers against the mean MSI shift of the three training
+> cohorts; R exons measured in both (grey = R_down, blue = R_up, light grey = runs ≥ 20 in neither arm). (c)
+> MMR-deficient tumours of the 30 cancers: score G percentile against their homopolymer deletions (exploratory).
+>
+> The DNA call is a proxy from exome calls, not a clinical MSI test. q over family PC (8 tests). Per-tumour values
+> are kept locally (D-12).
+<!-- /legend -->
+
+**What it shows** (PC2–PC8 supported, PC1 not resolved; family PC).
+- **Detection** (panel a). Score G is lower in MMR-deficient tumours: pooled AUROC 0.83 (PC2),
+  against 0.55 for score A (PC1, not resolved). The difference is +0.28 (PC3).
+- **Organ independence.** Without READ, ESCA and UCS, the tissue relatives of the training
+  cohorts, the AUROC is 0.81 (PC4).
 - **Mismatch repair, not mutation burden.** Against 408 hypermutated proficient tumours, mostly
   lung, bladder, skin and head-and-neck, it is 0.85 (PC5).
-- **Exon by exon.** The per-exon shifts in the 30 cancers follow the three cohorts' (ρ = 0.51 over
-  1,753 repeat exons; PC6). R_up exons rise more than R_down exons (AUROC 0.70; PC7). The
-  branch-point relation holds after adjustment (ρ = 0.10; PC8).
-- **Per cancer** (exploratory). Among the cancers with ≥ 3 MMR-deficient tumours, score G gives
-  0.65 (PRAD) to 0.93 (CESC); score A gives 0.40–0.72.
-- **The arms** (A-15, exploratory). The rising arm carries more of the signal (0.73) than the
+- **Per cancer** (exploratory). Score G gives 0.65 (PRAD) to 0.93 (CESC); score A gives
+  0.40–0.72.
+- **Exon by exon** (panel b).
+  - The shifts in the 30 cancers follow the training cancers' (ρ = 0.51 over 1,753 repeat exons;
+    PC6).
+  - R_up exons rise more than R_down exons (AUROC 0.70; PC7).
+  - The branch-point relation holds after adjustment (ρ = 0.10; PC8).
+- **The two arms** (A-15, exploratory). The rising arm carries more of the signal (0.73) than the
   falling arm (0.61).
-- **Dose** (exploratory). Within the 50 MMR-deficient tumours, score G falls further as the
-  deletion count rises: partial ρ = −0.47 given purity, p = 0.0008. STAD showed the same in D-61.
+- **Dose** (panel c, exploratory). Score G falls further as the deletion count rises: partial
+  ρ = −0.47 given purity, p = 0.0008. Stomach showed the same in Figure U16.
 
-**Reading.** Mismatch-repair deficiency changes splicing by a rule written in the reference genome,
-not by a tissue programme (interpretation).
+#### It is the branch point, and it is mismatch repair (D-65, D-67, Figure U19)
+
+**How to read Figure U19.**
+- **Panel (a)** shows where the switch lies: the share of repeat exons more included in MSI,
+  against branch-point distance in 10-nt bins, for the two run classes. The grey line marks the
+  rule's 36-nt cut.
+- **Panel (b)** repeats Figure U17c's adjusted correlation for MSI (blue) and for a matched control
+  (grey):
+  - exons without a tract (B exons);
+  - POLE tumours in UCEC;
+  - CIN against GS tumours in STAD.
+
+  If the relation came from the exons' sequence alone, or from hypermutation in general, the grey
+  points would sit with the blue ones.
+- **Panel (c)** gives the AUROC of score A and score G for MSI in each training cancer.
+
+![U19](figures/subtype/U19_msi_code_specificity.png)
+
+<!-- legend U19: copied from figures/subtype/U19_msi_code_specificity.caption.md by scripts/36_subtype_figures.py legends -->
+> **Figure U19. The code is specific to the branch point and to mismatch repair.** Pre-specified
+> (config/followup.yaml: msi_code_specificity, D-65; msi_code_endometrium, D-67). Exon shift = D-52's
+> background-adjusted difference in inclusion percentile. Adjusted ρ = D-63's: shift and branch-point distance
+> rank-residualised on run-length bins and mean inclusion.
+>
+> (a) Exploratory: share of repeat exons more included in MSI (mean over ≥ 2 of the three cancers), by 10-nt bins of
+> branch-point distance, bins with ≥ 10 exons; grey line = the rule's 36-nt cut for runs ≥ 20. Exons whose branch
+> point lies within 30 nt of the AG move up rarely (0.12 of runs ≥ 20 at 20–29 nt, n = 24; 0.28 of runs 10–19); from
+> 30–39 nt 0.73 and 0.51. (b) Adjusted ρ for MSI (blue) and the matching control (grey): repeat exons (R, acceptor
+> T-run ≥ 10) and exons without a tract (B, ≤ 5) measured in ≥ 2 cancers; UCEC MSI and POLE, each against the rest;
+> STAD MSI against the rest and CIN against GS. p = the test of the difference. (c) AUROC of score A and score G for
+> MSI against the rest.
+>
+> The rule behind score G was read from these three cohorts (D-53 and U17b), so c is in-sample for the rule, and its
+> STAD and COAD values are exploratory; U18 is the out-of-sample test. q over families BS (4 tests) and EG (2
+> tests).
+<!-- /legend -->
+
+**What it shows** (BS1–BS4 and EG1–EG2 supported).
+- **Beyond the run** (BS1). The distance from the run's far end to the branch point adds beyond
+  the run itself: ρ = 0.12, q = 0.001. This answers the caveat of Figure U17.
+- **No tract, no effect** (BS2, panel b). Exons without a tract show no relation between
+  branch-point distance and MSI shift: 22,100 exons, ρ = −0.000, against 0.156.
+- **Not in proficient tumours** (BS3, BS4, panel b). The relation is absent from hypermutated or
+  aneuploid contrasts with working mismatch repair:
+  - POLE against the rest in UCEC: ρ 0.03, against 0.11 for MSI (q = 0.012);
+  - CIN against GS in STAD: ρ −0.09, against 0.16 (q = 0.001).
+- **The switch lies near 30 nt** (panel a, exploratory).
+  - Runs ≥ 20 with a branch point 20–29 nt from the AG: 13% (3 of 24) move up in MSI. From 30–39
+    nt: 73%.
+  - Runs of 10–19: 28–30% below 30 nt, 35–51% beyond.
+- **A reading** (interpretation). A contraction that brings a distant branch point toward the AG
+  helps. One that squeezes an already close branch point, below the space U2AF needs, harms.
+- **Endometrium** (EG1–EG2, panel c). Score G separates UCEC MSI from the rest at AUROC 0.84, where
+  score A gave 0.51: difference +0.33, bootstrap 95% CI 0.21 to 0.45.
+  - **The two arms had cancelled.** The falling arm alone gives 0.60, the rising arm 0.77 in the
+    opposite direction. Score A read both as falling.
+  - **In-sample.** The rule was read partly from these three cohorts (D-53, Figure U17b), so this
+    is in-sample at the level of the rule. Score G reaches 0.96 in STAD and COAD (exploratory).
+    Figure U18 is the out-of-sample test.
+
+#### Not an infiltration readout (D-68, Figure U20)
+
+**Why.** MSI tumours are heavily infiltrated by immune cells, and D-55 had ruled out infiltration
+for score A only.
+
+**How to read Figure U20.**
+- **Panel (a)** asks whether the separation survives where there is little infiltrate. It gives
+  the AUROC of score G in all held-out tumours, then in the lower and upper halves of each cancer's
+  immune score, then in the less-infiltrated half of each training cancer. If G read infiltration,
+  the lower-half AUROC would fall toward 0.5. The grey point shows how well the immune score alone
+  marks MMR deficiency.
+- **Panel (b)** shows the effect of MMR deficiency (or MSI) on G after adjusting for stromal and
+  immune expression, the retained-intron level (an RNA-handling proxy) and purity. It is given as
+  a share of the unadjusted effect: 1 means the covariates explain none of it, 0 means all.
+
+![U20](figures/subtype/U20_msi_code_infiltration.png)
+
+<!-- legend U20: copied from figures/subtype/U20_msi_code_infiltration.caption.md by scripts/36_subtype_figures.py legends -->
+> **Figure U20. The code is not an infiltration readout.** Pre-specified (config/followup.yaml:
+> msi_code_infiltration, D-68). Covariates as in D-55: stromal and immune = mean log2 CPM of eight stromal and eight
+> immune genes (config/biology.yaml); RI = the tumour's mean retained-intron PSI, an RNA-handling proxy; purity =
+> ABSOLUTE, where called. In the 30 held-out cancers (D-66) each covariate and score G are percentiles within the
+> tumour's cancer.
+>
+> (a) AUROC for MMR-deficient tumours (MSI in the three cohorts) scoring lower on G: all held-out tumours, then the
+> lower and upper halves of each cancer's immune score; grey = the immune score itself, read as higher in
+> MMR-deficient tumours; then MSI against the rest in the lower-immune half of UCEC, STAD and COAD (MMR-deficient or
+> MSI tumours in brackets). (b) OLS coefficient of MMR deficiency (or MSI) on score G after adjustment, as a share
+> of the coefficient with cancer (or site) fixed effects only; bar = 95% HC3 interval; p of the adjusted
+> coefficient.
+>
+> The immune score marks MMR-deficient tumours only weakly here (AUROC 0.59), and in the adjusted model more immune
+> expression goes with a higher G, the opposite of the MMR effect. q over family IF (6 tests). Per-tumour values are
+> kept locally (D-12).
+<!-- /legend -->
+
+**What it shows** (IF1–IF6 supported).
+- **The covariates explain none of the effect** (panel b). In the 30 cancers, the MMR coefficient
+  on G is −0.34 adjusted, against −0.33 unadjusted (IF1); with purity, −0.33 (IF2). In the
+  training cancers, with site fixed effects, 1.01–1.07 of the effect is kept (IF4–IF6).
+- **The separation holds where infiltration is low** (panel a). AUROC 0.84 in the lower-immune
+  half (21 MMR-deficient tumours; IF3), and 0.85–0.98 in the lower-immune halves of UCEC, STAD and
+  COAD.
+- **The immune score marks MMR deficiency only weakly** (AUROC 0.59). In the adjusted model more
+  immune expression goes with a *higher* G, against the MMR effect, so infiltration cannot produce
+  the signal.
+
+#### Reading
+
+Mismatch-repair deficiency changes splicing by a rule written in the reference genome, not by a
+tissue programme (interpretation).
 - **The rule.** Tract length and branch-point distance say, exon by exon, which way an exon moves.
 - **The test.** Read in RNA, the rule finds MMR-deficient tumours in organs never used to define
-  it, and it does not mistake mutation burden for mismatch-repair deficiency.
+  it. It does not mistake mutation burden or infiltration for mismatch-repair deficiency.
 - **Why the earlier score failed.** It assumed every repeat exon falls. The long tracts with
   distant branch points rise, which cancelled the signal in endometrium and in the 30 other
   cancers.
 
 **What this does not show.**
-- **The DNA truth is a proxy.** MC3 exome calls stand in for an MSI test, not a clinical one.
+- **The DNA truth is a proxy.** MC3 exome calls stand in for an MSI test, not a clinical one. D-69
+  pre-specifies the test against MANTIS and MSIsensor calls; it waits on a download.
 - **No tract is observed.** No individual intronic tract is seen contracting (D-56 waits on the
   BAM slices).
 - **Few tumours per cancer.** The per-cancer AUROCs rest on 3–11 MMR-deficient tumours each.
-- **Infiltration.** It was ruled out for score A (D-55), not yet for score G.
 
 ## 12. Breast cancer: what the subtype models read beyond the labels
 
@@ -949,12 +1417,41 @@ ABSOLUTE purity, ploidy and allele-specific copy-number segments, and the MC3 pu
 calls; D-60 adds the SNP6 copy-ratio segments. All are on GRCh37; each gene is placed by its own MC3 calls, since no liftover is used.
 Tables are in `results/subtype/brca/`.
 
-### Two HER2s: amplification, and the HER2-enriched programme (D-58, D-60, U13, U15)
+### Two HER2s: amplification, and the HER2-enriched programme (D-58, D-60, Figures U13, U15)
 
 PAM50 calls a tumour Her2 from its expression, and ERBB2 amplification is a DNA event. The two
 overlap only in part (context). Amplified means total copy number at ERBB2 ≥ 2 × ploidy.
 
-**First reading, with ABSOLUTE copy number (D-58, U13).** 31 of 714 LumA/LumB and 30 of 54 PAM50
+**How to read Figure U13.**
+- **Panel (a)**: P(Her2) by PAM50 group, split by ERBB2 amplification. If a model read the amplicon,
+  amplified luminal tumours would sit with the Her2 tumours; if it read the programme, the
+  non-amplified Her2 tumours would sit there.
+- **Panel (b)**: the AUROC for each comparison, GEX (grey) against the AS ensemble (blue).
+- **Panel (c)**: what happens to the luminal AUROC when the inputs from the amplicon are blanked in
+  every stored model (hollow), against blanking random inputs of the same number (tick). A model
+  that reads the amplicon loses accuracy; one that does not stays put.
+
+![U13](figures/subtype/U13_brca_two_her2.png)
+
+<!-- legend U13: copied from figures/subtype/U13_brca_two_her2.caption.md by scripts/36_subtype_figures.py legends -->
+> **Figure U13. Splicing reads HER2 through the HER2-enriched programme, not through the 17q12 amplicon.**
+> Pre-specified before any probability was compared with copy number (config/followup.yaml: brca_her2, D-58).
+> P(Her2) is the stored out-of-fold probability of the BRCA_PAM50 models: GEX, and the AS ensemble (mean of the 8
+> splicing views). ERBB2 amplified = ABSOLUTE total copy number at ERBB2 ≥ 2 × ploidy (31 of 714 LumA/LumB and 30 of
+> 54 PAM50 Her2 tumours). ABSOLUTE's copy number at ERBB2 does not exceed 7 in any tumour, so the rule catches the
+> highest-level amplifications only: 34% of clinically HER2-positive tumours meet it. Clinical HER2 (IHC or ISH) is
+> the pre-specified second reading.
+>
+> (a) P(Her2) by PAM50 group and amplification; box = interquartile range, diamond = median, whiskers = 1.5 × IQR,
+> dots = tumours (n under each group). (b) AUROC of P(Her2) for each comparison, GEX (grey) and AS ensemble (blue).
+> (c) In-silico knockout (exploratory, A-12): in each stored fold model the inputs from chr17:39.6–39.8 Mb (GRCh38;
+> PPP1R1B to GRB7) are set to their training mean, and the LumA/LumB AUROC is recomputed (hollow); tick = 20 random
+> input sets of the same size.
+>
+> q over family H (4 tests). Per-tumour probabilities are kept locally (D-12).
+<!-- /legend -->
+
+**First reading, with ABSOLUTE copy number (D-58, Figure U13).** 31 of 714 LumA/LumB and 30 of 54 PAM50
 Her2 tumours are amplified.
 - **GEX P(Her2) rises in amplified luminal tumours** (H1, supported): AUROC 0.72, q = 9.3e-5.
 - **Splicing seemed to see it better** (H2, *against* the prediction): AS ensemble 0.81, 0.09
@@ -967,10 +1464,38 @@ Her2 tumours are amplified.
 - **With clinical HER2** (IHC or ISH, the pre-specified second reading): among luminal tumours,
   the AS ensemble ranks HER2-positive above HER2-negative at AUROC 0.71, and GEX at 0.65.
 
-**The ceiling, and the re-test (D-60, U15).** ABSOLUTE never reports more than 7 copies at ERBB2.
+**The ceiling, and the re-test (D-60, Figure U15).** ABSOLUTE never reports more than 7 copies at ERBB2.
 With D-58's rule, a tumour of ploidy above 3.5 can therefore never be amplified. D-60 was
 pre-specified before the file was downloaded. It reads the PanCanAtlas SNP6 copy ratio at ERBB2,
 made absolute with ABSOLUTE purity and ploidy, and applies the same rule with no ceiling.
+
+**How to read Figure U15.**
+- **Panel (a)** repeats Figure U13b's amplification test with the uncapped copy number, for three
+  groups: D-58's amplified tumours, all amplified tumours, and the newly amplified ones alone. The
+  last group is the part D-58 could not see, so it is the independent test.
+- **Panel (b)**: among amplified luminal tumours, P(Her2) against the amplification level. A model
+  that follows the dose rises to the right; filled = amplified by D-58 too, hollow = newly
+  amplified.
+
+![U15](figures/subtype/U15_brca_her2_uncapped.png)
+
+<!-- legend U15: copied from figures/subtype/U15_brca_her2_uncapped.caption.md by scripts/36_subtype_figures.py legends -->
+> **Figure U15. Without the ABSOLUTE ceiling, splicing matches expression on ERBB2 amplification but does not beat
+> it.** Pre-specified before the copy-number file was downloaded (config/followup.yaml: brca_her2_uncapped, D-60).
+> D-58 took amplification from ABSOLUTE, which never reports more than 7 copies at ERBB2. Here, the PanCanAtlas SNP6
+> copy ratio at ERBB2 is made absolute with ABSOLUTE purity and ploidy, without a ceiling; amplified = copy number ≥
+> 2 × ploidy, D-58's rule. Out-of-fold P(Her2) of the BRCA_PAM50 models; LumA and LumB tumours only.
+>
+> (a) AUROC of P(Her2), GEX (grey) and AS ensemble (blue), for D-58's amplified tumours (median ploidy 2.09), all
+> tumours amplified by the uncapped call, and the newly amplified ones only (median ploidy 3.85). Each group is
+> compared with the luminal tumours neither call makes amplified; the middle group is compared with all
+> non-amplified tumours. (b) Amplified luminal tumours: P(Her2) against copy number / ploidy; filled = amplified by
+> D-58 too, hollow = newly amplified.
+>
+> q over family HU (7 tests). Per-tumour values are kept locally (D-12).
+<!-- /legend -->
+
+**What it shows.**
 - **Who was left out.** 45 luminal tumours are amplified; 15 of them are new. The new ones are
   genome-doubled (median ploidy 3.85, against 2.09 for D-58's 31) and amplified to a similar level
   (5.7 against 5.3 × ploidy). 92% of all amplified tumours sit at ABSOLUTE's ceiling of 7.
@@ -1012,7 +1537,32 @@ made absolute with ABSOLUTE purity and ploidy, and applies the same rule with no
 the rest fall short is not tested here. Two possibilities (context) are that the array saturates
 at high copy number and that some tumours are HER2-positive by IHC with a lower-level gain.
 
-### Splice-site mutations and SF3B1 hotspots (D-59, U14)
+### Splice-site mutations and SF3B1 hotspots (D-59, Figure U14)
+
+**How to read Figure U14.**
+- **Panel (a)**: for each splice-site mutation, where its exon's inclusion in the mutated tumour
+  ranks among the other tumours of the cohort. With no effect the bars would follow the dashed
+  line; a pile-up near 0 means the mutated exon is skipped.
+- **Panel (b)**: a score of cryptic upstream acceptors, for SF3B1 hotspot tumours against the rest.
+  Higher means more use of the cryptic AG.
+
+![U14](figures/subtype/U14_brca_mutations.png)
+
+<!-- legend U14: copied from figures/subtype/U14_brca_mutations.caption.md by scripts/36_subtype_figures.py legends -->
+> **Figure U14. Splice-site mutations skip their exons, and SF3B1 hotspot tumours use cryptic acceptors.**
+> Pre-specified (config/followup.yaml: brca_mutations, D-59). MC3 public calls of the cohort's tumours (FILTER flags
+> within PASS, wga, native_wga_mix). (a) Every splice-site SNV at +1/+2 or −1/−2 whose hit exon (by the MC3
+> transcript's intron number, located in GENCODE v45) is a cassette exon of the main SE matrix: the exon's PSI
+> percentile in the mutated tumour among the other cohort tumours (ties count half, so an exon near 100% inclusion
+> in almost every tumour ranks at 0.5), stacked by side; dashed line = the count per bin with no effect; triangles =
+> the 5 CDH1 mutations. (b) SF3B1 hotspot tumours (codons 622, 625, 626, 662, 663, 666, 700, 741, 742) against the
+> rest on a cryptic A3SS score: mean within-cohort percentile of the long form of 820 A3SS events whose acceptors
+> are 10–30 nt apart and whose upstream acceptor is rarely used in normals (median PSI < 0.2). Box = interquartile
+> range, diamond = median, whiskers = 1.5 × IQR, dots = tumours.
+>
+> Stars: * p < 0.05, ** p < 0.01, *** p < 0.001. q over family C (3 tests). Per-tumour values are kept locally
+> (D-12).
+<!-- /legend -->
 
 - **A mutated splice site skips its exon** (C1, supported). There are 157 MC3 SNVs at +1/+2 or
   −1/−2 of a cassette exon in the SE matrix. In 110 of them, the exon in the mutated tumour falls
@@ -1032,7 +1582,7 @@ at high copy number and that some tumours are HER2-positive by IHC with a lower-
   0.95 with a truncating one and 0.96 with neither, against 0.996 in ductal tumours. The
   splice-site tumours are the extreme of the tail, not all of it.
 
-### Inherited splicing: what the pair check removed (D-57, A-13, A-14, U12)
+### Inherited splicing: what the pair check removed (D-57, A-13, A-14, Figure U12)
 
 **Design.** Some splicing events behave like genotypes: PSI falls into three well-separated groups
 (low, mid, high), and the mid group appears in normal tissue too. A label-blind scan found 1,594
@@ -1058,23 +1608,52 @@ are of this kind (13%), against 2.6% of all eligible events. That raised two que
   - 360 of 1,110 genes differ in allele frequency by race, against at most 6 under permutation
     (A3, supported).
 
+**How to read Figure U12.** The question is whether an event that looks like a genotype behaves
+like one between a patient's normal tissue and tumour.
+- **Panels (a, b)** cross-tabulate each normal's group with its own tumour's group. An inherited
+  event keeps the diagonal, or moves from mid to low or high by loss of heterozygosity. A count in
+  the opposite-homozygote corners cannot be inherited. CAST (a) has none; TMEM101 (b) has many.
+- **Panel (c)**: tumour–normal agreement (Cohen's κ) for all events, those passing the A-13 check
+  and those among the models' top events. A curve further left means less agreement.
+- **Panel (d)**: each event's high-group frequency in LumA against Basal tumours. An inherited
+  allele sits near the dashed line; a subtype programme sits off it.
+
+![U12](figures/subtype/U12_brca_germline_check.png)
+
+<!-- legend U12: copied from figures/subtype/U12_brca_germline_check.caption.md by scripts/36_subtype_figures.py legends -->
+> **Figure U12. Most of the BRCA models' genotype-like events are subtype programmes, not inherited alleles.** D-57
+> (config/followup.yaml: brca_germline) called an event genotype-like when, without labels, its PSI fell into three
+> well-separated groups (low, mid, high) with mid-group normals. A-13 adds a check from tumour–normal pairs, and
+> A-14 (exploratory) adds pair agreement. One tumour and one normal per patient (112 pairs). An inherited event
+> keeps its group in the tumour, apart from loss of heterozygosity (mid to low or high); a homozygous normal cannot
+> become the opposite homozygote.
+>
+> (a, b) Each normal's group against its own tumour's group (counts; shade = share of the normal's row) for CAST SE,
+> a germline event, and TMEM101 A5SS, the genotype-like event with the largest importance in the BRCA models. (c)
+> Cumulative distribution of Cohen's κ between normal and tumour group, for all 1110 checked events (one per gene),
+> the 82 that pass A-13 (opposite-homozygote flips in ≤ 5% of at least 20 homozygous pairs) and the 45 that rank
+> among the models' top events (legend: all, A-13, top). (d) Share of tumours in the high group, LumA (x) against
+> Basal (y), per event, coloured as in c (grey = the rest); dashed line = equal frequency. An inherited allele
+> differs between subtypes only through ancestry.
+<!-- /legend -->
+
 **The check that changed the reading** (A-13; added after these results). An inherited allele
 cannot turn a homozygous normal into the opposite homozygote in its own tumour. In 112
 tumour–normal pairs, that happened in a median of 20% of homozygous pairs per event.
 - **Few events pass.** Only 82 of 1,110 pass A-13 (≤ 5% flips over at least 20 homozygous pairs).
 - **Rare alleles pass easily** (A-14, exploratory). The 82 have about half the minor-allele
   frequency of the rest, which makes a flip rare anyway. Tumour–normal agreement (Cohen's κ) is
-  above 0.6 for only 20 events. These include CAST (κ 0.95: 109 of 112 pairs agree, U12a) and the
+  above 0.6 for only 20 events. These include CAST (κ 0.95: 109 of 112 pairs agree, Figure U12a) and the
   HLA-DRB1/DRB5 region.
 - **Agreement is necessary, not sufficient.** Some high-κ events are interferon-induced (IFI27,
   IFI44L) or imprinted (H19). They may record a patient-level state rather than a genotype.
 
 **The models' top genotype-like events are subtype programmes** (result).
 - **They fail the check.** 3 of the 45 that could be checked pass A-13, and none has κ above 0.24.
-- **TMEM101 is the clearest case.** Its A5SS event is the most important of them (U12b): 13 of 59
+- **TMEM101 is the clearest case.** Its A5SS event is the most important of them (Figure U12b): 13 of 59
   normals homozygous for the high group carry a low-group tumour.
 - **Their frequency follows subtype.** The high-group frequency differs between LumA and Basal
-  tumours by a median 0.18, against 0.03 for confirmed germline events (U12d). For TMEM101 it is
+  tumours by a median 0.18, against 0.03 for confirmed germline events (Figure U12d). For TMEM101 it is
   0.44 against 0.99.
 - **The enrichment is not inherited signal.** The models' "genotype-like" enrichment is a
   preference for three-level tumour programmes.
@@ -1130,7 +1709,7 @@ tumour–normal pairs could.
   the claim to the deletion signature itself.
 - **Score G outside TCGA.** An RNA-seq cohort with MMR status (CPTAC, or cell lines with MLH1 or
   MSH2 loss), quantified the same way, is the external test the code has not had.
-- **The MSI events in another cohort.** U7 was found and tested within TCGA (three cancers, one
+- **The MSI events in another cohort.** Figure U7 was found and tested within TCGA (three cancers, one
   pipeline). The claim would weaken considerably if the events fail in an independent MSI cohort
   (e.g. CPTAC colon or endometrial, or a cell-line panel with known MMR status) processed through
   the same quantification. It would also weaken if they follow tumour purity once purity is
@@ -1177,7 +1756,7 @@ tumour–normal pairs could.
   joined for POLE, RPL22 or MLH1, so those mechanisms in §7–§8 are context, not result. §11 tests one mechanism from the reference genome, and its
   repeat exons are a result; the deletions behind them are inferred, not observed.
 - **Unstranded libraries.** The audit can flag but not resolve antisense overlap. 65 top events
-  overlap a gene the expression matrix does not hold and stay uncleared, including two of U6's
+  overlap a gene the expression matrix does not hold and stay uncleared, including two of Figure U6's
   nineteen.
 - **Combination rules.** The AS ensemble averages eight views with equal weight, which shrinks
   minority-class probabilities when most views are weak on that class (§3). Fusion is fixed at 1:1
@@ -1186,9 +1765,9 @@ tumour–normal pairs could.
 - **Regulators are read from expression.** Factor activity is approximated by mRNA level; the
   event association of §9 runs across classes, so it cannot separate regulation from co-variation
   with the subtype. Only R5/R6 adjust for class.
-- **Exploratory additions.** The error-marker, shared-class and MSI-confound tables and U7 were
+- **Exploratory additions.** The error-marker, shared-class and MSI-confound tables and Figure U7 were
   added after results had been read (A-4), as were the R5/R6 sensitivity checks (A-6). In §11,
-  D-53 and D-54 were written after D-52's results; the reversal at ≥ 20 nt (U11a, c) is
+  D-53 and D-54 were written after D-52's results; the reversal at ≥ 20 nt (Figure U11a, c) is
   exploratory, and D-54 is its partial replication. In §12, the knockout (A-12), the germline check
   and its re-run (A-13), pair κ (A-14) and accuracy by race were added after results. They are
   descriptive, and none feeds a model. A-1 to A-3 changed presentation or widened an audit only.

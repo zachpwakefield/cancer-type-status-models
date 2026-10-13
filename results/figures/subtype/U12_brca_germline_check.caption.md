@@ -1,16 +1,15 @@
-**Are the BRCA models' genotype-like splicing events inherited?**
+**Figure U12. Most of the BRCA models' genotype-like events are subtype programmes, not inherited alleles.** D-57
+(config/followup.yaml: brca_germline) called an event genotype-like when, without labels, its PSI fell into three
+well-separated groups (low, mid, high) with mid-group normals. A-13 adds a check from tumour–normal pairs, and A-14
+(exploratory) adds pair agreement. One tumour and one normal per patient (112 pairs). An inherited event keeps its
+group in the tumour, apart from loss of heterozygosity (mid to low or high); a homozygous normal cannot become the
+opposite homozygote.
 
-D-57 (config/followup.yaml: brca_germline) called an event genotype-like when, without labels, its PSI fell into
-three well-separated groups (low, mid, high) with mid-group normals. A-13 adds a check from tumour–normal pairs, and
-A-14 (exploratory) adds pair agreement. One tumour and one normal per patient (112 pairs). An inherited event keeps
-its group in the tumour, apart from loss of heterozygosity (mid to low or high); a homozygous normal cannot become
-the opposite homozygote.
-
-a, b, each normal's group against its own tumour's group (counts; shade = share of the normal's row) for CAST SE, a
-germline event, and TMEM101 A5SS, the genotype-like event with the largest importance in the BRCA models. c,
-cumulative distribution of Cohen's κ between normal and tumour group, for all 1110 checked events (one per gene),
+(a, b) Each normal's group against its own tumour's group (counts; shade = share of the normal's row) for CAST SE, a
+germline event, and TMEM101 A5SS, the genotype-like event with the largest importance in the BRCA models. (c)
+Cumulative distribution of Cohen's κ between normal and tumour group, for all 1110 checked events (one per gene),
 the 82 that pass A-13 (opposite-homozygote flips in ≤ 5% of at least 20 homozygous pairs) and the 45 that rank among
-the models' top events (legend: all, A-13, top). d, share of tumours in the high group, LumA (x) against Basal (y),
+the models' top events (legend: all, A-13, top). (d) Share of tumours in the high group, LumA (x) against Basal (y),
 per event, coloured as in c (grey = the rest); dashed line = equal frequency. An inherited allele differs between
 subtypes only through ancestry.
 

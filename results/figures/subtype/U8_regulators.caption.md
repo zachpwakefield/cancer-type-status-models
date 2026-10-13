@@ -1,8 +1,7 @@
-**Do the splicing regulators the literature names differ between subtypes, and track the subtype's exons?**
-
-Six predictions fixed before the data were looked at by class (config/followup.yaml, D-46). a, a factor's log2 CPM
-in each class: dot = median, bar = interquartile range, patients in brackets; blue = the class predicted lower.
-AUROC = P(predicted-higher patient > predicted-lower patient), two-sided Mann–Whitney.
+**Figure U8. Named splicing regulators differ between subtypes as predicted in four of six tests.** Six predictions
+fixed before the data were looked at by class (config/followup.yaml, D-46). (a) A factor's log2 CPM in each class:
+dot = median, bar = interquartile range, patients in brackets; blue = the class predicted lower. AUROC =
+P(predicted-higher patient > predicted-lower patient), two-sided Mann–Whitney.
 
 - R1, ESRP1 lower in biphasic than epithelioid mesothelioma: AUROC 0.55, p = 0.52, q = 0.52, not resolved (ESRP1 is
   barely expressed in either class).
@@ -10,7 +9,7 @@ AUROC = P(predicted-higher patient > predicted-lower patient), two-sided Mann–
 - R3, ESRP1 lower in the mesenchymal HNSC class than in the other three: AUROC 0.76, p = 5.4e-11, q = 1.6e-10.
 - R4, PTBP1 lower in leiomyosarcoma (LMS) than in the other sarcomas: AUROC 0.66, p = 2.4e-5, q = 3.5e-5.
 
-b, the event's PSI by PTBP1 quintile, the quintiles cut within LMS and within the other sarcomas separately (dot =
+(b) The event's PSI by PTBP1 quintile, the quintiles cut within LMS and within the other sarcomas separately (dot =
 median, bar = interquartile range, about 20–26 patients per point). Test: partial Spearman of PTBP1 with the PSI
 over all 230 sarcomas, adjusting for class, stromal and immune scores; predicted sign = opposite to the LMS shift.
 

@@ -1,9 +1,8 @@
-**When a histology model is wrong, is the error molecularly coherent?**
-
-Each panel is one histology cohort's expression (GEX) model. Rows: true histology → the model's out-of-fold call,
-with patients in brackets; columns: the published molecular class of the same patients (PanCanAtlas, D-43); cells:
-patients, coloured by the share of the row. Only patients with both labels are counted. Counts only, no test (D-41).
-The AS ensemble's table is in the CSV (`plotted` = False); it shows the same pattern.
+**Figure U3. Histology models err in the molecular direction.** Each panel is one histology cohort's expression
+(GEX) model. Rows: true histology → the model's out-of-fold call, with patients in brackets; columns: the published
+molecular class of the same patients (PanCanAtlas, D-43); cells: patients, coloured by the share of the row. Only
+patients with both labels are counted. Counts only, no test (D-41). The AS ensemble's table is in the CSV (`plotted`
+= False); it shows the same pattern.
 
 - **LGG.** 126 of 128 codeleted oligodendrogliomas are called oligodendroglioma, but 41 of the 58 without a
   codeletion are called astrocytoma; 6 of 6 codeleted astrocytomas are called oligodendroglioma.

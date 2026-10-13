@@ -1,11 +1,9 @@
-**Do the longest acceptor repeats move the other way in MSI?**
-
-a, exploratory (read after D-52): SE exons with an acceptor T-run ≥ 10 (the nine MSI events of §8 left out), share
-whose background-adjusted MSI shift is positive, by run length; bars = Wilson 95% interval. Runs of 10–19 lean
-toward skipping (share 0.38–0.49), runs ≥ 20 toward inclusion (0.56–0.67) in all three cancers. b, the replication
-fixed after that (D-54) on A3SS events, which this analysis had not read: one acceptor with the run, the other ≤ 6;
-shift in the use of the acceptor carrying the run (negative = used less in MSI); marker = median, bar =
-interquartile range; Wilcoxon signed-rank against 0.
+**Figure U11. The longest acceptor repeats move toward inclusion in MSI.** (a) Exploratory (read after D-52): SE
+exons with an acceptor T-run ≥ 10 (the nine MSI events of §8 left out), share whose background-adjusted MSI shift is
+positive, by run length; bars = Wilson 95% interval. Runs of 10–19 lean toward skipping (share 0.38–0.49), runs ≥ 20
+toward inclusion (0.56–0.67) in all three cancers. (b) The replication fixed after that (D-54) on A3SS events, which
+this analysis had not read: one acceptor with the run, the other ≤ 6; shift in the use of the acceptor carrying the
+run (negative = used less in MSI); marker = median, bar = interquartile range; Wilcoxon signed-rank against 0.
 
 - Q1, runs 10–19, predicted < 0: UCEC median −0.012, n = 80, p = 0.11; STAD median −0.017, n = 85, p = 0.009; COAD
   median −0.008, n = 84, p = 0.094.
@@ -13,7 +11,7 @@ interquartile range; Wilcoxon signed-rank against 0.
   median +0.007, n = 18, p = 0.35.
 - 2 of 6 clear q < 0.05 (family Q); all 6 medians fall in the predicted direction. The long-run sets are small.
 
-c, exons measured in all three cohorts with the largest mean shift, one per gene: the 7 largest increases (top
+(c) Exons measured in all three cohorts with the largest mean shift, one per gene: the 7 largest increases (top
 block) and the 9 largest decreases, then MRE11 exon 5, the known MSI target. Label = gene · acceptor T-run · exon
 length. The increases carry runs of 21–32 nt; the decreases 14–21 nt.
 

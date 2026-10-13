@@ -1,14 +1,13 @@
-**Does splicing's lead on ERBB2-amplified luminal tumours survive without the ABSOLUTE ceiling?**
+**Figure U15. Without the ABSOLUTE ceiling, splicing matches expression on ERBB2 amplification but does not beat
+it.** Pre-specified before the copy-number file was downloaded (config/followup.yaml: brca_her2_uncapped, D-60).
+D-58 took amplification from ABSOLUTE, which never reports more than 7 copies at ERBB2. Here, the PanCanAtlas SNP6
+copy ratio at ERBB2 is made absolute with ABSOLUTE purity and ploidy, without a ceiling; amplified = copy number ≥ 2
+× ploidy, D-58's rule. Out-of-fold P(Her2) of the BRCA_PAM50 models; LumA and LumB tumours only.
 
-Pre-specified before the copy-number file was downloaded (config/followup.yaml: brca_her2_uncapped, D-60). D-58 took
-amplification from ABSOLUTE, which never reports more than 7 copies at ERBB2. Here, the PanCanAtlas SNP6 copy ratio
-at ERBB2 is made absolute with ABSOLUTE purity and ploidy, without a ceiling; amplified = copy number ≥ 2 × ploidy,
-D-58's rule. Out-of-fold P(Her2) of the BRCA_PAM50 models; LumA and LumB tumours only.
-
-a, AUROC of P(Her2), GEX (grey) and AS ensemble (blue), for D-58's amplified tumours (median ploidy 2.09), all
+(a) AUROC of P(Her2), GEX (grey) and AS ensemble (blue), for D-58's amplified tumours (median ploidy 2.09), all
 tumours amplified by the uncapped call, and the newly amplified ones only (median ploidy 3.85). Each group is
 compared with the luminal tumours neither call makes amplified; the middle group is compared with all non-amplified
-tumours. b, amplified luminal tumours: P(Her2) against copy number / ploidy; filled = amplified by D-58 too, hollow
+tumours. (b) Amplified luminal tumours: P(Her2) against copy number / ploidy; filled = amplified by D-58 too, hollow
 = newly amplified.
 
 - HU1, GEX P(Her2) higher in amplified tumours: AUROC 0.75, q = 9.4e-8, supported.

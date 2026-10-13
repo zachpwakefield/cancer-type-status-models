@@ -1,14 +1,13 @@
-**Does genome sequence say which exons MSI tumours skip?**
+**Figure U10. Genome sequence alone says which exons MSI tumours skip.** Pre-specified before any PSI was read by
+repeat (config/followup.yaml: msi_cis, D-52). For every cassette exon, the longest sense-strand T-run overlapping
+intron positions −1..−50 before it was read from GRCh38; no label or model chose the exons. MSI against the other
+classes (POLE apart) of UCEC_TCGA, STAD_TCGA and COAD_TCGA.
 
-Pre-specified before any PSI was read by repeat (config/followup.yaml: msi_cis, D-52). For every cassette exon, the
-longest sense-strand T-run overlapping intron positions −1..−50 before it was read from GRCh38; no label or model
-chose the exons. MSI against the other classes (POLE apart) of UCEC_TCGA, STAD_TCGA and COAD_TCGA.
-
-a, share of exons with a run ≥ 10 among all exons measured in the cohort and among the top 50 SE events of the
-cohort's MSI model (mean |SHAP| over MSI patients); Fisher exact (M6). b, the repeat score of each patient: each
+(a) Share of exons with a run ≥ 10 among all exons measured in the cohort and among the top 50 SE events of the
+cohort's MSI model (mean |SHAP| over MSI patients); Fisher exact (M6). (b) The repeat score of each patient: each
 exon's PSI as a percentile within the cohort, mean over exons with a run ≥ 10 minus the mean over exons with ≤ 5
 (weighted to the same mean-PSI deciles, which cancels the global PSI axis of D-24). Box = interquartile range,
-diamond = median, whiskers = 1.5 × IQR, dots = patients (n under each box); Mann–Whitney (M1, M5). c, AUROC of the
+diamond = median, whiskers = 1.5 × IQR, dots = patients (n under each box); Mann–Whitney (M1, M5). (c) AUROC of the
 same score built from each run-length bin, and (hollow) from T-runs ≥ 10 at −201..−400, deep in the intron, with the
 acceptor ≤ 6.
 

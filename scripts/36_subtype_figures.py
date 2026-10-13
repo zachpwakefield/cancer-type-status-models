@@ -20,19 +20,27 @@ One question per figure, in the order the story is told in results/SUBTYPE.md:
     U17 does the branch point's distance from the 3' splice site set the direction of the MSI shift (D-63)?
     U18 does the sequence code find mismatch-repair-deficient tumours in 30 cancers never used (D-66)?
     U19 is the code about the branch point, and about mismatch repair (D-65, D-67)?
+    U20 is the code an infiltration readout (D-68)?
+
+Captions are figure legends: "**Figure Un. Title.**", then (a), (b) ... for the panels. `legends`
+copies each legend (without its bullet list of tests) under the figure in results/SUBTYPE.md.
 
 Reads results/subtype/summary/ (step 34), results/subtype/interpret/ (step 35),
 results/subtype/regulators/ (step 37), results/subtype/site_probe/ (step 38),
 results/subtype/msi_cis/ (steps 42, 50, 51) and results/subtype/brca/ (steps 46-49). Every figure
 is SVG + PDF + 400-dpi PNG with `<stem>.csv` of the plotted values and `<stem>.caption.md`.
-Usage: python scripts/36_subtype_figures.py [U1 U3 ...]        (default: all)
+Usage: python scripts/36_subtype_figures.py [U1 U3 ... legends]        (default: all, then legends)
 """
 from __future__ import annotations
+
+import re
+import textwrap
 
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from scipy.stats import spearmanr
+from _common import log
 from _figbase import locus_label, run, tidy
 
 from ctsm.biology import bh
@@ -170,6 +178,8 @@ def U2() -> None:
     axes[1].legend(handles=[Line2D([], [], marker="o", ls="", color=c, ms=3.2, label=n) for n, c in
                             (("GEX", INK), ("AS ensemble", ACCENT), ("GEX + AS", ACCENT_DARK))],
                    loc="lower left", bbox_to_anchor=(0, 1.0), ncol=3, fontsize=5.6, handletextpad=0.2)
+    for x, lab in [(0.0, "a"), (0.40, "b")]:
+        fig.text(x, 0.995, lab, fontsize=8, fontweight="bold", va="top")
     save(fig, OUT, "U2_recall_by_class", data=pd.DataFrame(rows), caption=CAPTIONS["U2"](pd.DataFrame(rows)))
 
 
@@ -428,7 +438,7 @@ majority-class predictor's balanced accuracy. Rows: cohorts, patients in bracket
 made: histology (weak = a poorly reproducible label, control = a lineage or site contrast), genomic or IHC (DNA,
 protein), and expression-defined (mRNA clusters, so GEX is near-circular there; D-44).
 
-Right: fused minus GEX balanced accuracy, and the exact McNemar test of fused against GEX on paired per-patient
+Columns at right: fused minus GEX balanced accuracy, and the exact McNemar test of fused against GEX on paired per-patient
 correctness, raw p. McNemar weighs classes by their size and balanced accuracy weighs them equally, so the two
 can disagree (THCA). The CSV holds every point's 95% patient-bootstrap CI, macro F1, macro AUROC, the
 paired-bootstrap CI of the fused − GEX difference and BH q (family: the subtype cohorts, per comparison).
@@ -487,7 +497,7 @@ def _cap_u2(data):
     return f"""**Which subtypes does each modality recover?**
 
 Out-of-fold recall of every class (patients in brackets) for GEX (black), the AS ensemble (blue) and GEX + AS fused
-1:1 (dark blue). Left: histology cohorts; right: genomic and IHC cohorts, then the expression-defined ones, in the
+1:1 (dark blue). (a) Histology cohorts. (b) Genomic and IHC cohorts, then the expression-defined ones, in the
 order of U1. 95% patient-bootstrap CIs and every single view are in the CSV and in `recall_by_class.csv`.
 
 Splicing's five largest losses against expression (recall, GEX → AS ensemble) are{small_note}: {fmt(lo)}. Its largest gains: {fmt(hi)}. Over the {len(small)} classes with fewer than 40
@@ -545,7 +555,7 @@ def _cap_u6(data, ev):
 For each histology and genomic/IHC cohort, the one splicing event with the largest class-specific mean |SHAP|
 across the eight splicing models (rule fixed before the audit was run, D-41), labelled by cohort, host gene and
 view. Dots: the event's median over the patients of each class, PSI or usage (0 to 1) or HIT index (−1 to 1);
-filled and named = the class the event ranks for. Right: the D-27 audit. The event's segment is intersected with
+filled and named = the class the event ranks for. Columns at right: the D-27 audit. The event's segment is intersected with
 every other GENCODE v45 gene's exons (≥ 50 bp): antisense, same-strand, inside a readthrough model, or no overlap.
 ρ: Spearman correlation over the cohort's patients with the other gene's log2 CPM and with the host's. An
 overlapping event that follows the other gene (|ρ| ≥ 0.5 and above |ρ host|) is a readout of it (red). "Not
@@ -569,7 +579,7 @@ Every splicing event in the top 5 of the MSI class of the UCEC, STAD or COAD mod
 against the rest of the cohort, is at least 0.25 from 0.5 in the same direction in all three cohorts: {len(k)}
 events (AUROC in each cell; red = higher in MSI). • = in that cohort's MSI top 5; a cell without • is a
 replication in a cohort whose model did not pick the event. No model is involved in the AUROC; the patients with a
-value in each cell (MSI and rest) are in the CSV. Right: the D-27 audit, as in U6. Exploratory (A-4): the step was added after the
+value in each cell (MSI and rest) are in the CSV. Columns at right: the D-27 audit, as in U6. Exploratory (A-4): the step was added after the
 same CCNDBP1 exon was seen in the MSI top 5 of all three models; it then tests every event of every shared class.
 
 {int((chosen >= 2).sum())} of the {len(k)} events were chosen independently by at least two of the three models.
@@ -1718,10 +1728,10 @@ def _cap_u17(pr, ex, g):
 
 Pre-specified (config/followup.yaml: msi_branchpoint, D-63). Exons whose acceptor carries a T-run ≥ 10 (R exons, D-52),
 read from the GRCh38 primary assembly. Branch point = the A nearest the 3′ splice site that lies upstream of the run,
-within 100 nt, and matches yUnAy; found for {g.d_bp.notna().mean() * 100:.0f}% of {len(g)} exons. MSI shift =
+within 100 nt, and matches yUnAy; found for {g.d_bp.notna().mean() * 100:.0f}% of {len(g):,} exons. MSI shift =
 D-52's background-adjusted difference in inclusion percentile, MSI minus the rest.
 
-a, distance from the branch point to the 3′ss, by run length ({int(g[g.acc_T < 20].d_bp.notna().sum())} exons with
+a, distance from the branch point to the 3′ss, by run length ({int(g[g.acc_T < 20].d_bp.notna().sum()):,} exons with
 runs of 10–19 nt, {int(g[g.acc_T >= 20].d_bp.notna().sum())} with ≥ 20 nt); grey band = 19–23 nt, the optimum for a 3′ss AG
 (Chua and Reed 2001). b, share of R exons more included in MSI, by tertile of that distance within run classes,
 per cancer; bars = Wilson 95% interval. c, the tests: Spearman of the MSI shift with the branch-point distance after
@@ -1992,13 +2002,189 @@ The rule behind score G was read from these three cohorts (D-53 and U17b), so c 
 and COAD values are exploratory; U18 is the out-of-sample test. q over families BS (4 tests) and EG (2 tests)."""
 
 
-CAPTIONS = {k: (lambda f: (lambda *a: tidy(f(*a))))(f) for k, f in
+# ============================================================ infiltration (D-68)
+
+def U20() -> None:
+    pr = pd.read_csv(CODE_DIR / "infiltration" / "predictions.csv").set_index("id")
+    ex = pd.read_csv(CODE_DIR / "infiltration" / "exploratory.csv").set_index("what")
+    sc = pd.read_parquet(MSI_LOCAL / "pancancer_covariates.parquet")
+    step = _step("51_msi_code.py")
+    fig = plt.figure(figsize=(DOUBLE * 0.8, 2.0))
+    gs = fig.add_gridspec(1, 2, width_ratios=[1.0, 1.0], wspace=1.25)
+    rows = []
+    # a. AUROC of score G by immune half, and of the immune score alone
+    ax = fig.add_subplot(gs[0])
+    low = sc.immune <= sc.groupby("project").immune.transform("median")
+    mm = sc.mmr.to_numpy()
+    sets = [("30 cancers, all", step.auc_lower(sc.pct_G.to_numpy(), mm), int(mm.sum()), ACCENT, "PC2"),
+            ("lower-immune half", pr.loc["IF3"].effect + 0.5, int((mm & low).sum()), ACCENT, "IF3"),
+            ("upper-immune half", step.auc_lower(sc.pct_G.to_numpy()[~low], mm[~low]), int((mm & ~low).sum()), ACCENT,
+             "exploratory"),
+            ("immune score alone", ex.loc["AUROC of the immune score itself, higher in MMR-deficient (held-out)", "value"],
+             int(mm.sum()), INK2, "exploratory"),
+            ("UCEC, lower-immune half", ex.loc["IF4: AUROC(G lower in MSI), lower-immune half", "value"],
+             int(ex.loc["IF4: AUROC(G lower in MSI), lower-immune half", "n"]), COH_STYLE["UCEC_TCGA"][0], "exploratory"),
+            ("STAD, lower-immune half", ex.loc["IF5: AUROC(G lower in MSI), lower-immune half", "value"],
+             int(ex.loc["IF5: AUROC(G lower in MSI), lower-immune half", "n"]), COH_STYLE["STAD_TCGA"][0], "exploratory"),
+            ("COAD, lower-immune half", ex.loc["IF6: AUROC(G lower in MSI), lower-immune half", "value"],
+             int(ex.loc["IF6: AUROC(G lower in MSI), lower-immune half", "n"]), COH_STYLE["COAD_TCGA"][0], "exploratory")]
+    ys = [0, 1, 2, 3, 4.6, 5.6, 6.6]
+    for y, (lab, v, n, col, test) in zip(ys, sets):
+        ax.scatter(v, y, s=16, color=col, zorder=3)
+        rows.append({"panel": "a", "set": lab, "n_mmr_deficient_or_msi": n, "auroc": v, "test": test})
+    ax.axvline(0.5, color=MUTED, linewidth=0.6, linestyle=(0, (3, 2)), zorder=0)
+    rows.append({"panel": "a", "set": "reference line", "auroc": 0.5})
+    ax.set_yticks(ys)
+    ax.set_yticklabels([f"{l} ({n})" for l, _, n, _, _ in sets], fontsize=5.6)
+    ax.set_ylim(max(ys) + 0.6, -0.6)
+    ax.set_xlim(0.4, 1.0)
+    ax.tick_params(axis="y", length=0)
+    ax.spines["left"].set_visible(False)
+    ax.set_xlabel("AUROC, MMR-deficient or MSI lower", fontsize=6)
+    # b. the MMR (MSI) coefficient after adjustment, as a share of the unadjusted one
+    bx = fig.add_subplot(gs[1])
+    unadj = {"IF1": ex.loc["IF1: unadjusted coefficient (cancer fixed effects only)", "value"],
+             "IF2": ex.loc["IF2: unadjusted coefficient (cancer fixed effects only)", "value"]}
+    for k in ["IF4", "IF5", "IF6"]:
+        unadj[k] = float(pr.loc[k].n.split("site only ")[1])
+    labels = {"IF1": "30 cancers: stromal, immune, RI", "IF2": "30 cancers: + ABSOLUTE purity",
+              "IF4": "UCEC: site, stromal, immune, RI", "IF5": "STAD: site, stromal, immune, RI",
+              "IF6": "COAD: site, stromal, immune, RI"}
+    for y, k in enumerate(["IF1", "IF2", "IF4", "IF5", "IF6"]):
+        r, u = pr.loc[k], unadj[k]
+        lo, hi = sorted([r.ci_low / u, r.ci_high / u])
+        bx.hlines(y, lo, hi, color=ACCENT, linewidth=0.8)
+        bx.scatter(r.effect / u, y, s=16, color=ACCENT, zorder=3)
+        bx.text(1.62, y, f"p = {fp(r.p)}", va="center", fontsize=5.2)
+        rows.append({"panel": "b", "set": labels[k], "test": k, "coef_adjusted": r.effect, "coef_unadjusted": u,
+                     "share_kept": r.effect / u, "share_ci_low": lo, "share_ci_high": hi, "p": r.p, "q": r.q,
+                     "q_family": "IF (msi_code_infiltration, 6 tests)", "verdict": r.verdict})
+    bx.axvline(1.0, color=MUTED, linewidth=0.6, linestyle=(0, (3, 2)), zorder=0)
+    bx.axvline(0.0, color=INK2, linewidth=0.6, zorder=0)
+    rows += [{"panel": "b", "set": "reference line: unadjusted", "share_kept": 1.0},
+             {"panel": "b", "set": "reference line: none kept", "share_kept": 0.0}]
+    bx.set_yticks(range(5))
+    bx.set_yticklabels([labels[k] for k in ["IF1", "IF2", "IF4", "IF5", "IF6"]], fontsize=5.6)
+    bx.set_ylim(4.6, -0.6)
+    bx.set_xlim(-0.05, 1.6)
+    bx.set_xticks([0, 0.5, 1.0, 1.5])
+    bx.tick_params(axis="y", length=0)
+    bx.spines["left"].set_visible(False)
+    bx.set_xlabel("effect kept after adjustment", fontsize=6)
+    for a_, lab, x in [(ax, "a", -1.05), (bx, "b", -1.2)]:
+        a_.text(x, 1.04, lab, transform=a_.transAxes, fontsize=8, fontweight="bold")
+    save(fig, OUT, "U20_msi_code_infiltration", data=pd.DataFrame(rows), caption=CAPTIONS["U20"](pr, ex, rows))
+
+
+def _cap_u20(pr, ex, rows):
+    b = pd.DataFrame([r for r in rows if r["panel"] == "b" and "test" in r])
+    a = pd.DataFrame([r for r in rows if r["panel"] == "a" and "test" in r]).set_index("set")
+    return f"""**Is score G an infiltration readout?**
+
+Pre-specified (config/followup.yaml: msi_code_infiltration, D-68). Covariates as in D-55: stromal and immune = mean
+log2 CPM of eight stromal and eight immune genes (config/biology.yaml); RI = the tumour's mean retained-intron PSI, an
+RNA-handling proxy; purity = ABSOLUTE, where called. In the 30 held-out cancers (D-66) each covariate and score G are
+percentiles within the tumour's cancer.
+
+(a) AUROC for MMR-deficient tumours (MSI in the three cohorts) scoring lower on G: all held-out tumours, then the
+lower and upper halves of each cancer's immune score; grey = the immune score itself, read as higher in MMR-deficient
+tumours; then MSI against the rest in the lower-immune half of UCEC, STAD and COAD (MMR-deficient or MSI tumours in
+brackets). (b) OLS coefficient of MMR deficiency (or MSI) on score G after adjustment, as a share of the coefficient
+with cancer (or site) fixed effects only; bar = 95% HC3 interval; p of the adjusted coefficient.
+
+- IF1, IF2, held-out cancers: adjusted coefficient {signed(pr.loc['IF1'].effect, 3)} and
+  {signed(pr.loc['IF2'].effect, 3)} (unadjusted {signed(b.set_index('test').loc['IF1', 'coef_unadjusted'], 3)});
+  q = {fp(pr.loc['IF1'].q)}, supported.
+- IF3, lower-immune half: AUROC {pr.loc['IF3'].effect + 0.5:.2f} ({a.loc['lower-immune half', 'n_mmr_deficient_or_msi']}
+  MMR-deficient), supported; upper half {a.loc['upper-immune half', 'auroc']:.2f} (exploratory).
+- IF4–IF6, the three cohorts with site fixed effects: UCEC {signed(pr.loc['IF4'].effect, 3)}, STAD
+  {signed(pr.loc['IF5'].effect, 3)}, COAD {signed(pr.loc['IF6'].effect, 3)}; all supported, each keeping
+  {b[b.test.isin(['IF4', 'IF5', 'IF6'])].share_kept.min():.2f}–{b[b.test.isin(['IF4', 'IF5', 'IF6'])].share_kept.max():.2f}
+  of the site-only effect.
+
+The immune score marks MMR-deficient tumours only weakly here (AUROC {a.loc['immune score alone', 'auroc']:.2f}), and in
+the adjusted model more immune expression goes with a higher G, the opposite of the MMR effect. q over family IF (6
+tests). Per-tumour values are kept locally (D-12)."""
+
+
+TITLES = {
+    "U1": "Splicing matches expression on lineage and genome-state subtypes, and fusing the two adds little.",
+    "U2": "Splicing loses most on small classes defined by one programme.",
+    "U3": "Histology models err in the molecular direction.",
+    "U4": "The literature's markers are in the data and in the expression models, far less in the splicing models.",
+    "U5": "The splicing and expression models of a cohort read different genes.",
+    "U6": "Four of the nineteen strongest splicing events read a neighbouring gene.",
+    "U7": "Ten MSI splicing events replicate across endometrial, gastric and colorectal cancer.",
+    "U8": "Named splicing regulators differ between subtypes as predicted in four of six tests.",
+    "U9": "Part of the splicing models' subtype signal is tied to the site that sent the sample.",
+    "U10": "Genome sequence alone says which exons MSI tumours skip.",
+    "U11": "The longest acceptor repeats move toward inclusion in MSI.",
+    "U12": "Most of the BRCA models' genotype-like events are subtype programmes, not inherited alleles.",
+    "U13": "Splicing reads HER2 through the HER2-enriched programme, not through the 17q12 amplicon.",
+    "U14": "Splice-site mutations skip their exons, and SF3B1 hotspot tumours use cryptic acceptors.",
+    "U15": "Without the ABSOLUTE ceiling, splicing matches expression on ERBB2 amplification but does not beat it.",
+    "U16": "Mismatch-repair damage tracks the repeat score in stomach cancer only.",
+    "U17": "The branch point's distance from the 3′ splice site sets the direction of the MSI shift.",
+    "U18": "A two-arm sequence code finds mismatch-repair-deficient tumours in 30 cancers never used to define it.",
+    "U19": "The code is specific to the branch point and to mismatch repair.",
+    "U20": "The code is not an infiltration readout.",
+}
+
+
+def legend(key: str, text: str) -> str:
+    """Caption -> figure legend: the bold question line becomes 'Figure Un. Title.' and panel
+    markers 'a, ' at a sentence start become '(a) '."""
+    body = text.strip().split("\n", 1)[1].lstrip("\n")
+    cap = lambda m: f"{m.group(1)}({m.group(2)}) {m.group(3).upper()}"
+    body = re.sub(r"(?m)(^|\. )([a-f]), ([a-f]), (\w)", lambda m: f"{m.group(1)}({m.group(2)}, {m.group(3)}) "
+                  f"{m.group(4).upper()}", body)
+    body = re.sub(r"(?m)(^|\. )([a-f]), (\w)", cap, body)
+    body = re.sub(r"(?m)(^|\. )\(([a-f])\) (\w)", cap, body)
+    return f"**Figure {key}. {TITLES[key]}** {body}"
+
+
+def legends() -> None:
+    """Copy each figure's legend (its caption without the bullet list of tests) under the figure in
+    results/SUBTYPE.md, between marker comments, so the write-up and the caption files never drift."""
+    md = SCFG.results_dir / "SUBTYPE.md"
+    lines = md.read_text().split("\n")
+    out, i, n = [], 0, 0
+    while i < len(lines):
+        line = lines[i]
+        out.append(line)
+        m = re.match(r"^!\[(U\d+)\]\(figures/subtype/(.+)\.png\)$", line)
+        i += 1
+        if not m:
+            continue
+        j = i
+        while j < len(lines) and lines[j].strip() == "":
+            j += 1
+        if j < len(lines) and lines[j].startswith("<!-- legend"):
+            while not lines[j].startswith("<!-- /legend"):
+                j += 1
+            i = j + 1
+        paras = [p for p in (OUT / f"{m.group(2)}.caption.md").read_text().strip().split("\n\n")
+                 if not p.startswith("- ")]
+        block = [f"<!-- legend {m.group(1)}: copied from figures/subtype/{m.group(2)}.caption.md by "
+                 f"scripts/36_subtype_figures.py legends -->"]
+        for k, p in enumerate(paras):
+            if k:
+                block.append(">")
+            block += ["> " + ln for ln in textwrap.wrap(" ".join(p.split("\n")), 114, break_on_hyphens=False)]
+        block.append("<!-- /legend -->")
+        out += [""] + block
+        n += 1
+    md.write_text("\n".join(out))
+    log(f"legends: {n} figures in {md.name}")
+
+
+CAPTIONS = {k: (lambda k, f: (lambda *a: tidy(legend(k, f(*a)))))(k, f) for k, f in
             {"U1": _cap_u1, "U2": _cap_u2, "U3": _cap_u3, "U4": _cap_u4, "U5": _cap_u5, "U6": _cap_u6,
              "U7": _cap_u7, "U8": _cap_u8, "U9": _cap_u9,
              "U10": _cap_u10, "U11": _cap_u11, "U12": _cap_u12, "U13": _cap_u13, "U14": _cap_u14, "U15": _cap_u15,
-             "U16": _cap_u16, "U17": _cap_u17, "U18": _cap_u18, "U19": _cap_u19}.items()}
+             "U16": _cap_u16, "U17": _cap_u17, "U18": _cap_u18, "U19": _cap_u19, "U20": _cap_u20}.items()}
 
 if __name__ == "__main__":
     run({"U1": U1, "U2": U2, "U3": U3, "U4": U4, "U5": U5, "U6": U6, "U7": U7, "U8": U8, "U9": U9, "U10": U10, "U11": U11,
          "U12": U12, "U13": U13, "U14": U14, "U15": U15, "U16": U16, "U17": U17,
-         "U18": U18, "U19": U19})
+         "U18": U18, "U19": U19, "U20": U20, "legends": legends})
