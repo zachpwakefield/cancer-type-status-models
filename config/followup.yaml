@@ -1142,3 +1142,47 @@ msi_tool_benchmark:                      # D-72 · scripts/55_msi_benchmark.py
                      E2 pooled AUROC of M1 and M2, and M5's E1 per-cancer AUROC, PR curve and
                      coefficients (A-18). Not seen - any DNA tool scored against another, any RNA
                      model other than score G against MANTIS or MSIsensor, and M5 in E2
+
+msi_rna_only:                            # D-73 · scripts/56_msi_rna_only.py
+  # Which tumours does the repeat-exon logistic model (D-71 M4, shown alone by A-19) call MSI that
+  # no exome measure calls, and do they look like missed mismatch-repair deficiency or false calls?
+  tumours: D-71's 8,464 tumours (33 cancers) with their E2 score (each cancer scored by a model that
+           never saw it)
+  rna_call: M4's E2 decision function > 0 (the model's own call under balanced class weights; 168
+            tumours, counted label-blind before any DNA status of a called tumour was read)
+  dna_calls: MC3 >= 10 homopolymer deletions; MANTIS > 0.6; MSIsensor > 10 (D-69/D-72 thresholds)
+  groups:   # among tumours with both caller scores; tumours missing one are reported separately
+    rna_only: RNA call and none of the three DNA measures calls MSI
+    reference: no RNA call and no DNA call
+  tests:    # each covariate as a percentile within the tumour's cancer; AUROC of rna_only against
+            # reference; p by permuting the group labels within cancer (10,000, seed 0), cancers
+            # holding >= 1 rna_only tumour; not testable with fewer than 5 rna_only tumours
+    - id: RO1
+      claim: MLH1 expression lower in rna_only (AUROC for lower > 0.5)
+      why: MLH1 promoter silencing is the commonest cause of sporadic MMR deficiency, and it is read
+           in RNA, not in the exome
+    - id: RO2
+      claim: the lowest of the MLH1, MSH2, MSH6 and PMS2 expression percentiles is lower in rna_only
+      why: loss of any one MMR protein suffices
+    - id: RO3
+      claim: MANTIS score higher in rna_only
+      why: missed MMR deficiency should still leave sub-threshold instability
+    - id: RO4
+      claim: MSIsensor score higher in rna_only
+      why: as RO3
+    - id: RO5
+      claim: MC3 homopolymer-deletion count higher in rna_only
+      why: as RO3
+  fdr_family: RO, the 5 tests RO1-RO5
+  reading: RO1 or RO2 together with RO3-RO5 supported would mark the RNA-only calls as MMR
+           deficiency the exome calls miss; none supported would mark them as false calls; anything
+           in between is mixed
+  exploratory: counts of RNA calls by the number of DNA measures that call MSI (0-3), and of DNA
+               calls the model misses; RNA-only calls by cancer; tumours with an RNA call missing a
+               caller score; ABSOLUTE purity and SNV count (RO-style AUROCs, no q); non-silent MC3
+               mutations in MLH1, MSH2, MSH6, PMS2 and POLE; score G percentile; the RNA-only
+               tumours' decision function against DNA-confirmed calls; per-tumour rows kept locally
+               (data.nosync), committed tables aggregate only, medians blanked below 5 tumours
+  seen_when_written: D-72's discordance table (MC3-deficient tumours by caller calls, and their
+                     position in the model's ranking); the number of RNA calls at decision > 0
+                     (label-blind). Not seen - the DNA status, expression or purity of any RNA call

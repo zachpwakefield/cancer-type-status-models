@@ -4,7 +4,7 @@ The third task of the repository: **within one cancer, which subtype is a primar
 modelled, like the other two, independently in each of the nine views (AFE, ALE, HIT, SE, A5SS,
 A3SS, MXE, RI, GEX). Decisions are numbered from D-30 (D-48..D-51, which span the three tasks, are in
 [ACROSS_TASKS_METHODS.md](ACROSS_TASKS_METHODS.md), as is amendment A-8; D-52..D-56, the MSI-repeat
-follow-up, and D-57..D-60, the BRCA follow-up, D-61..D-64, the MSI follow-up, and D-65..D-72, the MSI sequence code, are here; D-01..D-12 are in
+follow-up, and D-57..D-60, the BRCA follow-up, D-61..D-64, the MSI follow-up, and D-65..D-73, the MSI sequence code, are here; D-01..D-12 are in
 [DECISIONS.md](DECISIONS.md), D-13..D-29 in [BIOLOGY_METHODS.md](BIOLOGY_METHODS.md)). Values live
 in [config/subtype.yaml](../config/subtype.yaml); this file explains them.
 
@@ -712,6 +712,22 @@ against another, and M5 had not been scored in E2.
   callers agree and 9% of proficient tumours.
 - **Coverage.** Both caller scores exist for 96.3% of the 8,464 tumours, against 100% for RNA.
 - Tables: `results/subtype/msi_cis/code/benchmark/`; figure U24.
+
+---
+
+### D-73 What the splicing model calls that the exome does not · `config/followup.yaml` · `scripts/56`
+Written 2026-10-13, after D-72 and A-19 and before the DNA status of any tumour the model calls was
+read. The repeat-exon model (D-71 M4) calls a tumour MSI when its decision function is above 0. Leaving
+each cancer out of training, that is 168 tumours. Some may be called by no exome measure (MC3,
+MANTIS, MSIsensor). Two readings predict different things:
+- **Missed MMR deficiency.** MLH1 silenced by promoter methylation is read in RNA but not in the
+  exome, so MLH1 expression should be low (RO1, RO2). Instability should sit just under the
+  callers' thresholds (RO3–RO5).
+- **False calls.** Neither should differ from tumours that no one calls.
+
+Each covariate is a percentile within the tumour's cancer, compared by AUROC against tumours that
+no one calls, with permutations within cancer. **Seen when written.** D-72's discordance table and
+the label-blind count of calls (168); nothing about the DNA, expression or purity of a called tumour.
 
 ---
 
