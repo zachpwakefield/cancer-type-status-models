@@ -1186,3 +1186,65 @@ msi_rna_only:                            # D-73 · scripts/56_msi_rna_only.py
   seen_when_written: D-72's discordance table (MC3-deficient tumours by caller calls, and their
                      position in the model's ranking); the number of RNA calls at decision > 0
                      (label-blind). Not seen - the DNA status, expression or purity of any RNA call
+
+msi_vs_expression:                       # D-74 · scripts/57_msi_vs_expression.py
+  # Is the splicing read-out worth having? Expression-based MSI classifiers exist (MSIsensor-RNA,
+  # PreMSIm and others). Does the repeat-exon model (D-71 M4) transfer to cancers it never saw better
+  # than expression models trained the same way, and does it add to them?
+  tumours: D-71's 8,464 tumours; label MC3 >= 10 homopolymer deletions; split E1 (train on COAD, STAD
+           and UCEC, 779 tumours with 150 positives; test on the 30 other cancers, 7,685 with 50)
+  models:   # each L2 logistic regression with balanced class weights, inputs standardised on the
+            # training rows; hyper-parameters chosen by pooled out-of-fold AUROC leaving one training
+            # cancer out (as M4); top-K genes by ANOVA F on the fitting rows only
+    M4: D-71's repeat-exon model, E1 scores as stored (not refitted)
+    X1: all 23,640 genes, each as a percentile within the tumour's cancer (M4's input scale);
+        K in {500, 2000, all} x C in {1e-4, 1e-3, 1e-2, 1e-1}
+    X2: all genes as log2(CPM + 1) (the usual scale of published classifiers); same grid
+    X3: PreMSIm's 15 genes (Li et al. 2020, from its GitHub README - DDX27, EPM2AIP1, HENMT1, LYG1,
+        MLH1, MSH4, NHLRC1, NOL4L, RNLS, RPL22L1, RTF2, SHROOM4, SMAP1, TTC30A (now IFT70A),
+        ZSWIM3) as within-cancer percentiles; C in {1e-3 ... 10}
+    X0: MLH1 alone, unfitted (lower expression percentile within cancer = higher score)
+    C1: M4's 1,562 repeat exons plus the top-K genes of X1's input; K in {500, 2000} x C as X1
+  tests:    # E1 held-out AUROC; 95% interval and two-sided p from 2,000 bootstrap resamples of
+            # tumours within cancer x label (seed 0, the same draws for every model)
+    - id: EX1
+      claim: AUROC(M4) > AUROC(X1)
+      why: expression models learn the training cancers' dominant cause of MMR deficiency (MLH1
+           promoter silencing) and its context; the splicing code reads the consequence (contracted
+           repeats), whatever the cause, so it should transfer better
+    - id: EX2
+      claim: AUROC(M4) > AUROC(X2)
+      why: as EX1, and raw expression also carries the training tissues' baselines
+    - id: EX3
+      claim: AUROC(M4) > AUROC(X3)
+      why: as EX1; PreMSIm's panel includes MLH1 and EPM2AIP1, which share MLH1's promoter
+    - id: EX4
+      claim: AUROC(M4) > AUROC(X0)
+      why: MLH1 loss is one cause among several outside COAD, STAD and UCEC
+    - id: EX5
+      claim: among held-out MMR-deficient tumours whose MLH1 is not low (percentile within cancer
+             >= 0.10), against all held-out proficient tumours, AUROC(M4) > AUROC(X1)
+      why: the place the two read-outs should differ most; not testable with fewer than 10 such
+           tumours
+    - id: EX6
+      claim: AUROC(C1) > AUROC(X1)
+      why: if splicing carries information expression lacks, adding the repeat exons helps
+  fdr_family: EX, the 6 tests EX1-EX6 (Benjamini-Hochberg)
+  reading: EX1-EX3 supported would make the cross-cancer transfer a property of the splicing
+           read-out; EX1-EX3 against would mean expression already does it and the splicing model's
+           value is mechanistic rather than practical; EX6 supported would mean the two are
+           complementary
+  exploratory: PreMSIm's own recipe on its genes (X3k - log2 expression scaled to [0, 1] per gene over
+               the training tumours, 5 nearest neighbours; score = share of MMR-deficient
+               neighbours); AUPRC and precision at recall 0.5 per model; per-cancer AUROC (>= 3 positives); MANTIS
+               MSI-H vs MSS as the label; AUROC split by MLH1 low / not low; counts of MLH1-low
+               MMR-deficient tumours per held-out cancer; rank agreement with M4 among positives;
+               X1's largest coefficients and X3's coefficients; C1's split of |coefficients| between
+               exons and genes; X1 leaving each cancer out (E2) with E1's chosen parameters (no inner
+               tuning) and its within-cancer AUROC against D-72's consensus references beside M4's;
+               per-tumour scores kept locally (data.nosync)
+  seen_when_written: D-71-D-73 (M4's scores, benchmark and discordance); the subtype task's GEX models
+                     classify the MSI class within COAD, STAD and UCEC (U1) and MLH1 is lower in MSI
+                     there (D-46); D-73's MLH1 percentiles of the RNA-only calls. Not seen - any
+                     expression model scored on a held-out cancer, and MLH1 expression of any
+                     held-out MMR-deficient tumour

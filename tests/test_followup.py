@@ -484,5 +484,45 @@ class TestMsiRnaOnly(unittest.TestCase):
         self.assertTrue(np.isnan(self.m.auroc_perm(x, few, grp, rng, lower=False)[0]))
 
 
+class TestMsiVsExpression(unittest.TestCase):
+    """D-74's fitting helpers on synthetic data (no real labels)."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.m = load_script("57_msi_vs_expression.py")
+
+    def _data(self):
+        rng = np.random.default_rng(1)
+        n, p = 240, 30
+        groups = np.repeat(["A", "B", "C", "D"], n // 4)
+        y = rng.random(n) < 0.25
+        X = rng.normal(size=(n, p)).astype(np.float32)
+        X[:, 3] += 2.0 * y                                  # one informative column
+        return X, y, groups
+
+    def test_fit_predict_keeps_always_columns_and_top_k(self):
+        X, y, _ = self._data()
+        tr, te = np.arange(180), np.arange(180, 240)
+        order = np.argsort(-np.arange(X.shape[1]))         # columns 29, 28, ...
+        s, _, cols = self.m.fit_predict(X, tr, te, y, {"K": 2, "C": 1.0}, order, always=np.array([0, 1]))
+        self.assertEqual(list(cols), [0, 1, 28, 29])
+        self.assertEqual(len(s), 60)
+
+    def test_run_tunes_on_training_groups_and_finds_the_signal(self):
+        X, y, groups = self._data()
+        tr, te = np.flatnonzero(groups != "D"), np.flatnonzero(groups == "D")
+        old = self.m.GRIDS.get("T")
+        self.m.GRIDS["T"] = [{"K": k, "C": c} for k in [1, None] for c in [0.01, 1.0]]
+        try:
+            r = self.m.run("T", X, y, groups, tr, te, offset=2, always=np.array([0, 1]))
+        finally:
+            self.m.GRIDS.pop("T") if old is None else self.m.GRIDS.update(T=old)
+        self.assertEqual(len(r["score"]), len(te))
+        self.assertEqual(len(r["table"]), 4)
+        self.assertEqual(sum(row["chosen"] for row in r["table"]), 1)
+        self.assertGreater(self.m.m54.auc(r["score"], y[te]), 0.8)
+        self.assertIn(3, r["cols"])                       # the informative column is selected
+
+
 if __name__ == "__main__":
     unittest.main()

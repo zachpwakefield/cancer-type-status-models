@@ -4,7 +4,7 @@ The third task of the repository: **within one cancer, which subtype is a primar
 modelled, like the other two, independently in each of the nine views (AFE, ALE, HIT, SE, A5SS,
 A3SS, MXE, RI, GEX). Decisions are numbered from D-30 (D-48..D-51, which span the three tasks, are in
 [ACROSS_TASKS_METHODS.md](ACROSS_TASKS_METHODS.md), as is amendment A-8; D-52..D-56, the MSI-repeat
-follow-up, and D-57..D-60, the BRCA follow-up, D-61..D-64, the MSI follow-up, and D-65..D-73, the MSI sequence code, are here; D-01..D-12 are in
+follow-up, and D-57..D-60, the BRCA follow-up, D-61..D-64, the MSI follow-up, and D-65..D-74, the MSI sequence code, are here; D-01..D-12 are in
 [DECISIONS.md](DECISIONS.md), D-13..D-29 in [BIOLOGY_METHODS.md](BIOLOGY_METHODS.md)). Values live
 in [config/subtype.yaml](../config/subtype.yaml); this file explains them.
 
@@ -753,6 +753,34 @@ calls).**
   all three, and 19 of those 20 are UCEC, where the code was always weakest (D-67).
 - Tables: `results/subtype/msi_cis/code/rna_only/`; per-tumour rows in
   `data.nosync/ctsm_v1/msi/rna_only_tumours.parquet`.
+
+---
+
+### D-74 Splicing against expression, trained the same way · `config/followup.yaml` · `scripts/57`
+Written 2026-10-13, after D-73 and before any expression model was scored on a held-out cancer.
+MSI can already be called from expression (MSIsensor-RNA, PreMSIm and others). The repeat-exon model
+is only worth having if it does something those do not. One candidate is transfer to cancers it
+never saw:
+- **Expression models** learn how MMR deficiency looks in their training cancers. In COAD, STAD and
+  UCEC that is mostly MLH1 promoter silencing.
+- **The splicing code** reads the consequence (contracted repeats), whatever the cause.
+
+**Design.** Expression models get M4's tumours, label, split (train on COAD, STAD and UCEC; test on
+the 30 others) and tuning (leaving one training cancer out):
+- X1: all genes as within-cancer percentiles (M4's input scale);
+- X2: all genes as log2(CPM + 1);
+- X3: PreMSIm's 15 genes;
+- X0: MLH1 alone, unfitted;
+- C1: the repeat exons plus genes.
+
+**Tests (family EX).**
+- EX1–EX4: M4 beats X1, X2, X3 and X0 on held-out AUROC.
+- EX5: M4 beats X1 on the held-out MMR-deficient tumours whose MLH1 is not low.
+- EX6: C1 beats X1.
+
+**Seen when written.** M4's scores, benchmark and discordance (D-71–D-73). Within COAD, STAD and UCEC,
+the GEX subtype models already classify MSI (U1) and MLH1 is lower there (D-46). No expression model
+had been scored on a held-out cancer, and no held-out MMR-deficient tumour's MLH1 had been read.
 
 ---
 
