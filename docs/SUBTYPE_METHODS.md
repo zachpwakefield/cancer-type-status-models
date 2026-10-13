@@ -4,7 +4,7 @@ The third task of the repository: **within one cancer, which subtype is a primar
 modelled, like the other two, independently in each of the nine views (AFE, ALE, HIT, SE, A5SS,
 A3SS, MXE, RI, GEX). Decisions are numbered from D-30 (D-48..D-51, which span the three tasks, are in
 [ACROSS_TASKS_METHODS.md](ACROSS_TASKS_METHODS.md), as is amendment A-8; D-52..D-56, the MSI-repeat
-follow-up, and D-57..D-60, the BRCA follow-up, are here; D-01..D-12 are in
+follow-up, and D-57..D-60, the BRCA follow-up, and D-61..D-64, the MSI follow-up, are here; D-01..D-12 are in
 [DECISIONS.md](DECISIONS.md), D-13..D-29 in [BIOLOGY_METHODS.md](BIOLOGY_METHODS.md)). Values live
 in [config/subtype.yaml](../config/subtype.yaml); this file explains them.
 
@@ -491,6 +491,21 @@ repeat H1–H4 (HU2 now predicts D-58's result, splicing ahead); HU3 is its inde
 tumours only the new call makes amplified. HU6–HU7 ask whether P(Her2) follows the amplification
 level, which the amplicon-reading GEX model should and a programme-reading splicing model should
 not. Family HU (7 tests).
+
+### D-61 to D-64 The MSI acceptor repeats, followed up · `config/followup.yaml` · `scripts/50`
+Written 2026-10-13, before any of these tests was computed. They follow the questions of
+[MSI_REPEATS_LITERATURE.md](MSI_REPEATS_LITERATURE.md).
+- **D-61, deletion load (DL1–DL6).** From MC3: does each MSI tumour's homopolymer-deletion load
+  set its repeat score, adjusted for purity? Are endometrial MSI deletions shorter, as published
+  marker shifts suggest?
+- **D-62, frame and NMD (NM1–NM4).** When a coding repeat exon that MSI skips is frameshifting,
+  does its gene's mRNA fall?
+- **D-63, branch-point geometry (BP1–BP4).** A long T-run pushes the branch point away from the
+  AG. Does the MSI shift follow the branch-point distance, beyond run length? This is the
+  candidate explanation of the reversal at ≥ 20 nt.
+- **D-64, germline indels (GL1–GL3).** Do GTEx v8 germline poly-T indels at the same exons move
+  splicing the way MSI contraction does, with the same reversal? The Hamanaka et al. catalogue
+  genotypes no homopolymer, so it could not be used.
 
 ---
 

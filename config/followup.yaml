@@ -8,6 +8,8 @@
 #   msi_dna                                  docs/SUBTYPE_METHODS.md D-56 (before any read was fetched)
 #   brca_germline, brca_her2, brca_mutations docs/SUBTYPE_METHODS.md D-57..D-59 (BRCA follow-up)
 #   brca_her2_uncapped                       docs/SUBTYPE_METHODS.md D-60 (after D-58's results)
+#   msi_deletion_load, msi_frame_nmd,        docs/SUBTYPE_METHODS.md D-61..D-64 (MSI follow-up, after
+#   msi_branchpoint, msi_germline_indels     D-52..D-56; docs/MSI_REPEATS_LITERATURE.md)
 #
 # Written 2026-10-12, after every model of the three tasks had been fitted and summarised, and
 # before any analysis below was run. Nothing here refits a model or changes a label, a cohort, a
@@ -608,3 +610,133 @@ brca_her2_uncapped:                      # D-60 · scripts/49_brca_her2_uncapped
                clinically HER2-positive and -negative tumours under both rules; Spearman of q with
                ABSOLUTE copy number where ABSOLUTE is below 7; the per-sample length-weighted median
                Segment_Mean (the convention check); the D-58 knockout with this amplified group
+
+# ---- MSI acceptor-repeat follow-up, 2026-10-13 (docs/MSI_REPEATS_LITERATURE.md Q1, Q5, Q2, Q3) ----
+# Written before any test below was computed. Seen when written, for all four: D-52..D-56 and their
+# tables (results/subtype/msi_cis/), including the D-52 exploratory frame shares (exons skipped in
+# MSI with an acceptor T-run >= 10: 0.65, 0.62, 0.60 frameshifting, against 0.64 of all such exons),
+# the shared-exon list (PTP4A2, UTP6, TMX3 ... ), the D-53 reversal (runs >= 20 move toward
+# inclusion) and the literature in docs/MSI_REPEATS_LITERATURE.md. Structural checks made before
+# writing (no outcome read): MC3 CONTEXT holds 6 left bases, the deleted bases, then 5 right bases,
+# deletions left-aligned; GTEx LeafCutter intron start:end = our 0-based left_end : es + 1 (one
+# offset matched SE junctions, none other); the Hamanaka et al. 2023 repeat catalogue holds no
+# homopolymer (period 1 at 0 of 32,869 genotyped repeats), so Q3 uses GTEx v8 sQTL indels instead.
+# All tests two-sided; supported / against / not resolved by BH q < 0.05 within the named family.
+
+msi_deletion_load:                       # D-61 · scripts/50_msi_followup.py --only load
+  # Q1. Seen: the per-patient score (D-52) and its AUROCs; ABSOLUTE purity. Not seen: any deletion
+  # count per tumour or its relation to anything.
+  calls: MC3 public, FILTER flags within {PASS, wga, native_wga_mix}, the cohorts' tumours (first
+         15 characters of the barcode; one tumour per patient as in D-52)
+  homopolymer_deletion: Variant_Type DEL whose deleted bases are all A or all T (length L), and whose
+                        CONTEXT run of that base starting at the deletion (deleted plus right-flank
+                        bases) is >= 5
+  load: log(1 + count of homopolymer deletions) per tumour; long = L >= 2, short = L = 1
+  long_share: long / all homopolymer deletions, tumours with >= 5 of them
+  score: D-52 score_acc (lower = repeat exons less included)
+  purity: ABSOLUTE purity, call status 'called'
+  fdr_family: DL, the 6 tests DL1-DL6
+  predictions:
+    - id: DL1
+      claim: STAD_TCGA MSI tumours - partial Spearman(score, load | purity) < 0
+      why: more contracted tracts, more skipping (Collura et al. 2014; Hause et al. 2016)
+    - id: DL2
+      claim: as DL1, COAD_TCGA
+    - id: DL3
+      claim: as DL1, UCEC_TCGA
+    - id: DL4
+      claim: long_share is lower in MSI UCEC than in MSI STAD tumours (AUROC > 0.5)
+      why: endometrial MSI shifts are about half the colorectal ones (Wang et al. 2017)
+    - id: DL5
+      claim: as DL4, against MSI COAD tumours
+    - id: DL6
+      claim: MSI tumours of the three cohorts, ranks within cohort - partial Spearman(score, long load |
+             short load, purity) < 0
+      why: large deletions weaken the tract more than single-base ones (Collura et al. 2014)
+  exploratory: the same partial correlations in the rest groups; deletion length distribution and
+               loads by cohort and group; score against load without the purity adjustment
+
+msi_frame_nmd:                           # D-62 · scripts/50_msi_followup.py --only nmd
+  # Q5. Not seen: any gene expression by MSI status for these genes, any coding or NMD annotation of
+  # the exons.
+  coding: the exon's coordinates equal an exon of an Ensembl_canonical protein_coding transcript in
+          GENCODE v45, it lies wholly within that transcript's CDS, and it is neither the first exon
+          nor one of the last two (skipping a frameshifting exon then leaves a premature stop that NMD
+          can see)
+  frameshift: exon length not a multiple of 3 (in-frame = a multiple of 3)
+  exons: D-52 R exons (acceptor T-run >= 10), coding; per gene and cohort the exon with the
+         smallest D-52 p
+  expression: GEX log2(CPM + 1), host gene mean in MSI minus mean in rest, per cohort
+  fdr_family: NM, the 4 tests NM1-NM4
+  predictions:
+    - id: NM1
+      claim: STAD_TCGA - among exons less included in MSI (delta_adj < 0, D-52 q < 0.05), the host
+             gene's expression change is lower when the exon is frameshifting (AUROC > 0.5)
+      why: a skipped frameshifting exon makes an NMD substrate, so the gene's mRNA falls
+    - id: NM2
+      claim: as NM1, COAD_TCGA
+    - id: NM3
+      claim: as NM1, UCEC_TCGA (not testable with fewer than 5 exons in either frame class)
+    - id: NM4
+      claim: all exons of the three cohorts - Spearman(delta_adj, expression change) is higher for
+             frameshifting than in-frame exons (difference > 0; bootstrap over exons, 2,000, seed 0)
+      why: the more a frameshifting exon is skipped, the more its gene's mRNA is degraded
+  exploratory: frameshifting coding exons skipped in all three cohorts (shared neoantigen candidates)
+               with their genes; the same exons' in-frame counterparts; DNA-repair and innate-immune
+               genes among them, read from the list without a test
+
+msi_branchpoint:                         # D-63 · scripts/50_msi_followup.py --only branch
+  # Q2. Not seen: where in the window each run lies, any branch-point motif. Branch-point tables
+  # (Pineda and Bradley 2018, BPHunter) could not be fetched, so the branch point is read from
+  # sequence. A branch-point A cannot lie inside a pure T run, so a long run pushes it upstream; an
+  # AG is chosen optimally 19-23 nt downstream of the branch point (Chua and Reed 2001).
+  run: the longest sense T-run overlapping -1..-50 (D-52); its 5' end d_run (nt from the 3'ss)
+  branch_point: the A nearest the 3'ss, upstream of the run and within -100, matching the yUnAy
+                motif around it (C or T 3 nt before the A, T 2 nt before, any base 1 nt before, C or
+                T 1 nt after); none found = not scored
+  d_bp: distance in nt from that A to the 3'ss
+  exons: D-52 R exons (acceptor T-run >= 10) with delta_adj in the cohort
+  adjustment: ranks of delta_adj and d_bp each residualised on run-length bins (10-11, 12-13,
+              14-15, 16-19, 20-24, >= 25) and the rank of the cohort mean PSI; p by permuting d_bp
+              within run-length bins (1,000, seed 0)
+  fdr_family: BP, the 4 tests BP1-BP4
+  predictions:
+    - id: BP1
+      claim: STAD_TCGA - adjusted Spearman(delta_adj, d_bp) > 0
+      why: contraction moves a distant branch point toward the optimal window, so more inclusion;
+           beyond run length itself
+    - id: BP2
+      claim: as BP1, COAD_TCGA
+    - id: BP3
+      claim: as BP1, UCEC_TCGA
+    - id: BP4
+      claim: exons measured in at least two cohorts, their mean delta_adj - adjusted Spearman with
+             d_bp > 0
+  exploratory: d_run in place of d_bp; the share moving up by d_bp tertile within run classes;
+               an antisense-Alu k-mer within 300 nt upstream of the run (TGAGCCACCGCGCCCGGCC or
+               GGCCGGGCGCGGTGGCTCA), by run class (Zarnack et al. 2013 setting)
+
+msi_germline_indels:                     # D-64 · scripts/50_msi_followup.py --only germline
+  # Q3. Not seen: any GTEx variant at our loci, any slope. GTEx v8 significant sQTL pairs (LeafCutter
+  # introns) in the tissues matching the cohorts: Colon_Transverse, Stomach, Uterus.
+  variants: indels whose inserted or deleted bases are all the sense T of the run (A on the plus
+            strand for minus-strand genes), anchored at the run's genomic start - 1 through its end
+  junctions: the exon's upstream and downstream inclusion introns and its skipping intron, as
+             LeafCutter (start, end) = (left_end, es + 1), (ee, right_start + 1) and (left_end,
+             right_start + 1) in our 0-based coordinates
+  effect: z = slope / slope_se, signed so that positive = a longer tract raises inclusion (an
+          insertion is longer; a skipping-intron effect counts negated); per exon, the median over
+          its variants, junctions and tissues
+  fdr_family: GL, the 3 tests GL1-GL3
+  predictions:
+    - id: GL1
+      claim: R exons with runs 10-19 nt - the per-exon effect is positive (sign test; not testable
+             with fewer than 5 exons)
+      why: a longer germline poly-T raises inclusion, as CFTR 5T/7T/9T (Chu et al. 1993)
+    - id: GL2
+      claim: R exons with runs >= 20 nt - the per-exon effect is negative
+      why: the MSI reversal (D-53) read in the germline
+    - id: GL3
+      claim: Spearman(per-exon effect, mean MSI delta_adj over the cohorts) < 0
+      why: MSI shortens tracts, so a germline lengthening effect predicts the opposite MSI shift
+  exploratory: the exons and variants behind GL1-GL3, by tissue
