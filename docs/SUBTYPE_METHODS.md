@@ -4,7 +4,7 @@ The third task of the repository: **within one cancer, which subtype is a primar
 modelled, like the other two, independently in each of the nine views (AFE, ALE, HIT, SE, A5SS,
 A3SS, MXE, RI, GEX). Decisions are numbered from D-30 (D-48..D-51, which span the three tasks, are in
 [ACROSS_TASKS_METHODS.md](ACROSS_TASKS_METHODS.md), as is amendment A-8; D-52..D-56, the MSI-repeat
-follow-up, and D-57..D-60, the BRCA follow-up, D-61..D-64, the MSI follow-up, and D-65..D-70, the MSI sequence code, are here; D-01..D-12 are in
+follow-up, and D-57..D-60, the BRCA follow-up, D-61..D-64, the MSI follow-up, and D-65..D-71, the MSI sequence code, are here; D-01..D-12 are in
 [DECISIONS.md](DECISIONS.md), D-13..D-29 in [BIOLOGY_METHODS.md](BIOLOGY_METHODS.md)). Values live
 in [config/subtype.yaml](../config/subtype.yaml); this file explains them.
 
@@ -613,6 +613,35 @@ that is too long.
   - **PTB relief is ruled out.** The more PTBP1 represses an exon, the *less* it rises (ρ +0.20
     against the predicted negative; RV8).
   - Tables: `results/subtype/msi_cis/code/reversal/`; figure U22.
+
+### D-71 Fitted models on the code · `config/followup.yaml` · `scripts/54`
+Written 2026-10-13, after D-70 and A-16 and before any model was fitted. Score G has no fitted
+weight: each arm counts once, and every exon in an arm counts equally. Two questions:
+- **Do weights help?** Can a few weights fitted on top of the code beat it in cancers never used?
+- **Does the sequence prior help transfer?** Does learning a weight per exon, as the subtype models
+  do, transfer worse than learning a weight per sequence class?
+
+**The ladder.** All models share one label (≥ 10 MC3 homopolymer deletions) and one split:
+- **M0.** Score G, unfitted.
+- **M1.** Logistic regression on the two arms.
+- **M2.** Logistic regression on ten sequence bins: four run-length bins for runs of 10–19 nt, and
+  runs ≥ 20 by 10-nt branch-point bins.
+- **M3.** An MLP on the same ten bins.
+- **M4.** Penalised logistic regression on each repeat exon. It keeps the sequence prior but
+  learns one weight per exon.
+- **M5 and M6.** Penalised logistic regression and an MLP on all exons, with no sequence prior: the
+  pan-cancer cousin of the subtype models.
+
+**Split.** Training uses the three cancers the code came from; testing uses the 30 held out
+(primary). Hyperparameters are chosen by leaving one training cancer out, so tuning rewards
+transfer, not fit. Leave-one-cancer-out over all 33 is a second, exploratory estimate.
+
+**Tests.** LR1–LR7 compare AUROC up and across the ladder, and AUPRC of M2 against G, by paired
+bootstrap of the held-out tumours.
+
+**Seen when written.** The 30 held-out cancers have been read many times (D-66 to D-70, A-15,
+A-16), and the 10-nt branch-point bins were seen to split held out (A-16). The bins themselves
+were set on the training cancers (U19a), and no weight is fitted on a held-out tumour.
 
 ---
 

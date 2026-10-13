@@ -997,3 +997,83 @@ msi_code_reversal:                       # D-70 · scripts/52_msi_reversal.py
                RV3, RV4 and RV5 on the training cohorts' mean shift; shares up by class; R_up
                against B_far within exons whose length is a multiple of 3; arm coupling within
                MMR-deficient and within proficient tumours; no per-tumour value is committed
+
+# ---- MSI sequence code: fitted models on the code, 2026-10-13 (after D-70 and A-16) ----
+# Written before any model was fitted. Seen when written: everything of D-52..D-70 and A-16,
+# including score G's held-out AUROC (0.832, D-66), each arm's held-out AUROC (rising 0.735,
+# falling 0.611; A-15), the training cancers' share of long-run exons moving up by 10-nt branch-
+# point bin (U19a: 0.12 at 20-29 nt, 0.73 at 30-39) and the same split held out (A-16: 0.20 at
+# 18-29 nt, 0.60-0.84 beyond). Label-blind count made today: 30,568 exons lie in the D-66 universe
+# of >= 25 of the 33 cancers (1,555 of them with an acceptor run >= 10). Not seen: any fitted
+# model's performance, score G's AUPRC, any bin score's AUROC, any coefficient.
+# All tests two-sided; supported / against / not resolved by BH q < 0.05 within the named family.
+
+msi_code_models:                         # D-71 · scripts/54_msi_models.py
+  # Does fitting weights on top of the code beat the fixed code in cancers never used, and does
+  # learning per-exon weights (as the subtype models do) transfer worse than learning per-class
+  # weights?
+  tumours: all 33 projects of the pan-cancer SE matrix, role tumour, one per patient (first sample
+           barcode in sort order), with >= 1 MC3 call passing the D-61 flags
+  label: MMR-deficient = >= 10 MC3 homopolymer deletions (the D-61/D-66 definition)
+  splits:
+    E1: train on all COAD, STAD and UCEC tumours; test on D-66's 30 other cancers (primary)
+    E2: leave one cancer out over all 33 (exploratory)
+  features:   # all within the tumour's cancer, label-blind, computed once
+    percentiles: each exon's PSI as a percentile over the cancer's tumours, D-66's universe (finite
+                 in >= 80% of the cancer's tumours, acceptor intron >= 60 nt, AG); mean-PSI deciles
+                 within the cancer
+    set_scores: m42.set_score (the set's mean percentile minus decile-matched B exons), then a
+                robust z within the cancer (median and 1.4826 x MAD; IQR / 1.349 if the MAD is 0;
+                0 if both are 0); a set with no exon in the cancer scores 0
+    arms: R_down and R_up as D-65 (2 features)
+    bins: runs 10-11, 12-13, 14-15, 16-19 (any branch point) and runs >= 20 by branch-point distance
+          20-29, 30-39, 40-49, 50-69, >= 70 nt and none found within 100 nt (10 features; D-63's
+          run bins and U19a's 10-nt branch-point bins, both set on the training cancers)
+    per_exon: the pool is the 30,568 exons in the universe of >= 25 of the 33 cancers; value = the
+              exon's percentile minus the tumour's mean B-exon percentile in the exon's mean-PSI
+              decile (set_score's background adjustment, exon by exon); 0 outside the cancer's
+              universe or where missing
+  models:     # scikit-learn; inputs standardised on the training set; class_weight balanced for
+              # logistic regression, positives randomly oversampled to balance for MLPs
+    M0: score G, no fit (D-66; ranked as -G within the cancer)
+    M1: logistic regression (L2) on the 2 arms; C in {0.01, 0.1, 1, 10}
+    M2: logistic regression (L2) on the 10 bins; C in {0.01, 0.1, 1, 10}
+    M3: MLP on the 10 bins, one hidden layer of 16 ReLU units, adam, 500 iterations, no early
+        stopping; alpha in {0.001, 0.01, 0.1}; mean probability over seeds 0-4
+    M4: logistic regression (L2) on the 1,555 repeat exons of the pool (acceptor run >= 10);
+        C in {1e-4, 1e-3, 1e-2, 1e-1}
+    M5: logistic regression (L2) on all pool exons, top K by ANOVA F on the training set;
+        K in {500, 2000} x C in {1e-4, 1e-3, 1e-2, 1e-1}
+    M6: MLP as M3 with 64 hidden units on M5's inputs; K in {500, 2000} x alpha in {0.001, 0.01, 0.1}
+  tuning: grid chosen by inner leave-one-cancer-out within the training set (in E1 the 3 cancers;
+          in E2 a GroupKFold of 4 over cancers), maximising the pooled out-of-fold AUROC (MLPs use seed 0
+          in the inner loop); refit on the whole training set with the chosen values
+  metrics: pooled AUROC (primary); average precision (AUPRC); precision at recall 0.5 (exploratory)
+  fdr_family: LR, the 7 tests LR1-LR7, all on E1; differences by paired bootstrap of test tumours
+              within cancer x label strata (2,000, seed 0), models not refitted
+  predictions:
+    - id: LR1
+      claim: AUROC(M1) - AUROC(M0) > 0
+      why: G weights the arms equally; the rising arm carries more signal (A-15)
+    - id: LR2
+      claim: AUROC(M2) - AUROC(M1) > 0
+      why: finer bins can follow the branch-point switch the 36-nt cut only approximates
+    - id: LR3
+      claim: AUROC(M3) - AUROC(M2) < 0
+      why: on 10 inputs an MLP has nothing nonlinear to find and more to overfit
+    - id: LR4
+      claim: AUROC(M4) - AUROC(M2) < 0
+      why: per-exon weights fitted in three cancers learn their tissue as well as the code
+    - id: LR5
+      claim: AUROC(M5) - AUROC(M2) < 0
+      why: without the sequence prior the model learns the training cancers' MSI programmes
+    - id: LR6
+      claim: AUROC(M6) - AUROC(M2) < 0
+      why: the pan-cancer cousin of the subtype models
+    - id: LR7
+      claim: AUPRC(M2) - AUPRC(M0) > 0
+      why: with 0.65% positives held out, precision at the top of the ranking is what a test needs
+  exploratory: E2 for M0-M5 (M6 is left out of E2 for compute); precision at recall 0.5; the inner-
+               CV AUROC of each chosen setting beside its E1 AUROC; standardised coefficients of M1
+               and M2; per-cancer AUROC where >= 3 positives; E1 with MANTIS MSI-H against MSS as
+               the test label; per-tumour predictions are kept locally
