@@ -1654,6 +1654,21 @@ all-exon model; the repeat-exon numbers below are exploratory (A-19).
   0.001–0.002 below MANTIS and MSIsensor. It does not differ from the MC3 count, and it is
   non-inferior at the pre-set 0.05 margin in all six.
 
+**What the model calls that the exome does not** (D-73, pre-registered; no figure).
+- **Most calls are confirmed.** The repeat-exon model calls 168 tumours MSI (decision function > 0,
+  each cancer left out of training). 115 are called by all three exome measures; 32 by none.
+- **Those 32 look mostly like false calls.**
+  - They sit just above the threshold (median 1.0 against 8.9 for confirmed calls).
+  - They are spread thinly over 18 cancers where MSI is rare.
+  - Their MLH1 and other MMR-gene expression is not low (RO1, RO2), and their MANTIS scores and
+    deletion counts are not raised (RO3, RO5).
+- **Their MSIsensor scores are slightly higher** (RO4 supported), but far below the stable cut.
+- **A few are plausible missed cases:** a STAD tumour one deletion short of the MC3 cut with a
+  between-zone MANTIS score, and a hypermutated PAAD tumour with MC3 calls in all four MMR genes
+  and POLE.
+- **The reverse.** The model misses 20 tumours that all three exome measures call; 19 are UCEC,
+  where the code was always weakest. Tables: `results/subtype/msi_cis/code/rna_only/`.
+
 #### Reading
 
 Mismatch-repair deficiency changes splicing by a rule written in the reference genome, not by a

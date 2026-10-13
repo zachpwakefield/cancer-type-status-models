@@ -1,0 +1,6 @@
+id,what,effect,predicted_sign,p,n,q,verdict
+RO1,"AUROC(MLH1 expression lower in RNA-only than reference, within-cancer percentile) - 0.5",-0.02752362927790719,1,0.5980401959804019,"RNA-only 32, reference 5581",0.8005449455054494,not resolved
+RO2,"AUROC(lowest MMR-gene expression percentile lower in RNA-only than reference, within-cancer percentile) - 0.5",0.02398203726930659,1,0.6404359564043596,"RNA-only 32, reference 5581",0.8005449455054494,not resolved
+RO3,"AUROC(MANTIS score higher in RNA-only than reference, within-cancer percentile) - 0.5",-0.0007391148539688253,1,0.9881011898810119,"RNA-only 32, reference 5581",0.9881011898810119,not resolved
+RO4,"AUROC(MSIsensor score higher in RNA-only than reference, within-cancer percentile) - 0.5",0.14682908528937466,1,0.0037996200379962005,"RNA-only 32, reference 5581",0.018998100189981,supported
+RO5,"AUROC(MC3 homopolymer deletions higher in RNA-only than reference, within-cancer percentile) - 0.5",0.06521848683031717,1,0.40505949405059494,"RNA-only 32, reference 5581",0.8005449455054494,not resolved

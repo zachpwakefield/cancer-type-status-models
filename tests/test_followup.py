@@ -458,5 +458,31 @@ class TestMsiBenchmark(unittest.TestCase):
                 self.assertAlmostEqual(fast[m][k], self.m.auc_within(S[m][i], y[i], g[i]))
 
 
+class TestMsiRnaOnly(unittest.TestCase):
+    """D-73's helpers: within-cancer percentiles and the within-cancer permutation AUROC."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.m = load_script("56_msi_rna_only.py")
+
+    def test_within_pct_ranks_inside_each_cancer(self):
+        v = pd.Series([1.0, 2.0, 100.0, 200.0, np.nan])
+        g = pd.Series(["A", "A", "B", "B", "B"])
+        self.assertEqual(list(self.m.within_pct(v, g).round(2).fillna(-1)), [0.5, 1.0, 0.5, 1.0, -1])
+
+    def test_auroc_perm_orientation_and_minimum(self):
+        rng = np.random.default_rng(0)
+        x = np.r_[np.arange(10.0), np.arange(10.0) + 100]
+        case = np.r_[np.zeros(10, bool), np.ones(10, bool)]
+        grp = np.r_[["A"] * 5, ["B"] * 5, ["A"] * 5, ["B"] * 5]
+        a, p, n1, n0 = self.m.auroc_perm(x, case, grp, rng, lower=False)
+        self.assertEqual((a, n1, n0), (1.0, 10, 10))
+        self.assertLess(p, 0.01)
+        self.assertEqual(self.m.auroc_perm(x, case, grp, rng, lower=True)[0], 0.0)
+        few = case.copy()
+        few[13:] = False                                   # 3 cases: below MIN_N, not testable
+        self.assertTrue(np.isnan(self.m.auroc_perm(x, few, grp, rng, lower=False)[0]))
+
+
 if __name__ == "__main__":
     unittest.main()

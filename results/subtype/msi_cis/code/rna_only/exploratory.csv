@@ -1,0 +1,11 @@
+what,group,n,value,p_perm,median_M4,median_pct_G,median_MLH1_pct,median_min_mmr_pct,median_mantis,median_msisensor,median_n_hp,median_purity,median_n_snv,n_mut_MLH1,n_mut_MSH2,n_mut_MSH6,n_mut_PMS2,n_mut_POLE,n_MLH1_below_10th_pct
+"AUROC(purity lower in RNA-only than reference) [exploratory, no q]",rna_only,30,0.3968,0.05069,,,,,,,,,,,,,,,
+"AUROC(SNV count higher in RNA-only than reference) [exploratory, no q]",rna_only,32,0.6413,0.006199,,,,,,,,,,,,,,,
+"AUROC(MSH2 lower in RNA-only than reference) [exploratory, no q]",rna_only,32,0.5312,0.5476,,,,,,,,,,,,,,,
+"AUROC(MSH6 lower in RNA-only than reference) [exploratory, no q]",rna_only,32,0.5377,0.4631,,,,,,,,,,,,,,,
+"AUROC(PMS2 lower in RNA-only than reference) [exploratory, no q]",rna_only,32,0.4682,0.534,,,,,,,,,,,,,,,
+group summary,caller score missing,311,,,-8.689,0.5474,0.5888,0.2421,,0.075,0,0.675,53,1,0,5,4,5,26
+group summary,dna_only,68,,,-3.305,0.2429,0.1713,0.05233,0.5399,8.105,43.5,0.715,731,16,14,16,8,14,24
+group summary,reference,7920,,,-8.625,0.5124,0.507,0.2541,0.3143,0.04,0,0.64,74,45,57,73,58,150,694
+group summary,rna_and_dna,133,,,8.94,0.08262,0.08594,0.06395,0.8795,24.64,102,0.61,1381,25,15,17,15,40,77
+group summary,rna_only,32,,,1.001,0.2782,0.6102,0.1984,0.3079,0.16,0,0.755,76.5,1,2,1,1,1,5

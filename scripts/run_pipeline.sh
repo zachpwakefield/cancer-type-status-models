@@ -78,6 +78,7 @@ run scripts/54_msi_models.py --only features   # D-71, label-blind inputs
 run scripts/54_msi_models.py --only fit
 run scripts/54_msi_models.py --only posthoc    # A-18, exploratory
 run scripts/55_msi_benchmark.py                # D-72, against MANTIS, MSIsensor and the MC3 count
+run scripts/56_msi_rna_only.py                 # D-73, what the model calls that the exome does not
 run scripts/44_repeat_dna.py --only loci    # D-56: loci and the BAM manifest; the slices are fetched
 run scripts/44_repeat_dna.py --only manifest #   by the data user with their own GDC token (see step 44)
 if [ -d data.nosync/ctsm_v1/msi/slices ]; then

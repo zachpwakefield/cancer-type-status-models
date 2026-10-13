@@ -729,6 +729,31 @@ Each covariate is a percentile within the tumour's cancer, compared by AUROC aga
 no one calls, with permutations within cancer. **Seen when written.** D-72's discordance table and
 the label-blind count of calls (168); nothing about the DNA, expression or purity of a called tumour.
 
+**Outcome (computed 2026-10-13; RO4 supported, RO1–RO3 and RO5 not resolved: mixed, mostly false
+calls).**
+- **Most calls are confirmed.** Of the 168 calls, 115 are called MSI by all three exome measures, 6
+  by two and 12 by one. 32 (19%) are called by none; 3 lack a caller score.
+- **The 32 RNA-only calls look mostly like false calls.**
+  - They are scattered over 18 cancers where MSI is rare (1–4 each), and only one is in STAD.
+  - They sit just above the model's threshold (median decision function 1.0, against 8.9 for
+    confirmed calls).
+  - Their MLH1 expression is not low (RO1, AUROC 0.47), and neither is any MMR gene's (RO2).
+  - Their MANTIS scores and MC3 deletion counts are no higher than those of tumours no one calls
+    (RO3, RO5).
+- **Their MSIsensor scores are higher** (RO4, AUROC 0.65, q = 0.019), but far below the stable cut
+  (median 0.16 against 0.04; the cut is 4). They also carry more SNVs for their cancer (AUROC 0.64,
+  exploratory).
+- **A few are plausible missed cases (exploratory).** These three are listed locally:
+  - a STAD tumour with the highest score (6.0): 9 homopolymer deletions, one short of the cut,
+    MANTIS 0.45 (the between zone) and one MMR gene at the 1st percentile of expression;
+  - a hypermutated PAAD tumour (21,427 SNVs; MSIsensor 4.5, between zone) with MC3 calls in MLH1,
+    MSH2, MSH6, PMS2 and POLE;
+  - a BLCA tumour with MLH1 at the 1st percentile, but no DNA instability.
+- **The reverse.** The model misses 68 tumours that an exome measure calls. 20 of them are called by
+  all three, and 19 of those 20 are UCEC, where the code was always weakest (D-67).
+- Tables: `results/subtype/msi_cis/code/rna_only/`; per-tumour rows in
+  `data.nosync/ctsm_v1/msi/rna_only_tumours.parquet`.
+
 ---
 
 ## Amendments and deviations
