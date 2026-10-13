@@ -4,7 +4,7 @@ The third task of the repository: **within one cancer, which subtype is a primar
 modelled, like the other two, independently in each of the nine views (AFE, ALE, HIT, SE, A5SS,
 A3SS, MXE, RI, GEX). Decisions are numbered from D-30 (D-48..D-51, which span the three tasks, are in
 [ACROSS_TASKS_METHODS.md](ACROSS_TASKS_METHODS.md), as is amendment A-8; D-52..D-56, the MSI-repeat
-follow-up, and D-57..D-60, the BRCA follow-up, D-61..D-64, the MSI follow-up, and D-65..D-69, the MSI sequence code, are here; D-01..D-12 are in
+follow-up, and D-57..D-60, the BRCA follow-up, D-61..D-64, the MSI follow-up, and D-65..D-70, the MSI sequence code, are here; D-01..D-12 are in
 [DECISIONS.md](DECISIONS.md), D-13..D-29 in [BIOLOGY_METHODS.md](BIOLOGY_METHODS.md)). Values live
 in [config/subtype.yaml](../config/subtype.yaml); this file explains them.
 
@@ -569,6 +569,30 @@ Written 2026-10-13, after D-65..D-67 and before either was computed.
   percentile over all scored tumours is +0.011 (MC3, not resolved). All 17 MANTIS MSI-H tumours
   are MC3-deficient; MANTIS calls 27 of the 50 MC3-deficient tumours mid and 6 MSS. Tables:
   `results/subtype/msi_cis/code/msicalls/`; figure U21.
+
+### D-70 Is the rising arm real? · `config/followup.yaml` · `scripts/52`
+Written 2026-10-13, after D-68 and D-69 and before any of these tests was computed. What had been
+seen is listed in the config header. The claim under test: in mismatch-repair-deficient tumours,
+exons after a T-run of 20 nt or more, with the branch point at least 36 nt from the AG (R_up),
+become *more* included, and this happens because contraction shortens a branch-point-to-AG distance
+that is too long.
+- **Specificity (RV1, RV7).** Do R_up exons rise in MSI more than in any of about 60 other subtype
+  contrasts? Do they rise more than in hypermutated tumours whose repair is intact? Every contrast is
+  drawn at 20 against 20 tumours, so noise is equal.
+- **A tumour-wide axis (RV2).** Is the rise left once each tumour's average inclusion is in the
+  model?
+- **The tract is needed (RV3), and its side matters (RV5).** Exons with a far branch point but no
+  tract should not rise. Long runs that lie *upstream* of a branch point should not rise either,
+  because contracting them cannot move the branch point closer to the AG.
+- **Geometry without a predictor (RV4).** The AG exclusion zone bounds where a branch point can lie
+  (Gooding et al. 2006) and needs no branch-point model. Its length should predict the rise among
+  long runs.
+- **Dose (RV6).** The rise should grow with the tumour's homopolymer deletion count.
+- **The alternative (RV8).** PTB represses many exons with long tracts and distant branch points. If
+  contraction relieved PTB, the exons that PTBP1 represses most should rise most.
+- **Not testable here.** The public MC3 file holds almost no intronic deletions (458 A/T deletions
+  within 50 nt of any exon), so the tumour's own allele at each locus cannot be read. Only 2 R_up
+  introns have a retained-intron event, so a read-out from intronic reads is not possible either.
 
 ---
 

@@ -912,3 +912,88 @@ msi_code_msi_calls:                      # D-69 · scripts/51_msi_code.py --only
              a score
   exploratory: concordance of D-66's MC3 call with MANTIS and MSIsensor (counts by call); score G of
                discordant tumours; the same AUROCs in UCEC, STAD and COAD (in-sample for the rule)
+
+# ---- MSI sequence code: is the rising arm real? 2026-10-13 (after D-68, D-69) ----
+# Written before any of these tests was computed. Seen when written: everything of D-52..D-69,
+# including PC7 (held-out R_up median delta_adj +0.028 against R_down -0.005; 73% of R_up exons
+# more included), A-15 (R_up arm AUROC 0.735 for higher in MMR-deficient tumours), U19a's shares
+# by branch-point bin, D-65's exploratory shares for runs >= 20 nt in POLE-vs-rest (0.56-0.59 up)
+# and CIN-vs-GS (0.49-0.72 up), and D-63's d_run-for-d_bp check. Label-blind counts made today
+# before writing: pan-cancer SE exons R_up 234, R_down 2,660, B 58,820, B_far 15,466, shield 158
+# (124 without an acceptor run >= 10); AGEZ median 47 (R_up), 40 (R_down), 32 (B); Spearman of AGEZ
+# with d_bp among runs >= 20 is 0.04. Not seen: any shift of B_far or shield exons, any AGEZ or
+# PTBP1 relation to a shift, any statistic of a non-MSI subtype contrast on R_up exons, the
+# global-axis adjustment of the R_up arm, the R_up arm against hypermutated proficient tumours or
+# against deletion load.
+# Not possible with local data, checked label-blind today: a locus-level DNA test from MC3 (the
+# public MAF holds 458 A/T deletions within 50 nt upstream of any exon, none at MRE11 exon 5), and
+# a retained-intron read-out of the same introns (2 R_up upstream introns have an RI event).
+# All tests two-sided; supported / against / not resolved by BH q < 0.05 within the named family.
+
+msi_code_reversal:                       # D-70 · scripts/52_msi_reversal.py
+  # MSI makes exons after a run >= 20 nt with a far branch point MORE included (R_up). Is that
+  # specific to mismatch repair, independent of a global splicing axis, dependent on the run lying
+  # between the branch point and the AG, and does it follow deletion load?
+  classes: label-blind, pan-cancer SE annotation. R_up, R_down and B as D-65; B_far = B exons with
+           d_bp >= 36; shield = exons with acc_T < 10 whose upstream intron holds a T-run >= 20 nt
+           starting >= 25 nt and ending <= 200 nt from the exon, with a yUnAy branch-point A at
+           18 nt or more and at least 2 nt downstream of the run (between the run and the AG)
+  agez: AG exclusion zone (Gooding et al. 2006), the distance from the exon to the first upstream
+        AG whose G lies >= 12 nt from it, read up to 300 nt (censored at 300 or the intron end);
+        a branch-point-free measure of how far the branch point can lie
+  global_axis: per tumour, the mean percentile over all exons of its cancer's D-66 universe, as a
+               percentile within the cancer (label-blind)
+  held_out: D-66's tumours, exon universe, pooled exon shift (delta_adj) and arm scores; pct_up =
+            the R_up arm (R_up against B) as a percentile within the cancer; covariates as D-68
+  fdr_family: RV, the 8 tests RV1-RV8
+  predictions:
+    - id: RV1
+      claim: the held-out R_up statistic is positive and larger than every-pair non-MSI subtype
+             contrasts' absolute statistic; p = (1 + number of null contrasts with |s| >= s) /
+             (1 + number of null contrasts)
+      statistic: mean delta_adj over R_up exons, averaged over 50 draws (seed 0) of 20 tumours
+                 per group; per draw, percentiles within the cohort (null) or within each
+                 cancer (held-out), delta per exon with >= 10 finite values per group, B-exon
+                 median per mean-PSI decile subtracted. Held-out draw = 20 of the 50 MMR-deficient
+                 tumours, each paired with a random proficient tumour of the same cancer
+      null: every pair of classes in each of the 22 subtype cohorts, after removing MSI- and
+            POLE-labelled tumours and tumours with >= 10 MC3 homopolymer deletions, both groups
+            >= 20
+      why: if long-run exons rose whenever two tumour groups differ, MSI would not stand out
+    - id: RV2
+      claim: held-out tumours - OLS pct_up ~ mmr + C(project) + global_axis + stromal + immune +
+             ri_mean (HC3), coefficient of mmr > 0
+      why: the rise is not a tumour-wide shift in inclusion that long-run exons follow more
+    - id: RV3
+      claim: held-out pooled delta_adj higher for R_up than for B_far exons (AUROC > 0.5)
+      why: a far branch point without a tract to contract should not rise
+    - id: RV4
+      claim: held-out exons with acc_T >= 20 - adjusted rho(delta_adj, agez | run bins 20-24 and
+             >= 25, mean-PSI rank) > 0; p by permuting agez within bins (1,000, seed 0)
+      why: the geometry reading without any branch-point predictor
+    - id: RV5
+      claim: held-out pooled delta_adj higher for R_up than for shield exons (AUROC > 0.5)
+      why: contracting a run upstream of the branch point cannot shorten the branch point to AG
+           distance; a run-binding repressor would not care which side of the branch point it is
+    - id: RV6
+      claim: MMR-deficient tumours (held-out) and MSI tumours of COAD_TCGA, STAD_TCGA and
+             UCEC_TCGA with MC3 calls - partial Spearman(pct_up, log(1 + homopolymer deletions) |
+             ABSOLUTE purity) > 0; pct_up within each cohort or cancer (the three cohorts with
+             D-52's universe)
+      why: more contraction, more rise
+    - id: RV7
+      claim: held-out pct_up higher in MMR-deficient than in hypermutated proficient tumours
+             (AUROC > 0.5)
+      why: mismatch repair, not mutation burden
+    - id: RV8
+      claim: held-out exons with acc_T >= 20 - Spearman(delta_adj, PTB sensitivity) < 0, where PTB
+             sensitivity = mean over cancers (weighted by tumours) of the partial Spearman of the
+             exon's PSI with PTBP1 log2 CPM given the global axis, proficient tumours only
+      why: the alternative to geometry. Long tracts with distant branch points are often PTB-
+           repressed (Gooding et al. 2006); if contraction relieves PTB, the most PTB-repressed
+           exons rise most. Supported = PTB relief contributes; not resolved = no sign of it
+  exploratory: the three training MSI contrasts against the RV1 null (in-sample); RV1 as a z-score;
+               RV2 without the global axis; RV2 and RV7 with MANTIS MSI-H in place of MMR-deficient;
+               RV3, RV4 and RV5 on the training cohorts' mean shift; shares up by class; R_up
+               against B_far within exons whose length is a multiple of 3; arm coupling within
+               MMR-deficient and within proficient tumours; no per-tumour value is committed
