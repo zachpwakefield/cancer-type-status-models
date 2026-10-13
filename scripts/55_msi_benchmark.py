@@ -196,9 +196,10 @@ def main() -> None:
                                        "auroc": auc_pooled(Sk[m][k], y[k])})
             log(f"{split} R_{ref}: {int(y.sum())} positives, {int((~y).sum())} negatives; "
                 + ", ".join(f"{m} {obs[m]:.3f}" for m in methods))
-        # discordance: M5's within-cancer percentile over all of the split's tumours
+        # discordance: M4's and M5's within-cancer percentiles over all of the split's tumours (M4: A-19)
         full = t.merge(p.drop(columns=["project", "mmr"]), on="file_id", how="inner")
-        full["pct_M5"] = full.groupby("project").M5.rank(pct=True)
+        for m in ["M4", "M5"]:
+            full[f"pct_{m}"] = full.groupby("project")[m].rank(pct=True)
         cm = full.mantis > 0.6
         cs = full.msisensor > 10
         both_scored = full.mantis.notna() & full.msisensor.notna()
@@ -210,9 +211,11 @@ def main() -> None:
                   "MC3 proficient, neither caller MSI-H": ~full.mmr & both_scored & ~cm & ~cs}
         for name, k in groups.items():
             n = int(k.sum())
-            disc.append({"split": split, "group": name, "n": n,
-                         "median_pct_M5": float(full.loc[k, "pct_M5"].median()) if n >= 5 else np.nan,
-                         "share_top_decile_M5": float((full.loc[k, "pct_M5"] > 0.9).mean()) if n >= 5 else np.nan})
+            row = {"split": split, "group": name, "n": n}
+            for m in ["M4", "M5"]:
+                row[f"median_pct_{m}"] = float(full.loc[k, f"pct_{m}"].median()) if n >= 5 else np.nan
+                row[f"share_top_decile_{m}"] = float((full.loc[k, f"pct_{m}"] > 0.9).mean()) if n >= 5 else np.nan
+            disc.append(row)
     OUT.mkdir(parents=True, exist_ok=True)
     pr = m51.predictions(pred, "benchmark")
     pd.DataFrame(met).to_csv(OUT / "metrics.csv", index=False, float_format="%.4g")

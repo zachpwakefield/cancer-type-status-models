@@ -851,36 +851,38 @@ tumours. D-70 tested that eight ways, fixed in advance (3 supported, 1 against, 
   exclusion zone does not predict it, runs upstream of the branch point rise too, it does not grow
   with deletion count, and PTB relief runs the wrong way.
 
-<img src="results/figures/subtype/U23_msi_code_models.png" width="900" alt="U23: held-out AUROC and AUPRC of score G and six fitted models, precision-recall curves, and the 10-bin model's coefficients">
+<img src="results/figures/subtype/U23_msi_code_models.png" width="900" alt="U23: held-out ROC and precision-recall of the repeat-exon logistic model against score G, AUROC per held-out cancer, and its largest coefficients">
 
-**Figure U23. Ten sequence bins beat the two arms held out, and per-exon models did not transfer
-worse.** (a) AUROC in the 30 held-out cancers (filled; bar = 95% bootstrap interval), in the tuning
-loop (hollow) and leaving each cancer out of a model trained on the other 32 (cross). (b) AUPRC
-held out. (c) Precision against recall held out. (d) Coefficients of the 10-bin logistic model.
+**Figure U23. Logistic regression on repeat exons, fitted in three cancers, finds MMR deficiency in
+30 others.** (a) ROC in the 30 held-out cancers, against score G. (b) Precision against recall
+held out. (c) AUROC per held-out cancer with three or more MMR-deficient tumours. (d) The 20
+largest standardised coefficients (gene, acceptor T-run, branch-point distance).
 
-Fitted on COAD, STAD and UCEC only (D-71):
-- **Weighting the two arms adds nothing** (0.835 against 0.832 for score G).
-- **Ten sequence bins add** (0.868; AUPRC 0.257 against 0.083). Their weights rediscover the code:
-  negative for runs of 10–19 nt and for long runs with a near branch point, positive beyond 30 nt.
-- **Per-exon logistic regression transfers** (0.900 on repeat exons, 0.902 on all exons; AUPRC
-  0.44–0.47), against the prediction that it would learn its training tissues. It works by
-  weighting the code's own exons (exploratory, A-18): without repeat exons it falls to 0.777.
+A weight per exon, on the 1,562 exons with an acceptor run of 10 nt or more (D-71; shown alone
+by A-19):
+- **It transfers.** Trained on COAD, STAD and UCEC, it reaches AUROC 0.900 in the other 30 cancers
+  (score G 0.832), AUPRC 0.44 (0.08), and 0.9997 against MANTIS MSI-H.
+- **Its weights are the code.** Long runs with a far branch point carry the largest positive
+  weights (CCNDBP1 T30); runs of 10–19 nt carry negative ones.
+- **Pre-registered.** It was predicted to transfer worse than ten sequence bins; it did not (LR4,
+  not resolved).
 
-<img src="results/figures/subtype/U24_msi_callers_benchmark.png" width="900" alt="U24: within-cancer AUROC of each exome MSI measure and the splicing models against the other two measures' consensus, per cancer, at matched call volume, and where the DNA measures disagree">
+<img src="results/figures/subtype/U24_msi_callers_benchmark.png" width="900" alt="U24: within-cancer AUROC of each exome MSI measure and the repeat-exon model against the other two measures' consensus, per cancer, at matched call volume, and where the DNA measures disagree">
 
-**Figure U24. Within each cancer, the splicing model ranks tumours almost as well as the exome MSI
-callers.** (a) Within-cancer AUROC of each exome measure judged by the other two, and of the
-splicing models on the same tumours (filled: leave one cancer out; hollow: the 30 held-out
-cancers). (b) Per cancer. (c) Sensitivity at each caller's call volume, pooled over cancers. (d)
-MC3-deficient tumours by the callers' calls: share in the all-exon model's top decile.
+**Figure U24. Within each cancer, the repeat-exon model ranks tumours almost as well as the exome
+MSI callers.** (a) Within-cancer AUROC of each exome measure judged by the other two, and of the
+model on the same tumours (filled: each cancer left out of training; hollow: the 30 held-out
+cancers). (b) Per cancer. (c) Sensitivity and PPV at each caller's call volume, pooled over
+cancers. (d) MC3-deficient tumours by the callers' calls: share in the model's top decile.
 
-D-72 compares the all-exon model with MANTIS, MSIsensor and the MC3 count, each judged against
-the tumours on which the other two agree:
-- **Within a cancer, it reaches 0.998–0.999.** That is 0.001–0.002 below MANTIS and MSIsensor (4 of
-  6 tests supported), no different from the MC3 count, and non-inferior at a pre-set 0.05 margin.
-- **Across cancers it is not calibrated.** At each caller's call volume it finds 80–84% of positives
-  against the callers' 94–100%.
-- **It needs no DNA.** RNA alone, with no exome, scores every tumour.
+Each of MANTIS, MSIsensor and the MC3 count is judged against the tumours on which the other two
+agree (D-72):
+- **Within a cancer, the model reaches 0.998–1.000.** That is 0.002 or less below the exome
+  measures, from RNA alone.
+- **Across cancers it is not calibrated.** At each caller's call volume it finds 82–84% of
+  positives, against the callers' 94–100%.
+- **Pre-registered tests.** These were on the all-exon model (4 of 6 supported, small deficits);
+  the repeat-exon numbers are exploratory.
 
 [U10 caption](results/figures/subtype/U10_msi_repeats.caption.md) ·
 [U11 caption](results/figures/subtype/U11_msi_long_tracts.caption.md) ·

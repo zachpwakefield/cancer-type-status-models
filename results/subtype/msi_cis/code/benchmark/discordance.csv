@@ -1,13 +1,13 @@
-split,group,n,median_pct_M5,share_top_decile_M5
-E2,"MC3 MMR-deficient, both callers MSI-H",135,0.9336,0.6889
-E2,"MC3 MMR-deficient, one caller MSI-H",12,0.8875,0.4167
-E2,"MC3 MMR-deficient, neither caller MSI-H",50,0.8561,0.42
-E2,"MC3 MMR-deficient, a caller score missing",3,,
-E2,"MC3 proficient, both callers MSI-H",0,,
-E2,"MC3 proficient, neither caller MSI-H",7952,0.4923,0.08979
-E1,"MC3 MMR-deficient, both callers MSI-H",17,0.998,1
-E1,"MC3 MMR-deficient, one caller MSI-H",2,,
-E1,"MC3 MMR-deficient, neither caller MSI-H",31,0.9051,0.5161
-E1,"MC3 MMR-deficient, a caller score missing",0,,
-E1,"MC3 proficient, both callers MSI-H",0,,
-E1,"MC3 proficient, neither caller MSI-H",7336,0.4984,0.09746
+split,group,n,median_pct_M4,share_top_decile_M4,median_pct_M5,share_top_decile_M5
+E2,"MC3 MMR-deficient, both callers MSI-H",135,0.936,0.6889,0.9336,0.6889
+E2,"MC3 MMR-deficient, one caller MSI-H",12,0.8846,0.4167,0.8875,0.4167
+E2,"MC3 MMR-deficient, neither caller MSI-H",50,0.8574,0.4,0.8561,0.42
+E2,"MC3 MMR-deficient, a caller score missing",3,,,,
+E2,"MC3 proficient, both callers MSI-H",0,,,,
+E2,"MC3 proficient, neither caller MSI-H",7952,0.4905,0.08954,0.4923,0.08979
+E1,"MC3 MMR-deficient, both callers MSI-H",17,1,1,0.998,1
+E1,"MC3 MMR-deficient, one caller MSI-H",2,,,,
+E1,"MC3 MMR-deficient, neither caller MSI-H",31,0.9121,0.5484,0.9051,0.5161
+E1,"MC3 MMR-deficient, a caller score missing",0,,,,
+E1,"MC3 proficient, both callers MSI-H",0,,,,
+E1,"MC3 proficient, neither caller MSI-H",7336,0.4997,0.09733,0.4984,0.09746
