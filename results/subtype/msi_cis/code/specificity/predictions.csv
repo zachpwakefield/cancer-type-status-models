@@ -1,0 +1,5 @@
+id,what,effect,predicted_sign,p,n,q,verdict
+BS1,"Spearman(mean delta_adj, d_bp - d_run | run bins, mean PSI, d_run)",0.11602827398346553,1,0.000999000999000999,1420 R exons in >= 2 cohorts,0.001332001332001332,supported
+BS2,"adjusted rho(mean delta_adj, d_bp): R exons minus B exons",0.15630318094522017,1,0.0005,"R 1420 (rho 0.156), B 22,100 (rho -0.000)",0.001,supported
+BS3,"UCEC_TCGA: adjusted rho(MSI shift, d_bp) minus adjusted rho(POLE vs rest shift, d_bp)",0.07466963936368773,1,0.012,"1235 R exons; MSI rho 0.109, POLE vs rest rho 0.034; groups POLE 23, rest 111",0.012,supported
+BS4,"STAD_TCGA: adjusted rho(MSI shift, d_bp) minus adjusted rho(CIN vs GS shift, d_bp)",0.24856409741257357,1,0.0005,"1492 R exons; MSI rho 0.161, CIN vs GS rho -0.087; groups CIN 196, GS 43",0.001,supported

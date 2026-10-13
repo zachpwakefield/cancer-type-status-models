@@ -1,0 +1,14 @@
+cohort,what,value,n,p
+UCEC_TCGA,AUROC(G lower in MSI than POLE),0.7033,"MSI 34, POLE 23",
+UCEC_TCGA,"AUROC(score lower in MSI than the rest), A",0.5106,"MSI 34, rest 111",
+UCEC_TCGA,"AUROC(score lower in MSI than the rest), G",0.8439,"MSI 34, rest 111",1.403e-09
+UCEC_TCGA,AUROC(arm R_down vs B lower in MSI),0.6025,1265 exons,
+UCEC_TCGA,AUROC(arm R_up vs B lower in MSI),0.2337,110 exons,
+STAD_TCGA,"AUROC(score lower in MSI than the rest), A",0.7091,"MSI 55, rest 265",
+STAD_TCGA,"AUROC(score lower in MSI than the rest), G",0.9638,"MSI 55, rest 265",2.629e-27
+STAD_TCGA,AUROC(arm R_down vs B lower in MSI),0.7929,1543 exons,
+STAD_TCGA,AUROC(arm R_up vs B lower in MSI),0.2075,130 exons,
+COAD_TCGA,"AUROC(score lower in MSI than the rest), A",0.7781,"MSI 40, rest 195",
+COAD_TCGA,"AUROC(score lower in MSI than the rest), G",0.9578,"MSI 40, rest 195",7.777e-20
+COAD_TCGA,AUROC(arm R_down vs B lower in MSI),0.8568,1456 exons,
+COAD_TCGA,AUROC(arm R_up vs B lower in MSI),0.2067,127 exons,

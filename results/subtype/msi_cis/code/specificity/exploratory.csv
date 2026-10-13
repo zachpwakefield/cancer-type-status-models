@@ -1,0 +1,41 @@
+what,cohort,contrast,run_class,bin,n,share_up,median_d_bp
+share up by d_bp tertile,UCEC_TCGA,MSI vs rest,10-19,near,357,0.4258,24
+share up by d_bp tertile,UCEC_TCGA,MSI vs rest,10-19,middle,357,0.4762,39
+share up by d_bp tertile,UCEC_TCGA,MSI vs rest,10-19,far,357,0.5182,72
+share up by d_bp tertile,UCEC_TCGA,MSI vs rest,>=20,near,55,0.6909,31
+share up by d_bp tertile,UCEC_TCGA,MSI vs rest,>=20,middle,54,0.6481,41.5
+share up by d_bp tertile,UCEC_TCGA,MSI vs rest,>=20,far,55,0.7273,80
+share up by d_bp tertile,UCEC_TCGA,POLE vs rest,10-19,near,357,0.4566,24
+share up by d_bp tertile,UCEC_TCGA,POLE vs rest,10-19,middle,357,0.5406,39
+share up by d_bp tertile,UCEC_TCGA,POLE vs rest,10-19,far,357,0.5126,72
+share up by d_bp tertile,UCEC_TCGA,POLE vs rest,>=20,near,55,0.5636,31
+share up by d_bp tertile,UCEC_TCGA,POLE vs rest,>=20,middle,54,0.5926,41.5
+share up by d_bp tertile,UCEC_TCGA,POLE vs rest,>=20,far,55,0.5636,80
+share up by d_bp tertile,STAD_TCGA,MSI vs rest,10-19,near,432,0.294,24
+share up by d_bp tertile,STAD_TCGA,MSI vs rest,10-19,middle,432,0.4421,39
+share up by d_bp tertile,STAD_TCGA,MSI vs rest,10-19,far,433,0.4342,72
+share up by d_bp tertile,STAD_TCGA,MSI vs rest,>=20,near,65,0.3692,31
+share up by d_bp tertile,STAD_TCGA,MSI vs rest,>=20,middle,65,0.6462,42
+share up by d_bp tertile,STAD_TCGA,MSI vs rest,>=20,far,65,0.6615,80
+share up by d_bp tertile,STAD_TCGA,CIN vs GS,10-19,near,432,0.5903,24
+share up by d_bp tertile,STAD_TCGA,CIN vs GS,10-19,middle,432,0.5833,39
+share up by d_bp tertile,STAD_TCGA,CIN vs GS,10-19,far,433,0.515,72
+share up by d_bp tertile,STAD_TCGA,CIN vs GS,>=20,near,65,0.6,31
+share up by d_bp tertile,STAD_TCGA,CIN vs GS,>=20,middle,65,0.7231,42
+share up by d_bp tertile,STAD_TCGA,CIN vs GS,>=20,far,65,0.4923,80
+"share up by 10-nt d_bp bin, mean over >= 2 cohorts",,,10-19,10-19,78,0.2949,18
+"share up by 10-nt d_bp bin, mean over >= 2 cohorts",,,10-19,20-29,335,0.2836,25
+"share up by 10-nt d_bp bin, mean over >= 2 cohorts",,,10-19,30-39,217,0.5069,34
+"share up by 10-nt d_bp bin, mean over >= 2 cohorts",,,10-19,40-49,182,0.3516,45
+"share up by 10-nt d_bp bin, mean over >= 2 cohorts",,,10-19,50-59,113,0.4779,55
+"share up by 10-nt d_bp bin, mean over >= 2 cohorts",,,10-19,60-69,92,0.4783,64
+"share up by 10-nt d_bp bin, mean over >= 2 cohorts",,,10-19,70-79,85,0.4824,74
+"share up by 10-nt d_bp bin, mean over >= 2 cohorts",,,10-19,80-89,81,0.4074,83
+"share up by 10-nt d_bp bin, mean over >= 2 cohorts",,,10-19,90-99,49,0.449,94
+"share up by 10-nt d_bp bin, mean over >= 2 cohorts",,,>=20,20-29,24,0.125,27
+"share up by 10-nt d_bp bin, mean over >= 2 cohorts",,,>=20,30-39,56,0.7321,34
+"share up by 10-nt d_bp bin, mean over >= 2 cohorts",,,>=20,40-49,37,0.5676,43
+"share up by 10-nt d_bp bin, mean over >= 2 cohorts",,,>=20,50-59,18,0.6111,55
+"share up by 10-nt d_bp bin, mean over >= 2 cohorts",,,>=20,70-79,12,0.8333,72.5
+"share up by 10-nt d_bp bin, mean over >= 2 cohorts",,,>=20,80-89,20,0.7,87
+B-exon branch points,,,,found for 0.824,63648,,26

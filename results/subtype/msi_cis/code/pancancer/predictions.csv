@@ -1,0 +1,9 @@
+id,what,effect,predicted_sign,p,n,q,verdict
+PC1,pooled AUROC(score A lower in MMR-deficient) - 0.5,0.047193189259986945,1,0.24927227256198425,"MMR-deficient 50, other 7635",0.24927227256198425,not resolved
+PC2,pooled AUROC(score G lower in MMR-deficient) - 0.5,0.3318166339227243,1,5.461146050390313e-16,"MMR-deficient 50, other 7635",2.1844584201561253e-15,supported
+PC3,"AUROC(G) - AUROC(A), pooled",0.2846234446627375,1,0.0005,"AUROC G 0.832, A 0.547",0.0006666666666666666,supported
+PC4,"as PC2 without READ, ESCA and UCS",0.3140460072993806,1,3.465105021010615e-13,"MMR-deficient 45, other 7337",5.544168033616984e-13,supported
+PC5,AUROC(G lower in MMR-deficient than hypermutated proficient) - 0.5,0.34519607843137257,1,1.568894636301892e-15,"MMR-deficient 50, hypermutated proficient 408",4.183719030138378e-15,supported
+PC6,"Spearman(held-out delta_adj, mean delta_adj of the three cohorts)",0.505014790080038,1,4.2524895317751124e-114,1753 R exons,3.40199162542009e-113,supported
+PC7,AUROC(held-out delta_adj higher for R_up than R_down) - 0.5,0.2020846493998737,1,5.937096833874116e-15,"R_down 1583 (median -0.0048), R_up 135 (median +0.0277)",1.1874193667748233e-14,supported
+PC8,"adjusted rho(held-out delta_adj, d_bp)",0.1042403840072426,1,0.000999000999000999,1525 R exons,0.0011417154274297131,supported

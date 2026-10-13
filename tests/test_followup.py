@@ -275,5 +275,37 @@ class TestMsiFollowup(unittest.TestCase):
         self.assertGreater(p0, 0.01)
 
 
+class TestMsiCode(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.m = load_script("51_msi_code.py")
+
+    def test_arms_follow_the_rule(self):
+        acc = np.array([10, 19, 20, 25, 30, 5, 3, 21])
+        bp = np.array([40, 20, 36, 35, np.nan, 50, 30, 80])
+        down, up, b = self.m.arms(acc, bp)
+        self.assertEqual(down.tolist(), [True, True, False, False, False, False, False, False])
+        self.assertEqual(up.tolist(), [False, False, True, False, False, False, False, True])
+        self.assertEqual(b.tolist(), [False, False, False, False, False, True, True, False])
+
+    def test_auc_lower_matches_mann_whitney(self):
+        from scipy.stats import mannwhitneyu
+        rng = np.random.default_rng(3)
+        s = rng.normal(size=200)
+        pos = rng.random(200) < 0.2
+        s[pos] -= 0.5
+        u = mannwhitneyu(s[~pos], s[pos]).statistic / (pos.sum() * (~pos).sum())
+        self.assertAlmostEqual(self.m.auc_lower(s, pos), u)
+
+    def test_resid_rho_removes_the_bins(self):
+        rng = np.random.default_rng(4)
+        bins = np.repeat(np.array(["a", "b"], dtype=object), 200)
+        x = rng.normal(size=400) + 5 * (bins == "b")
+        y = rng.normal(size=400) + 5 * (bins == "b")
+        self.assertLess(abs(self.m.resid_rho(y, x, bins, [])), 0.15)
+        raw = np.corrcoef(np.argsort(np.argsort(x)), np.argsort(np.argsort(y)))[0, 1]
+        self.assertGreater(raw, 0.5)                       # the bins alone make x and y agree
+
+
 if __name__ == "__main__":
     unittest.main()

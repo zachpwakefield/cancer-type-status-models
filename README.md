@@ -44,7 +44,7 @@ tasks relate.
 | AS ensemble (8 splicing views) | 0.994; 91 errors | 0.950 | 0.80 / 0.82 / 0.81 |
 | GEX + AS (1:1) | 77 errors (McNemar p = 1.1e-4) | 0.961 (p = 3.9e-9) | −0.04 to +0.04 per cohort; no McNemar p < 0.05 |
 | Headline | splicing is a second, partly independent view of the tumour state | splicing is a lineage code, and fails where a lineage code should | splicing matches expression on lineage and genome-state subtypes and loses where one gene defines the class |
-| Write-up · figures | [TUMOUR_STATUS.md](results/TUMOUR_STATUS.md) · S1–S10 | [CANCER_TYPE.md](results/CANCER_TYPE.md) · T1–T9 | [SUBTYPE.md](results/SUBTYPE.md) · U1–U17 |
+| Write-up · figures | [TUMOUR_STATUS.md](results/TUMOUR_STATUS.md) · S1–S10 | [CANCER_TYPE.md](results/CANCER_TYPE.md) · T1–T9 | [SUBTYPE.md](results/SUBTYPE.md) · U1–U19 |
 
 [**Across the three tasks**](#across-the-three-tasks) ([ACROSS_TASKS.md](results/ACROSS_TASKS.md),
 X1–X4) compares them:
@@ -56,9 +56,10 @@ X1–X4) compares them:
 
 One subtype result goes furthest. The MSI splicing marks are largely written in the genome: the
 exons the MSI models chose sit after long poly-T tracts that mismatch-repair deficiency destabilises.
-A score from the reference sequence alone ranks MSI tumours in stomach and colon, and the
-branch point's distance from the splice site says which exons gain rather than lose inclusion
-([U10–U11, U16–U17](#8-msi-splicing-follows-acceptor-poly-t-repeats-in-the-genome)).
+Tract length and the branch point's distance from the splice site say which exons lose and which
+gain inclusion. That two-part code, read in RNA without re-fitting, finds mismatch-repair-deficient
+tumours in 30 cancers never used to define it (AUROC 0.83)
+([U10–U11, U16–U19](#8-msi-splicing-follows-acceptor-poly-t-repeats-in-the-genome)).
 In breast cancer, splicing reads HER2 through a programme rather than through the amplified genes
 ([U12–U15](#9-breast-cancer-with-dna-two-her2s-splice-site-mutations-and-what-the-pair-check-removed)).
 
@@ -66,7 +67,7 @@ Full tables, CIs and the top SHAP features of every cohort and view are in
 [results/RESULTS.md](results/RESULTS.md). Methods are in three files:
 - [docs/BIOLOGY_METHODS.md](docs/BIOLOGY_METHODS.md), D-13 to D-29: interpretation of status and
   type;
-- [docs/SUBTYPE_METHODS.md](docs/SUBTYPE_METHODS.md), D-30 to D-47 and D-52 to D-64: the subtype task
+- [docs/SUBTYPE_METHODS.md](docs/SUBTYPE_METHODS.md), D-30 to D-47 and D-52 to D-67: the subtype task
   and its MSI-repeat and BRCA follow-ups;
 - [docs/ACROSS_TASKS_METHODS.md](docs/ACROSS_TASKS_METHODS.md), D-48 to D-51: the cross-task
   layer.
@@ -393,7 +394,7 @@ Not shown here, all in the write-up: per-class recall against expression (T2), p
 
 ## Subtype within a cancer: 22 cohorts in 15 cancers
 
-**Full write-up: [results/SUBTYPE.md](results/SUBTYPE.md)** (figures U1–U17) — *within a cancer,
+**Full write-up: [results/SUBTYPE.md](results/SUBTYPE.md)** (figures U1–U19) — *within a cancer,
 splicing recovers lineage and genome state about as well as expression, and loses where a subtype
 is a single gene switched on.* One model per (cohort, view) over 22 subtype cohorts from 15 TCGA
 projects:
@@ -403,8 +404,8 @@ projects:
 Every label map, exclusion and minimum class size (20 patients) was fixed in
 [config/subtype.yaml](config/subtype.yaml) before the first model was fitted
 ([docs/SUBTYPE_METHODS.md](docs/SUBTYPE_METHODS.md), D-30 to D-45); the regulator, site,
-MSI-repeat and BRCA analyses of U8–U17 were fixed in [config/followup.yaml](config/followup.yaml)
-before they were run (D-46, D-47, D-52 to D-64).
+MSI-repeat and BRCA analyses of U8–U19 were fixed in [config/followup.yaml](config/followup.yaml)
+before they were run (D-46, D-47, D-52 to D-67).
 
 ### Performance
 
@@ -657,10 +658,35 @@ not shorter, so deletion size does not explain the endometrial gap.
 - **No NMD signature in gene expression** (D-62, not resolved).
 - **GTEx genotypes no variant inside any run**, so the germline test (D-64) could not be run.
 
+<img src="results/figures/subtype/U18_msi_code_pancancer.png" width="900" alt="U18: AUROC of score A and score G for MMR-deficient tumours in 30 held-out cancers, per-exon shifts in held-out cancers against the training cohorts, and score G against deletion load">
+
+**U18.** The sequence code finds mismatch-repair-deficient tumours in 30 cancers never used to
+define it (D-66, fixed in advance; 7 of 8 tests supported).
+- **The code** (score G): runs of 10–19 nt fall; runs ≥ 20 nt with the branch point ≥ 36 nt from
+  the AG rise. Score A, D-52's, reads every repeat exon as falling.
+- **The test.** Among 7,685 tumours, 50 carry ≥ 10 MC3 homopolymer deletions. Score G finds them
+  at AUROC 0.83, against 0.55 for score A, with no re-fitting.
+- **Organ independence and specificity.** 0.81 without READ, ESCA and UCS; 0.85 against
+  hypermutated proficient tumours.
+- **Exon by exon.** The per-exon shifts replicate (ρ 0.51), and so do the direction rule and the
+  branch-point relation.
+
+<img src="results/figures/subtype/U19_msi_code_specificity.png" width="820" alt="U19: share of repeat exons more included in MSI by branch-point distance, the adjusted correlations for MSI and for control contrasts, and AUROC of score A and score G in the three cohorts">
+
+**U19.** The code is about the branch point and about mismatch repair (D-65, D-67).
+- **Beyond the run.** The branch point adds beyond the run's own extent.
+- **Controls.** Exons without a tract show no relation, and neither do POLE or CIN-vs-GS
+  contrasts.
+- **The switch** sits near 30 nt from the AG (exploratory).
+- **Endometrium.** Score G separates UCEC MSI at 0.84, where score A gave 0.51; in-sample for the
+  rule.
+
 [U10 caption](results/figures/subtype/U10_msi_repeats.caption.md) ·
 [U11 caption](results/figures/subtype/U11_msi_long_tracts.caption.md) ·
 [U16 caption](results/figures/subtype/U16_msi_deletion_load.caption.md) ·
 [U17 caption](results/figures/subtype/U17_msi_branchpoint.caption.md) ·
+[U18 caption](results/figures/subtype/U18_msi_code_pancancer.caption.md) ·
+[U19 caption](results/figures/subtype/U19_msi_code_specificity.caption.md) ·
 [§11](results/SUBTYPE.md#11-the-msi-splicing-marks-are-written-in-the-genome-acceptor-poly-t-repeats)
 
 #### 9. Breast cancer with DNA: two HER2s, splice-site mutations, and what the pair check removed

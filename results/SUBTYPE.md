@@ -78,6 +78,21 @@ only for tracts at the acceptor, and the same exons move in all three organs. Th
 replicated only in part on alternative 3′ splice sites, and the mechanism we wrote down for it
 did not hold (§11).
 
+Followed further, with each step written down before it was computed, the reversal has a cause in
+the sequence, and the cause makes a test. Where the branch point lies far from the AG, a repeat
+exon gains inclusion in MSI. Where it lies close, the exon is skipped. The relation holds beyond
+the run's own extent, is absent from exons without a tract, and is absent from
+mismatch-repair-proficient contrasts. A two-part code follows: runs of 10–19 nt fall; runs ≥ 20 nt
+with a distant branch point rise.
+- **Endometrium.** The code separates endometrial MSI (AUROC 0.84, against 0.51 for the one-sided
+  score). The rule was partly read from these cohorts, so that figure is in-sample.
+- **Thirty cancers never used.** Unchanged and unfitted, the code finds the 50 tumours that
+  carry a DNA signature of mismatch-repair deficiency among 7,685: AUROC 0.83. It does so without
+  the gastrointestinal and uterine relatives (0.81), and against hypermutated proficient tumours
+  (0.85). There, the one-sided score fails (0.55).
+- **The exons and the dose.** The same exons move (ρ 0.51), and within those 50 tumours the
+  signal deepens with the deletion count (§11).
+
 A fourth follow-up brings DNA into breast cancer (§12). Splicing reads HER2 without the amplicon.
 It separates ERBB2-amplified luminal tumours about as well as expression does, and setting the
 amplicon's inputs to their mean leaves it unchanged, while expression loses 0.03. An apparent lead
@@ -128,7 +143,11 @@ transcription read on the other strand (§7).
     D-61 to D-64 fixed in advance): an exon whose branch point lies further from the AG gains
     inclusion in MSI, beyond its run length, in all three cancers (adjusted ρ 0.11–0.16). Deletion
     dose tracks the score in STAD only, and does not explain the weak endometrial score. No NMD
-    signature shows in gene expression. GTEx genotypes no variant inside the runs.
+    signature shows in gene expression. GTEx genotypes no variant inside the runs. The resulting
+    two-arm code (U18–U19; D-65 to D-67 fixed in advance) is specific to the branch point and to
+    mismatch repair. It finds MMR-deficient tumours in 30 cancers never used (AUROC 0.83 against
+    0.55 for the one-sided score; 0.85 against hypermutated proficient tumours), and it separates
+    endometrial MSI (0.84, in-sample for the rule).
 11. **BRCA with DNA** (U12–U15; D-57 to D-60 fixed in advance): the AS ensemble separates
     ERBB2-amplified luminal tumours about as well as GEX (0.81 against 0.75 without the ABSOLUTE
     ceiling; HU2 not resolved, and no gap on the 15 newly amplified tumours), and not through the
@@ -841,6 +860,85 @@ sQTL pairs in transverse colon, stomach and uterus contain no variant of any kin
 (`followup/germline/variant_coverage.csv`). That call set does not genotype long homopolymers.
 The test needs one that does, for instance from long reads or a repeat genotyper.
 
+### The sequence code: specificity, endometrium and thirty other cancers (D-65 to D-67, U18, U19)
+
+D-63 suggested a code: whether an MSI repeat exon falls or rises depends on its tract length and
+on where its branch point lies. Three sets of tests, written down before any was computed, asked
+whether that code is specific and whether it travels (`results/subtype/msi_cis/code/`).
+- **Runs of 10–19 nt fall.** These are R_down.
+- **Runs ≥ 20 nt rise when the branch point lies ≥ 36 nt from the AG.** These are R_up. 36 nt is
+  the first tertile of that distance, a label-blind cut.
+- **Score G** reads both arms against matched background exons. Score A, D-52's, reads every
+  repeat exon as falling.
+
+![U19](figures/subtype/U19_msi_code_specificity.png)
+
+**It is the branch point, and it is mismatch repair** (D-65; BS1–BS4 supported, family BS).
+- **Beyond the run.** The distance from the run's far end to the branch point adds beyond the run
+  itself: ρ = 0.12, q = 0.001 (BS1). This answers the caveat of D-63.
+- **No tract, no effect.** Exons without a tract (acceptor T-run ≤ 5, 22,100 exons) show no
+  relation between branch-point distance and MSI shift (ρ = −0.000, against 0.156; BS2).
+- **Not in proficient tumours.** The relation is absent from contrasts that are hypermutated or
+  aneuploid but mismatch-repair proficient:
+  - POLE against the rest in UCEC: ρ 0.03, against 0.11 for MSI (q = 0.012; BS3);
+  - CIN against GS in STAD: ρ −0.09, against 0.16 (q = 0.001; BS4).
+- **The switch** (exploratory, U19a). It lies near 30 nt. Of exons with runs ≥ 20 and a branch
+  point 20–29 nt from the AG, 13% (3 of 24) move up in MSI. From 30–39 nt, 73% move up. For runs of
+  10–19 the share is 28–30% below 30 nt and 35–51% beyond.
+- **A reading** (interpretation). A contraction that brings a distant branch point toward the AG
+  helps. One that squeezes an already close branch point, below the space U2AF needs, harms.
+
+**Endometrium** (D-67; EG1–EG2 supported, family EG). Score G separates UCEC MSI tumours from the
+rest with AUROC 0.84, where score A gave 0.51 (difference +0.33, bootstrap 95% CI 0.21 to 0.45).
+- **The two arms cancelled.** The falling arm alone gives 0.60 and the rising arm 0.77 in the
+  opposite direction. Score A read both as falling, so in UCEC they cancelled.
+- **In-sample.** The rule was read partly from these three cohorts (D-53, U17b), so this is
+  in-sample at the level of the rule. Score G reaches 0.96 in STAD and COAD (exploratory). The
+  out-of-sample test is below.
+
+![U18](figures/subtype/U18_msi_code_pancancer.png)
+
+**Thirty cancers never used** (D-66; PC2–PC8 supported, PC1 not resolved, family PC).
+- **The tumours.** One per patient in the 30 other TCGA projects of the pan-cancer SE matrix with
+  MC3 calls: 7,685.
+- **The DNA truth.** Mismatch-repair deficient (MMR-deficient) means ≥ 10 MC3 homopolymer
+  deletions, a cut fixed from the three cohorts (129 of 129 MSI tumours against 2 of 571 others).
+  50 tumours qualify:
+  - BRCA 11, CESC 8, HNSC 5, PRAD 4, ACC 3, LUSC 3;
+  - one or two in each of ten more cancers.
+- **The scores.** Neither was re-fitted; each was computed and ranked within each cancer.
+- **Detection.** Score G is lower in MMR-deficient tumours: pooled AUROC 0.83 (PC2), against 0.55
+  for score A (PC1, not resolved). The difference is +0.28 (PC3).
+- **Organ independence.** Without READ, ESCA and UCS, the tissue relatives of the training cohorts,
+  the AUROC is 0.81 (PC4).
+- **Mismatch repair, not mutation burden.** Against 408 hypermutated proficient tumours, mostly
+  lung, bladder, skin and head-and-neck, it is 0.85 (PC5).
+- **Exon by exon.** The per-exon shifts in the 30 cancers follow the three cohorts' (ρ = 0.51 over
+  1,753 repeat exons; PC6). R_up exons rise more than R_down exons (AUROC 0.70; PC7). The
+  branch-point relation holds after adjustment (ρ = 0.10; PC8).
+- **Per cancer** (exploratory). Among the cancers with ≥ 3 MMR-deficient tumours, score G gives
+  0.65 (PRAD) to 0.93 (CESC); score A gives 0.40–0.72.
+- **The arms** (A-15, exploratory). The rising arm carries more of the signal (0.73) than the
+  falling arm (0.61).
+- **Dose** (exploratory). Within the 50 MMR-deficient tumours, score G falls further as the
+  deletion count rises: partial ρ = −0.47 given purity, p = 0.0008. STAD showed the same in D-61.
+
+**Reading.** Mismatch-repair deficiency changes splicing by a rule written in the reference genome,
+not by a tissue programme (interpretation).
+- **The rule.** Tract length and branch-point distance say, exon by exon, which way an exon moves.
+- **The test.** Read in RNA, the rule finds MMR-deficient tumours in organs never used to define
+  it, and it does not mistake mutation burden for mismatch-repair deficiency.
+- **Why the earlier score failed.** It assumed every repeat exon falls. The long tracts with
+  distant branch points rise, which cancelled the signal in endometrium and in the 30 other
+  cancers.
+
+**What this does not show.**
+- **The DNA truth is a proxy.** MC3 exome calls stand in for an MSI test, not a clinical one.
+- **No tract is observed.** No individual intronic tract is seen contracting (D-56 waits on the
+  BAM slices).
+- **Few tumours per cancer.** The per-cancer AUROCs rest on 3–11 MMR-deficient tumours each.
+- **Infiltration.** It was ruled out for score A (D-55), not yet for score G.
+
 ## 12. Breast cancer: what the subtype models read beyond the labels
 
 Three BRCA follow-ups, each fixed in [config/followup.yaml](../config/followup.yaml) before its
@@ -1025,6 +1123,13 @@ tumour–normal pairs could.
   contraction would remove it. For the reversal at ≥ 20 nt, a minigene shortening the CCNDBP1 or
   ANXA7 tract that raised inclusion would show the effect is real and cis; read counts split into
   junction and exon-body reads would show whether unspliced RNA contributes.
+- **An MSI call that is not from MC3.** D-66 takes mismatch-repair deficiency from exome
+  homopolymer deletions. Published MSI scores for TCGA (MANTIS or MSIsensor), or clinical MMR
+  immunohistochemistry, would show whether the 50 tumours are MSI-high by other means. A score G
+  that also followed those calls would remove the proxy caveat; one that did not would narrow
+  the claim to the deletion signature itself.
+- **Score G outside TCGA.** An RNA-seq cohort with MMR status (CPTAC, or cell lines with MLH1 or
+  MSH2 loss), quantified the same way, is the external test the code has not had.
 - **The MSI events in another cohort.** U7 was found and tested within TCGA (three cancers, one
   pipeline). The claim would weaken considerably if the events fail in an independent MSI cohort
   (e.g. CPTAC colon or endometrial, or a cell-line panel with known MMR status) processed through

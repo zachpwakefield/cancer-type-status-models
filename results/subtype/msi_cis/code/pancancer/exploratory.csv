@@ -1,0 +1,11 @@
+what,value,p,n
+"dose: partial Spearman(G percentile, log(1 + homopolymer deletions) | purity), MMR-deficient",-0.4702,0.0007455,49
+"AUROC A, all held-out",0.5472,,50
+"AUROC G, all held-out",0.8318,,50
+"AUROC A, without READ, ESCA, UCS",0.5125,,45
+"AUROC G, without READ, ESCA, UCS",0.814,,45
+"A-15: AUROC of the R_down arm against B, lower in MMR-deficient, all held-out",0.6106,,50
+"A-15: AUROC of the R_up arm against B, lower in MMR-deficient (below 0.5 = higher), all held-out",0.265,,50
+share of R_down exons more included in held-out MMR-deficient tumours,0.4586,,1583
+share of R_up exons more included in held-out MMR-deficient tumours,0.7259,,135
+MMR-deficient patients with an adjacent normal in the matrix,2,,50

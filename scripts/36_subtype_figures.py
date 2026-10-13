@@ -18,10 +18,12 @@ One question per figure, in the order the story is told in results/SUBTYPE.md:
     U15 does splicing's HER2 lead survive ERBB2 copy number without the ABSOLUTE ceiling (D-60)?
     U16 does more mismatch-repair damage mean more skipping of repeat exons (D-61)?
     U17 does the branch point's distance from the 3' splice site set the direction of the MSI shift (D-63)?
+    U18 does the sequence code find mismatch-repair-deficient tumours in 30 cancers never used (D-66)?
+    U19 is the code about the branch point, and about mismatch repair (D-65, D-67)?
 
 Reads results/subtype/summary/ (step 34), results/subtype/interpret/ (step 35),
 results/subtype/regulators/ (step 37), results/subtype/site_probe/ (step 38),
-results/subtype/msi_cis/ (steps 42, 50) and results/subtype/brca/ (steps 46-49). Every figure
+results/subtype/msi_cis/ (steps 42, 50, 51) and results/subtype/brca/ (steps 46-49). Every figure
 is SVG + PDF + 400-dpi PNG with `<stem>.csv` of the plotted values and `<stem>.caption.md`.
 Usage: python scripts/36_subtype_figures.py [U1 U3 ...]        (default: all)
 """
@@ -1740,12 +1742,263 @@ it; these tests cannot separate the two. The branch point is a motif call, not a
 (4 tests)."""
 
 
+# ============================================================ MSI sequence code (D-65..D-67)
+CODE_DIR = MSI_DIR / "code"
+
+
+def U18() -> None:
+    pr = pd.read_csv(CODE_DIR / "pancancer" / "predictions.csv").set_index("id")
+    per = pd.read_csv(CODE_DIR / "pancancer" / "by_cancer.csv")
+    exo = pd.read_csv(CODE_DIR / "pancancer" / "exploratory.csv").set_index("what")
+    el = pd.read_csv(CODE_DIR / "pancancer" / "exon_shifts_R.csv")
+    sc = pd.read_parquet(MSI_LOCAL / "pancancer_scores.parquet")
+    step = _step("51_msi_code.py")
+    mm = sc.mmr.to_numpy()
+    fig = plt.figure(figsize=(DOUBLE, 2.45))
+    gs = fig.add_gridspec(1, 3, width_ratios=[1.25, 1.0, 1.0], wspace=0.62)
+    rows, local = [], []
+    # a. AUROC of score A and score G, per cancer and pooled
+    ax = fig.add_subplot(gs[0])
+    big = per[per.mmr_deficient >= 3].sort_values("mmr_deficient", ascending=False)
+    k_rel = ~sc.project.isin(step.RELATIVES).to_numpy()
+    hy = sc.hyper.to_numpy()
+    sel = mm | hy
+    pooled = [("all 30 cancers", step.auc_lower(sc.pct_A.to_numpy(), mm), step.auc_lower(sc.pct_G.to_numpy(), mm),
+               int(mm.sum()), "PC1, PC2"),
+              ("without READ, ESCA, UCS", step.auc_lower(sc.pct_A.to_numpy()[k_rel], mm[k_rel]),
+               step.auc_lower(sc.pct_G.to_numpy()[k_rel], mm[k_rel]), int((mm & k_rel).sum()), "PC4"),
+              ("vs hypermutated proficient", step.auc_lower(sc.pct_A.to_numpy()[sel], mm[sel]),
+               step.auc_lower(sc.pct_G.to_numpy()[sel], mm[sel]), int(mm.sum()), "PC5")]
+    labels = []
+    for i, (lab, a_, g_, n, pid) in enumerate(pooled):
+        ax.plot([a_, g_], [i, i], color=GRID, linewidth=1.2, zorder=1)
+        ax.scatter(a_, i, s=16, facecolor="white", edgecolor=INK2, linewidth=0.7, zorder=2)
+        ax.scatter(g_, i, s=16, color=ACCENT, zorder=3)
+        labels.append(f"{lab} ({n})")
+        rows.append({"panel": "a", "set": lab, "n_mmr_deficient": n, "auroc_A": a_, "auroc_G": g_, "tests": pid})
+    off = len(pooled) + 0.6
+    for j, r in enumerate(big.itertuples()):
+        y = off + j
+        ax.plot([r.auroc_A, r.auroc_G], [y, y], color=GRID, linewidth=1.2, zorder=1)
+        ax.scatter(r.auroc_A, y, s=12, facecolor="white", edgecolor=INK2, linewidth=0.6, zorder=2)
+        ax.scatter(r.auroc_G, y, s=12, color=ACCENT, zorder=3)
+        labels.append(f"{r.project} ({r.mmr_deficient} of {r.tumours})")
+        rows.append({"panel": "a", "set": r.project, "n_mmr_deficient": r.mmr_deficient, "n_tumours": r.tumours,
+                     "auroc_A": r.auroc_A, "auroc_G": r.auroc_G, "tests": "exploratory"})
+    ys = list(range(len(pooled))) + [off + j for j in range(len(big))]
+    ax.axvline(0.5, color=MUTED, linewidth=0.6, linestyle=(0, (3, 2)), zorder=0)
+    rows.append({"panel": "a", "set": "reference line", "auroc_A": 0.5, "auroc_G": 0.5})
+    ax.set_yticks(ys)
+    ax.set_yticklabels(labels, fontsize=5.5)
+    ax.set_ylim(max(ys) + 0.6, -0.6)
+    ax.tick_params(axis="y", length=0)
+    ax.spines["left"].set_visible(False)
+    ax.set_xlim(0.35, 1.0)
+    ax.set_xlabel("AUROC, MMR-deficient lower", fontsize=6)
+    from matplotlib.lines import Line2D
+    ax.legend(handles=[Line2D([], [], marker="o", linestyle="", markersize=3.5, markerfacecolor="white",
+                              markeredgecolor=INK2, label="score A (D-52)"),
+                       Line2D([], [], marker="o", linestyle="", markersize=3.5, color=ACCENT, label="score G")],
+              loc="lower center", bbox_to_anchor=(0.5, 1.0), ncol=2, fontsize=5.2, handletextpad=0.2,
+              borderaxespad=0.1, columnspacing=0.8)
+    # b. exon shifts in held-out cancers against the three training cohorts
+    bx = fig.add_subplot(gs[1])
+    down, up, _ = step.arms(el.acc_T.to_numpy(), el.d_bp.to_numpy())
+    v = el.dropna(subset=["train_delta_adj"])
+    dn, upv = step.arms(v.acc_T.to_numpy(), v.d_bp.to_numpy())[:2]
+    other = ~(dn | upv)
+    for k, col, lab, z, s_ in [(other, GRID, None, 1, 3), (dn, MUTED, "runs 10–19", 2, 3),
+                               (upv, ACCENT, "runs ≥ 20, bp ≥ 36 nt", 3, 5)]:
+        bx.scatter(v.train_delta_adj[k], v.delta_adj[k], s=s_, color=col, linewidths=0, alpha=0.8, zorder=z, label=lab)
+    rows += [{"panel": "b", "set": "exon", "feature_id": r.feature_id, "symbol": r.symbol, "acc_T": r.acc_T,
+              "d_bp": r.d_bp, "train_delta_adj": r.train_delta_adj, "heldout_delta_adj": r.delta_adj}
+             for r in v.itertuples()]
+    bx.axhline(0, color=INK2, linewidth=0.5, zorder=0)
+    bx.axvline(0, color=INK2, linewidth=0.5, zorder=0)
+    rows += [{"panel": "b", "set": "reference line", "train_delta_adj": 0.0}, {"panel": "b", "set": "reference line",
+                                                                                "heldout_delta_adj": 0.0}]
+    bx.text(0.03, 0.97, f"ρ = {pr.loc['PC6'].effect:.2f}", transform=bx.transAxes, ha="left", va="top", fontsize=5.6)
+    bx.set_xlabel("MSI shift, UCEC + STAD + COAD", fontsize=6)
+    bx.set_ylabel("MMR-deficient shift, 30 other cancers", fontsize=6)
+    bx.legend(loc="lower right", bbox_to_anchor=(1.13, 0.0), fontsize=5.0, handletextpad=0.1, borderaxespad=0.1,
+              markerscale=1.6)
+    # c. dose within MMR-deficient tumours of the held-out cancers
+    cx = fig.add_subplot(gs[2])
+    m_ = sc[sc.mmr]
+    cx.scatter(np.log1p(m_.n_hp), m_.pct_G, s=9, color=ACCENT, alpha=0.8, linewidths=0)
+    local.append(m_[["project", "n_hp", "pct_G", "purity"]])
+    d = exo.loc["dose: partial Spearman(G percentile, log(1 + homopolymer deletions) | purity), MMR-deficient"]
+    cx.text(0.97, 0.97, f"ρ = {signed(d.value, 2)}\np = {fp(d.p)}", transform=cx.transAxes, ha="right", va="top", fontsize=5.6)
+    rows.append({"panel": "c", "set": "partial Spearman | purity (exploratory)", "value": d.value, "p": d.p, "n": int(d.n)})
+    cx.set_xticks(np.log1p([10, 30, 100, 300, 1000]))
+    cx.set_xticklabels(["10", "30", "100", "300", "1000"], fontsize=5.6)
+    cx.set_xlabel("homopolymer deletions", fontsize=6)
+    cx.set_ylabel("score G, percentile in its cancer", fontsize=6)
+    cx.set_ylim(-0.02, 1.02)
+    for a_, lab, x in [(ax, "a", -0.95), (bx, "b", -0.36), (cx, "c", -0.36)]:
+        a_.text(x, 1.04, lab, transform=a_.transAxes, fontsize=8, fontweight="bold")
+    for r in pr.reset_index().itertuples(index=False):
+        rows.append({"panel": "tests", "set": r.id, "value": r.effect, "p": r.p, "q": r.q,
+                     "q_family": "PC (msi_code_pancancer, 8 tests)", "tests": r.verdict})
+    save(fig, OUT, "U18_msi_code_pancancer", data=pd.DataFrame(rows), caption=CAPTIONS["U18"](pr, per, exo, sc),
+         local_data=(SCFG.base_data_dir / "figure_data", pd.concat(local, ignore_index=True)))
+
+
+def _cap_u18(pr, per, exo, sc):
+    big = per[per.mmr_deficient >= 3]
+    a15 = exo.loc[[i for i in exo.index if i.startswith("A-15")], "value"]
+    return f"""**Does the sequence code find mismatch-repair-deficient tumours in 30 cancers never used to define it?**
+
+Pre-specified (config/followup.yaml: msi_code_pancancer, D-66) before any tumour outside UCEC, STAD and COAD was read for
+MSI. Tumours: one per patient in the 30 other TCGA projects of the pan-cancer SE matrix, with MC3 calls ({len(sc):,}).
+Mismatch-repair deficient (MMR-deficient) = ≥ 10 MC3 homopolymer deletions, the D-61 count; in the three training
+cohorts that cut separates MSI from the rest almost perfectly (129 of 129 against 2 of 571). {int(sc.mmr.sum())} tumours
+qualify. Hypermutated proficient = fewer than 10 such deletions and ≥ 500 SNVs ({int(sc.hyper.sum())}). Score A = D-52's
+repeat-exon score; score G = the code: exons after a T-run of 10–19 nt (R_down, read as falling) against exons after a
+run ≥ 20 nt whose branch point lies ≥ 36 nt from the AG (R_up, read as rising), each against matched background exons.
+Neither score was re-fitted; each was computed within each cancer and ranked there.
+
+a, AUROC for MMR-deficient tumours scoring lower (score A hollow, G filled): pooled over the 30 cancers, without the
+three tissue relatives of the training cohorts, against hypermutated proficient tumours only, and per cancer with ≥ 3
+MMR-deficient tumours (MMR-deficient of all tumours in brackets). b, per-exon shift (MMR-deficient minus the rest,
+background-adjusted percentile) in the 30 cancers against the mean MSI shift of the three training cohorts; R exons
+measured in both (grey = R_down, blue = R_up, light grey = runs ≥ 20 in neither arm). c, MMR-deficient tumours of the 30 cancers: score G percentile against their homopolymer deletions
+(exploratory).
+
+- PC1, score A: AUROC {pr.loc['PC1'].effect + 0.5:.2f}, q = {fp(pr.loc['PC1'].q)}, not resolved.
+- PC2, score G: AUROC {pr.loc['PC2'].effect + 0.5:.2f}, q = {fp(pr.loc['PC2'].q)}, supported; PC3, G ahead of A by
+  {pr.loc['PC3'].effect:.2f}, supported.
+- PC4, without READ, ESCA and UCS: {pr.loc['PC4'].effect + 0.5:.2f}; PC5, against hypermutated proficient tumours:
+  {pr.loc['PC5'].effect + 0.5:.2f}. Both supported: the code reads mismatch-repair deficiency, not mutation burden.
+- PC6, exon shifts replicate: ρ = {pr.loc['PC6'].effect:.2f} over {pr.loc['PC6'].n}; PC7, R_up exons rise more
+  than R_down exons: AUROC {pr.loc['PC7'].effect + 0.5:.2f}; PC8, the branch-point distance, adjusted:
+  ρ = {pr.loc['PC8'].effect:.2f}. All supported.
+- Per cancer (exploratory, {len(big)} cancers): score G {big.auroc_G.min():.2f}–{big.auroc_G.max():.2f}, score A
+  {big.auroc_A.min():.2f}–{big.auroc_A.max():.2f}. By arm (A-15, exploratory): R_down {a15.iloc[0]:.2f}, R_up
+  {1 - a15.iloc[1]:.2f} (higher in MMR-deficient).
+
+The DNA call is a proxy from exome calls, not a clinical MSI test. q over family PC (8 tests). Per-tumour values are
+kept locally (D-12)."""
+
+
+def U19() -> None:
+    sp = pd.read_csv(CODE_DIR / "specificity" / "predictions.csv").set_index("id")
+    sx = pd.read_csv(CODE_DIR / "specificity" / "exploratory.csv")
+    eg = pd.read_csv(CODE_DIR / "endometrium" / "predictions.csv").set_index("id")
+    ee = pd.read_csv(CODE_DIR / "endometrium" / "exploratory.csv")
+    bp = pd.read_csv(FU_DIR / "branch" / "predictions.csv").set_index("id")
+    fig = plt.figure(figsize=(DOUBLE * 0.95, 2.3))
+    gs = fig.add_gridspec(1, 3, width_ratios=[1.1, 0.95, 0.75], wspace=0.95)
+    rows = []
+    # a. share of R exons more included in MSI, by 10-nt branch-point bins
+    ax = fig.add_subplot(gs[0])
+    b = sx[sx.what.eq("share up by 10-nt d_bp bin, mean over >= 2 cohorts")]
+    for cls, col, mk in [("10-19", INK2, "o"), (">=20", ACCENT, "s")]:
+        v = b[b.run_class.eq(cls)]
+        x = v.bin.str.split("-").str[0].astype(int) + 5
+        ax.plot(x, v.share_up, color=col, linewidth=0.8, marker=mk, ms=3, mec="white", mew=0.3,
+                label="T-run 10–19" if cls == "10-19" else "T-run ≥ 20")
+        rows += [{"panel": "a", "set": f"T-run {cls}", "d_bp_bin": r.bin, "n": int(r.n), "share_up": r.share_up}
+                 for r in v.itertuples()]
+    ax.axhline(0.5, color=MUTED, linewidth=0.6, linestyle=(0, (3, 2)), zorder=0)
+    ax.axvline(36, color=GRID, linewidth=0.8, zorder=0)
+    rows += [{"panel": "a", "set": "reference line", "share_up": 0.5}, {"panel": "a", "set": "rule cut", "d_bp_bin": "36"}]
+    ax.set_xlabel("branch point to 3′ss (nt)", fontsize=6)
+    ax.set_ylabel("share more included in MSI", fontsize=6)
+    ax.set_xlim(10, 100)
+    ax.set_ylim(0, 0.9)
+    ax.legend(loc="lower right", fontsize=5.2, handlelength=1.4, borderaxespad=0.1)
+    # b. adjusted rho of the shift with the branch-point distance, MSI and controls
+    bx = fig.add_subplot(gs[1])
+    def num(txt, key):
+        return float(txt.split(key)[1].split(")")[0].split(",")[0].split(";")[0])
+    sets = [("R exons, MSI", bp.loc["BP4"].effect, ACCENT, "BP4"),
+            ("B exons, MSI", num(sp.loc["BS2"].n, "B 22,100 (rho "), INK2, "BS2"),
+            ("UCEC MSI", num(sp.loc["BS3"].n, "MSI rho "), ACCENT, "BS3"),
+            ("UCEC POLE", num(sp.loc["BS3"].n, "POLE vs rest rho "), INK2, "BS3"),
+            ("STAD MSI", num(sp.loc["BS4"].n, "MSI rho "), ACCENT, "BS4"),
+            ("STAD CIN vs GS", num(sp.loc["BS4"].n, "CIN vs GS rho "), INK2, "BS4")]
+    for i, (lab, v, col, pid) in enumerate(sets):
+        y = i + (i // 2) * 0.5
+        bx.scatter(v, y, s=16, color=col, zorder=3)
+        rows.append({"panel": "b", "set": lab, "rho": v, "test": pid})
+        if i % 2 == 1:
+            t = sp.loc[pid]
+            bx.text(0.235, y - 0.5, f"p = {fp(t.p)}", va="center", fontsize=5.2)
+            rows.append({"panel": "b", "set": f"{pid}: difference", "rho": t.effect, "p": t.p, "q": t.q,
+                         "q_family": "BS (msi_code_specificity, 4 tests)", "test": t.verdict})
+    bx.axvline(0, color=INK2, linewidth=0.6)
+    rows.append({"panel": "b", "set": "reference line", "rho": 0.0})
+    yt = [i + (i // 2) * 0.5 for i in range(len(sets))]
+    bx.set_yticks(yt)
+    bx.set_yticklabels([s_[0] for s_ in sets], fontsize=5.5)
+    bx.set_ylim(max(yt) + 0.6, -0.6)
+    bx.set_xlim(-0.12, 0.22)
+    bx.set_xticks([-0.1, 0, 0.1, 0.2])
+    bx.tick_params(axis="y", length=0)
+    bx.spines["left"].set_visible(False)
+    bx.set_xlabel("adjusted ρ with branch-point distance", fontsize=6)
+    # c. AUROC of score A and score G, MSI against the rest, in the three cohorts
+    cx = fig.add_subplot(gs[2])
+    coh = ["UCEC_TCGA", "STAD_TCGA", "COAD_TCGA"]
+    for i, c in enumerate(coh):
+        v = ee[ee.cohort.eq(c)].set_index("what")
+        a_ = v.loc["AUROC(score lower in MSI than the rest), A", "value"]
+        g_ = v.loc["AUROC(score lower in MSI than the rest), G", "value"]
+        cx.plot([0, 1], [a_, g_], color=COH_STYLE[c][0], linewidth=0.8, marker=COH_STYLE[c][1], ms=3.5, mec="white",
+                mew=0.3, label=_short(c))
+        rows.append({"panel": "c", "set": c, "auroc_A": a_, "auroc_G": g_,
+                     "test": "EG1, EG2" if c == "UCEC_TCGA" else "in-sample for the rule (exploratory)"})
+    cx.axhline(0.5, color=MUTED, linewidth=0.6, linestyle=(0, (3, 2)), zorder=0)
+    cx.set_xticks([0, 1])
+    cx.set_xticklabels(["score A", "score G"], fontsize=5.8)
+    cx.set_xlim(-0.3, 1.3)
+    cx.set_ylim(0.4, 1.0)
+    cx.set_ylabel("AUROC, MSI lower", fontsize=6)
+    cx.legend(loc="upper left", fontsize=5.2, handlelength=1.4, borderaxespad=0.1)
+    for a_, lab, x in [(ax, "a", -0.3), (bx, "b", -0.62), (cx, "c", -0.5)]:
+        a_.text(x, 1.04, lab, transform=a_.transAxes, fontsize=8, fontweight="bold")
+    save(fig, OUT, "U19_msi_code_specificity", data=pd.DataFrame(rows), caption=CAPTIONS["U19"](sp, eg, ee, sx))
+
+
+def _cap_u19(sp, eg, ee, sx):
+    b = sx[sx.what.eq("share up by 10-nt d_bp bin, mean over >= 2 cohorts")].set_index(["run_class", "bin"])
+    return f"""**Is the code about the branch point, and about mismatch repair?**
+
+Pre-specified (config/followup.yaml: msi_code_specificity, D-65; msi_code_endometrium, D-67). Exon shift = D-52's
+background-adjusted difference in inclusion percentile. Adjusted ρ = D-63's: shift and branch-point distance
+rank-residualised on run-length bins and mean inclusion.
+
+a, exploratory: share of repeat exons more included in MSI (mean over ≥ 2 of the three cancers), by 10-nt bins of
+branch-point distance, bins with ≥ 10 exons; grey line = the rule's 36-nt cut for runs ≥ 20. Exons whose branch point
+lies within 30 nt of the AG move up rarely ({b.loc[('>=20', '20-29')].share_up:.2f} of runs ≥ 20 at 20–29 nt, n =
+{int(b.loc[('>=20', '20-29')].n)}; {b.loc[('10-19', '20-29')].share_up:.2f} of runs 10–19); from 30–39 nt
+{b.loc[('>=20', '30-39')].share_up:.2f} and {b.loc[('10-19', '30-39')].share_up:.2f}. b, adjusted ρ for MSI (blue) and
+the matching control (grey): repeat exons (R, acceptor T-run ≥ 10) and exons without a tract (B, ≤ 5) measured in ≥ 2
+cancers; UCEC MSI and POLE, each against the rest; STAD MSI against the rest and CIN against GS. p = the test of the
+difference. c, AUROC of score A and score G for MSI against the rest.
+
+- BS1, the distance from the run's far end to the branch point adds beyond the run: ρ = {sp.loc['BS1'].effect:.3f},
+  q = {fp(sp.loc['BS1'].q)}, supported.
+- BS2, exons without a tract (acceptor T-run ≤ 5) show no such relation: R minus B {signed(sp.loc['BS2'].effect, 3)},
+  q = {fp(sp.loc['BS2'].q)}, supported.
+- BS3, POLE (hypermutated, mismatch-repair proficient) against MSI in UCEC: difference
+  {signed(sp.loc['BS3'].effect, 3)}, q = {fp(sp.loc['BS3'].q)}, supported. BS4, CIN against GS in STAD:
+  {signed(sp.loc['BS4'].effect, 3)}, q = {fp(sp.loc['BS4'].q)}, supported.
+- EG1, score G separates UCEC MSI: AUROC {eg.loc['EG1'].effect + 0.5:.2f}, q = {fp(eg.loc['EG1'].q)}; EG2, ahead of
+  score A ({eg.loc['EG2'].effect:+.2f}), q = {fp(eg.loc['EG2'].q)}. Both supported.
+
+The rule behind score G was read from these three cohorts (D-53 and U17b), so c is in-sample for the rule, and its STAD
+and COAD values are exploratory; U18 is the out-of-sample test. q over families BS (4 tests) and EG (2 tests)."""
+
+
 CAPTIONS = {k: (lambda f: (lambda *a: tidy(f(*a))))(f) for k, f in
             {"U1": _cap_u1, "U2": _cap_u2, "U3": _cap_u3, "U4": _cap_u4, "U5": _cap_u5, "U6": _cap_u6,
              "U7": _cap_u7, "U8": _cap_u8, "U9": _cap_u9,
              "U10": _cap_u10, "U11": _cap_u11, "U12": _cap_u12, "U13": _cap_u13, "U14": _cap_u14, "U15": _cap_u15,
-             "U16": _cap_u16, "U17": _cap_u17}.items()}
+             "U16": _cap_u16, "U17": _cap_u17, "U18": _cap_u18, "U19": _cap_u19}.items()}
 
 if __name__ == "__main__":
     run({"U1": U1, "U2": U2, "U3": U3, "U4": U4, "U5": U5, "U6": U6, "U7": U7, "U8": U8, "U9": U9, "U10": U10, "U11": U11,
-         "U12": U12, "U13": U13, "U14": U14, "U15": U15, "U16": U16, "U17": U17})
+         "U12": U12, "U13": U13, "U14": U14, "U15": U15, "U16": U16, "U17": U17,
+         "U18": U18, "U19": U19})

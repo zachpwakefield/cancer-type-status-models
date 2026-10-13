@@ -82,6 +82,15 @@ def save_predictions(pr: pd.DataFrame, sub: str) -> None:
 
 # ---------------------------------------------------------------- geometry (label-blind)
 
+def find_bp(rev: str, start: int, stop: int = 100) -> float:
+    """Nearest yUnAy branch-point A at positions start..stop (rev: index 0 = position 1)."""
+    for p in range(start, min(stop, len(rev) - 3) + 1):
+        # position p is the A; p+1 lies 1 nt 5' of it, p-1 1 nt 3' of it (toward the 3'ss)
+        if rev[p - 1] == "A" and rev[p + 1] == "T" and rev[p + 2] in "CT" and rev[p - 2] in "CT":
+            return p
+    return np.nan
+
+
 def run_geometry(rev: str) -> dict:
     """rev: intron bases in position order (index 0 = position 1). Longest T-run overlapping 1..50
     (ties: nearest the 3'ss), and the nearest yUnAy branch-point A upstream of it within 100."""
@@ -93,12 +102,7 @@ def run_geometry(rev: str) -> dict:
     if best is None:
         return {}
     s, e = best
-    bp = np.nan
-    for p in range(e + 1, min(100, len(rev) - 3) + 1):
-        # position p is the A; p+1 lies 1 nt 5' of it, p-1 1 nt 3' of it (toward the 3'ss)
-        if rev[p - 1] == "A" and rev[p + 1] == "T" and rev[p + 2] in "CT" and rev[p - 2] in "CT":
-            bp = p
-            break
+    bp = find_bp(rev, e + 1)
     alu = any(k in rev[e:e + 300][::-1] for k in ALU)       # 5'->3' sense sequence upstream of the run
     return {"run_near": s, "run_far": e, "run_len": e - s + 1, "d_run": e, "d_bp": bp, "alu_kmer": alu}
 

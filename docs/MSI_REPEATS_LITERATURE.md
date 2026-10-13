@@ -148,6 +148,9 @@ already pre-specified)*
 - Compare the genome-only score with MSIsensor-RNA in TCGA, then in a cohort processed elsewhere
   (CPTAC colon or endometrial).
 - Its value would be transparency and organ-independence, not raw accuracy.
+- *Status (D-66, done within TCGA):* the two-arm sequence code finds MMR-deficient tumours, called
+  from MC3 homopolymer deletions, in 30 cancers never used to define it (AUROC 0.83; 0.85 against
+  hypermutated proficient tumours). An external cohort and a non-MC3 MSI call are still to come.
 
 **Start with Q1 and Q5:** both use only local data, and Q1 directly tests the endometrium
 explanation. **Q2 and Q3 each need one small download**, which would be stated and approved first.

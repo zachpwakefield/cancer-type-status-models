@@ -1,0 +1,3 @@
+id,what,effect,predicted_sign,p,n,q,verdict
+EG1,UCEC_TCGA: AUROC(G lower in MSI than the rest) - 0.5,0.3439321674615792,1,1.4033904460891221e-09,"MSI 34, rest 111",2.8067808921782442e-09,supported
+EG2,UCEC_TCGA: AUROC(G) - AUROC(A),0.33333333333333326,1,0.0005,"AUROC G 0.844, A 0.511; 95% CI of the difference 0.206 to 0.450",0.0005,supported
