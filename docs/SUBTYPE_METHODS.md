@@ -4,7 +4,7 @@ The third task of the repository: **within one cancer, which subtype is a primar
 modelled, like the other two, independently in each of the nine views (AFE, ALE, HIT, SE, A5SS,
 A3SS, MXE, RI, GEX). Decisions are numbered from D-30 (D-48..D-51, which span the three tasks, are in
 [ACROSS_TASKS_METHODS.md](ACROSS_TASKS_METHODS.md), as is amendment A-8; D-52..D-56, the MSI-repeat
-follow-up, and D-57..D-60, the BRCA follow-up, D-61..D-64, the MSI follow-up, and D-65..D-67, the MSI sequence code, are here; D-01..D-12 are in
+follow-up, and D-57..D-60, the BRCA follow-up, D-61..D-64, the MSI follow-up, and D-65..D-69, the MSI sequence code, are here; D-01..D-12 are in
 [DECISIONS.md](DECISIONS.md), D-13..D-29 in [BIOLOGY_METHODS.md](BIOLOGY_METHODS.md)). Values live
 in [config/subtype.yaml](../config/subtype.yaml); this file explains them.
 
@@ -541,6 +541,19 @@ mismatch-repair-deficient tumours in organs never used to define it.
     proficient tumours).
   - Tested on the exons: replication of the exon shifts and of the direction rule.
 - **D-67, endometrium (EG1–EG2).** Does score G separate UCEC MSI, where score A could not?
+
+### D-68 and D-69 The code against infiltration and against independent MSI calls · `config/followup.yaml` · `scripts/51`
+Written 2026-10-13, after D-65..D-67 and before either was computed.
+- **D-68, infiltration (IF1–IF6).** MSI tumours are heavily infiltrated, and D-55 ruled out
+  infiltration for score A only. Does score G keep its separation in the 30 held-out cancers, and
+  in the three cohorts, after stromal and immune expression, the retained-intron level (an
+  RNA-handling proxy) and, where called, ABSOLUTE purity? Is it kept within the less-infiltrated
+  half of each cancer?
+- **D-69, MSI calls not from MC3 (MC1–MC3).** D-66's DNA truth was a count of MC3 homopolymer
+  deletions. MANTIS (Bonneville et al. 2017) and MSIsensor call MSI from the exome reads by
+  different means. Does score G follow those calls in the 30 held-out cancers? D-69 runs only if
+  the user approves the download: per-sample attributes from the cBioPortal PanCancer Atlas
+  studies, about 20,000 records.
 
 ---
 

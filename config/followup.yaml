@@ -855,3 +855,60 @@ msi_code_endometrium:                    # D-67 · scripts/51_msi_code.py --only
     - id: EG2
       claim: UCEC_TCGA - AUROC(G) - AUROC(A) > 0; bootstrap of tumours within group (2,000, seed 0)
   exploratory: G in STAD_TCGA and COAD_TCGA (in-sample for the rule); G against POLE in UCEC
+
+# ---- MSI sequence code: infiltration and independent MSI calls, 2026-10-13 (after D-65..D-67) ----
+# Written before either was computed. Seen when written: everything of D-52..D-67, including the
+# per-tumour score G percentiles and MC3 counts of the 30 held-out cancers (PC1-PC8, A-15) and
+# D-55's infiltration result for score A. Not seen: any stromal, immune or RI covariate of a
+# held-out tumour; any score G adjusted for them; any MANTIS or MSIsensor value (D-69's data are
+# not downloaded; only cBioPortal's attribute metadata and record counts were read).
+# All tests two-sided; supported / against / not resolved by BH q < 0.05 within the named family.
+#
+# Covariates (D-55's definitions): stromal = mean log2 CPM of biology.yaml stromal_genes; immune =
+# the same for immune_genes; ri_mean = the tumour's mean RI PSI over the RI events finite in >= 80%
+# of its cancer's tumours (label-blind, as D-66's exon filter); purity = ABSOLUTE, call status
+# 'called'. In pooled models each covariate is a percentile within the tumour's cancer.
+
+msi_code_infiltration:                   # D-68 · scripts/51_msi_code.py --only infiltration
+  # Is score G an infiltration readout? MSI tumours are heavily infiltrated.
+  fdr_family: IF, the 6 tests IF1-IF6
+  predictions:
+    - id: IF1
+      claim: D-66 held-out tumours - OLS pct_G ~ mmr + C(project) + stromal + immune + ri_mean (HC3),
+             coefficient of mmr < 0
+    - id: IF2
+      claim: as IF1 with ABSOLUTE purity added, tumours with a called purity
+    - id: IF3
+      claim: D-66 held-out tumours in the lower half of their cancer's immune score - pooled AUROC(pct_G
+             lower in MMR-deficient) > 0.5
+    - id: IF4
+      claim: UCEC_TCGA - D-55's S2 model with score G in place of score A, OLS G ~ MSI + C(tss) +
+             stromal + immune + ri_mean (HC3; single-patient sites left out as A-10), coefficient of
+             MSI < 0
+    - id: IF5
+      claim: as IF4, STAD_TCGA
+    - id: IF6
+      claim: as IF4, COAD_TCGA
+  exploratory: the unadjusted coefficients beside IF1 and IF4-IF6 (share of the effect kept); the
+               AUROC of the immune score itself for MMR-deficient tumours; Spearman of each arm of G
+               with immune within non-MMR-deficient tumours; IF3 by cancer where >= 3 MMR-deficient
+
+msi_code_msi_calls:                      # D-69 · scripts/51_msi_code.py --only msicalls
+  # Only if the user approves the download. Does score G follow MSI calls that do not come from MC3?
+  data: cBioPortal TCGA PanCancer Atlas sample attributes MSI_SCORE_MANTIS (Bonneville et al. 2017)
+        and MSI_SENSOR_SCORE, 32 studies, matched by 15-character sample barcode
+  calls: MANTIS MSI-H above 0.6, MSS below 0.4, 0.4-0.6 left out; MSIsensor MSI-H above 10, MSS below
+         4, 4-10 left out (cBioPortal's suggested thresholds)
+  tumours: D-66's held-out tumours (30 projects, one per patient, with MC3 calls)
+  fdr_family: MC, the 3 tests MC1-MC3
+  predictions:
+    - id: MC1
+      claim: pooled AUROC(pct_G lower in MANTIS MSI-H than MSS) > 0.5 (not testable with fewer than
+             10 MSI-H)
+    - id: MC2
+      claim: as MC1 with MSIsensor calls
+    - id: MC3
+      claim: Spearman(pct_G, MANTIS score as a percentile within cancer) < 0, all held-out tumours with
+             a score
+  exploratory: concordance of D-66's MC3 call with MANTIS and MSIsensor (counts by call); score G of
+               discordant tumours; the same AUROCs in UCEC, STAD and COAD (in-sample for the rule)
