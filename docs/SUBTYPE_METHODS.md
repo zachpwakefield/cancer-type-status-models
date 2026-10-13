@@ -4,7 +4,7 @@ The third task of the repository: **within one cancer, which subtype is a primar
 modelled, like the other two, independently in each of the nine views (AFE, ALE, HIT, SE, A5SS,
 A3SS, MXE, RI, GEX). Decisions are numbered from D-30 (D-48..D-51, which span the three tasks, are in
 [ACROSS_TASKS_METHODS.md](ACROSS_TASKS_METHODS.md), as is amendment A-8; D-52..D-56, the MSI-repeat
-follow-up, are here; D-01..D-12 are in
+follow-up, and D-57..D-59, the BRCA follow-up, are here; D-01..D-12 are in
 [DECISIONS.md](DECISIONS.md), D-13..D-29 in [BIOLOGY_METHODS.md](BIOLOGY_METHODS.md)). Values live
 in [config/subtype.yaml](../config/subtype.yaml); this file explains them.
 
@@ -455,6 +455,32 @@ tumours carry more contraction (G1), POLE less than MSI (G2); within MSI tumours
 goes with less inclusion of its exon at runs of 10–19 (G3) and with more at runs ≥ 20 (G5); loci
 that contract more skip more (G4); contraction rises with run length (G6). Family D (8 tests).
 
+
+### D-57 Inherited splicing variation in the BRCA subtypes · `config/followup.yaml: brca_germline` · `scripts/46`
+Added 2026-10-12, before any test was computed, with three open GDC tables and the MC3 calls
+fetched for it (step 00b; about 1 GB, approved by the data user). Many splicing events are set by
+a common germline variant: their PSI falls in three evenly spaced groups, the two homozygotes
+and the heterozygote between them. A label-blind scan finds these events in the BRCA matrices.
+Two routes could carry them into a subtype signal. (1) **LOH**: when a tumour loses one
+homologue, a heterozygote's PSI moves toward the retained allele, more so the purer the tumour
+(L1–L3, in the 108 tumour–normal pairs with ABSOLUTE calls). If splicing reads LOH, the subtypes'
+different LOH maps show in their splicing (L4, LumA against Basal; L5, 16q in lobular tumours;
+L6, arm by arm against the DNA call). (2) **Ancestry**: GSTM1, a deletion polymorphism, is a top
+ER feature of the GEX model; ER-negative disease is more common in Black patients, who less often
+carry the deletion (A1, A2); genotype-like splicing events differ in allele frequency by race
+(A3). GRCh37 tables are joined to GRCh38 events through each gene's MC3 call span (no liftover is
+installed). Families L (6 tests) and A (3).
+
+### D-58 Two meanings of HER2 · `config/followup.yaml: brca_her2` · `scripts/47`
+Added with D-57. The PAM50 Her2 class is an expression programme; clinical HER2 is ERBB2
+amplification. The GEX model's top Her2 genes are the 17q12 amplicon; the AS models' are not, and
+a PSI does not move with copy number. H1–H4 ask which HER2 each modality learned, with
+amplification from ABSOLUTE copy number at ERBB2 (≥ 2 × ploidy). Family H (4 tests).
+
+### D-59 Splice-site mutations and SF3B1 in BRCA · `config/followup.yaml: brca_mutations` · `scripts/48`
+Added with D-57. MC3 splice-site SNVs are mapped to the cassette exon they hit (C1, every gene; C2,
+CDH1, the open item of the lobular event card); SF3B1 hotspot tumours should use cryptic
+acceptors 10–30 nt upstream (C3). Family C (3 tests).
 ---
 
 ## Amendments and deviations

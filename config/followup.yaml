@@ -6,6 +6,7 @@
 #   msi_a3ss_replication                     docs/SUBTYPE_METHODS.md D-54 (after D-53's results)
 #   msi_robustness                           docs/SUBTYPE_METHODS.md D-55 (after D-54's results)
 #   msi_dna                                  docs/SUBTYPE_METHODS.md D-56 (before any read was fetched)
+#   brca_germline, brca_her2, brca_mutations docs/SUBTYPE_METHODS.md D-57..D-59 (BRCA follow-up)
 #
 # Written 2026-10-12, after every model of the three tasks had been fitted and summarised, and
 # before any analysis below was run. Nothing here refits a model or changes a label, a cohort, a
@@ -414,3 +415,146 @@ msi_dna:                                 # D-56 · scripts/44_repeat_dna.py (loc
   exploratory: BAT-25/BAT-26 c in each group; G3/G5 with c partialled on the tumour's burden;
                normals' share of reads shorter than the reference length, MSI patients against the
                rest (somatic or germline)
+
+brca_germline:                           # D-57 · scripts/46_brca_germline.py
+  # Written 2026-10-12 after D-52..D-56, before any test below was computed. Asks whether inherited
+  # splicing variation reaches the BRCA subtype signal, by two routes: somatic loss of
+  # heterozygosity (LOH) unmasking a germline splicing allele, and ancestry.
+  # Seen: results/SUBTYPE.md and its BRCA tables; top_features_by_class.csv for BRCA, BRCA_ER and
+  # BRCA_PAM50 (GSTM1 ranks 2nd among the ER-positive GEX features, higher GSTM1 -> ER-negative);
+  # a label-blind scan of the BRCA SE matrix (896 genotype-like events, the 30 widest listed, e.g.
+  # CAST at 0.05 / 0.55 / 0.99); counts only of race (white 758, Black 183, Asian 61), of ABSOLUTE
+  # coverage (1,045 tumours, 108 with a normal in the matrix; LOH 19.6% of the genome) and of MC3
+  # anchors (779 of the 896 events).
+  # Not seen: any PSI against LOH, copy number, purity, race or subtype; any race tabulation by
+  # class or by any feature; GSTM1 by race or ER.
+  genotype_like:
+    data: main matrices, all 8 AS views, BRCA tumours and normals of the tumour-status task
+    eligible: at least 90% non-missing and SD > 0.12
+    groups: two thresholds on a 0.02 grid (0.02-0.98, at least 0.08 apart, each group >= 5 samples)
+            minimising the within-group sum of squares
+    rule: centres evenly spaced (|left gap - right gap| < 0.25 x range), adjacent centres > 3 pooled
+          within-group SD apart, and in the normals minor-allele frequency > 0.1 with Hardy-Weinberg
+          chi-square p > 0.05
+    one_per_gene: the event with the widest separation, for every test that pools events
+  coordinates: events are GRCh38, ABSOLUTE and MC3 are GRCh37; each gene is anchored at the midpoint
+               of its MC3 call span (all MC3 calls of that Ensembl gene, same chromosome); arms split
+               at the largest gap between consecutive MC3 positions of each chromosome (13, 14, 15,
+               21, 22 - q only)
+  allelic_position: x = (PSI - low centre) / (high centre - low centre)
+  loh: the ABSOLUTE segment holding the anchor has LOH = 1 (call status 'called' only)
+  predicted_shift: "d_pred = f - 0.5 with f = (p x max(c1, c2) + 1 - p) / (p x (c1 + c2) + 2 (1 - p)); p
+                   = ABSOLUTE purity, c1, c2 = Modal_HSCN_1, Modal_HSCN_2"
+  heterozygous_pair: the patient's normal falls in the middle group; d = |x_tumour - 0.5|
+  band: "|x - 0.5| < 0.15; expected in-band rate per event = share of the cohort's normals in band"
+  depletion: per tumour and arm, 1 - (events in band) / (sum of expected rates), arms with >= 5
+             anchored genes
+  arm_loh: per tumour and arm, share of the arm's anchored genes in an LOH segment
+  race: self-reported, Black or African American against white (others reported, not tested)
+  gstm1_null: GEX log2(CPM + 1) of GSTM1 below its Otsu threshold over all BRCA tumours and normals
+  fdr_families:
+    L: L1-L6 (6 tests)
+    A: A1-A3 (3 tests)
+  predictions:
+    - id: L1
+      claim: in tumour-normal pairs, heterozygous events sit further from the middle (larger d) inside
+             LOH segments than outside, within the same tumour (mean difference, tumours with >= 3 of
+             each; sign test over tumours)
+      why: with one allele lost, the tumour's PSI moves toward the retained allele's value
+    - id: L2
+      claim: the L1 difference rises with ABSOLUTE purity across those tumours (Spearman > 0)
+      why: only the tumour cells lost the allele; the normal cells in the sample still carry both
+    - id: L3
+      claim: per tumour, Spearman(d, d_pred) over its heterozygous events > 0 (>= 10 events with
+             two or more d_pred values); sign test over tumours
+      why: gains of one homologue shift the allelic ratio too, by an amount set by copy number
+    - id: L4
+      claim: across arms, the LumA-minus-Basal difference in mean depletion follows the
+             LumA-minus-Basal difference in the share of tumours with arm_loh >= 0.5 (Spearman > 0)
+      why: if splicing reads LOH, the subtypes' different LOH maps show in their splicing
+    - id: L5
+      claim: 16q depletion is higher in lobular than in ductal tumours (AUROC > 0.5)
+      why: 16q loss with the second CDH1 hit is the genomic hallmark of lobular cancer
+    - id: L6
+      claim: per arm, Spearman(depletion, arm_loh) across tumours > 0; sign test over arms
+      why: the splicing read-out of LOH should track the DNA call arm by arm
+    - id: A1
+      claim: GSTM1 null is less frequent in Black than in white patients (log odds ratio < 0;
+             Fisher, BRCA tumours)
+      why: positive control - the GSTM1 deletion polymorphism differs in frequency by ancestry
+    - id: A2
+      claim: the odds ratio of ER-negative status for GSTM1 present shrinks when stratified by race
+             (crude minus Mantel-Haenszel log odds ratio > 0; bootstrap over patients, 2,000, seed 0)
+      why: ER-negative disease is more common in Black patients, who less often carry the deletion,
+           so a germline marker can look like an ER feature
+    - id: A3
+      claim: more genotype-like genes differ in allele frequency between Black and white patients
+             (Fisher on allele counts from the tumours' groups, BH q < 0.05) than in 1,000 race
+             permutations (observed count above the permutation distribution; permutation p)
+      why: positive control - ancestry is visible in splicing
+  exploratory: genotype-like events among the subtype models' top events (top 30 per class and AS
+               view, three BRCA cohorts) and their race and LOH behaviour; out-of-fold balanced
+               accuracy by race (GEX, AS ensemble; BRCA, BRCA_ER, BRCA_PAM50); depletion maps of
+               every PAM50 class; L1 in the other tumour-status projects
+
+brca_her2:                               # D-58 · scripts/47_brca_her2.py
+  # Written 2026-10-12 with D-57, before any test below was computed. "Her2" means two things: the
+  # PAM50 HER2-enriched expression programme, and ERBB2 amplification (clinical HER2). The GEX
+  # model's top Her2 genes are the 17q12 amplicon (STARD3, ERBB2, PGAP3, MIEN1, ORMDL3); of the AS
+  # models' 240 top Her2 events, 3 lie in chr17:39.0-40.5 Mb (two ERBB2 ALE, one PLXDC1 HIT). A PSI
+  # is a ratio and does not move with copy number. Seen: those lists. Not seen: any probability
+  # against copy number or clinical HER2.
+  amplified: ABSOLUTE Modal_Total_CN of the segment holding ERBB2's anchor >= 2 x the sample's
+             ploidy (call status 'called')
+  clinical_her2: positive when IHC or ISH is Positive; negative when IHC is Negative and ISH is not
+                 Positive, or ISH is Negative and IHC is not Positive; otherwise unknown
+  probability: out-of-fold P(Her2) of BRCA_PAM50 - GEX, and the AS ensemble (mean of the 8 AS views)
+  fdr_family: H, the 4 tests H1-H4
+  predictions:
+    - id: H1
+      claim: among PAM50 LumA and LumB tumours, GEX P(Her2) is higher in amplified tumours (AUROC > 0.5)
+      why: GEX reads the amplicon even where the PAM50 label is luminal
+    - id: H2
+      claim: in the same tumours, AUROC(GEX) - AUROC(AS ensemble) > 0 (paired bootstrap, 2,000, seed 0)
+      why: splicing cannot see copy number
+    - id: H3
+      claim: among PAM50 Her2 tumours, AUROC(GEX) - AUROC(AS ensemble) for amplified against not > 0
+             (paired bootstrap)
+    - id: H4
+      claim: AS ensemble P(Her2) is higher in non-amplified PAM50 Her2 tumours than in amplified LumA
+             and LumB tumours (AUROC > 0.5)
+      why: if splicing follows the HER2-enriched programme, not the amplicon
+  exploratory: H1-H4 with clinical HER2; the GEX counterpart of H4; ERBB2 events by amplification;
+               P(Her2) against ERBB2 copy number relative to ploidy; agreement of amplified with
+               clinical HER2
+
+brca_mutations:                          # D-59 · scripts/48_brca_mutations.py
+  # Written 2026-10-12 with D-57, before any test below was computed. Closes the open item of the
+  # CDH1 event card (results/SUBTYPE.md: "whether the skipping tumours carry splice-site mutations
+  # is not tested") and adds a positive control for mutation-driven splicing in BRCA.
+  # Seen: label-blind counts in MC3 for the cohort - 997 tumours, 1,901 Splice_Site calls, 14 CDH1
+  # splice-site calls (their HGVSc), SF3B1 missense (K700E 11, E622Q, K666E, K666N, N626D, A633V,
+  # Y765C, D781E, E802Q one each); FILTER tallies. Not seen: any PSI by mutation.
+  calls: MC3 public, the cohort's BRCA tumours, FILTER flags within {PASS, wga, native_wga_mix}
+  splice_mapping: Splice_Site SNVs at +1/+2 or -1/-2 (HGVSc); the exon whose donor (+) or acceptor
+                  (-) is hit, by the MC3 transcript's intron number, located in GENCODE v45 (same
+                  transcript ID, same exon count) and matched to a main-matrix SE exon by coordinates
+  percentile: the exon's PSI percentile in the mutated tumour among all other cohort tumours
+  sf3b1_hotspot: missense at codons 622, 625, 626, 662, 663, 666, 700, 741 or 742
+  cryptic_a3ss: A3SS events whose acceptors are 10-30 nt apart and whose long (upstream-acceptor) form
+                has median PSI < 0.2 in the BRCA normals; score = mean within-cohort percentile of
+                the long form's PSI
+  fdr_family: C, the 3 tests C1-C3
+  predictions:
+    - id: C1
+      claim: exons next to a splice-site mutation are skipped in the mutated tumour (percentile <
+             0.5; sign test over mutations, every gene)
+      why: positive control of the mapping
+    - id: C2
+      claim: as C1 for CDH1 alone
+      why: a splice-site hit is one route to the CDH1 skipping seen in lobular tumours
+    - id: C3
+      claim: the cryptic A3SS score is higher in SF3B1-hotspot tumours (AUROC > 0.5)
+      why: mutant SF3B1 selects AGs 10-30 nt upstream of the canonical one (Darman et al. 2015)
+  exploratory: SF3B1-hotspot and CDH1-mutant tumours by PAM50 and histology; CDH1 exon PSI in
+               lobular tumours by CDH1 status (splice, truncating, none); C1 by mutation side
