@@ -740,3 +740,118 @@ msi_germline_indels:                     # D-64 · scripts/50_msi_followup.py --
       claim: Spearman(per-exon effect, mean MSI delta_adj over the cohorts) < 0
       why: MSI shortens tracts, so a germline lengthening effect predicts the opposite MSI shift
   exploratory: the exons and variants behind GL1-GL3, by tissue
+
+# ---- MSI sequence code, 2026-10-13 (after D-61..D-64) -------------------------------------------
+# Written before any test below was computed. Seen when written: everything of D-52..D-64, including
+# the D-63 exploratory table behind U17b (share of R exons more included in MSI, by branch-point
+# tertile within run classes; STAD and COAD alone show the pattern the rule below uses), and the D-61
+# deletion counts of the three cohorts (MSI: minimum 20 homopolymer deletions, 129 of 129 >= 10;
+# the rest: 2 of 571 >= 10). Not seen: any splicing value, MC3 count or MMR call of any tumour
+# outside UCEC_TCGA, STAD_TCGA and COAD_TCGA; any POLE, CIN or GS exon shift; any B-exon branch
+# point. Structural checks made before writing (no outcome read): the pan-cancer SE matrix
+# (data.nosync/ctsm_v1/matrices/se) holds 9,034 tumours and 695 normals of 33 TCGA projects and
+# 71,208 exons, 68,679 of them already annotated by D-52 (the rest are annotated by the same code).
+# The claim these build toward: mismatch-repair deficiency moves 3' splice-site use by a code in the
+# reference genome (tract length and branch-point distance) that says, exon by exon, whether
+# inclusion falls or rises, and that code, read in RNA, finds mismatch-repair-deficient tumours in
+# organs never used to define it.
+# All tests two-sided; supported / against / not resolved by BH q < 0.05 within the named family.
+#
+# Shared definitions (used by D-65..D-67):
+#   R exon: acceptor T-run >= 10 at -1..-50 (D-52); B exon: <= 5
+#   d_bp: the D-63 branch point (yUnAy A nearest the 3'ss, upstream of the run, within 100); for B
+#         exons the yUnAy A nearest the 3'ss at positions 11..100 (the nearest an R-exon branch
+#         point can lie)
+#   rule (from D-53 and U17b, fixed here): R_down = runs 10-19; R_up = runs >= 20 with d_bp >= 36
+#         (36 = the first tertile cut of d_bp among runs >= 20, label-blind); runs >= 20 with
+#         d_bp < 36 or no branch point are left out
+#   score A: the D-52 score (R against B, B weighted to R's mean-PSI deciles), lower = R less included
+#   score G: set_score(R_down vs B) - set_score(R_up vs B), with D-52's set_score; lower = the
+#            MMR-deficient direction on both arms
+#   exon shift: D-52's delta_adj (group mean percentile minus reference mean percentile, minus the
+#               median B-exon shift of the same mean-PSI decile)
+#   adjusted rho: D-63's (ranks residualised on run-length bins and mean-PSI rank; p by permuting
+#                 d_bp within run-length bins, 1,000, seed 0)
+
+msi_code_specificity:                    # D-65 · scripts/51_msi_code.py --only specificity
+  # Is D-63 about the branch point, and about mismatch repair?
+  fdr_family: BS, the 4 tests BS1-BS4
+  predictions:
+    - id: BS1
+      claim: R exons measured in >= 2 cohorts, mean delta_adj - Spearman with the gap d_bp - d_run,
+             ranks residualised on run-length bins, mean-PSI rank and d_run rank, > 0; p by
+             permuting the gap within run-length bins (1,000, seed 0)
+      why: if the branch point's distance matters, it matters beyond where the run ends; if only the
+           run's position matters, the gap adds nothing
+    - id: BS2
+      claim: the BP4 adjusted rho on R exons minus the same rho on B exons measured in >= 2 cohorts
+             (residualised on mean-PSI rank only) > 0; bootstrap over exons within each set (2,000,
+             seed 0)
+      why: B exons have no tract to contract, so their branch-point distance should not set their
+           MSI shift
+    - id: BS3
+      claim: UCEC_TCGA, R exons - adjusted rho(MSI-vs-rest delta_adj, d_bp) minus adjusted rho(POLE-
+             vs-rest delta_adj, d_bp) > 0; exons measured in both contrasts (>= 10 finite values in
+             each group); paired bootstrap over exons (2,000, seed 0)
+      why: POLE tumours are hypermutated but mismatch-repair proficient; their repeats do not contract
+    - id: BS4
+      claim: as BS3 in STAD_TCGA with CIN-vs-GS delta_adj (two mismatch-repair-proficient classes) in
+             place of POLE-vs-rest
+      why: a second proficient contrast, with larger groups
+  exploratory: share moving up by 10-nt d_bp bins within run classes (where the switch lies); BS3
+               and BS4 shares by tertile; B-exon branch-point distances
+
+msi_code_pancancer:                      # D-66 · scripts/51_msi_code.py --only pancancer
+  # Does the code find MMR-deficient tumours in the 30 TCGA projects never used to define it?
+  cancers: the 30 projects of the pan-cancer SE matrix other than COAD, STAD and UCEC
+  tumours: role tumour, one per patient (first sample barcode in sort order), with >= 1 MC3 call
+           passing the D-61 flags
+  mmr_deficient: at least 10 MC3 homopolymer deletions (D-61 definition), set from the three cohorts
+  hypermutated_proficient: < 10 homopolymer deletions and >= 500 SNVs (Variant_Type SNP, same flags)
+  exons: per cancer and label-blind, finite PSI in >= 80% of the cancer's tumours, acceptor intron
+         >= 60 nt, AG at -2,-1; percentiles and mean-PSI deciles within the cancer
+  pooled_tumour_tests: each score as a percentile within its cancer, then pooled over cancers
+  exon_shift: pooled over held-out tumours with the within-cancer percentiles; an exon needs >= 10
+              MMR-deficient and >= 100 other finite values; deciles of the pooled mean PSI
+  fdr_family: PC, the 8 tests PC1-PC8
+  predictions:
+    - id: PC1
+      claim: score A lower in MMR-deficient tumours (pooled AUROC > 0.5)
+      why: D-52's score, without any re-fitting, in new organs
+    - id: PC2
+      claim: score G lower in MMR-deficient tumours (pooled AUROC > 0.5)
+    - id: PC3
+      claim: AUROC(G) - AUROC(A) > 0; bootstrap of tumours within cancer and class (2,000, seed 0)
+      why: the direction code (U17) adds to the length rule
+    - id: PC4
+      claim: as PC2 without READ, ESCA and UCS (the tissue relatives of COAD, STAD and UCEC)
+      why: organ independence
+    - id: PC5
+      claim: score G lower in MMR-deficient than in hypermutated proficient tumours (AUROC > 0.5;
+             not testable with fewer than 10 in either group)
+      why: the code reads mismatch-repair deficiency, not mutation burden
+    - id: PC6
+      claim: R exons - Spearman(held-out pooled delta_adj, mean delta_adj of the three cohorts) > 0
+      why: the same exons move in new organs
+    - id: PC7
+      claim: R exons - held-out pooled delta_adj higher for R_up than for R_down exons (AUROC > 0.5)
+      why: the direction rule, exon by exon, in new organs
+    - id: PC8
+      claim: R exons - adjusted rho(held-out pooled delta_adj, d_bp) > 0
+      why: D-63 replicated in new organs
+  exploratory: per-cancer counts and AUROCs of A and G (cancers with >= 3 MMR-deficient tumours);
+               MRE11 exon 5 PSI by class per cancer; dose within MMR-deficient tumours (partial
+               Spearman of G with log homopolymer deletions given purity); G in the adjacent normals
+               of MMR-deficient patients; no per-tumour value is committed
+
+msi_code_endometrium:                    # D-67 · scripts/51_msi_code.py --only endometrium
+  # D-52 could not separate UCEC MSI (AUROC 0.51), and D-61 ruled out deletion size. UCEC repeat
+  # exons of 10-19 nt move down less often (U17b), so score A may cancel its own arms.
+  fdr_family: EG, the 2 tests EG1-EG2
+  predictions:
+    - id: EG1
+      claim: UCEC_TCGA, D-52 groups and exon universe - score G lower in MSI than in the rest
+             (AUROC > 0.5)
+    - id: EG2
+      claim: UCEC_TCGA - AUROC(G) - AUROC(A) > 0; bootstrap of tumours within group (2,000, seed 0)
+  exploratory: G in STAD_TCGA and COAD_TCGA (in-sample for the rule); G against POLE in UCEC

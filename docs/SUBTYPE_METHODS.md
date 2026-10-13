@@ -4,7 +4,7 @@ The third task of the repository: **within one cancer, which subtype is a primar
 modelled, like the other two, independently in each of the nine views (AFE, ALE, HIT, SE, A5SS,
 A3SS, MXE, RI, GEX). Decisions are numbered from D-30 (D-48..D-51, which span the three tasks, are in
 [ACROSS_TASKS_METHODS.md](ACROSS_TASKS_METHODS.md), as is amendment A-8; D-52..D-56, the MSI-repeat
-follow-up, and D-57..D-60, the BRCA follow-up, and D-61..D-64, the MSI follow-up, are here; D-01..D-12 are in
+follow-up, and D-57..D-60, the BRCA follow-up, D-61..D-64, the MSI follow-up, and D-65..D-67, the MSI sequence code, are here; D-01..D-12 are in
 [DECISIONS.md](DECISIONS.md), D-13..D-29 in [BIOLOGY_METHODS.md](BIOLOGY_METHODS.md)). Values live
 in [config/subtype.yaml](../config/subtype.yaml); this file explains them.
 
@@ -514,6 +514,33 @@ Written 2026-10-13, before any of these tests was computed. They follow the ques
 - **Outcome, recorded after running.** GL1–GL3 are not testable: the GTEx pairs hold no variant
   inside any of the 1,580 runs (`followup/germline/variant_coverage.csv`). No amendment was needed;
   every other test ran as written.
+
+### D-65 to D-67 The MSI sequence code · `config/followup.yaml` · `scripts/51`
+Written 2026-10-13, after D-61..D-64 and before any of these tests was computed. Nothing outside
+UCEC_TCGA, STAD_TCGA and COAD_TCGA had been read for MSI: no splicing value, MC3 count or mismatch-
+repair call of any other tumour. The claim they build toward: mismatch-repair deficiency moves 3′
+splice-site use by a code in the reference genome, tract length and branch-point distance, that
+says exon by exon whether inclusion falls or rises. Read in RNA, that code should find
+mismatch-repair-deficient tumours in organs never used to define it.
+- **The rule.** Fixed from D-53 and the U17b table; STAD and COAD show the pattern on their own.
+  Runs of 10–19 nt fall; runs ≥ 20 nt with the branch point ≥ 36 nt from the AG rise. 36 is the
+  first tertile of that distance among runs ≥ 20, a label-blind cut. Score G subtracts the rising
+  arm from the falling one.
+- **D-65, specificity (BS1–BS4).**
+  - Does the branch point add beyond where the run ends?
+  - Is the effect absent from exons without a tract (B exons)?
+  - Is it absent from mismatch-repair-proficient contrasts (POLE against the rest in UCEC; CIN
+    against GS in STAD)?
+- **D-66, thirty held-out cancers (PC1–PC8).**
+  - DNA truth: mismatch-repair deficiency is called from MC3 as ≥ 10 homopolymer deletions, the
+    D-61 count. In the three cohorts it puts 129 of 129 MSI tumours and 2 of 571 others above
+    the cut.
+  - Scores A and G are computed with no re-fitting, within each cancer.
+  - Tested on these tumours: tumour-level detection, the advantage of G over A, organ independence
+    (READ, ESCA and UCS left out), and mismatch repair against mutation burden (hypermutated
+    proficient tumours).
+  - Tested on the exons: replication of the exon shifts and of the direction rule.
+- **D-67, endometrium (EG1–EG2).** Does score G separate UCEC MSI, where score A could not?
 
 ---
 
