@@ -28,6 +28,7 @@ One question per figure, in the order the story is told in results/SUBTYPE.md:
     U25 where do the model and the exome measures agree and disagree (D-73)?
     U26 does the splicing model transfer better than expression models trained the same way (D-74)?
     U27 how large is the MSI splicing shift, and how is it spread over exons and tumours (D-75)?
+    U28 what does including a rising-arm exon do to its transcript (D-76)?
 
 Captions are figure legends: "**Figure Un. Title.**", then (a), (b) ... for the panels. `legends`
 copies each legend (without its bullet list of tests) under the figure in results/SUBTYPE.md.
@@ -3338,6 +3339,213 @@ to {ru.max():.2f} (× 100). MMR status explains a median {e2s} of an R_down exon
 Per-tumour values are kept locally (D-12)."""
 
 
+CQ_COL = {"canonical": MUTED, "in_frame": ACCENT, "ptc_nmd": "#b0412c", "ptc_escape": "#e6a88a", "other": "white"}
+CQ_NAME = {"canonical": "canonical exon", "in_frame": "in-frame insertion", "ptc_nmd": "poison (NMD)",
+           "ptc_escape": "stop, escapes NMD", "other": "UTR, non-coding or other"}
+BAND_ORDER = ["≤ 0.02", "0.02–0.1", "0.1–0.3", "0.3–0.7", "> 0.7"]
+
+
+def U28() -> None:
+    d = CODE_DIR / "consequence"
+    pr = pd.read_csv(d / "predictions.csv").set_index("id")
+    comp = pd.read_csv(d / "composition.csv")
+    rt = pd.read_csv(d / "r_up_training_exons.csv")
+    ctl = pd.read_csv(d / "nmd_control.csv")
+    cb = pd.read_csv(d / "coupling_by_baseline.csv")
+    gc = pd.read_csv(d / "gene_change_training.csv")
+    mv = pd.read_csv(d / "r_up_movers_by_consequence.csv").set_index("consequence")
+    fig = plt.figure(figsize=(DOUBLE - 0.2, 4.7))
+    gs = fig.add_gridspec(2, 1, hspace=0.55, height_ratios=[1.0, 1.0])
+    top = gs[0].subgridspec(1, 2, wspace=0.55, width_ratios=[1.0, 1.0])
+    bot = gs[1].subgridspec(1, 3, wspace=0.55)
+    rows = []
+    from matplotlib.lines import Line2D
+    # a. what inclusion does, by exon class (training cancers)
+    ax = fig.add_subplot(top[0])
+    order = [("R_up", "rising arm (R_up)"), ("B, matched to R_up proficient PSI", "background, matched"),
+             ("B", "background (B)"), ("R_down", "falling arm (R_down)")]
+    tr = comp[comp.group.eq("training")].copy()
+    tr["consequence"] = tr.consequence.replace({"no_stop": "other"})
+    tr = tr.groupby(["class", "consequence"], as_index=False)[["n", "share"]].sum()
+    for y, (c_, lab) in enumerate(order):
+        left = 0.0
+        for k in CQ_COL:
+            r = tr[tr["class"].eq(c_) & tr.consequence.eq(k)]
+            sh = float(r.share.sum())
+            ax.barh(y, sh, left=left, height=0.62, color=CQ_COL[k], edgecolor=INK2 if k == "other" else "white",
+                    linewidth=0.4)
+            rows.append({"panel": "a", "class": c_, "consequence": k, "share": sh, "n": int(r.n.sum())})
+            left += sh
+    n_ = lambda c_: int(tr[tr["class"].eq(c_)].n.sum())
+    ax.set_yticks(range(len(order)))
+    ax.set_yticklabels([f"{lab}\n({n_(c_):,})" if not c_.startswith("B, matched") else f"{lab}\n(weighted)"
+                        for c_, lab in order], fontsize=5.6)
+    ax.set_ylim(len(order) - 0.5, -0.5)
+    ax.set_xlim(0, 1)
+    ax.tick_params(axis="y", length=0)
+    ax.spines["left"].set_visible(False)
+    ax.set_xlabel("share of exons", fontsize=6)
+    hand = [plt.Rectangle((0, 0), 1, 1, facecolor=CQ_COL[k], edgecolor=INK2 if k == "other" else CQ_COL[k],
+                          linewidth=0.4, label=CQ_NAME[k]) for k in CQ_COL]
+    ax.legend(handles=hand, loc="lower center", bbox_to_anchor=(0.45, 1.0), ncol=3, fontsize=5.2, frameon=False,
+              handlelength=1.0, columnspacing=0.8, handletextpad=0.4)
+    # b. R_up exons: shift against baseline inclusion, by consequence
+    bx = fig.add_subplot(top[1])
+    sub = rt[rt.consequence.isin(["canonical", "in_frame", "ptc_nmd", "ptc_escape"])]
+    for k in ["canonical", "ptc_escape", "in_frame", "ptc_nmd"]:
+        v = sub[sub.consequence.eq(k)]
+        bx.scatter(v.median_proficient, v["shift"], s=9 if k == "ptc_nmd" else 8, color=CQ_COL[k],
+                   edgecolors="white", linewidths=0.3, zorder=3 if k in ("ptc_nmd", "in_frame") else 2,
+                   marker="o" if k != "in_frame" else "s")
+        for r in v.itertuples():
+            rows.append({"panel": "b", "cancer": r.group, "symbol": r.symbol, "consequence": k,
+                         "proficient_median": r.median_proficient, "shift": r.shift})
+    lead = dict(arrowstyle="-", linewidth=0.4, color=INK2, shrinkA=0, shrinkB=1.5)
+    offs = {"BOD1L1": (14, 0), "CCNDBP1": (16, 4), "LRR1": (14, 0), "C19orf12": (14, -9), "BRCA1": (26, 14)}
+    for g_, (dx_, dy_) in offs.items():          # each gene's largest poison shift
+        r = sub[sub.symbol.eq(g_)].sort_values("shift", ascending=False).iloc[0]
+        bx.annotate(g_, (r.median_proficient, r["shift"]), xytext=(dx_, dy_), textcoords="offset points",
+                    fontsize=5.2, color=INK, va="center", ha="left", arrowprops=lead)
+    bx.axhline(0, color=GRID, linewidth=0.6, zorder=0)
+    bx.set_xlim(-0.03, 1.03)
+    bx.set_ylim(-0.12, 0.42)
+    bx.set_xlabel("PSI in proficient tumours (median)", fontsize=6)
+    bx.set_ylabel("shift in MMR-deficient tumours, PSI", fontsize=6)
+    hb = [Line2D([], [], marker="o" if k != "in_frame" else "s", color=CQ_COL[k], linestyle="", markersize=3.3,
+                 label=CQ_NAME[k]) for k in ["ptc_nmd", "in_frame", "ptc_escape", "canonical"]]
+    bx.legend(handles=hb, loc="center right", bbox_to_anchor=(1.0, 0.64), fontsize=5.2, frameon=False,
+              handletextpad=0.3, borderaxespad=0.1)
+    # c. global-NMD control: do background poison exons rise? (training cancers)
+    cx = fig.add_subplot(bot[0])
+    c_ = ctl[ctl.group.eq("training")]
+    series = [("B", "ptc_nmd", CQ_COL["ptc_nmd"], True, -0.2), ("B", "in_frame", ACCENT, True, -0.07),
+              ("R_up", "ptc_nmd", CQ_COL["ptc_nmd"], False, 0.07), ("R_up", "in_frame", ACCENT, False, 0.2)]
+    for cls_, k, col, fill, off in series:
+        v = c_[c_["class"].eq(cls_) & c_.consequence.eq(k)]
+        for r in v.itertuples():
+            x = BAND_ORDER.index(r.baseline_psi) + off
+            cx.vlines(x, r.ci_low, r.ci_high, color=col, linewidth=0.6)
+            cx.scatter(x, r.mean_shift, s=12, color=col if fill else "white", edgecolors=col, linewidths=0.7,
+                       marker="o" if cls_ == "B" else "D", zorder=3)
+            rows.append({"panel": "c", "class": cls_, "consequence": k, "baseline_psi": r.baseline_psi, "n": int(r.n),
+                         "mean_shift": r.mean_shift, "ci_low": r.ci_low, "ci_high": r.ci_high})
+    cx.axhline(0, color=GRID, linewidth=0.6, zorder=0)
+    cx.set_xticks(range(len(BAND_ORDER)))
+    cx.set_xticklabels(BAND_ORDER, fontsize=5.4, rotation=30, ha="right")
+    cx.tick_params(axis="x", length=0)
+    cx.set_xlim(-0.5, len(BAND_ORDER) - 0.5)
+    cx.set_xlabel("PSI in proficient tumours", fontsize=6)
+    cx.set_ylabel("mean shift, PSI", fontsize=6)
+    hc = [Line2D([], [], marker="o", color=INK2, linestyle="", markersize=3.3, label="background"),
+          Line2D([], [], marker="D", color=INK2, markerfacecolor="white", linestyle="", markersize=3.3, label="rising arm")]
+    cx.legend(handles=hc, loc="upper left", fontsize=5.2, frameon=False, handletextpad=0.3, borderaxespad=0.1)
+    # d. coupling of PSI with host-gene mRNA across tumours, by baseline inclusion (background exons)
+    dx = fig.add_subplot(bot[1])
+    for k, off in [("ptc_nmd", -0.12), ("in_frame", 0.12)]:
+        v = cb[cb["class"].eq("B") & cb.consequence.eq(k)]
+        for r in v.itertuples():
+            x = BAND_ORDER.index(r.baseline_psi) + off
+            dx.vlines(x, r.q25, r.q75, color=CQ_COL[k], linewidth=0.7)
+            dx.scatter(x, r.median_rho, s=12, color=CQ_COL[k], zorder=3, marker="o" if k == "ptc_nmd" else "s")
+            rows.append({"panel": "d", "consequence": k, "baseline_psi": r.baseline_psi, "n": r.n,
+                         "median_rho": r.median_rho, "q25": r.q25, "q75": r.q75})
+    dx.axhline(0, color=GRID, linewidth=0.6, zorder=0)
+    dx.set_xticks(range(len(BAND_ORDER)))
+    dx.set_xticklabels(BAND_ORDER, fontsize=5.4, rotation=30, ha="right")
+    dx.tick_params(axis="x", length=0)
+    dx.set_xlim(-0.5, len(BAND_ORDER) - 0.5)
+    dx.set_xlabel("PSI in proficient tumours", fontsize=6)
+    dx.set_ylabel("PSI–mRNA partial Spearman ρ", fontsize=6)
+    hd = [Line2D([], [], marker="o", color=CQ_COL["ptc_nmd"], linestyle="", markersize=3.3, label="poison"),
+          Line2D([], [], marker="s", color=ACCENT, linestyle="", markersize=3.3, label="in-frame")]
+    dx.legend(handles=hd, loc="lower left", fontsize=5.2, frameon=False, handletextpad=0.3, borderaxespad=0.1)
+    # e. MSI's rise in R_up exons against their gene's mRNA change (training cancers)
+    ex_ = fig.add_subplot(bot[2])
+    for k in ["in_frame", "ptc_nmd"]:
+        v = gc[gc.consequence.eq(k)]
+        ex_.scatter(v["shift"], v.log2fc, s=9, color=CQ_COL[k], edgecolors="white", linewidths=0.3, zorder=3,
+                    marker="o" if k == "ptc_nmd" else "s")
+        for r in v.itertuples():
+            rows.append({"panel": "e", "cancer": r.group, "symbol": r.symbol, "consequence": k, "shift": r.shift,
+                         "gene_log2fc": r.log2fc})
+    for g_, (dx2, dy2) in {"BOD1L1": (-6, -14), "CCNDBP1": (4, 14), "BRCA1": (10, 22), "LRR1": (4, -14)}.items():
+        v = gc[gc.symbol.eq(g_)].sort_values("shift", ascending=False).head(1)
+        if len(v):
+            r = v.iloc[0]
+            ex_.annotate(g_, (r["shift"], r.log2fc), xytext=(dx2, dy2), textcoords="offset points", fontsize=5.2,
+                         ha="right" if dx2 < 0 else "left", va="center", arrowprops=lead)
+    ex_.set_xticks([0, 0.1, 0.2, 0.3])
+    ex_.axhline(0, color=GRID, linewidth=0.6, zorder=0)
+    ex_.axvline(0, color=GRID, linewidth=0.6, zorder=0)
+    rows.append({"panel": "c-e", "symbol": "reference lines: 0"})
+    ex_.set_xlabel("exon shift, PSI", fontsize=6)
+    ex_.set_ylabel("gene mRNA change, log2", fontsize=6)
+    from _figbase import panel_letters
+    panel_letters([(ax, -0.42), (bx, -0.2), (cx, -0.33), (dx, -0.4), (ex_, -0.36)], y=1.06)
+    save(fig, OUT, "U28_msi_rising_consequence", data=pd.DataFrame(rows),
+         caption=CAPTIONS["U28"](pr, comp, rt, ctl, cb, gc, mv))
+
+
+def _cap_u28(pr, comp, rt, ctl, cb, gc, mv):
+    t = pr
+    v = lambda i: f"{signed(t.loc[i, 'effect'])}, p = {fp(t.loc[i, 'p'])}, q = {fp(t.loc[i, 'q'])}, {t.loc[i, 'verdict']}"
+    sh = lambda c_, k, g="training": float(comp[comp.group.eq(g) & comp["class"].eq(c_) & comp.consequence.eq(k)].share.sum())
+    pc = lambda x: f"{100 * x:.0f}%"
+    ins = lambda c_: {k: int(comp[comp.group.eq("training") & comp["class"].eq(c_) & comp.consequence.eq(k)].n.sum())
+                      for k in ["in_frame", "ptc_nmd", "ptc_escape"]}
+    ru = ins("R_up")
+    top = rt[rt.consequence.isin(["canonical", "in_frame", "ptc_nmd", "ptc_escape", "other"])].sort_values(
+        "shift", ascending=False).head(15)
+    n_p = int(top.consequence.eq("ptc_nmd").sum())
+    inf_max = float(rt[rt.consequence.eq("in_frame")]["shift"].max())
+    c_ = ctl[ctl.group.eq("training") & ctl["class"].eq("B") & ctl.consequence.eq("ptc_nmd")]
+    c_h = ctl[ctl.group.eq("held out") & ctl["class"].eq("B") & ctl.consequence.eq("ptc_nmd")]
+    rng_ = lambda s: f"{s.mean_shift.min():+.4f} to {s.mean_shift.max():+.4f}".replace("-", "−")
+    diff = cb[cb.consequence.eq("ptc_nmd minus in_frame")].set_index("baseline_psi")
+    dd = lambda b: f"{diff.loc[b, 'median_rho']:+.3f} (p = {fp(diff.loc[b, 'p'])})".replace("-", "−")
+    g = lambda s: gc[gc.symbol.eq(s)]
+    gl = lambda s: ", ".join(f"{r.group} {r.log2fc:+.2f}".replace("-", "−") for r in g(s).sort_values("group").itertuples())
+    return f"""**What does including a rising-arm exon do to its transcript?**
+
+Pre-specified (config/followup.yaml: msi_rising_consequence, D-76) before any consequence annotation or host-gene
+expression was examined. Each cassette exon was placed in its gene's canonical protein-coding transcript (GENCODE
+v45): a canonical exon, an exon that inclusion inserts into the coding sequence (its flanking exons are joined
+directly inside the CDS), or other (UTR, non-coding or non-canonical context). Inserted exons were translated in the
+canonical frame: an in-frame insertion, a premature stop more than 55 nt before the last exon–exon junction
+(poison, predicted NMD), or a stop that escapes NMD.
+
+(a) Consequence of inclusion for the exons of each class measured in a training cancer (COAD, STAD, UCEC);
+background exons are shown as they are and reweighted to the rising arm's distribution of proficient PSI (deciles);
+"no stop" (< 0.1%) counted with other. (b) Rising-arm exons in the training cancers (exon × cancer): shift (median PSI
+of MMR-deficient minus proficient tumours) against the proficient median, by consequence; the six genes with the
+largest shifts labelled. (c) Mean shift by proficient PSI band, for poison (red) and in-frame (blue) exons, background
+(filled) and rising arm (hollow); bars = 95% bootstrap intervals; bands with ≥ 5 exons. (d) Background exons: per-exon
+partial Spearman of PSI with the host gene's log2 CPM across a cancer's tumours, adjusting for the tumour's mean PSI,
+averaged over the 33 cancers; median and quartiles by proficient PSI band (A-21). (e) Rising-arm exons inserted
+into the CDS, training cancers, one per gene and cancer: shift against the host gene's change (mean log2 CPM of
+MMR-deficient minus proficient tumours).
+
+- CQ1, background poison exons couple more negatively than in-frame ones (positive control): {v('CQ1')}.
+- CQ2, the same for rising-arm exons: {v('CQ2')}.
+- CQ3, MSI lowers the host gene more for rising poison than in-frame exons (AUROC − 0.5): {v('CQ3')}.
+- CQ4, Spearman(shift, gene change), poison minus in-frame: {v('CQ4')}.
+
+None of 4 supported (family CQ). The positive control failed, so CQ2–CQ4 cannot be read. Coupling follows baseline
+inclusion whatever the consequence (panel d; ρ = −0.45 across all annotated exons); within bands, poison background
+exons couple slightly more negatively than in-frame ones: {dd('≤ 0.02')}, {dd('0.02–0.1')}, {dd('0.1–0.3')}
+(exploratory, A-21). Panel (a), rising arm: {pc(sh('R_up', 'ptc_nmd'))} poison, {pc(sh('R_up', 'in_frame'))} in-frame,
+{pc(sh('R_up', 'ptc_escape'))} escaping NMD, {pc(sh('R_up', 'canonical'))} canonical ({ru['ptc_nmd']}, {ru['in_frame']} and
+{ru['ptc_escape']} exons inserted into the CDS); matched background {pc(sh('B, matched to R_up proficient PSI', 'ptc_nmd'))},
+{pc(sh('B, matched to R_up proficient PSI', 'in_frame'))}, {pc(sh('B, matched to R_up proficient PSI', 'ptc_escape'))} and
+{pc(sh('B, matched to R_up proficient PSI', 'canonical'))}. Panel (b): {n_p} of the 15 largest shifts are poison exons; no
+in-frame exon moves by more than {inf_max:.3f} ({int(mv.loc['ptc_nmd', 'moving_ge_005'])} of {int(mv.loc['ptc_nmd', 'n'])}
+poison and {int(mv.loc['in_frame', 'moving_ge_005'])} of {int(mv.loc['in_frame', 'n'])} in-frame rows move by ≥ 0.05;
+Fisher p = {fp(mv.loc['ptc_nmd', 'fisher_p_ptc_nmd_vs_in_frame'])}; exploratory). Panel (c): background poison exons do not rise
+in MMR-deficient tumours (band means {rng_(c_)}; held out {rng_(c_h)}). Panel (e), host-gene change, BOD1L1:
+{gl('BOD1L1')}; CCNDBP1: {gl('CCNDBP1')}; BRCA1: {gl('BRCA1')}. No in-frame rising-arm exon reaches a median PSI of
+0.10 in MMR-deficient tumours while ≤ 0.05 in proficient and normal tissue."""
+
+
 TITLES = {
     "U1": "Splicing matches expression on lineage and genome-state subtypes, and fusing the two adds little.",
     "U2": "Splicing loses most on small classes defined by one programme.",
@@ -3366,6 +3574,7 @@ TITLES = {
     "U25": "The model agrees with the exome measures on its confident calls; its own extra calls are borderline.",
     "U26": "Expression models trained the same way transfer almost as well; splicing adds to them.",
     "U27": "A minority of exons move by a tenth of PSI or more; the typical exon moves by a few hundredths.",
+    "U28": "The rising exons that move are poison exons; in-frame insertions stay silent.",
 }
 
 
@@ -3386,10 +3595,10 @@ CAPTIONS = {k: (lambda k, f: (lambda *a: tidy(legend(k, f(*a)))))(k, f) for k, f
              "U10": _cap_u10, "U11": _cap_u11, "U12": _cap_u12, "U13": _cap_u13, "U14": _cap_u14, "U15": _cap_u15,
              "U16": _cap_u16, "U17": _cap_u17, "U18": _cap_u18, "U19": _cap_u19, "U20": _cap_u20,
              "U21": _cap_u21, "U22": _cap_u22, "U23": _cap_u23, "U24": _cap_u24, "U25": _cap_u25,
-             "U26": _cap_u26, "U27": _cap_u27}.items()}
+             "U26": _cap_u26, "U27": _cap_u27, "U28": _cap_u28}.items()}
 
 if __name__ == "__main__":
     run({"U1": U1, "U2": U2, "U3": U3, "U4": U4, "U5": U5, "U6": U6, "U7": U7, "U8": U8, "U9": U9, "U10": U10, "U11": U11,
          "U12": U12, "U13": U13, "U14": U14, "U15": U15, "U16": U16, "U17": U17,
-         "U18": U18, "U19": U19, "U20": U20, "U21": U21, "U22": U22, "U23": U23, "U24": U24, "U25": U25, "U26": U26, "U27": U27,
+         "U18": U18, "U19": U19, "U20": U20, "U21": U21, "U22": U22, "U23": U23, "U24": U24, "U25": U25, "U26": U26, "U27": U27, "U28": U28,
          "legends": legends})

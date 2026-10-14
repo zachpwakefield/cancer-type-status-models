@@ -1,0 +1,61 @@
+group,class,consequence,n,share
+training,R_up,canonical,22,0.1667
+training,R_up,in_frame,8,0.06061
+training,R_up,ptc_nmd,46,0.3485
+training,R_up,ptc_escape,8,0.06061
+training,R_up,no_stop,0,0
+training,R_up,other,48,0.3636
+training,R_down,canonical,289,0.1815
+training,R_down,in_frame,91,0.05716
+training,R_down,ptc_nmd,448,0.2814
+training,R_down,ptc_escape,46,0.02889
+training,R_down,no_stop,1,0.0006281
+training,R_down,other,717,0.4504
+training,"long, other",canonical,11,0.09091
+training,"long, other",in_frame,6,0.04959
+training,"long, other",ptc_nmd,42,0.3471
+training,"long, other",ptc_escape,8,0.06612
+training,"long, other",no_stop,0,0
+training,"long, other",other,54,0.4463
+training,B,canonical,13402,0.4478
+training,B,in_frame,1182,0.03949
+training,B,ptc_nmd,4427,0.1479
+training,B,ptc_escape,476,0.0159
+training,B,no_stop,4,0.0001336
+training,B,other,10439,0.3488
+training,"B, matched to R_up proficient PSI",canonical,13402,0.2266
+training,"B, matched to R_up proficient PSI",in_frame,1182,0.08562
+training,"B, matched to R_up proficient PSI",ptc_nmd,4427,0.3281
+training,"B, matched to R_up proficient PSI",ptc_escape,476,0.03248
+training,"B, matched to R_up proficient PSI",no_stop,4,0.0001728
+training,"B, matched to R_up proficient PSI",other,10439,0.3271
+held out,R_up,canonical,21,0.1654
+held out,R_up,in_frame,8,0.06299
+held out,R_up,ptc_nmd,44,0.3465
+held out,R_up,ptc_escape,8,0.06299
+held out,R_up,no_stop,0,0
+held out,R_up,other,46,0.3622
+held out,R_down,canonical,271,0.1805
+held out,R_down,in_frame,89,0.05929
+held out,R_down,ptc_nmd,433,0.2885
+held out,R_down,ptc_escape,42,0.02798
+held out,R_down,no_stop,1,0.0006662
+held out,R_down,other,665,0.443
+held out,"long, other",canonical,11,0.09483
+held out,"long, other",in_frame,6,0.05172
+held out,"long, other",ptc_nmd,42,0.3621
+held out,"long, other",ptc_escape,8,0.06897
+held out,"long, other",no_stop,0,0
+held out,"long, other",other,49,0.4224
+held out,B,canonical,12475,0.4505
+held out,B,in_frame,1115,0.04026
+held out,B,ptc_nmd,4209,0.152
+held out,B,ptc_escape,452,0.01632
+held out,B,no_stop,4,0.0001444
+held out,B,other,9439,0.3408
+held out,"B, matched to R_up proficient PSI",canonical,12475,0.2241
+held out,"B, matched to R_up proficient PSI",in_frame,1115,0.08703
+held out,"B, matched to R_up proficient PSI",ptc_nmd,4209,0.3395
+held out,"B, matched to R_up proficient PSI",ptc_escape,452,0.03344
+held out,"B, matched to R_up proficient PSI",no_stop,4,0.0001819
+held out,"B, matched to R_up proficient PSI",other,9439,0.3157

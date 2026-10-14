@@ -856,6 +856,20 @@ inclusion does:
 consequence annotation of rising or background exons, no expression of their genes, no
 normal-tissue PSI.
 
+**Outcome (computed 2026-10-13; CQ1–CQ4 not resolved; the positive control failed).**
+- **Read-out not validated (CQ1).** Background poison exons do not couple to their gene's mRNA more
+  negatively than in-frame ones (median ρ +0.081 against +0.078). Coupling follows baseline
+  inclusion whatever the consequence (ρ = −0.45), so CQ2–CQ4 cannot be read (all not resolved).
+- **Composition** (exploratory). Rising-arm exons: 35% poison, 6% in-frame, 6% stop escaping NMD,
+  17% canonical. Background exons matched on baseline PSI: 33%, 9%, 3%, 23%. The rising arm hits
+  ordinary low-inclusion exons.
+- **The movers are poison exons** (exploratory). 12 of the 15 largest shifts are poison (BOD1L1,
+  CCNDBP1, LRR1, C19orf12, BRCA1). No in-frame exon moves by more than 0.022 (14 of 129 poison and
+  0 of 23 in-frame rows move by ≥ 0.05; Fisher p = 0.13). No in-frame exon is switched on
+  (≥ 0.10 in MMR-deficient tumours, ≤ 0.05 in proficient and normal tissue).
+- **No global NMD weakening** (A-21). Background poison exons do not rise in MMR-deficient
+  tumours in any baseline band, training or held out. Figure U28.
+
 ---
 
 ## Amendments and deviations
@@ -881,6 +895,7 @@ normal-tissue PSI.
 | A-18 | 2026-10-13, after the E1 AUROCs of M0–M6 were read, before the LR family was computed | Exploratory checks of what the per-exon models learn (`scripts/54 --only posthoc`, `posthoc.csv`, `posthoc_exons.csv`): M4 refitted on the E1 training set at its chosen C, standardised coefficients summarised by sequence class (runs 10–19; runs ≥ 20 with the branch point ≥ 36 nt; other runs ≥ 20) and the 20 largest; the share of M5's top-500 ANOVA exons with a run ≥ 10 against the pool's share, and their genes; M5 refitted on the E1 training set at its chosen K and C, its standardised coefficients by sequence class and the 20 largest; three ablations fitted on E1 with the grid and tuning of the model they modify, described with bootstrap intervals against M2 and no q: M5 on the pool exons without a run ≥ 10 (M5n); M4 on the exons of the 2 arms only (M4a, per-exon weights on the exons score G uses); and M4 on the repeat exons outside the arms (M4x). No test, cut or verdict changed | M4 and M5 beat the 10 bins held out, against LR4 and LR5's predicted sign; these checks ask whether the gain comes from the repeat sequence or from other exons | Yes: chosen after the results; reported as exploratory |
 | A-19 | 2026-10-13, after D-71, D-72 and A-18 were computed and read | At the user's request, figures U23 and U24 and the write-ups show one fitted model: logistic regression on the repeat exons (M4), with score G as the unfitted reference in U23. The pre-registered tests are unchanged and still reported: the LR family compares M0–M6, and BM1–BM6 test the all-exon model (M5). M4's benchmark differences are exploratory (same paired bootstrap, no q). Step 55's discordance table is also computed for M4; nothing else is recomputed | Presentation: M4 keeps the sequence prior, so it is the fitted model that reads the code | Yes: chosen after the results, when M4 had the highest leave-one-cancer-out AUROC (0.967); its numbers are labelled exploratory where the tests were on M5 |
 | A-20 | 2026-10-13, after MG1–MG5 and the exploratory tables of D-75 were computed and read | Four exploratory additions to `scripts/60` (`figure_data`): (1) shift summaries and figure panels restricted to exons whose proficient median PSI lies within 0.1–0.9; (2) mid-rank percentiles of MMR-deficient tumours among proficient ones, binned by class (ties count half; the held-out tail shares now use them too, where strict ranks had counted a tumour tied with every proficient value as a low-tail case); (3) MG4 and MG5's statistic by proficient-median band and on the 0.1–0.9 exons; (4) PSI histograms of MRE11 exon 5 and three exons chosen after the largest-movers table was read (METTL8 and BOD1L1, the largest mean shifts of each arm; CCNDBP1, the event of Figure U7) | The median exon shift was exactly 0 in every class (most exons sit at PSI 0 or 1), and MG4's location-shift expectation was found to move proficient values past 0 and 1: the positive control MRE11 exon 5 scored 57% observed against 100% expected in COAD | Yes: all four were added after the results were read; they are exploratory and reported beside the pre-specified tests, whose verdicts are unchanged |
+| A-21 | 2026-10-13, after CQ1–CQ4 and the composition were read | `scripts/61 --only posthoc`: coupling by baseline-PSI band, the shift of background poison against in-frame exons by band (a check for global NMD weakening in MMR-deficient tumours), and rising-arm exons moving ≥ 0.05 by consequence (Fisher) | CQ1 failed and the largest movers were poison exons, which weaker NMD could also produce | Yes: exploratory; the pre-specified verdicts are unchanged |
 
 ## Verification that the existing tasks are unchanged
 - `tests/test_subtype.py::TestExistingTasksUnchanged` rebuilds every existing task table from

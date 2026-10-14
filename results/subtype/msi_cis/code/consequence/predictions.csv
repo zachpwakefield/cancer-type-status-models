@@ -1,0 +1,5 @@
+id,what,effect,predicted_sign,p,n,ci_low,ci_high,q,verdict
+CQ1,B inserted exons: median coupling of ptc_nmd minus in_frame,0.0028396325763717645,-1,0.3062567993100287,"ptc_nmd 4874 (median +0.081), in_frame 1353 (median +0.078)",,,0.6332785983920615,not resolved
+CQ2,R_up inserted exons: median coupling of ptc_nmd minus in_frame,-0.024966239416028962,-1,0.31663929919603073,"ptc_nmd 50 (median +0.062), in_frame 9 (median +0.087)",,,0.6332785983920615,not resolved
+CQ3,"training cancers, R_up inserted exons: AUROC(host-gene change lower for ptc_nmd than in_frame) - 0.5",-0.02619047619047621,1,0.7092991675143483,"ptc_nmd 126 (median +0.024), in_frame 20 (median +0.044)",,,0.923,not resolved
+CQ4,"training cancers, R_up inserted exons: Spearman(exon shift, host-gene change), ptc_nmd minus in_frame",-0.022022679752398043,-1,0.923,"ptc_nmd 126 (rho +0.025), in_frame 20 (rho +0.047)",-0.48714765588289033,0.46212951195059243,0.923,not resolved

@@ -12,7 +12,7 @@ Inputs:  GENCODE v45 GTF and GRCh38 FASTA (as step 42), the pan-cancer SE and GE
          per-exon table (data.nosync/ctsm_v1/msi/magnitude_exons.parquet), step 54's tumours
 Outputs: results/subtype/msi_cis/code/consequence/ (aggregates and per-exon tables);
          data.nosync/ctsm_v1/msi/consequence_{annotation,coupling}.parquet (local)
-Usage: python scripts/61_msi_rising_consequence.py [--only annotate|compute|report]
+Usage: python scripts/61_msi_rising_consequence.py [--only annotate|compute|report|posthoc]
 """
 from __future__ import annotations
 
@@ -171,7 +171,8 @@ def compute() -> None:
     from ctsm.matrix_io import load_view
     cfg = load_config()
     a = pd.read_parquet(LOCAL / "consequence_annotation.parquet")
-    keep = a[a.consequence.isin(["in_frame", "ptc_nmd", "ptc_escape", "canonical"])]
+    keep = a[a.consequence.isin(["in_frame", "ptc_nmd", "ptc_escape"]) |
+             (a.consequence.eq("canonical") & a.mclass.ne("B"))]        # canonical B exons enter no test
     t = pd.read_parquet(LOCAL / "models_tumours.parquet")[["file_id", "project", "mmr"]]
     tab = pd.read_parquet(m51.DATA / "tasks" / "cancer_type__PANCAN.parquet")
     normals = tab[tab.role.eq("normal")][["file_id", "project"]]
@@ -344,12 +345,65 @@ def report() -> None:
     log(f"switched-on candidates:\n{cand[cols].round(3).to_string()}")
 
 
+BANDS, BAND_NAMES = [-0.01, 0.02, 0.1, 0.3, 0.7, 1.01], ["≤ 0.02", "0.02–0.1", "0.1–0.3", "0.3–0.7", "> 0.7"]
+
+
+def posthoc() -> None:
+    """A-21 (exploratory, after CQ1-CQ4 were read): coupling by baseline PSI, the global-NMD control
+    (do background poison exons rise in MMR-deficient tumours?) and R_up movers by consequence."""
+    from scipy.stats import fisher_exact, mannwhitneyu
+    a = pd.read_parquet(LOCAL / "consequence_annotation.parquet")
+    cp = pd.read_parquet(LOCAL / "consequence_coupling.parquet")
+    ex = pd.read_parquet(LOCAL / "magnitude_exons.parquet")
+    rng = np.random.default_rng(m51.SEED)
+    base = ex[ex.group.isin(TRAIN)].groupby("feature_index").median_proficient.median()
+    d = a.assign(rho=a.feature_index.map(cp.groupby("feature_index").rho.mean()), base=a.feature_index.map(base))
+    d = d.dropna(subset=["rho", "base"]).assign(band=lambda x: pd.cut(x.base, BANDS, labels=BAND_NAMES))
+    rows = []
+    for (c_, k, b), v in d[d.consequence.isin(["ptc_nmd", "in_frame", "canonical"])].groupby(
+            ["mclass", "consequence", "band"], observed=True):
+        rows.append({"class": c_, "consequence": k, "baseline_psi": b, "n": len(v), "median_rho": float(v.rho.median()),
+                     "q25": float(v.rho.quantile(0.25)), "q75": float(v.rho.quantile(0.75))})
+    strat = pd.DataFrame(rows)
+    for b in BAND_NAMES:                                    # B poison minus in-frame within each band
+        x = d[d.mclass.eq("B") & d.consequence.eq("ptc_nmd") & d.band.eq(b)].rho
+        y = d[d.mclass.eq("B") & d.consequence.eq("in_frame") & d.band.eq(b)].rho
+        if min(len(x), len(y)) >= 10:
+            strat = pd.concat([strat, pd.DataFrame([{"class": "B", "consequence": "ptc_nmd minus in_frame",
+                                                     "baseline_psi": b, "n": f"{len(x)} v {len(y)}",
+                                                     "median_rho": float(x.median() - y.median()),
+                                                     "p": float(mannwhitneyu(x, y).pvalue)}])])
+    strat.to_csv(OUT / "coupling_by_baseline.csv", index=False, float_format="%.4g")
+    log(f"coupling vs baseline PSI, all annotated exons: rho = {d[['base', 'rho']].corr('spearman').iloc[0, 1]:.3f}")
+    rows = []
+    for grp, sub in [("training", ex[ex.group.isin(TRAIN)]), ("held out", ex[ex.group.eq("held out") & ex.n_mmr.ge(MIN_HELD)])]:
+        sub = sub.merge(a[["feature_index", "consequence"]], on="feature_index")
+        sub = sub[sub.consequence.isin(["ptc_nmd", "in_frame"])].assign(band=lambda x: pd.cut(x.median_proficient, BANDS, labels=BAND_NAMES))
+        for (c_, k, b), v in sub.groupby(["mclass", "consequence", "band"], observed=True):
+            w = v["shift"].dropna().to_numpy()
+            if len(w) < 5:
+                continue
+            bs = rng.choice(w, size=(m51.BOOT, len(w))).mean(1)
+            rows.append({"group": grp, "class": c_, "consequence": k, "baseline_psi": b, "n": len(w),
+                         "mean_shift": float(w.mean()), "ci_low": float(np.quantile(bs, 0.025)),
+                         "ci_high": float(np.quantile(bs, 0.975)), "share_ge_005": float((w >= 0.05).mean())})
+    pd.DataFrame(rows).to_csv(OUT / "nmd_control.csv", index=False, float_format="%.4g")
+    tr = ex[ex.group.isin(TRAIN) & ex.mclass.eq("R_up")].merge(a[["feature_index", "consequence"]], on="feature_index")
+    tr = tr[tr.consequence.isin(["ptc_nmd", "in_frame"])]
+    k = pd.crosstab(tr.consequence, tr["shift"] >= 0.05).reindex(columns=[False, True], fill_value=0)
+    res = fisher_exact(k.to_numpy())
+    pd.DataFrame([{"consequence": c, "n": int(k.loc[c].sum()), "moving_ge_005": int(k.loc[c, True]),
+                   "fisher_p_ptc_nmd_vs_in_frame": float(res.pvalue)} for c in k.index]).to_csv(
+        OUT / "r_up_movers_by_consequence.csv", index=False, float_format="%.4g")
+    log(f"R_up rows moving >= 0.05 by consequence:\n{k}\nFisher p = {res.pvalue:.3f}")
+
+
 def main() -> None:
     import argparse
     ap = argparse.ArgumentParser()
-    ap.add_argument("--only", choices=["annotate", "compute", "report"])
+    ap.add_argument("--only", choices=["annotate", "compute", "report", "posthoc"])
     a = ap.parse_args()
-    for step, fn in [("annotate", annotate), ("compute", compute), ("report", report)]:
+    for step, fn in [("annotate", annotate), ("compute", compute), ("report", report), ("posthoc", posthoc)]:
         if a.only in (None, step):
             fn()
 
