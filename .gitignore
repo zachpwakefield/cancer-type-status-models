@@ -20,3 +20,6 @@ __pycache__/
 logs/
 *.log
 *.tmp
+
+# Machine-specific paths (config/local.env.example is the template)
+config/local.env

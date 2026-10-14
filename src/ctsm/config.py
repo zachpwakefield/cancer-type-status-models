@@ -6,6 +6,8 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
+import re
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -20,11 +22,51 @@ PAN = "PANCAN"                      # cohort name of the pan-cancer (cancer_type
 RMATS_VIEWS = ("se", "mxe", "a3ss", "a5ss", "ri")
 TERMINAL_VIEWS = ("afe", "ale")
 INT16_VIEWS = RMATS_VIEWS + ("hit",)
+LOCAL_ENV = CONFIG_DIR / "local.env"   # machine-specific paths, git-ignored; see config/local.env.example
+_VAR = re.compile(r"\$\{([A-Z][A-Z0-9_]*)\}")
 
 
 def load_yaml(name: str) -> dict[str, Any]:
     with open(CONFIG_DIR / name) as fh:
         return yaml.safe_load(fh)
+
+
+def settings() -> dict[str, str]:
+    """Machine-specific settings: KEY=VALUE lines of config/local.env, overridden by environment
+    variables of the same name (CTSM_* and PYTHON)."""
+    out: dict[str, str] = {}
+    if LOCAL_ENV.exists():
+        for line in LOCAL_ENV.read_text().splitlines():
+            line = line.strip()
+            if line and not line.startswith("#") and "=" in line:
+                k, v = line.split("=", 1)
+                out[k.strip()] = os.path.expanduser(v.strip().strip("\"'"))
+    out.update({k: v for k, v in os.environ.items() if k.startswith("CTSM_") or k == "PYTHON"})
+    return out
+
+
+def expand(value: Any, env: dict[str, str] | None = None) -> Any:
+    """Fill ${VAR} in strings, recursively through dicts and lists. An unset variable stays as
+    written, so a path that needs it fails with the variable's name in the error."""
+    env = settings() if env is None else env
+    if isinstance(value, str):
+        return _VAR.sub(lambda m: env.get(m.group(1), m.group(0)), value)
+    if isinstance(value, dict):
+        return {k: expand(v, env) for k, v in value.items()}
+    if isinstance(value, list):
+        return [expand(v, env) for v in value]
+    return value
+
+
+def portable(path: Any, env: dict[str, str] | None = None) -> str:
+    """A resolved path with the longest matching CTSM_* setting written back as ${VAR}, for
+    records that are committed (no machine paths in the repository)."""
+    env = settings() if env is None else env
+    s = str(path)
+    for k, v in sorted(env.items(), key=lambda kv: -len(kv[1])):
+        if k.startswith("CTSM_") and v and (s == v or s.startswith(v.rstrip("/") + "/")):
+            return "${" + k + "}" + s[len(v):]
+    return s
 
 
 def stable_hash(obj: Any) -> str:
@@ -90,7 +132,7 @@ class Config:
 
 
 def load_config() -> Config:
-    cfg = Config(study=load_yaml("study.yaml"), sources=load_yaml("sources.yaml"))
+    cfg = Config(study=load_yaml("study.yaml"), sources=expand(load_yaml("sources.yaml")))
     unknown = set(cfg.views) - set(cfg.sources["tcga"]["molecular"])
     if unknown:
         raise ValueError(f"views without a raw source: {sorted(unknown)}")

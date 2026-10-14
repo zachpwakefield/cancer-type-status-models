@@ -1,10 +1,15 @@
 #!/usr/bin/env bash
 # End-to-end rebuild: sources -> cohort/splits -> matrices -> validation -> models -> summary.
-# Usage: bash scripts/run_pipeline.sh            (PYTHON env var overrides the interpreter)
+# Usage: bash scripts/run_pipeline.sh   (machine paths and PYTHON from config/local.env or the environment)
 # Runtime on a shared 12-core Mac: extraction ~10 min; models several hours (8 workers).
 set -euo pipefail
 cd "$(dirname "$0")/.."
-PY="${PYTHON:-/Users/zacharywakefield/miniconda3/envs/survival_env_full/bin/python}"
+if [ -f config/local.env ]; then   # exported values already in the environment win
+  while IFS='=' read -r k v; do
+    case "$k" in CTSM_*|PYTHON) if [ -z "${!k:-}" ]; then export "$k=$v"; fi ;; esac
+  done < <(grep -E '^[A-Z_][A-Z0-9_]*=' config/local.env)
+fi
+PY="${PYTHON:-python}"
 export OMP_NUM_THREADS=1   # set before Python starts (see scripts/_common.py)
 mkdir -p logs
 

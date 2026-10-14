@@ -37,9 +37,10 @@ from scipy.stats import fisher_exact, mannwhitneyu, rankdata, spearmanr
 from scipy.stats import t as t_dist
 from statsmodels.stats.multitest import multipletests
 
+from ctsm.config import expand
 from ctsm.matrix_io import load_view
 
-FASTA = "/Users/zacharywakefield/Downloads/GRCh38.primary_assembly.genome.fa.gz"
+FASTA = expand("${CTSM_GENOME_FASTA}")      # GRCh38 primary assembly (config/local.env)
 DATA = REPO / "data.nosync" / "ctsm_v1"
 LOCAL = DATA / "msi"
 OUT = REPO / "results" / "subtype" / "msi_cis"

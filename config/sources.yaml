@@ -1,8 +1,9 @@
 # Raw data sources. All are READ-ONLY and live outside this repository.
 # Step 00 records size + SHA-256 of every file listed here in results/data/source_manifest.json,
-# so any later change to a source is detectable. To run elsewhere, edit only this file.
+# so any later change to a source is detectable. Machine-specific locations are ${CTSM_*}
+# variables, set in config/local.env (git-ignored; copy config/local.env.example) or exported.
 
-tcga_root: /Users/zacharywakefield/Desktop/cancer_7_16_2026
+tcga_root: "${CTSM_TCGA_ROOT}"
 
 tcga:
   # One row per GDC RNA-seq FILE: File.ID (UUID), Case.ID, Sample.ID, Sample.Type, Project.ID
@@ -27,11 +28,11 @@ tcga:
   gdc_tpm_matrix: data/intermediate/gdc_tpm/tpm.float32.npy
   gdc_tpm_samples: data/intermediate/gdc_tpm/samples.csv.gz
 
-gencode_v45_gtf: /Users/zacharywakefield/Desktop/annotation_cache/gencode.v45.annotation.gtf.gz
+gencode_v45_gtf: "${CTSM_GENCODE_GTF}"
 
 # Biological reference data (read-only), used only by the interpretation steps 07+
 reference:
-  root: /Users/zacharywakefield/Desktop/cancer_7_16_2026/data/reference
+  root: "${CTSM_TCGA_ROOT}/data/reference"
   msigdb_dir: gene_sets/msigdb_v2026.1.Hs           # MSigDB v2026.1 (HGNC symbols)
   gene_sets:
     hallmark: h.all.v2026.1.Hs.symbols.gmt
@@ -43,4 +44,4 @@ reference:
 # with the standard library (ctsm/subtype.py: read_xlsx_sheet), sheet "TCGA-CDR".
 subtype_labels:
   # TCGA Clinical Data Resource, Liu et al. 2018 Cell 173:400, Table S1 (one row per patient)
-  tcga_cdr: /Users/zacharywakefield/Desktop/SNHG17/hypothesis_20261010/downloads.nosync/tcga_cdr_liu2018/TCGA-CDR-SupplementalTableS1.xlsx
+  tcga_cdr: "${CTSM_TCGA_CDR}"

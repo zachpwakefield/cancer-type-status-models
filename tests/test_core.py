@@ -204,5 +204,41 @@ class TestAggregation(unittest.TestCase):
         self.assertEqual(make_labels(f, "se").tolist(), ["G r", "G r#2", "H r"])
 
 
+class TestMachinePaths(unittest.TestCase):
+    """Machine-specific paths live in config/local.env (git-ignored), never in tracked files."""
+
+    def test_settings_expand_and_portable(self):
+        import tempfile
+
+        import ctsm.config as C
+        old = C.LOCAL_ENV
+        with tempfile.TemporaryDirectory() as d:
+            C.LOCAL_ENV = Path(d) / "local.env"
+            C.LOCAL_ENV.write_text("# comment\nCTSM_ROOT=/data/root\nCTSM_GTF='/data/root/a.gtf'\nOTHER=x\n")
+            os.environ["CTSM_GTF"] = "/env/b.gtf"                      # the environment wins
+            try:
+                env = C.settings()
+            finally:
+                del os.environ["CTSM_GTF"]
+                C.LOCAL_ENV = old
+        self.assertEqual(env["CTSM_ROOT"], "/data/root")
+        self.assertEqual(env["CTSM_GTF"], "/env/b.gtf")
+        tree = {"a": "${CTSM_ROOT}/raw", "b": ["${CTSM_GTF}"], "c": "${CTSM_UNSET}/x", "d": 3}
+        self.assertEqual(C.expand(tree, env), {"a": "/data/root/raw", "b": ["/env/b.gtf"], "c": "${CTSM_UNSET}/x", "d": 3})
+        self.assertEqual(C.portable("/data/root/raw/x.csv", env), "${CTSM_ROOT}/raw/x.csv")
+        self.assertEqual(C.portable("/env/b.gtf", env), "${CTSM_GTF}")
+        self.assertEqual(C.portable("/data/rootless/x", env), "/data/rootless/x")   # prefix only at a path boundary
+
+    def test_no_home_paths_in_tracked_text(self):
+        import re
+        root = Path(__file__).resolve().parents[1]
+        pat = re.compile(r"/(Users|home)/[A-Za-z]")
+        files = [root / "README.md", root / "results" / "data" / "source_manifest.json"]
+        for d in ["config", "src", "scripts", "docs", "tests"]:
+            files += [p for p in (root / d).rglob("*") if p.suffix in {".py", ".sh", ".yaml", ".md", ".json", ".example"}]
+        hits = [str(p.relative_to(root)) for p in files if p.is_file() and pat.search(p.read_text(errors="ignore"))]
+        self.assertEqual(hits, [], "machine paths belong in config/local.env")
+
+
 if __name__ == "__main__":
     unittest.main()

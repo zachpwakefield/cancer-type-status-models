@@ -1226,7 +1226,8 @@ cohort and view are in [results/RESULTS.md](results/RESULTS.md).
 
 ```
 config/       study.yaml (rules and search space), sources.yaml (raw data paths), biology.yaml,
-              subtype.yaml (label maps, fixed before any fit), followup.yaml (every later prediction)
+              subtype.yaml (label maps, fixed before any fit), followup.yaml (every later prediction),
+              local.env.example (template for this machine's paths; the copy is git-ignored)
 src/ctsm/     library: cohort, splits, extraction, preprocessing, model, pipeline, metrics, SHAP,
               biology helpers, subtype labels, figure style
 scripts/      00–06    data, models and summaries (05 runs all jobs)
@@ -1254,6 +1255,10 @@ conda env create -f environment.yml
 ```
 
 ```bash
+cp config/local.env.example config/local.env
+```
+
+```bash
 bash scripts/run_pipeline.sh
 ```
 
@@ -1265,10 +1270,13 @@ OMP_NUM_THREADS=1 python scripts/04_run_job.py tumor_status se BRCA
 python scripts/59_build_readme.py
 ```
 
-- **Commands.** The second runs everything end to end, the third a single job, and the fourth
-  rebuilds this page from [docs/readme/README.template.md](docs/readme/README.template.md).
-- **Raw inputs.** Paths are in `config/sources.yaml`: TCGA rMATS and HITindex tables and STAR
-  counts produced from GDC BAM files, plus GENCODE annotation. They are not redistributed.
+- **Commands.** The second creates this machine's settings file, whose paths you then edit. The
+  third runs everything end to end, the fourth a single job, and the fifth rebuilds this page
+  from [docs/readme/README.template.md](docs/readme/README.template.md).
+- **Raw inputs.** `config/sources.yaml` names them through `${CTSM_*}` variables. Their locations
+  are set in `config/local.env`, which git ignores, or exported in the shell: TCGA rMATS and
+  HITindex tables and STAR counts produced from GDC BAM files, plus GENCODE annotation, the GRCh38
+  genome and the TCGA-CDR table. They are not redistributed.
 - **Downloaded labels.** Subtype labels, copy number and mutation calls are open-access GDC
   PanCanAtlas files, and the MANTIS and MSIsensor scores come from the public cBioPortal API. All
   are fetched and MD5-checked by `scripts/00b_fetch_gdc_labels.py` and

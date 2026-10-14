@@ -28,9 +28,9 @@ from _common import REPO, log
 from scipy.stats import fisher_exact
 
 from ctsm.biology import bh
-from ctsm.config import load_config
+from ctsm.config import expand, load_config
 
-SA_PYTHON = "/Users/zacharywakefield/miniconda3/envs/first_env/bin/python"   # splice-assay 0.4.0 lives here
+SA_PYTHON = expand("${CTSM_SA_PYTHON}")      # a Python with splice-assay 0.4.0 (config/local.env)
 ENDPOINTS = ("OS", "DSS")
 ARMS = {"base": [], "adjusted": ["--covariate", "age", "--covariate", "sex", "--covariate", "stage",
                                  "--baseline", "stage=I", "--baseline", "sex=female"]}

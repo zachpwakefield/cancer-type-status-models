@@ -9,7 +9,7 @@ from pathlib import Path
 
 from _common import log
 
-from ctsm.config import load_config
+from ctsm.config import load_config, portable
 from ctsm.provenance import sha256_file, write_json
 
 
@@ -33,7 +33,7 @@ def main() -> None:
         if getattr(st, "st_flags", 0) & 0x40000000:          # SF_DATALESS: evicted by iCloud
             raise SystemExit(f"{p} is an iCloud placeholder; download it first (brctl download)")
         log(f"hashing {key}: {p.name} ({st.st_size / 1e9:.2f} GB)")
-        out[key] = {"path": str(p), "bytes": st.st_size, "sha256": sha256_file(p)}
+        out[key] = {"path": portable(p), "bytes": st.st_size, "sha256": sha256_file(p)}   # ${CTSM_*}, not machine paths
     write_json(cfg.results_dir / "data" / "source_manifest.json", out)
     log(f"{len(out)} sources registered")
 
