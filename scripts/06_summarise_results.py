@@ -26,7 +26,9 @@ N_BEESWARM = 15
 
 def collect(cfg) -> tuple[pd.DataFrame, pd.DataFrame]:
     ts, ct = [], []
-    for p in sorted(cfg.results_dir.glob("*/*/*/metrics.json")):
+    # tumour status and cancer type only: results/subtype/ holds the subtype task's jobs (step 34)
+    paths = [*cfg.results_dir.glob("tumor_status/*/*/metrics.json"), *cfg.results_dir.glob("cancer_type/*/*/metrics.json")]
+    for p in sorted(paths):
         m = json.loads(p.read_text())
         row = {"view": m["view"], "cohort": m["cohort"], **m["pooled_oof"],
                **{f"{k}_lo": v[0] for k, v in m["bootstrap_95ci"].items()},

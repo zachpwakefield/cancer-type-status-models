@@ -99,3 +99,6 @@ run scripts/53_msi_manuscript_figures.py   # M1, the MSI manuscript's schematic
 # across the three tasks (docs/ACROSS_TASKS_METHODS.md D-48..D-51): nothing refitted
 run scripts/40_cross_task.py
 run scripts/41_figures_cross_task.py
+# the README: the overview figure, then the page itself from docs/readme/README.template.md
+run scripts/58_overview_figure.py
+run scripts/59_build_readme.py

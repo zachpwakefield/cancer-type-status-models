@@ -1,0 +1,77 @@
+panel,view,isoform,exon_start,exon_end,alternative,project,tumour_cases,normal_cases,tumour_status_model,subtype_cohorts,mmr_deficient_mc3,msi_role
+a,AFE,0.0,0.0,1.0,True,,,,,,,
+a,AFE,0.0,5.0,6.0,False,,,,,,,
+a,AFE,0.0,8.0,9.0,False,,,,,,,
+a,AFE,1.0,2.5,3.5,True,,,,,,,
+a,AFE,1.0,5.0,6.0,False,,,,,,,
+a,AFE,1.0,8.0,9.0,False,,,,,,,
+a,ALE,0.0,0.0,1.0,False,,,,,,,
+a,ALE,0.0,3.0,4.0,False,,,,,,,
+a,ALE,0.0,5.5,6.5,True,,,,,,,
+a,ALE,1.0,0.0,1.0,False,,,,,,,
+a,ALE,1.0,3.0,4.0,False,,,,,,,
+a,ALE,1.0,8.0,9.0,True,,,,,,,
+a,HIT,0.0,0.0,1.0,False,,,,,,,
+a,HIT,0.0,4.0,5.0,True,,,,,,,
+a,HIT,1.0,4.0,5.0,True,,,,,,,
+a,HIT,1.0,8.0,9.0,False,,,,,,,
+a,SE,0.0,0.0,1.0,False,,,,,,,
+a,SE,0.0,4.0,5.0,True,,,,,,,
+a,SE,0.0,8.0,9.0,False,,,,,,,
+a,SE,1.0,0.0,1.0,False,,,,,,,
+a,SE,1.0,8.0,9.0,False,,,,,,,
+a,A5SS,0.0,0.0,1.8,False,,,,,,,
+a,A5SS,0.0,8.0,9.0,False,,,,,,,
+a,A5SS,0.0,1.0,1.8,True,,,,,,,
+a,A5SS,1.0,0.0,1.0,False,,,,,,,
+a,A5SS,1.0,8.0,9.0,False,,,,,,,
+a,A3SS,0.0,0.0,1.0,False,,,,,,,
+a,A3SS,0.0,7.2,9.0,False,,,,,,,
+a,A3SS,0.0,7.2,8.0,True,,,,,,,
+a,A3SS,1.0,0.0,1.0,False,,,,,,,
+a,A3SS,1.0,8.0,9.0,False,,,,,,,
+a,MXE,0.0,0.0,1.0,False,,,,,,,
+a,MXE,0.0,3.0,4.0,True,,,,,,,
+a,MXE,0.0,8.0,9.0,False,,,,,,,
+a,MXE,1.0,0.0,1.0,False,,,,,,,
+a,MXE,1.0,5.5,6.5,True,,,,,,,
+a,MXE,1.0,8.0,9.0,False,,,,,,,
+a,RI,0.0,0.0,9.0,False,,,,,,,
+a,RI,0.0,1.0,8.0,True,,,,,,,
+a,RI,1.0,0.0,1.0,False,,,,,,,
+a,RI,1.0,8.0,9.0,False,,,,,,,
+a,GEX,0.0,0.0,9.0,False,,,,,,,
+b,,,,,,BRCA,1073.0,112.0,True,3.0,11.0,held out
+b,,,,,,KIRC,522.0,71.0,True,0.0,1.0,held out
+b,,,,,,LGG,510.0,0.0,False,2.0,2.0,held out
+b,,,,,,THCA,503.0,59.0,True,1.0,0.0,held out
+b,,,,,,HNSC,501.0,44.0,True,2.0,5.0,held out
+b,,,,,,PRAD,497.0,52.0,True,1.0,4.0,held out
+b,,,,,,LUSC,494.0,49.0,True,0.0,3.0,held out
+b,,,,,,LUAD,489.0,58.0,True,0.0,2.0,held out
+b,,,,,,BLCA,402.0,18.0,True,0.0,1.0,held out
+b,,,,,,OV,375.0,0.0,False,0.0,0.0,held out
+b,,,,,,LIHC,366.0,50.0,True,0.0,2.0,held out
+b,,,,,,STAD,352.0,31.0,True,2.0,59.0,training
+b,,,,,,CESC,291.0,3.0,False,1.0,8.0,held out
+b,,,,,,KIRP,287.0,32.0,True,0.0,0.0,held out
+b,,,,,,COAD,263.0,39.0,True,1.0,44.0,training
+b,,,,,,SARC,256.0,2.0,False,1.0,2.0,held out
+b,,,,,,PCPG,179.0,3.0,False,2.0,0.0,held out
+b,,,,,,UCEC,178.0,13.0,True,2.0,47.0,training
+b,,,,,,PAAD,177.0,4.0,False,0.0,0.0,held out
+b,,,,,,ESCA,161.0,11.0,True,1.0,2.0,held out
+b,,,,,,GBM,152.0,0.0,False,0.0,0.0,held out
+b,,,,,,TGCT,134.0,0.0,False,1.0,0.0,held out
+b,,,,,,LAML,131.0,0.0,False,0.0,0.0,held out
+b,,,,,,THYM,119.0,2.0,False,1.0,1.0,held out
+b,,,,,,READ,91.0,9.0,False,0.0,2.0,held out
+b,,,,,,SKCM,88.0,0.0,False,0.0,0.0,held out
+b,,,,,,MESO,85.0,0.0,False,1.0,0.0,held out
+b,,,,,,ACC,79.0,0.0,False,0.0,3.0,held out
+b,,,,,,UVM,78.0,0.0,False,0.0,0.0,held out
+b,,,,,,KICH,64.0,24.0,True,0.0,0.0,held out
+b,,,,,,UCS,55.0,0.0,False,0.0,1.0,held out
+b,,,,,,DLBC,47.0,0.0,False,0.0,0.0,held out
+b,,,,,,CHOL,35.0,9.0,False,0.0,0.0,held out
+b,,,,,,reference line: 10 normal cases (tumour-status scope),,,,,,
