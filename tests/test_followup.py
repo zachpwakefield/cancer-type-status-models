@@ -565,6 +565,13 @@ class TestMsiMagnitude(unittest.TestCase):
         self.assertEqual(obs[0], 1.0)                       # 1 of 1 finite value below the 5th percentile
         self.assertTrue(np.isnan(exp[1]))
 
+    def test_midrank_puts_ties_at_the_middle(self):
+        P = np.array([[1.0, 0.2, np.nan], [1.0, 0.4, np.nan], [1.0, 0.6, np.nan], [1.0, 0.8, np.nan]])
+        u = self.m.midrank(P, np.array([1.0, 0.5, 0.3]))
+        self.assertEqual(u[0], 0.5)                         # tied with every proficient value
+        self.assertEqual(u[1], 0.5)
+        self.assertTrue(np.isnan(u[2]))
+
     def test_strat_perm_matches_strata_and_detects_a_shift(self):
         rng = np.random.default_rng(2)
         strata = np.repeat(["s0", "s1"], 200)

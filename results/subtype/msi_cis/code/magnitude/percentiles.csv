@@ -1,0 +1,801 @@
+group,mclass,band,bin,count,density
+COAD,B,all,0,57410,0.97161
+COAD,B,all,1,45650,0.77258
+COAD,B,all,2,43559,0.73719
+COAD,B,all,3,41645,0.7048
+COAD,B,all,4,40122,0.67903
+COAD,B,all,5,42046,0.71159
+COAD,B,all,6,41412,0.70086
+COAD,B,all,7,41845,0.70819
+COAD,B,all,8,45218,0.76527
+COAD,B,all,9,50833,0.8603
+COAD,B,all,10,225696,3.8197
+COAD,B,all,11,102441,1.7337
+COAD,B,all,12,78387,1.3266
+COAD,B,all,13,64878,1.098
+COAD,B,all,14,55698,0.94263
+COAD,B,all,15,50076,0.84749
+COAD,B,all,16,43689,0.73939
+COAD,B,all,17,39345,0.66588
+COAD,B,all,18,36944,0.62524
+COAD,B,all,19,34858,0.58994
+COAD,B,interior,0,14450,1.298
+COAD,B,interior,1,11697,1.0507
+COAD,B,interior,2,11405,1.0245
+COAD,B,interior,3,10444,0.93816
+COAD,B,interior,4,9758,0.87654
+COAD,B,interior,5,10085,0.90591
+COAD,B,interior,6,9999,0.89819
+COAD,B,interior,7,9765,0.87717
+COAD,B,interior,8,9884,0.88786
+COAD,B,interior,9,9606,0.86289
+COAD,B,interior,10,10093,0.90663
+COAD,B,interior,11,9839,0.88382
+COAD,B,interior,12,9618,0.86396
+COAD,B,interior,13,9571,0.85974
+COAD,B,interior,14,9134,0.82049
+COAD,B,interior,15,13556,1.2177
+COAD,B,interior,16,14315,1.2859
+COAD,B,interior,17,13571,1.2191
+COAD,B,interior,18,13638,1.2251
+COAD,B,interior,19,12220,1.0977
+COAD,R_down,all,0,4573,1.4454
+COAD,R_down,all,1,2830,0.89448
+COAD,R_down,all,2,2845,0.89922
+COAD,R_down,all,3,2460,0.77753
+COAD,R_down,all,4,2704,0.85465
+COAD,R_down,all,5,2486,0.78575
+COAD,R_down,all,6,2918,0.92229
+COAD,R_down,all,7,3436,1.086
+COAD,R_down,all,8,3568,1.1277
+COAD,R_down,all,9,3519,1.1123
+COAD,R_down,all,10,8519,2.6926
+COAD,R_down,all,11,4100,1.2959
+COAD,R_down,all,12,2536,0.80156
+COAD,R_down,all,13,3087,0.97571
+COAD,R_down,all,14,2490,0.78702
+COAD,R_down,all,15,2325,0.73486
+COAD,R_down,all,16,2209,0.6982
+COAD,R_down,all,17,1951,0.61665
+COAD,R_down,all,18,2326,0.73518
+COAD,R_down,all,19,2395,0.75699
+COAD,R_down,interior,0,1865,2.7334
+COAD,R_down,interior,1,920,1.3484
+COAD,R_down,interior,2,910,1.3337
+COAD,R_down,interior,3,680,0.99663
+COAD,R_down,interior,4,546,0.80023
+COAD,R_down,interior,5,628,0.92042
+COAD,R_down,interior,6,538,0.78851
+COAD,R_down,interior,7,583,0.85446
+COAD,R_down,interior,8,609,0.89257
+COAD,R_down,interior,9,526,0.77092
+COAD,R_down,interior,10,545,0.79877
+COAD,R_down,interior,11,450,0.65953
+COAD,R_down,interior,12,513,0.75187
+COAD,R_down,interior,13,432,0.63315
+COAD,R_down,interior,14,446,0.65367
+COAD,R_down,interior,15,820,1.2018
+COAD,R_down,interior,16,677,0.99223
+COAD,R_down,interior,17,552,0.80903
+COAD,R_down,interior,18,780,1.1432
+COAD,R_down,interior,19,626,0.91748
+COAD,R_up,all,0,156,0.56893
+COAD,R_up,all,1,181,0.6601
+COAD,R_up,all,2,157,0.57257
+COAD,R_up,all,3,148,0.53975
+COAD,R_up,all,4,227,0.82786
+COAD,R_up,all,5,179,0.65281
+COAD,R_up,all,6,204,0.74398
+COAD,R_up,all,7,271,0.98833
+COAD,R_up,all,8,457,1.6667
+COAD,R_up,all,9,320,1.167
+COAD,R_up,all,10,561,2.046
+COAD,R_up,all,11,441,1.6083
+COAD,R_up,all,12,329,1.1999
+COAD,R_up,all,13,280,1.0212
+COAD,R_up,all,14,166,0.6054
+COAD,R_up,all,15,202,0.73669
+COAD,R_up,all,16,190,0.69292
+COAD,R_up,all,17,246,0.89716
+COAD,R_up,all,18,283,1.0321
+COAD,R_up,all,19,486,1.7724
+COAD,R_up,interior,0,49,0.95146
+COAD,R_up,interior,1,77,1.4951
+COAD,R_up,interior,2,28,0.54369
+COAD,R_up,interior,3,34,0.66019
+COAD,R_up,interior,4,43,0.83495
+COAD,R_up,interior,5,38,0.73786
+COAD,R_up,interior,6,49,0.95146
+COAD,R_up,interior,7,41,0.79612
+COAD,R_up,interior,8,34,0.66019
+COAD,R_up,interior,9,37,0.71845
+COAD,R_up,interior,10,38,0.73786
+COAD,R_up,interior,11,35,0.67961
+COAD,R_up,interior,12,40,0.7767
+COAD,R_up,interior,13,60,1.165
+COAD,R_up,interior,14,39,0.75728
+COAD,R_up,interior,15,47,0.91262
+COAD,R_up,interior,16,55,1.068
+COAD,R_up,interior,17,76,1.4757
+COAD,R_up,interior,18,80,1.5534
+COAD,R_up,interior,19,130,2.5243
+COAD,"long, other",all,0,263,1.0945
+COAD,"long, other",all,1,226,0.94049
+COAD,"long, other",all,2,181,0.75323
+COAD,"long, other",all,3,184,0.76571
+COAD,"long, other",all,4,343,1.4274
+COAD,"long, other",all,5,346,1.4399
+COAD,"long, other",all,6,216,0.89888
+COAD,"long, other",all,7,307,1.2776
+COAD,"long, other",all,8,192,0.799
+COAD,"long, other",all,9,254,1.057
+COAD,"long, other",all,10,202,0.84062
+COAD,"long, other",all,11,146,0.60757
+COAD,"long, other",all,12,206,0.85726
+COAD,"long, other",all,13,231,0.9613
+COAD,"long, other",all,14,212,0.88223
+COAD,"long, other",all,15,193,0.80316
+COAD,"long, other",all,16,201,0.83645
+COAD,"long, other",all,17,243,1.0112
+COAD,"long, other",all,18,235,0.97794
+COAD,"long, other",all,19,425,1.7686
+COAD,"long, other",interior,0,105,1.9444
+COAD,"long, other",interior,1,71,1.3148
+COAD,"long, other",interior,2,64,1.1852
+COAD,"long, other",interior,3,52,0.96296
+COAD,"long, other",interior,4,43,0.7963
+COAD,"long, other",interior,5,47,0.87037
+COAD,"long, other",interior,6,53,0.98148
+COAD,"long, other",interior,7,51,0.94444
+COAD,"long, other",interior,8,35,0.64815
+COAD,"long, other",interior,9,41,0.75926
+COAD,"long, other",interior,10,46,0.85185
+COAD,"long, other",interior,11,34,0.62963
+COAD,"long, other",interior,12,43,0.7963
+COAD,"long, other",interior,13,40,0.74074
+COAD,"long, other",interior,14,61,1.1296
+COAD,"long, other",interior,15,62,1.1481
+COAD,"long, other",interior,16,41,0.75926
+COAD,"long, other",interior,17,74,1.3704
+COAD,"long, other",interior,18,63,1.1667
+COAD,"long, other",interior,19,54,1
+STAD,B,all,0,61325,0.73258
+STAD,B,all,1,66637,0.79604
+STAD,B,all,2,69430,0.8294
+STAD,B,all,3,70720,0.84481
+STAD,B,all,4,71391,0.85283
+STAD,B,all,5,73343,0.87615
+STAD,B,all,6,74033,0.88439
+STAD,B,all,7,73739,0.88088
+STAD,B,all,8,74035,0.88441
+STAD,B,all,9,78282,0.93515
+STAD,B,all,10,246736,2.9475
+STAD,B,all,11,143338,1.7123
+STAD,B,all,12,111913,1.3369
+STAD,B,all,13,98593,1.1778
+STAD,B,all,14,85992,1.0272
+STAD,B,all,15,75147,0.8977
+STAD,B,all,16,64747,0.77346
+STAD,B,all,17,54564,0.65181
+STAD,B,all,18,45848,0.54769
+STAD,B,all,19,34405,0.411
+STAD,B,interior,0,16168,0.94539
+STAD,B,interior,1,18067,1.0564
+STAD,B,interior,2,18047,1.0553
+STAD,B,interior,3,17366,1.0154
+STAD,B,interior,4,16841,0.98474
+STAD,B,interior,5,17714,1.0358
+STAD,B,interior,6,17402,1.0175
+STAD,B,interior,7,17226,1.0073
+STAD,B,interior,8,17341,1.014
+STAD,B,interior,9,17171,1.004
+STAD,B,interior,10,17506,1.0236
+STAD,B,interior,11,17132,1.0018
+STAD,B,interior,12,16550,0.96773
+STAD,B,interior,13,16137,0.94358
+STAD,B,interior,14,15213,0.88955
+STAD,B,interior,15,18260,1.0677
+STAD,B,interior,16,20029,1.1712
+STAD,B,interior,17,18477,1.0804
+STAD,B,interior,18,16975,0.99258
+STAD,B,interior,19,12417,0.72606
+STAD,R_down,all,0,4972,1.113
+STAD,R_down,all,1,4032,0.90255
+STAD,R_down,all,2,4503,1.008
+STAD,R_down,all,3,4868,1.0897
+STAD,R_down,all,4,4666,1.0445
+STAD,R_down,all,5,5127,1.1477
+STAD,R_down,all,6,4548,1.0181
+STAD,R_down,all,7,4771,1.068
+STAD,R_down,all,8,5242,1.1734
+STAD,R_down,all,9,3928,0.87927
+STAD,R_down,all,10,9108,2.0388
+STAD,R_down,all,11,5362,1.2003
+STAD,R_down,all,12,5011,1.1217
+STAD,R_down,all,13,4171,0.93366
+STAD,R_down,all,14,3878,0.86808
+STAD,R_down,all,15,3650,0.81704
+STAD,R_down,all,16,3192,0.71452
+STAD,R_down,all,17,3240,0.72526
+STAD,R_down,all,18,2731,0.61132
+STAD,R_down,all,19,2347,0.52537
+STAD,R_down,interior,0,2192,2.0385
+STAD,R_down,interior,1,1395,1.2973
+STAD,R_down,interior,2,1429,1.3289
+STAD,R_down,interior,3,1192,1.1085
+STAD,R_down,interior,4,1012,0.94113
+STAD,R_down,interior,5,1130,1.0509
+STAD,R_down,interior,6,1066,0.99135
+STAD,R_down,interior,7,986,0.91695
+STAD,R_down,interior,8,973,0.90486
+STAD,R_down,interior,9,935,0.86952
+STAD,R_down,interior,10,963,0.89556
+STAD,R_down,interior,11,903,0.83977
+STAD,R_down,interior,12,881,0.81931
+STAD,R_down,interior,13,856,0.79606
+STAD,R_down,interior,14,870,0.80908
+STAD,R_down,interior,15,986,0.91695
+STAD,R_down,interior,16,1017,0.94578
+STAD,R_down,interior,17,1073,0.99786
+STAD,R_down,interior,18,884,0.8221
+STAD,R_down,interior,19,763,0.70957
+STAD,R_up,all,0,146,0.39237
+STAD,R_up,all,1,278,0.74711
+STAD,R_up,all,2,257,0.69067
+STAD,R_up,all,3,328,0.88148
+STAD,R_up,all,4,312,0.83848
+STAD,R_up,all,5,469,1.2604
+STAD,R_up,all,6,390,1.0481
+STAD,R_up,all,7,413,1.1099
+STAD,R_up,all,8,319,0.8573
+STAD,R_up,all,9,388,1.0427
+STAD,R_up,all,10,581,1.5614
+STAD,R_up,all,11,478,1.2846
+STAD,R_up,all,12,319,0.8573
+STAD,R_up,all,13,449,1.2067
+STAD,R_up,all,14,339,0.91105
+STAD,R_up,all,15,341,0.91642
+STAD,R_up,all,16,399,1.0723
+STAD,R_up,all,17,411,1.1045
+STAD,R_up,all,18,400,1.075
+STAD,R_up,all,19,425,1.1422
+STAD,R_up,interior,0,70,1.0043
+STAD,R_up,interior,1,83,1.1908
+STAD,R_up,interior,2,77,1.1047
+STAD,R_up,interior,3,37,0.53085
+STAD,R_up,interior,4,75,1.076
+STAD,R_up,interior,5,63,0.90387
+STAD,R_up,interior,6,53,0.7604
+STAD,R_up,interior,7,58,0.83214
+STAD,R_up,interior,8,60,0.86083
+STAD,R_up,interior,9,53,0.7604
+STAD,R_up,interior,10,51,0.73171
+STAD,R_up,interior,11,64,0.91822
+STAD,R_up,interior,12,60,0.86083
+STAD,R_up,interior,13,67,0.96126
+STAD,R_up,interior,14,78,1.1191
+STAD,R_up,interior,15,59,0.84648
+STAD,R_up,interior,16,83,1.1908
+STAD,R_up,interior,17,118,1.693
+STAD,R_up,interior,18,101,1.4491
+STAD,R_up,interior,19,84,1.2052
+STAD,"long, other",all,0,272,0.78795
+STAD,"long, other",all,1,323,0.93569
+STAD,"long, other",all,2,367,1.0632
+STAD,"long, other",all,3,546,1.5817
+STAD,"long, other",all,4,297,0.86037
+STAD,"long, other",all,5,413,1.1964
+STAD,"long, other",all,6,423,1.2254
+STAD,"long, other",all,7,347,1.0052
+STAD,"long, other",all,8,283,0.81981
+STAD,"long, other",all,9,332,0.96176
+STAD,"long, other",all,10,400,1.1587
+STAD,"long, other",all,11,360,1.0429
+STAD,"long, other",all,12,262,0.75898
+STAD,"long, other",all,13,269,0.77926
+STAD,"long, other",all,14,330,0.95597
+STAD,"long, other",all,15,320,0.927
+STAD,"long, other",all,16,289,0.8372
+STAD,"long, other",all,17,304,0.88065
+STAD,"long, other",all,18,323,0.93569
+STAD,"long, other",all,19,444,1.2862
+STAD,"long, other",interior,0,166,1.8455
+STAD,"long, other",interior,1,137,1.5231
+STAD,"long, other",interior,2,122,1.3563
+STAD,"long, other",interior,3,114,1.2674
+STAD,"long, other",interior,4,58,0.6448
+STAD,"long, other",interior,5,85,0.94497
+STAD,"long, other",interior,6,77,0.85603
+STAD,"long, other",interior,7,78,0.86715
+STAD,"long, other",interior,8,87,0.9672
+STAD,"long, other",interior,9,76,0.84491
+STAD,"long, other",interior,10,65,0.72262
+STAD,"long, other",interior,11,66,0.73374
+STAD,"long, other",interior,12,65,0.72262
+STAD,"long, other",interior,13,70,0.77821
+STAD,"long, other",interior,14,56,0.62257
+STAD,"long, other",interior,15,118,1.3118
+STAD,"long, other",interior,16,84,0.93385
+STAD,"long, other",interior,17,98,1.0895
+STAD,"long, other",interior,18,95,1.0561
+STAD,"long, other",interior,19,82,0.91162
+UCEC,B,all,0,45545,0.82072
+UCEC,B,all,1,40670,0.73287
+UCEC,B,all,2,42255,0.76144
+UCEC,B,all,3,40871,0.7365
+UCEC,B,all,4,40553,0.73077
+UCEC,B,all,5,41466,0.74722
+UCEC,B,all,6,40877,0.7366
+UCEC,B,all,7,40588,0.7314
+UCEC,B,all,8,42759,0.77052
+UCEC,B,all,9,43515,0.78414
+UCEC,B,all,10,221088,3.984
+UCEC,B,all,11,111920,2.0168
+UCEC,B,all,12,79577,1.434
+UCEC,B,all,13,64733,1.1665
+UCEC,B,all,14,50228,0.90511
+UCEC,B,all,15,45457,0.81914
+UCEC,B,all,16,39023,0.7032
+UCEC,B,all,17,31044,0.55941
+UCEC,B,all,18,27350,0.49285
+UCEC,B,all,19,20357,0.36683
+UCEC,B,interior,0,10914,1.1146
+UCEC,B,interior,1,10394,1.0615
+UCEC,B,interior,2,10614,1.084
+UCEC,B,interior,3,9537,0.97396
+UCEC,B,interior,4,9472,0.96733
+UCEC,B,interior,5,9926,1.0137
+UCEC,B,interior,6,9573,0.97764
+UCEC,B,interior,7,9433,0.96334
+UCEC,B,interior,8,9680,0.98857
+UCEC,B,interior,9,9183,0.93781
+UCEC,B,interior,10,9727,0.99337
+UCEC,B,interior,11,9097,0.92903
+UCEC,B,interior,12,8478,0.86581
+UCEC,B,interior,13,8293,0.84692
+UCEC,B,interior,14,7575,0.77359
+UCEC,B,interior,15,11342,1.1583
+UCEC,B,interior,16,13460,1.3746
+UCEC,B,interior,17,11430,1.1673
+UCEC,B,interior,18,10771,1.1
+UCEC,B,interior,19,6940,0.70875
+UCEC,R_down,all,0,2280,0.80635
+UCEC,R_down,all,1,2217,0.78407
+UCEC,R_down,all,2,2455,0.86824
+UCEC,R_down,all,3,2498,0.88345
+UCEC,R_down,all,4,2777,0.98212
+UCEC,R_down,all,5,2699,0.95454
+UCEC,R_down,all,6,2732,0.96621
+UCEC,R_down,all,7,3167,1.1201
+UCEC,R_down,all,8,3294,1.165
+UCEC,R_down,all,9,2840,1.0044
+UCEC,R_down,all,10,7909,2.7971
+UCEC,R_down,all,11,4054,1.4338
+UCEC,R_down,all,12,3031,1.072
+UCEC,R_down,all,13,2405,0.85056
+UCEC,R_down,all,14,2562,0.90608
+UCEC,R_down,all,15,2100,0.74269
+UCEC,R_down,all,16,2156,0.7625
+UCEC,R_down,all,17,1890,0.66842
+UCEC,R_down,all,18,1810,0.64013
+UCEC,R_down,all,19,1675,0.59239
+UCEC,R_down,interior,0,846,1.4721
+UCEC,R_down,interior,1,732,1.2737
+UCEC,R_down,interior,2,687,1.1954
+UCEC,R_down,interior,3,647,1.1258
+UCEC,R_down,interior,4,564,0.98138
+UCEC,R_down,interior,5,525,0.91352
+UCEC,R_down,interior,6,549,0.95528
+UCEC,R_down,interior,7,545,0.94832
+UCEC,R_down,interior,8,538,0.93614
+UCEC,R_down,interior,9,510,0.88742
+UCEC,R_down,interior,10,547,0.9518
+UCEC,R_down,interior,11,443,0.77084
+UCEC,R_down,interior,12,449,0.78128
+UCEC,R_down,interior,13,496,0.86306
+UCEC,R_down,interior,14,393,0.68384
+UCEC,R_down,interior,15,676,1.1763
+UCEC,R_down,interior,16,750,1.305
+UCEC,R_down,interior,17,656,1.1415
+UCEC,R_down,interior,18,615,1.0701
+UCEC,R_down,interior,19,326,0.56725
+UCEC,R_up,all,0,123,0.4998
+UCEC,R_up,all,1,183,0.7436
+UCEC,R_up,all,2,179,0.72735
+UCEC,R_up,all,3,198,0.80455
+UCEC,R_up,all,4,199,0.80861
+UCEC,R_up,all,5,204,0.82893
+UCEC,R_up,all,6,151,0.61357
+UCEC,R_up,all,7,332,1.349
+UCEC,R_up,all,8,334,1.3572
+UCEC,R_up,all,9,223,0.90614
+UCEC,R_up,all,10,588,2.3893
+UCEC,R_up,all,11,370,1.5035
+UCEC,R_up,all,12,283,1.1499
+UCEC,R_up,all,13,260,1.0565
+UCEC,R_up,all,14,153,0.6217
+UCEC,R_up,all,15,233,0.94677
+UCEC,R_up,all,16,180,0.73141
+UCEC,R_up,all,17,233,0.94677
+UCEC,R_up,all,18,224,0.9102
+UCEC,R_up,all,19,272,1.1052
+UCEC,R_up,interior,0,47,0.85455
+UCEC,R_up,interior,1,80,1.4545
+UCEC,R_up,interior,2,37,0.67273
+UCEC,R_up,interior,3,42,0.76364
+UCEC,R_up,interior,4,45,0.81818
+UCEC,R_up,interior,5,47,0.85455
+UCEC,R_up,interior,6,40,0.72727
+UCEC,R_up,interior,7,59,1.0727
+UCEC,R_up,interior,8,58,1.0545
+UCEC,R_up,interior,9,53,0.96364
+UCEC,R_up,interior,10,61,1.1091
+UCEC,R_up,interior,11,62,1.1273
+UCEC,R_up,interior,12,53,0.96364
+UCEC,R_up,interior,13,51,0.92727
+UCEC,R_up,interior,14,33,0.6
+UCEC,R_up,interior,15,78,1.4182
+UCEC,R_up,interior,16,61,1.1091
+UCEC,R_up,interior,17,70,1.2727
+UCEC,R_up,interior,18,56,1.0182
+UCEC,R_up,interior,19,67,1.2182
+UCEC,"long, other",all,0,101,0.45795
+UCEC,"long, other",all,1,155,0.70279
+UCEC,"long, other",all,2,169,0.76627
+UCEC,"long, other",all,3,220,0.99751
+UCEC,"long, other",all,4,219,0.99297
+UCEC,"long, other",all,5,365,1.655
+UCEC,"long, other",all,6,218,0.98844
+UCEC,"long, other",all,7,308,1.3965
+UCEC,"long, other",all,8,189,0.85695
+UCEC,"long, other",all,9,220,0.99751
+UCEC,"long, other",all,10,233,1.0564
+UCEC,"long, other",all,11,186,0.84335
+UCEC,"long, other",all,12,244,1.1063
+UCEC,"long, other",all,13,184,0.83428
+UCEC,"long, other",all,14,225,1.0202
+UCEC,"long, other",all,15,217,0.9839
+UCEC,"long, other",all,16,231,1.0474
+UCEC,"long, other",all,17,222,1.0066
+UCEC,"long, other",all,18,234,1.061
+UCEC,"long, other",all,19,271,1.2287
+UCEC,"long, other",interior,0,54,1.165
+UCEC,"long, other",interior,1,46,0.99245
+UCEC,"long, other",interior,2,53,1.1435
+UCEC,"long, other",interior,3,47,1.014
+UCEC,"long, other",interior,4,43,0.92772
+UCEC,"long, other",interior,5,59,1.2729
+UCEC,"long, other",interior,6,42,0.90615
+UCEC,"long, other",interior,7,41,0.88457
+UCEC,"long, other",interior,8,53,1.1435
+UCEC,"long, other",interior,9,39,0.84142
+UCEC,"long, other",interior,10,51,1.1003
+UCEC,"long, other",interior,11,40,0.863
+UCEC,"long, other",interior,12,49,1.0572
+UCEC,"long, other",interior,13,43,0.92772
+UCEC,"long, other",interior,14,21,0.45307
+UCEC,"long, other",interior,15,78,1.6828
+UCEC,"long, other",interior,16,37,0.79827
+UCEC,"long, other",interior,17,55,1.1866
+UCEC,"long, other",interior,18,52,1.1219
+UCEC,"long, other",interior,19,24,0.5178
+held out,B,all,0,58521,0.87885
+held out,B,all,1,53961,0.81037
+held out,B,all,2,53305,0.80052
+held out,B,all,3,51469,0.77295
+held out,B,all,4,50333,0.75589
+held out,B,all,5,50469,0.75793
+held out,B,all,6,50851,0.76367
+held out,B,all,7,50036,0.75143
+held out,B,all,8,54545,0.81914
+held out,B,all,9,56995,0.85594
+held out,B,all,10,242838,3.6469
+held out,B,all,11,119887,1.8004
+held out,B,all,12,89331,1.3415
+held out,B,all,13,73942,1.1104
+held out,B,all,14,61656,0.92593
+held out,B,all,15,53837,0.80851
+held out,B,all,16,48016,0.72109
+held out,B,all,17,41702,0.62627
+held out,B,all,18,37534,0.56368
+held out,B,all,19,32531,0.48854
+held out,B,interior,0,14259,1.1164
+held out,B,interior,1,13969,1.0937
+held out,B,interior,2,13437,1.052
+held out,B,interior,3,12473,0.97654
+held out,B,interior,4,12221,0.95681
+held out,B,interior,5,12386,0.96972
+held out,B,interior,6,12174,0.95313
+held out,B,interior,7,12079,0.94569
+held out,B,interior,8,12325,0.96495
+held out,B,interior,9,11800,0.92385
+held out,B,interior,10,12397,0.97059
+held out,B,interior,11,11812,0.92478
+held out,B,interior,12,11442,0.89582
+held out,B,interior,13,10930,0.85573
+held out,B,interior,14,10944,0.85683
+held out,B,interior,15,14626,1.1451
+held out,B,interior,16,15793,1.2365
+held out,B,interior,17,14953,1.1707
+held out,B,interior,18,14039,1.0991
+held out,B,interior,19,11395,0.89214
+held out,R_down,all,0,3045,0.86363
+held out,R_down,all,1,2805,0.79556
+held out,R_down,all,2,2920,0.82818
+held out,R_down,all,3,3077,0.87271
+held out,R_down,all,4,3132,0.88831
+held out,R_down,all,5,3406,0.96602
+held out,R_down,all,6,3451,0.97878
+held out,R_down,all,7,3727,1.0571
+held out,R_down,all,8,3955,1.1217
+held out,R_down,all,9,3942,1.118
+held out,R_down,all,10,8837,2.5064
+held out,R_down,all,11,4693,1.331
+held out,R_down,all,12,3741,1.061
+held out,R_down,all,13,3566,1.0114
+held out,R_down,all,14,2955,0.83811
+held out,R_down,all,15,2953,0.83754
+held out,R_down,all,16,2722,0.77202
+held out,R_down,all,17,2515,0.71331
+held out,R_down,all,18,2526,0.71643
+held out,R_down,all,19,2548,0.72267
+held out,R_down,interior,0,1111,1.4034
+held out,R_down,interior,1,930,1.1748
+held out,R_down,interior,2,890,1.1242
+held out,R_down,interior,3,825,1.0421
+held out,R_down,interior,4,783,0.98907
+held out,R_down,interior,5,776,0.98023
+held out,R_down,interior,6,767,0.96886
+held out,R_down,interior,7,715,0.90318
+held out,R_down,interior,8,775,0.97897
+held out,R_down,interior,9,667,0.84254
+held out,R_down,interior,10,732,0.92465
+held out,R_down,interior,11,697,0.88044
+held out,R_down,interior,12,631,0.79707
+held out,R_down,interior,13,657,0.82991
+held out,R_down,interior,14,643,0.81223
+held out,R_down,interior,15,972,1.2278
+held out,R_down,interior,16,961,1.2139
+held out,R_down,interior,17,800,1.0105
+held out,R_down,interior,18,814,1.0282
+held out,R_down,interior,19,687,0.86781
+held out,R_up,all,0,139,0.45596
+held out,R_up,all,1,185,0.60686
+held out,R_up,all,2,222,0.72823
+held out,R_up,all,3,186,0.61014
+held out,R_up,all,4,246,0.80695
+held out,R_up,all,5,304,0.99721
+held out,R_up,all,6,269,0.8824
+held out,R_up,all,7,326,1.0694
+held out,R_up,all,8,450,1.4761
+held out,R_up,all,9,297,0.97425
+held out,R_up,all,10,578,1.896
+held out,R_up,all,11,449,1.4729
+held out,R_up,all,12,375,1.2301
+held out,R_up,all,13,355,1.1645
+held out,R_up,all,14,268,0.87912
+held out,R_up,all,15,242,0.79383
+held out,R_up,all,16,246,0.80695
+held out,R_up,all,17,279,0.9152
+held out,R_up,all,18,361,1.1842
+held out,R_up,all,19,320,1.0497
+held out,R_up,interior,0,62,0.89595
+held out,R_up,interior,1,77,1.1127
+held out,R_up,interior,2,61,0.8815
+held out,R_up,interior,3,42,0.60694
+held out,R_up,interior,4,77,1.1127
+held out,R_up,interior,5,64,0.92486
+held out,R_up,interior,6,64,0.92486
+held out,R_up,interior,7,62,0.89595
+held out,R_up,interior,8,68,0.98266
+held out,R_up,interior,9,45,0.65029
+held out,R_up,interior,10,58,0.83815
+held out,R_up,interior,11,60,0.86705
+held out,R_up,interior,12,65,0.93931
+held out,R_up,interior,13,71,1.026
+held out,R_up,interior,14,73,1.0549
+held out,R_up,interior,15,63,0.9104
+held out,R_up,interior,16,82,1.185
+held out,R_up,interior,17,85,1.2283
+held out,R_up,interior,18,115,1.6618
+held out,R_up,interior,19,90,1.3006
+held out,"long, other",all,0,152,0.55013
+held out,"long, other",all,1,165,0.59718
+held out,"long, other",all,2,253,0.91567
+held out,"long, other",all,3,276,0.99891
+held out,"long, other",all,4,258,0.93377
+held out,"long, other",all,5,317,1.1473
+held out,"long, other",all,6,360,1.3029
+held out,"long, other",all,7,295,1.0677
+held out,"long, other",all,8,292,1.0568
+held out,"long, other",all,9,311,1.1256
+held out,"long, other",all,10,317,1.1473
+held out,"long, other",all,11,245,0.88672
+held out,"long, other",all,12,261,0.94463
+held out,"long, other",all,13,303,1.0966
+held out,"long, other",all,14,281,1.017
+held out,"long, other",all,15,259,0.93739
+held out,"long, other",all,16,267,0.96634
+held out,"long, other",all,17,249,0.90119
+held out,"long, other",all,18,296,1.0713
+held out,"long, other",all,19,369,1.3355
+held out,"long, other",interior,0,71,1.1243
+held out,"long, other",interior,1,56,0.88678
+held out,"long, other",interior,2,74,1.1718
+held out,"long, other",interior,3,58,0.91845
+held out,"long, other",interior,4,52,0.82344
+held out,"long, other",interior,5,71,1.1243
+held out,"long, other",interior,6,80,1.2668
+held out,"long, other",interior,7,70,1.1085
+held out,"long, other",interior,8,48,0.7601
+held out,"long, other",interior,9,50,0.79177
+held out,"long, other",interior,10,61,0.96595
+held out,"long, other",interior,11,61,0.96595
+held out,"long, other",interior,12,68,1.0768
+held out,"long, other",interior,13,56,0.88678
+held out,"long, other",interior,14,55,0.87094
+held out,"long, other",interior,15,67,1.061
+held out,"long, other",interior,16,65,1.0293
+held out,"long, other",interior,17,62,0.98179
+held out,"long, other",interior,18,69,1.0926
+held out,"long, other",interior,19,69,1.0926
+training,B,all,0,164280,0.82847
+training,B,all,1,152957,0.77137
+training,B,all,2,155244,0.7829
+training,B,all,3,153236,0.77278
+training,B,all,4,152066,0.76688
+training,B,all,5,156855,0.79103
+training,B,all,6,156322,0.78834
+training,B,all,7,156172,0.78758
+training,B,all,8,162012,0.81704
+training,B,all,9,172630,0.87058
+training,B,all,10,693520,3.4975
+training,B,all,11,357699,1.8039
+training,B,all,12,269877,1.361
+training,B,all,13,228204,1.1508
+training,B,all,14,191918,0.96785
+training,B,all,15,170680,0.86075
+training,B,all,16,147459,0.74364
+training,B,all,17,124953,0.63015
+training,B,all,18,110142,0.55545
+training,B,all,19,89620,0.45196
+training,B,interior,0,41532,1.0922
+training,B,interior,1,40158,1.0561
+training,B,interior,2,40066,1.0536
+training,B,interior,3,37347,0.98214
+training,B,interior,4,36071,0.94858
+training,B,interior,5,37725,0.99208
+training,B,interior,6,36974,0.97233
+training,B,interior,7,36424,0.95786
+training,B,interior,8,36905,0.97051
+training,B,interior,9,35960,0.94566
+training,B,interior,10,37326,0.98158
+training,B,interior,11,36068,0.9485
+training,B,interior,12,34646,0.91111
+training,B,interior,13,34001,0.89414
+training,B,interior,14,31922,0.83947
+training,B,interior,15,43158,1.135
+training,B,interior,16,47804,1.2571
+training,B,interior,17,43478,1.1434
+training,B,interior,18,41384,1.0883
+training,B,interior,19,31577,0.8304
+training,R_down,all,0,11825,1.1306
+training,R_down,all,1,9079,0.86808
+training,R_down,all,2,9803,0.9373
+training,R_down,all,3,9826,0.9395
+training,R_down,all,4,10147,0.97019
+training,R_down,all,5,10312,0.98597
+training,R_down,all,6,10198,0.97507
+training,R_down,all,7,11374,1.0875
+training,R_down,all,8,12104,1.1573
+training,R_down,all,9,10287,0.98358
+training,R_down,all,10,25536,2.4416
+training,R_down,all,11,13516,1.2923
+training,R_down,all,12,10578,1.0114
+training,R_down,all,13,9663,0.92392
+training,R_down,all,14,8930,0.85383
+training,R_down,all,15,8075,0.77208
+training,R_down,all,16,7557,0.72255
+training,R_down,all,17,7081,0.67704
+training,R_down,all,18,6867,0.65658
+training,R_down,all,19,6417,0.61355
+training,R_down,interior,0,4903,2.1022
+training,R_down,interior,1,3047,1.3064
+training,R_down,interior,2,3026,1.2974
+training,R_down,interior,3,2519,1.08
+training,R_down,interior,4,2122,0.90983
+training,R_down,interior,5,2283,0.97886
+training,R_down,interior,6,2153,0.92312
+training,R_down,interior,7,2114,0.9064
+training,R_down,interior,8,2120,0.90897
+training,R_down,interior,9,1971,0.84509
+training,R_down,interior,10,2055,0.8811
+training,R_down,interior,11,1796,0.77006
+training,R_down,interior,12,1843,0.79021
+training,R_down,interior,13,1784,0.76491
+training,R_down,interior,14,1709,0.73275
+training,R_down,interior,15,2482,1.0642
+training,R_down,interior,16,2444,1.0479
+training,R_down,interior,17,2281,0.978
+training,R_down,interior,18,2279,0.97715
+training,R_down,interior,19,1715,0.73533
+training,R_up,all,0,425,0.47624
+training,R_up,all,1,642,0.71941
+training,R_up,all,2,593,0.6645
+training,R_up,all,3,674,0.75527
+training,R_up,all,4,738,0.82698
+training,R_up,all,5,852,0.95473
+training,R_up,all,6,745,0.83483
+training,R_up,all,7,1016,1.1385
+training,R_up,all,8,1110,1.2438
+training,R_up,all,9,931,1.0433
+training,R_up,all,10,1730,1.9386
+training,R_up,all,11,1289,1.4444
+training,R_up,all,12,931,1.0433
+training,R_up,all,13,989,1.1082
+training,R_up,all,14,658,0.73734
+training,R_up,all,15,776,0.86957
+training,R_up,all,16,769,0.86172
+training,R_up,all,17,890,0.99731
+training,R_up,all,18,907,1.0164
+training,R_up,all,19,1183,1.3256
+training,R_up,interior,0,166,0.94211
+training,R_up,interior,1,240,1.3621
+training,R_up,interior,2,142,0.8059
+training,R_up,interior,3,113,0.64132
+training,R_up,interior,4,163,0.92509
+training,R_up,interior,5,148,0.83995
+training,R_up,interior,6,142,0.8059
+training,R_up,interior,7,158,0.89671
+training,R_up,interior,8,152,0.86266
+training,R_up,interior,9,143,0.81158
+training,R_up,interior,10,150,0.85131
+training,R_up,interior,11,161,0.91373
+training,R_up,interior,12,153,0.86833
+training,R_up,interior,13,178,1.0102
+training,R_up,interior,14,150,0.85131
+training,R_up,interior,15,184,1.0443
+training,R_up,interior,16,199,1.1294
+training,R_up,interior,17,264,1.4983
+training,R_up,interior,18,237,1.3451
+training,R_up,interior,19,281,1.5948
+training,"long, other",all,0,636,0.78903
+training,"long, other",all,1,704,0.87339
+training,"long, other",all,2,717,0.88952
+training,"long, other",all,3,950,1.1786
+training,"long, other",all,4,859,1.0657
+training,"long, other",all,5,1124,1.3945
+training,"long, other",all,6,857,1.0632
+training,"long, other",all,7,962,1.1935
+training,"long, other",all,8,664,0.82377
+training,"long, other",all,9,806,0.99994
+training,"long, other",all,10,835,1.0359
+training,"long, other",all,11,692,0.85851
+training,"long, other",all,12,712,0.88332
+training,"long, other",all,13,684,0.84858
+training,"long, other",all,14,767,0.95155
+training,"long, other",all,15,730,0.90565
+training,"long, other",all,16,721,0.89449
+training,"long, other",all,17,769,0.95404
+training,"long, other",all,18,792,0.98257
+training,"long, other",all,19,1140,1.4143
+training,"long, other",interior,0,325,1.7078
+training,"long, other",interior,1,254,1.3347
+training,"long, other",interior,2,239,1.2559
+training,"long, other",interior,3,213,1.1193
+training,"long, other",interior,4,144,0.7567
+training,"long, other",interior,5,191,1.0037
+training,"long, other",interior,6,172,0.90384
+training,"long, other",interior,7,170,0.89333
+training,"long, other",interior,8,175,0.9196
+training,"long, other",interior,9,156,0.81976
+training,"long, other",interior,10,162,0.85129
+training,"long, other",interior,11,140,0.73568
+training,"long, other",interior,12,157,0.82501
+training,"long, other",interior,13,153,0.80399
+training,"long, other",interior,14,138,0.72517
+training,"long, other",interior,15,258,1.3558
+training,"long, other",interior,16,162,0.85129
+training,"long, other",interior,17,227,1.1929
+training,"long, other",interior,18,210,1.1035
+training,"long, other",interior,19,160,0.84078

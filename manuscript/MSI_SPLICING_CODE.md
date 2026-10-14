@@ -1,8 +1,8 @@
 # Mismatch-repair deficiency moves splicing by a two-arm code written in acceptor poly-T tracts
 
-*Working draft, 13 October 2026. Every analysis is in this repository (`scripts/42`–`57`). Each was
+*Working draft, 13 October 2026. Every analysis is in this repository (`scripts/42`–`57`, `60`). Each was
 pre-specified in [`config/followup.yaml`](../config/followup.yaml) before it was computed, with
-decisions D-52 to D-74 and amendments A-9 to A-19 in
+decisions D-52 to D-75 and amendments A-9 to A-20 in
 [`docs/SUBTYPE_METHODS.md`](../docs/SUBTYPE_METHODS.md). Figure files carry fuller legends with
 every test; this text gives the journal version.*
 
@@ -31,6 +31,10 @@ cancers never used to build the rule.
   MMR-deficient tumours in 30 cancers it had never seen (AUROC 0.83; 0.85 against hypermutated
   tumours whose repair is intact). It was not explained by immune infiltration. It separated
   MSI-high tumours called by two independent exome callers (AUROC 0.97 and 0.89).
+- **Many small shifts.** The typical repeat exon moved by 0.02–0.03 in PSI. About one in six
+  alternatively spliced R_down exons fell by 0.10 or more in colon and stomach cancer, against 4%
+  of exons without a repeat, so each MMR-deficient tumour carried a few dozen such changes. The
+  shift did not scale with tumour purity.
 - **A model can learn it.** Logistic regression on the inclusion of the 1,562 repeat exons, trained
   in three cancers, reached AUROC 0.90 in the 30 others. Within each cancer it ranked tumours
   almost exactly as the exome MSI callers did (AUROC 0.998–1.000 against their consensus), from
@@ -435,6 +439,46 @@ AUROC against the tumours on which two exome measures agree.
   Its within-cancer AUROC against their consensus was 0.998; expression's was 0.975–0.979.
   Against MANTIS MSI-H calls in the held-out cancers, it reached 1.000 against 0.969.
 
+### The typical exon moves by a few hundredths of PSI; a minority by a tenth or more
+
+All results so far were percentiles within a cancer, which rank tumours but do not say how far an
+exon moves. We measured the shifts in PSI units (D-75; Fig. 10). We restricted the size estimates to
+exons whose median PSI in proficient tumours lies between 0.1 and 0.9, where a shift is not capped
+by 0 or 1 (A-20).
+
+![Figure 10](../results/figures/subtype/U27_msi_shift_magnitude.png)
+
+**Figure 10. A minority of exons move by a tenth of PSI or more; the typical exon moves by a few
+hundredths.** MMR-deficient against proficient tumours of the same cancer; (a), (b) and (e) use exons
+whose proficient median PSI lies between 0.1 and 0.9. (a) Share of exons whose shift lies below x
+(left) or above x (right), three training cancers pooled; log scale. (b) Share of exons dropping (▼)
+or rising (▲) by at least 0.10, by acceptor T-run length; filled = training, hollow = held-out
+cancers; bars = 95% Wilson intervals. (c) PSI of four exons in proficient (grey) and MMR-deficient
+tumours (line); dashed = medians. (d) Per tumour, the R_down exons down and the R_up exons up by at
+least 0.10, minus the cancer's median proficient tumour; boxes = quartiles, whiskers = 5th–95th
+percentiles. (e) Density of MMR-deficient tumours' percentiles among proficient tumours; 1 = no
+difference. (f) Mean arm shift by purity fifth; filled = MMR-deficient, hollow = proficient; bars =
+95% bootstrap intervals.
+
+- **The typical repeat exon moves a little.** The median R_down exon fell by 0.021, 0.028 and 0.015
+  PSI in colon, stomach and endometrial cancer, and by 0.005 in the held-out cancers. MMR status
+  explained a median 0.4–0.5% of an R_down exon's PSI variance.
+- **A minority move a lot.** In colon and stomach cancer 18% and 16% of R_down exons fell by at least
+  0.10, against 3.8% and 3.6% of background exons (UCEC 9.4% against 4.0%; held out 5.5% against
+  1.6%). The share rose with tract length, from 10% at 10–11 nt to 24% at 16–19 nt (Fig. 10b). The
+  largest shifts reached 0.2–0.4: METTL8's T14 exon fell from a median of 0.58 to 0.22, BOD1L1's
+  T24 exon rose from 0.13 to 0.43 (Fig. 10c).
+- **A few dozen exons per tumour.** An MMR-deficient colon or stomach tumour had 35 and 32 more
+  R_down exons down by at least 0.10 than the median proficient tumour of its cancer, and 7 and 5
+  more R_up exons up by 0.10 (Fig. 10d).
+- **The shift did not track purity.** If the change arises in tumour cells, normal cells should
+  dilute it. Among MMR-deficient tumours, the R_down arm did not grow with purity: the trend had
+  the predicted sign but was not resolved (ρ = −0.15, q = 0.12), and the mean stayed at −0.006 to
+  −0.007 PSI across purity fifths (Fig. 10f).
+- **The change is graded, not confined to a few tumours.** MMR-deficient tumours fell below the
+  lowest 5% of the proficient range at 2.1 times the expected rate for R_down exons, against 1.1
+  for background exons, and leaned low across the whole lower half (Fig. 10e).
+
 ### What the data did not support
 
 Several pre-registered tests failed or could not be run:
@@ -451,6 +495,14 @@ Several pre-registered tests failed or could not be run:
   new organs better than expression models trained the same way, above all where MLH1 is not
   silenced. Neither difference was resolved (+0.008 and +0.034 overall; +0.005 without MLH1
   silencing).
+- **Purity scaling (D-75; Fig. 10f).** We predicted the shift would grow with tumour purity among
+  MMR-deficient tumours. It did not (MG1–MG3 not resolved), so purity neither places the change in
+  tumour cells nor in the infiltrate. ABSOLUTE purity is least certain in copy-number-quiet
+  tumours.
+- **Concentration in a subset (D-75).** We predicted that each repeat exon's change would sit in a
+  subset of MMR-deficient tumours, beyond what a uniform shift predicts. The pre-specified test went
+  the other way (q = 0.001). Its uniform-shift expectation lets values pass 0 and 1 (A-20). Where
+  that does not happen, repeat exons exceeded background by only 0.002–0.010.
 
 ---
 
@@ -642,6 +694,22 @@ All annotation was done without labels.
   MLH1 alone, unfitted.
 - **Combination.** The 1,562 repeat-exon inputs plus the top K genes, tuned as above.
 - **Comparisons.** Held-out AUROC differences, paired bootstrap as above; family EX, six tests.
+
+**Size of the shifts (D-75).**
+- **Units.** PSI (0–1), within cancer. An exon's shift is the median PSI of the MMR-deficient
+  tumours minus that of the proficient tumours. Held out, it is the median over the 50 MMR-deficient
+  tumours of each one's deviation from its own cancer's proficient median, for exons measured in
+  ≥ 20 of them.
+- **Arm shift per tumour.** The mean deviation from the proficient median over the R_down (or R_up)
+  exons, minus the tumour's mean deviation over background exons of the same mean-PSI decile.
+- **Purity.** ABSOLUTE; partial Spearman with cancer as covariate (MG1, MG2); OLS of the R_down arm
+  on purity × MMR status with cancer fixed effects and HC3 errors (MG3).
+- **Tails.** The share of MMR-deficient tumours below the proficient 5th (above the 95th) percentile,
+  minus the share expected if every one moved by the exon's shift. Repeat exons are compared with
+  background exons by permuting the class within cancer × mean-PSI decile (10,000 permutations).
+  Family MG, five tests.
+- **Exploratory (A-20).** Exons with proficient median PSI 0.1–0.9 for the size estimates;
+  mid-rank percentiles of MMR-deficient tumours among proficient ones, ties counting half.
 
 **Statistics and pre-registration.**
 - **Pre-registration.** Every test was committed to `config/followup.yaml` with its predicted sign

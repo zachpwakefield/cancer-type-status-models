@@ -1,0 +1,6 @@
+id,what,effect,predicted_sign,p,n,ci_low,ci_high,decile_matched_difference,mean_class,mean_B,q,verdict
+MG1,"partial Spearman of arm_down with purity given cancer, MMR-deficient tumours",-0.14978492644248784,-1,0.04723686893574974,194 tumours,,,,,,0.11809217233937436,not resolved
+MG2,"partial Spearman of arm_up with purity given cancer, MMR-deficient tumours",-0.05056336795257448,1,0.5051263779882446,194 tumours,,,,,,0.6314079724853057,not resolved
+MG3,OLS arm_down ~ purity * MMR + cancer (HC3): purity x MMR coefficient,-0.0014835115824881197,-1,0.7196627713479178,"8,010 tumours (194 MMR-deficient)",-0.009584799074092005,0.006617775909115765,,,,0.7196627713479178,not resolved
+MG4,"mean low_x of R_down minus B exons, training cancers",-0.027010475180293234,1,0.00019998000199980003,4330 R_down and 81519 B exon x cancer rows,,,-0.010652917087769661,-0.047252753568875504,-0.02024227838858227,0.000999900009999,against
+MG5,"mean high_x of R_up minus B exons, training cancers",0.024187667881552244,1,0.07539246075392461,369 R_up and 81519 B exon x cancer rows,,,0.006529424309603414,-0.009809076074133815,-0.03399674395568606,0.12565410125654103,not resolved

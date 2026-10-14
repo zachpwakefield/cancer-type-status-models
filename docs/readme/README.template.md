@@ -43,7 +43,7 @@ the splicing marks of microsatellite instability, grew into a study of its own (
 | [1. Cancer type](#part-1-cancer-type) | Which of 33 cancers, or normal tissue? | {{n:T1}}–{{n:T7}} | [results/CANCER_TYPE.md](results/CANCER_TYPE.md) |
 | [2. Tumour status](#part-2-tumour-status) | Tumour or adjacent normal tissue? | {{n:S1}}–{{n:S8}} | [results/TUMOUR_STATUS.md](results/TUMOUR_STATUS.md) |
 | [3. Subtype](#part-3-subtype) | Which subtype of this cancer? | {{n:U1}}–{{n:U7}} | [results/SUBTYPE.md](results/SUBTYPE.md) |
-| [4. The MSI study](#part-4-the-msi-study) | Does MMR deficiency move splicing by a rule written in the genome? | {{n:M1}}–{{n:U26}} | [manuscript/MSI_SPLICING_CODE.md](manuscript/MSI_SPLICING_CODE.md) |
+| [4. The MSI study](#part-4-the-msi-study) | Does MMR deficiency move splicing by a rule written in the genome? | {{n:M1}}–{{n:U27}} | [manuscript/MSI_SPLICING_CODE.md](manuscript/MSI_SPLICING_CODE.md) |
 | [5. Across the tasks](#part-5-connections-across-the-tasks) | How do the three tasks' models relate? | {{n:X1}}–{{n:X4}} | [results/ACROSS_TASKS.md](results/ACROSS_TASKS.md) |
 
 The rest of this page has three more sections:
@@ -818,6 +818,38 @@ expression (fraction of the cancer at or above it; log axes); grey line, equalit
 left out of training: within-cancer AUROC against the tumours on which two exome measures agree.
 :::
 
+**How large are the shifts?** Every result so far ranked tumours within a cancer; none said how far
+an exon moves. Measured in PSI units ({{ref:U27}}), the typical repeat exon moves a little and a
+minority move a lot:
+- **Small per exon.** Among exons that are alternatively spliced in proficient tumours, the median
+  R_down exon falls by 0.02–0.03 PSI in colon and stomach cancer. MMR status explains about 0.5% of
+  a typical repeat exon's variance.
+- **Large in a minority.** 16–18% of those exons fall by at least 0.10, against 4% of exons without
+  a repeat; the share rises with tract length. The largest move by 0.2–0.4 (METTL8, BOD1L1,
+  CCNDBP1).
+- **A few dozen per tumour.** An MMR-deficient colon or stomach tumour has about 33 more repeat exons
+  down by 0.10 than a typical proficient tumour of its cancer.
+- **Not explained by purity, and not confined to a subset of tumours.** We had predicted that the
+  shift would grow with purity and crowd into a subset of tumours. Neither held: the arm shift is
+  flat across purity, and outside the PSI bounds the tails are only slightly heavier than a uniform
+  move predicts. The pre-specified tail test was itself distorted at PSI 0 and 1 (amendment A-20).
+
+The rule's power therefore comes from the number of exons it reads, not from the size of any one
+change, which is why a model over many repeat exons transfers where single events do not.
+
+::: figure U27
+Within each cancer, MMR-deficient tumours against proficient tumours; panels a, b and e use exons
+whose proficient median PSI lies between 0.1 and 0.9. (a) Share of exons whose shift lies below x
+(left) or above x (right), three training cancers pooled; log scale. (b) Share of exons dropping (▼)
+or rising (▲) by at least 0.10, by acceptor T-run length; filled, training cancers; hollow, held-out
+cancers; bars, 95% Wilson intervals. (c) PSI of four exons in proficient (grey) and MMR-deficient
+tumours (line); dashed lines, medians. (d) Per tumour, the R_down exons down and the R_up exons up by
+at least 0.10, minus the cancer's median proficient tumour; boxes, quartiles; whiskers, 5th–95th
+percentiles. (e) Density of MMR-deficient tumours' percentiles among proficient tumours; 1, no
+difference. (f) Mean arm shift by purity fifth; filled, MMR-deficient; hollow, proficient; bars, 95%
+bootstrap intervals.
+:::
+
 **Where this stands.** A literature search found no splicing-based MSI classifier. It also found no
 report of exons gaining inclusion at long poly-T tracts, and no RNA classifier tested across many
 held-out organs against DNA calls. Three parts of this work are therefore new:
@@ -1003,9 +1035,10 @@ src/ctsm/     library: cohort, splits, extraction, preprocessing, model, pipelin
               biology helpers, subtype labels, figure style
 scripts/      00–06    data, models and summaries (05 runs all jobs)
               07–25    interpretation of tumour status and cancer type; 20/21 draw S1–S10, T1–T9
-              30–38    subtype task; 36 draws U1–U26
+              30–38    subtype task; 36 draws U1–U27
               40–41    across tasks (X1–X4)
               42–57    MSI study (repeats, code, rising arm, models, benchmarks); 53 draws M1
+              60       MSI study: size of the shifts in PSI units (D-75)
               46–49    breast cancer with DNA
               58–59    overview figure (O1) and this README
               run_pipeline.sh

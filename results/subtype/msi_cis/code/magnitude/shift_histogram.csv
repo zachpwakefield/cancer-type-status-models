@@ -1,0 +1,401 @@
+group,mclass,bin_low,bin_high,count,n_exons
+held out,R_down,-0.5,-0.48,0,344
+held out,R_down,-0.48,-0.46,0,344
+held out,R_down,-0.46,-0.44,0,344
+held out,R_down,-0.44,-0.42,0,344
+held out,R_down,-0.42,-0.4,0,344
+held out,R_down,-0.4,-0.38,0,344
+held out,R_down,-0.38,-0.36,0,344
+held out,R_down,-0.36,-0.34,0,344
+held out,R_down,-0.34,-0.32,0,344
+held out,R_down,-0.32,-0.3,0,344
+held out,R_down,-0.3,-0.28,0,344
+held out,R_down,-0.28,-0.26,0,344
+held out,R_down,-0.26,-0.24,0,344
+held out,R_down,-0.24,-0.22,0,344
+held out,R_down,-0.22,-0.2,1,344
+held out,R_down,-0.2,-0.18,2,344
+held out,R_down,-0.18,-0.16,0,344
+held out,R_down,-0.16,-0.14,3,344
+held out,R_down,-0.14,-0.12,5,344
+held out,R_down,-0.12,-0.1,8,344
+held out,R_down,-0.1,-0.08,5,344
+held out,R_down,-0.08,-0.06,19,344
+held out,R_down,-0.06,-0.04,24,344
+held out,R_down,-0.04,-0.02,54,344
+held out,R_down,-0.02,0,70,344
+held out,R_down,0,0.02,80,344
+held out,R_down,0.02,0.04,36,344
+held out,R_down,0.04,0.06,19,344
+held out,R_down,0.06,0.08,7,344
+held out,R_down,0.08,0.1,4,344
+held out,R_down,0.1,0.12,3,344
+held out,R_down,0.12,0.14,1,344
+held out,R_down,0.14,0.16,0,344
+held out,R_down,0.16,0.18,0,344
+held out,R_down,0.18,0.2,1,344
+held out,R_down,0.2,0.22,1,344
+held out,R_down,0.22,0.24,0,344
+held out,R_down,0.24,0.26,0,344
+held out,R_down,0.26,0.28,1,344
+held out,R_down,0.28,0.3,0,344
+held out,R_down,0.3,0.32,0,344
+held out,R_down,0.32,0.34,0,344
+held out,R_down,0.34,0.36,0,344
+held out,R_down,0.36,0.38,0,344
+held out,R_down,0.38,0.4,0,344
+held out,R_down,0.4,0.42,0,344
+held out,R_down,0.42,0.44,0,344
+held out,R_down,0.44,0.46,0,344
+held out,R_down,0.46,0.48,0,344
+held out,R_down,0.48,0.5,0,344
+held out,R_up,-0.5,-0.48,0,26
+held out,R_up,-0.48,-0.46,0,26
+held out,R_up,-0.46,-0.44,0,26
+held out,R_up,-0.44,-0.42,0,26
+held out,R_up,-0.42,-0.4,0,26
+held out,R_up,-0.4,-0.38,0,26
+held out,R_up,-0.38,-0.36,0,26
+held out,R_up,-0.36,-0.34,0,26
+held out,R_up,-0.34,-0.32,0,26
+held out,R_up,-0.32,-0.3,0,26
+held out,R_up,-0.3,-0.28,0,26
+held out,R_up,-0.28,-0.26,0,26
+held out,R_up,-0.26,-0.24,0,26
+held out,R_up,-0.24,-0.22,0,26
+held out,R_up,-0.22,-0.2,0,26
+held out,R_up,-0.2,-0.18,0,26
+held out,R_up,-0.18,-0.16,0,26
+held out,R_up,-0.16,-0.14,0,26
+held out,R_up,-0.14,-0.12,0,26
+held out,R_up,-0.12,-0.1,1,26
+held out,R_up,-0.1,-0.08,0,26
+held out,R_up,-0.08,-0.06,1,26
+held out,R_up,-0.06,-0.04,0,26
+held out,R_up,-0.04,-0.02,2,26
+held out,R_up,-0.02,0,4,26
+held out,R_up,0,0.02,6,26
+held out,R_up,0.02,0.04,5,26
+held out,R_up,0.04,0.06,4,26
+held out,R_up,0.06,0.08,2,26
+held out,R_up,0.08,0.1,0,26
+held out,R_up,0.1,0.12,1,26
+held out,R_up,0.12,0.14,0,26
+held out,R_up,0.14,0.16,0,26
+held out,R_up,0.16,0.18,0,26
+held out,R_up,0.18,0.2,0,26
+held out,R_up,0.2,0.22,0,26
+held out,R_up,0.22,0.24,0,26
+held out,R_up,0.24,0.26,0,26
+held out,R_up,0.26,0.28,0,26
+held out,R_up,0.28,0.3,0,26
+held out,R_up,0.3,0.32,0,26
+held out,R_up,0.32,0.34,0,26
+held out,R_up,0.34,0.36,0,26
+held out,R_up,0.36,0.38,0,26
+held out,R_up,0.38,0.4,0,26
+held out,R_up,0.4,0.42,0,26
+held out,R_up,0.42,0.44,0,26
+held out,R_up,0.44,0.46,0,26
+held out,R_up,0.46,0.48,0,26
+held out,R_up,0.48,0.5,0,26
+held out,"long, other",-0.5,-0.48,0,24
+held out,"long, other",-0.48,-0.46,0,24
+held out,"long, other",-0.46,-0.44,0,24
+held out,"long, other",-0.44,-0.42,0,24
+held out,"long, other",-0.42,-0.4,0,24
+held out,"long, other",-0.4,-0.38,0,24
+held out,"long, other",-0.38,-0.36,0,24
+held out,"long, other",-0.36,-0.34,0,24
+held out,"long, other",-0.34,-0.32,0,24
+held out,"long, other",-0.32,-0.3,0,24
+held out,"long, other",-0.3,-0.28,0,24
+held out,"long, other",-0.28,-0.26,0,24
+held out,"long, other",-0.26,-0.24,0,24
+held out,"long, other",-0.24,-0.22,0,24
+held out,"long, other",-0.22,-0.2,0,24
+held out,"long, other",-0.2,-0.18,0,24
+held out,"long, other",-0.18,-0.16,0,24
+held out,"long, other",-0.16,-0.14,0,24
+held out,"long, other",-0.14,-0.12,0,24
+held out,"long, other",-0.12,-0.1,0,24
+held out,"long, other",-0.1,-0.08,0,24
+held out,"long, other",-0.08,-0.06,2,24
+held out,"long, other",-0.06,-0.04,1,24
+held out,"long, other",-0.04,-0.02,5,24
+held out,"long, other",-0.02,0,5,24
+held out,"long, other",0,0.02,7,24
+held out,"long, other",0.02,0.04,2,24
+held out,"long, other",0.04,0.06,1,24
+held out,"long, other",0.06,0.08,0,24
+held out,"long, other",0.08,0.1,0,24
+held out,"long, other",0.1,0.12,0,24
+held out,"long, other",0.12,0.14,0,24
+held out,"long, other",0.14,0.16,0,24
+held out,"long, other",0.16,0.18,0,24
+held out,"long, other",0.18,0.2,0,24
+held out,"long, other",0.2,0.22,0,24
+held out,"long, other",0.22,0.24,1,24
+held out,"long, other",0.24,0.26,0,24
+held out,"long, other",0.26,0.28,0,24
+held out,"long, other",0.28,0.3,0,24
+held out,"long, other",0.3,0.32,0,24
+held out,"long, other",0.32,0.34,0,24
+held out,"long, other",0.34,0.36,0,24
+held out,"long, other",0.36,0.38,0,24
+held out,"long, other",0.38,0.4,0,24
+held out,"long, other",0.4,0.42,0,24
+held out,"long, other",0.42,0.44,0,24
+held out,"long, other",0.44,0.46,0,24
+held out,"long, other",0.46,0.48,0,24
+held out,"long, other",0.48,0.5,0,24
+held out,B,-0.5,-0.48,0,5340
+held out,B,-0.48,-0.46,0,5340
+held out,B,-0.46,-0.44,0,5340
+held out,B,-0.44,-0.42,0,5340
+held out,B,-0.42,-0.4,0,5340
+held out,B,-0.4,-0.38,0,5340
+held out,B,-0.38,-0.36,0,5340
+held out,B,-0.36,-0.34,0,5340
+held out,B,-0.34,-0.32,0,5340
+held out,B,-0.32,-0.3,0,5340
+held out,B,-0.3,-0.28,1,5340
+held out,B,-0.28,-0.26,2,5340
+held out,B,-0.26,-0.24,0,5340
+held out,B,-0.24,-0.22,1,5340
+held out,B,-0.22,-0.2,4,5340
+held out,B,-0.2,-0.18,3,5340
+held out,B,-0.18,-0.16,8,5340
+held out,B,-0.16,-0.14,13,5340
+held out,B,-0.14,-0.12,23,5340
+held out,B,-0.12,-0.1,31,5340
+held out,B,-0.1,-0.08,67,5340
+held out,B,-0.08,-0.06,124,5340
+held out,B,-0.06,-0.04,277,5340
+held out,B,-0.04,-0.02,712,5340
+held out,B,-0.02,0,1308,5340
+held out,B,0,0.02,1700,5340
+held out,B,0.02,0.04,562,5340
+held out,B,0.04,0.06,273,5340
+held out,B,0.06,0.08,113,5340
+held out,B,0.08,0.1,49,5340
+held out,B,0.1,0.12,23,5340
+held out,B,0.12,0.14,15,5340
+held out,B,0.14,0.16,4,5340
+held out,B,0.16,0.18,8,5340
+held out,B,0.18,0.2,5,5340
+held out,B,0.2,0.22,3,5340
+held out,B,0.22,0.24,1,5340
+held out,B,0.24,0.26,3,5340
+held out,B,0.26,0.28,2,5340
+held out,B,0.28,0.3,1,5340
+held out,B,0.3,0.32,1,5340
+held out,B,0.32,0.34,0,5340
+held out,B,0.34,0.36,2,5340
+held out,B,0.36,0.38,1,5340
+held out,B,0.38,0.4,0,5340
+held out,B,0.4,0.42,0,5340
+held out,B,0.42,0.44,0,5340
+held out,B,0.44,0.46,0,5340
+held out,B,0.46,0.48,0,5340
+held out,B,0.48,0.5,0,5340
+training,R_down,-0.5,-0.48,0,966
+training,R_down,-0.48,-0.46,0,966
+training,R_down,-0.46,-0.44,1,966
+training,R_down,-0.44,-0.42,1,966
+training,R_down,-0.42,-0.4,1,966
+training,R_down,-0.4,-0.38,2,966
+training,R_down,-0.38,-0.36,2,966
+training,R_down,-0.36,-0.34,0,966
+training,R_down,-0.34,-0.32,1,966
+training,R_down,-0.32,-0.3,1,966
+training,R_down,-0.3,-0.28,2,966
+training,R_down,-0.28,-0.26,3,966
+training,R_down,-0.26,-0.24,8,966
+training,R_down,-0.24,-0.22,7,966
+training,R_down,-0.22,-0.2,12,966
+training,R_down,-0.2,-0.18,8,966
+training,R_down,-0.18,-0.16,9,966
+training,R_down,-0.16,-0.14,20,966
+training,R_down,-0.14,-0.12,22,966
+training,R_down,-0.12,-0.1,44,966
+training,R_down,-0.1,-0.08,52,966
+training,R_down,-0.08,-0.06,72,966
+training,R_down,-0.06,-0.04,94,966
+training,R_down,-0.04,-0.02,131,966
+training,R_down,-0.02,0,115,966
+training,R_down,0,0.02,134,966
+training,R_down,0.02,0.04,80,966
+training,R_down,0.04,0.06,45,966
+training,R_down,0.06,0.08,25,966
+training,R_down,0.08,0.1,20,966
+training,R_down,0.1,0.12,17,966
+training,R_down,0.12,0.14,7,966
+training,R_down,0.14,0.16,11,966
+training,R_down,0.16,0.18,2,966
+training,R_down,0.18,0.2,5,966
+training,R_down,0.2,0.22,2,966
+training,R_down,0.22,0.24,1,966
+training,R_down,0.24,0.26,2,966
+training,R_down,0.26,0.28,0,966
+training,R_down,0.28,0.3,0,966
+training,R_down,0.3,0.32,1,966
+training,R_down,0.32,0.34,2,966
+training,R_down,0.34,0.36,1,966
+training,R_down,0.36,0.38,0,966
+training,R_down,0.38,0.4,0,966
+training,R_down,0.4,0.42,0,966
+training,R_down,0.42,0.44,1,966
+training,R_down,0.44,0.46,1,966
+training,R_down,0.46,0.48,0,966
+training,R_down,0.48,0.5,1,966
+training,R_up,-0.5,-0.48,0,73
+training,R_up,-0.48,-0.46,0,73
+training,R_up,-0.46,-0.44,0,73
+training,R_up,-0.44,-0.42,0,73
+training,R_up,-0.42,-0.4,0,73
+training,R_up,-0.4,-0.38,0,73
+training,R_up,-0.38,-0.36,0,73
+training,R_up,-0.36,-0.34,0,73
+training,R_up,-0.34,-0.32,0,73
+training,R_up,-0.32,-0.3,0,73
+training,R_up,-0.3,-0.28,0,73
+training,R_up,-0.28,-0.26,0,73
+training,R_up,-0.26,-0.24,0,73
+training,R_up,-0.24,-0.22,0,73
+training,R_up,-0.22,-0.2,0,73
+training,R_up,-0.2,-0.18,0,73
+training,R_up,-0.18,-0.16,1,73
+training,R_up,-0.16,-0.14,0,73
+training,R_up,-0.14,-0.12,0,73
+training,R_up,-0.12,-0.1,2,73
+training,R_up,-0.1,-0.08,3,73
+training,R_up,-0.08,-0.06,3,73
+training,R_up,-0.06,-0.04,4,73
+training,R_up,-0.04,-0.02,8,73
+training,R_up,-0.02,0,7,73
+training,R_up,0,0.02,14,73
+training,R_up,0.02,0.04,4,73
+training,R_up,0.04,0.06,7,73
+training,R_up,0.06,0.08,6,73
+training,R_up,0.08,0.1,5,73
+training,R_up,0.1,0.12,3,73
+training,R_up,0.12,0.14,3,73
+training,R_up,0.14,0.16,0,73
+training,R_up,0.16,0.18,0,73
+training,R_up,0.18,0.2,1,73
+training,R_up,0.2,0.22,0,73
+training,R_up,0.22,0.24,0,73
+training,R_up,0.24,0.26,0,73
+training,R_up,0.26,0.28,0,73
+training,R_up,0.28,0.3,0,73
+training,R_up,0.3,0.32,0,73
+training,R_up,0.32,0.34,0,73
+training,R_up,0.34,0.36,0,73
+training,R_up,0.36,0.38,2,73
+training,R_up,0.38,0.4,0,73
+training,R_up,0.4,0.42,0,73
+training,R_up,0.42,0.44,0,73
+training,R_up,0.44,0.46,0,73
+training,R_up,0.46,0.48,0,73
+training,R_up,0.48,0.5,0,73
+training,"long, other",-0.5,-0.48,0,77
+training,"long, other",-0.48,-0.46,0,77
+training,"long, other",-0.46,-0.44,0,77
+training,"long, other",-0.44,-0.42,0,77
+training,"long, other",-0.42,-0.4,0,77
+training,"long, other",-0.4,-0.38,0,77
+training,"long, other",-0.38,-0.36,0,77
+training,"long, other",-0.36,-0.34,0,77
+training,"long, other",-0.34,-0.32,0,77
+training,"long, other",-0.32,-0.3,0,77
+training,"long, other",-0.3,-0.28,1,77
+training,"long, other",-0.28,-0.26,0,77
+training,"long, other",-0.26,-0.24,0,77
+training,"long, other",-0.24,-0.22,0,77
+training,"long, other",-0.22,-0.2,0,77
+training,"long, other",-0.2,-0.18,0,77
+training,"long, other",-0.18,-0.16,0,77
+training,"long, other",-0.16,-0.14,1,77
+training,"long, other",-0.14,-0.12,0,77
+training,"long, other",-0.12,-0.1,4,77
+training,"long, other",-0.1,-0.08,4,77
+training,"long, other",-0.08,-0.06,4,77
+training,"long, other",-0.06,-0.04,9,77
+training,"long, other",-0.04,-0.02,7,77
+training,"long, other",-0.02,0,10,77
+training,"long, other",0,0.02,15,77
+training,"long, other",0.02,0.04,8,77
+training,"long, other",0.04,0.06,5,77
+training,"long, other",0.06,0.08,4,77
+training,"long, other",0.08,0.1,2,77
+training,"long, other",0.1,0.12,1,77
+training,"long, other",0.12,0.14,2,77
+training,"long, other",0.14,0.16,0,77
+training,"long, other",0.16,0.18,0,77
+training,"long, other",0.18,0.2,0,77
+training,"long, other",0.2,0.22,0,77
+training,"long, other",0.22,0.24,0,77
+training,"long, other",0.24,0.26,0,77
+training,"long, other",0.26,0.28,0,77
+training,"long, other",0.28,0.3,0,77
+training,"long, other",0.3,0.32,0,77
+training,"long, other",0.32,0.34,0,77
+training,"long, other",0.34,0.36,0,77
+training,"long, other",0.36,0.38,0,77
+training,"long, other",0.38,0.4,0,77
+training,"long, other",0.4,0.42,0,77
+training,"long, other",0.42,0.44,0,77
+training,"long, other",0.44,0.46,0,77
+training,"long, other",0.46,0.48,0,77
+training,"long, other",0.48,0.5,0,77
+training,B,-0.5,-0.48,3,15632
+training,B,-0.48,-0.46,0,15632
+training,B,-0.46,-0.44,0,15632
+training,B,-0.44,-0.42,0,15632
+training,B,-0.42,-0.4,1,15632
+training,B,-0.4,-0.38,2,15632
+training,B,-0.38,-0.36,1,15632
+training,B,-0.36,-0.34,0,15632
+training,B,-0.34,-0.32,4,15632
+training,B,-0.32,-0.3,4,15632
+training,B,-0.3,-0.28,2,15632
+training,B,-0.28,-0.26,11,15632
+training,B,-0.26,-0.24,7,15632
+training,B,-0.24,-0.22,17,15632
+training,B,-0.22,-0.2,24,15632
+training,B,-0.2,-0.18,29,15632
+training,B,-0.18,-0.16,51,15632
+training,B,-0.16,-0.14,84,15632
+training,B,-0.14,-0.12,140,15632
+training,B,-0.12,-0.1,212,15632
+training,B,-0.1,-0.08,367,15632
+training,B,-0.08,-0.06,677,15632
+training,B,-0.06,-0.04,1149,15632
+training,B,-0.04,-0.02,2018,15632
+training,B,-0.02,0,2672,15632
+training,B,0,0.02,3076,15632
+training,B,0.02,0.04,1903,15632
+training,B,0.04,0.06,1109,15632
+training,B,0.06,0.08,693,15632
+training,B,0.08,0.1,393,15632
+training,B,0.1,0.12,273,15632
+training,B,0.12,0.14,175,15632
+training,B,0.14,0.16,132,15632
+training,B,0.16,0.18,94,15632
+training,B,0.18,0.2,61,15632
+training,B,0.2,0.22,46,15632
+training,B,0.22,0.24,35,15632
+training,B,0.24,0.26,28,15632
+training,B,0.26,0.28,19,15632
+training,B,0.28,0.3,18,15632
+training,B,0.3,0.32,13,15632
+training,B,0.32,0.34,13,15632
+training,B,0.34,0.36,9,15632
+training,B,0.36,0.38,10,15632
+training,B,0.38,0.4,7,15632
+training,B,0.4,0.42,9,15632
+training,B,0.42,0.44,9,15632
+training,B,0.44,0.46,4,15632
+training,B,0.46,0.48,5,15632
+training,B,0.48,0.5,23,15632

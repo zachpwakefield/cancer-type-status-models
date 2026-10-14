@@ -1206,7 +1206,7 @@ upstream of the run. One was found for 83% of 1,580 exons, a median 40 nt from t
 - **Why.** That call set does not genotype long homopolymers. The test needs one that does, for
   instance from long reads or a repeat genotyper.
 
-### The sequence code: thirty other cancers, specificity, endometrium, infiltration, MSI callers, the rising arm, fitted models (D-65 to D-74, Figures U18–U26)
+### The sequence code: thirty other cancers, specificity, endometrium, infiltration, MSI callers, the rising arm, fitted models, magnitude (D-65 to D-75, Figures U18–U27)
 
 D-63 suggested a code: whether an MSI repeat exon falls or rises depends on its tract length and
 on where its branch point lies.
@@ -1216,7 +1216,7 @@ on where its branch point lies.
 - **Score G** reads both arms against matched background exons. Score A, D-52's, reads every
   repeat exon as falling.
 
-Ten sets of tests, each written down before it was computed, asked whether the code works
+Eleven sets of tests, each written down before it was computed, asked whether the code works
 (`results/subtype/msi_cis/code/`):
 - whether it travels to cancers never used to define it (D-66, Figure U18);
 - whether it is about the branch point and about mismatch repair (D-65, Figure U19a–b);
@@ -1227,7 +1227,8 @@ Ten sets of tests, each written down before it was computed, asked whether the c
 - whether a model fitted on its exons transfers to cancers never used (D-71, Figure U23);
 - how that model compares with the exome MSI callers (D-72, Figure U24);
 - where the model and the exome measures disagree (D-73, Figure U25);
-- how it compares with expression models trained the same way (D-74, Figure U26).
+- how it compares with expression models trained the same way (D-74, Figure U26);
+- how large the shifts are in PSI units, and how they spread over exons and tumours (D-75, Figure U27).
 
 #### Thirty cancers never used (D-66, Figure U18)
 
@@ -1768,6 +1769,105 @@ split (train on COAD, STAD and UCEC; test on the 30 others) and tuning.
 - **Splicing stays closer to the exome callers within a cancer** (exploratory): 0.998 against
   0.975–0.979 for expression.
 
+#### How large is the shift? (D-75, Figure U27)
+
+Every result above is in percentiles within a cancer: it ranks tumours but does not say how far an
+exon moves. D-75 measured the shifts in PSI units (0–1). It asked two questions, written down
+before any shift was measured:
+- **Does the shift scale with purity?** Deletions in tumour cells are diluted by normal cells, so
+  the shift should grow with purity among MMR-deficient tumours (MG1–MG3).
+- **Is it a large change in some tumours or a small one in all?** A deletion at one tract occurs
+  in some tumours and not others, so its effect should crowd into the tail of the proficient
+  range (MG4, MG5).
+
+**How to read Figure U27.**
+- **Panel (a)** is the size distribution of exon shifts. For each x it gives the share of exons
+  that moved further than x, falls on the left and rises on the right, on a log scale. Background
+  exons (dashed) show how far exons drift between MMR-deficient and proficient tumours without
+  a repeat.
+- **Panel (b)** gives the share of exons moving by at least 0.10, by tract length.
+- **Panel (c)** shows four single exons: the PSI of every proficient (grey) and MMR-deficient
+  (line) tumour of the training cancers.
+- **Panel (d)** counts, per tumour, the repeat exons that moved by at least 0.10, minus what a
+  typical proficient tumour of the same cancer has.
+- **Panel (e)** asks where MMR-deficient tumours fall among proficient ones. A flat line at 1
+  would mean no difference; a spike at the left edge means many fall below every proficient
+  tumour.
+- **Panel (f)** plots the per-tumour arm shift against tumour purity.
+
+![U27](figures/subtype/U27_msi_shift_magnitude.png)
+
+<!-- legend U27: copied from figures/subtype/U27_msi_shift_magnitude.caption.md by the figure script's 'legends' step -->
+> **Figure U27. A minority of exons move by a tenth of PSI or more; the typical exon moves by a few hundredths.**
+> Pre-specified (config/followup.yaml: msi_magnitude, D-75) before any shift was measured in PSI units. All shifts
+> are within cancer: the MMR-deficient tumours (MC3 ≥ 10 homopolymer deletions; 150 in COAD, STAD and UCEC, 50 in 30
+> held-out cancers) against the proficient tumours of the same cancer, on cassette exons measured in ≥ 80% of the
+> cancer's tumours. Panels a, b and e use the exons whose proficient median PSI lies between 0.1 and 0.9 (A-20),
+> where a shift is not capped by 0 or 1 (COAD: 322 R_down, 24 R_up, 5,209 background exons).
+>
+> (a) Share of exons whose shift (median PSI of MMR-deficient minus proficient tumours) lies below x (left) or above
+> x (right), the three training cancers pooled over exon × cancer; grey lines at ±0.10. (b) Share of exons dropping
+> (▼) or rising (▲) by at least 0.10, by acceptor T-run length and branch-point (bp) distance; filled = training
+> cancers, hollow = held-out cancers (an exon's shift there is the median over held-out MMR-deficient tumours, ≥ 20,
+> of its deviation from the proficient median of each tumour's cancer); bars = 95% Wilson intervals; n = training
+> exons. (c) PSI of four exons in the proficient (grey) and MMR-deficient tumours (line) of the training cancers;
+> dashed lines = medians. MRE11 exon 5 is the known MSI target; METTL8 and BOD1L1 have the largest mean shifts among
+> the R_down and R_up exons measured in all three training cancers; CCNDBP1 is the MSI event of Figure U7. (d) Per
+> tumour, the R_down exons with PSI at least 0.10 below the proficient median (left) and the R_up exons at least
+> 0.10 above it (right), minus the count of the cancer's median proficient tumour; boxes = quartiles, whiskers =
+> 5th–95th percentiles. (e) Where the MMR-deficient tumours of the training cancers fall among the proficient
+> tumours of their cancer: density of mid-rank percentiles over tumour × exon pairs (A-20); lines as in (a); 1 = no
+> difference. (f) Mean arm shift (a tumour's mean deviation over its R_down or R_up exons, minus its mean over
+> background exons of the same PSI decile) by purity fifth of the MMR-deficient tumours, and for proficient tumours
+> in the same bins; bars = 95% bootstrap intervals.
+>
+> 0 of 5 supported, 1 against (family MG). The tail excess of MG4 and MG5 is the share of MMR-deficient tumours
+> beyond the proficient 5th (95th) percentile minus the share expected if all moved by the exon's median shift; that
+> expectation lets proficient values pass 0 and 1 (A-20). Lower-tail excess of background exons runs from −0.072
+> (proficient median < 0.1) to +0.001 (≥ 0.98); where the bound is not reached (0.5–0.9, 0.9–0.98 and ≥ 0.98),
+> R_down exons score −0.001, +0.005 and +0.011 against −0.002, −0.001 and +0.001; upper tail below 0.1 and 0.1–0.5,
+> R_up +0.001 and −0.008 against −0.002 and −0.020. Exons dropping ≥ 0.10, R_down against background: COAD 18%
+> against 3.8%; STAD 16% against 3.6%; UCEC 9.4% against 4.0%; held out 5.5% against 1.6%. Rising ≥ 0.10, R_up
+> against background: COAD 17% against 8.5%; STAD 8.3% against 4.4%; UCEC 12% against 6.2%; held out 3.8% against
+> 1.3%. Median shift of R_down exons: −0.021, −0.028, −0.015 and −0.005 (COAD, STAD, UCEC, held out); 5th
+> percentiles −0.20, −0.21, −0.13 and −0.10. Panel (c), proficient → MMR-deficient medians: MRE11 1.00 → 0.96,
+> METTL8 0.58 → 0.22, BOD1L1 0.13 → 0.43, CCNDBP1 0.04 → 0.25; 52% of the MMR-deficient tumours fall below the
+> proficient 5th percentile of MRE11 exon 5 (mean over the three cancers). Panel (d), MMR-deficient median (IQR),
+> R_down: COAD +35 (+22 to +46), STAD +32 (+19 to +50), UCEC +12 (+1 to +24), held out +16 (−2 to +28); R_up: +7 (+3
+> to +9), +5 (+2 to +7), +2 (+0 to +5), +4 (−1 to +7). Panel (e), lowest 5% of the proficient range: R_down 2.10,
+> background 1.09; highest 5%: R_up 1.59, background 0.83; held out 1.40 against 1.12 and 1.30 against 0.89. Panel
+> (f), MMR-deficient means across the purity fifths: R_down −0.73 to −0.59, R_up 0.84 to 1.58 (× 100). MMR status
+> explains a median 0.5%, 0.4%, 0.4% of an R_down exon's PSI variance (COAD, STAD, UCEC). Per-tumour values are kept
+> locally (D-12).
+<!-- /legend -->
+
+**What it shows** (none of MG1–MG5 supported; MG4 against; family MG). Unless noted, the numbers
+are for exons whose proficient median PSI lies between 0.1 and 0.9 (A-20), where a shift is not
+capped by 0 or 1.
+- **The typical repeat exon moves a little.** The median R_down exon falls by 0.02–0.03 PSI in
+  colon and stomach cancer and by 0.015 in endometrium. Over all measured exons, MMR status explains
+  about 0.5% of a typical R_down exon's PSI variance.
+- **A minority move a lot.** 16–18% of R_down exons fall by at least 0.10 in COAD and STAD, against
+  4% of background exons; 9% against 4% in UCEC; 5.5% against 1.6% held out. The share grows with
+  tract length, to 24% at 16–19 nt.
+- **The largest moves are large.** METTL8's T14 exon goes from a median PSI of 0.58 to 0.22, BOD1L1's
+  T24 exon from 0.13 to 0.43. CCNDBP1's T30 exon (Figure U7) goes from 0.04 to 0.25.
+- **Per tumour, a few dozen exons** (all measured exons). An MMR-deficient colon or stomach tumour has
+  about 33 more R_down exons down by at least 0.10 than a typical proficient tumour of its cancer. It has 5–7 more R_up
+  exons up by 0.10. The excess is smaller in UCEC (12) and held out (16).
+- **Purity does not move it** (MG1–MG3 not resolved). Across purity fifths the MMR-deficient
+  R_down arm stays at −0.006 to −0.007 PSI. Dilution would make it about 2.5 times larger at the
+  highest purity than at the lowest. So purity neither places the change in tumour cells nor
+  points to the infiltrate (D-68 had excluded the infiltrate by other means). ABSOLUTE purity is
+  least certain in copy-number-quiet tumours such as these.
+- **Not concentrated in a subset** (MG4 against, MG5 not resolved; A-20). The pre-specified tail
+  statistic is distorted near PSI 0 and 1. Where it is valid, R_down exons exceed background by only
+  0.002–0.010. MMR-deficient tumours pile up below the proficient range (2.1 times the
+  expected share in its lowest 5%, against 1.1 for background exons), but they also lean low
+  across its whole lower half (panel e). The typical change is a graded move of the MMR-deficient
+  tumours, not a large change in a few. Known targets differ: 52% of MMR-deficient tumours fall
+  below the proficient 5th percentile of MRE11 exon 5, while its median moves by only 0.04.
+
 #### Reading
 
 Mismatch-repair deficiency changes splicing by a rule written in the reference genome, not by a
@@ -1781,6 +1881,9 @@ tissue programme (interpretation).
 - **The rise is real; its cause is open.** It is held out, specific to mismatch repair against
   mutation burden, and needs the tract (D-70). It follows the branch point's distance, but not
   the AG exclusion zone, not the run's side of the branch point, and not deletion dose.
+- **The effect is small per exon, broad in reach.** The typical repeat exon moves by a few
+  hundredths of PSI, and a few dozen per tumour by a tenth or more (D-75). The signal is in the
+  number of exons, not in the size of any one change.
 - **A model can use it.** Logistic regression on the repeat exons, fitted in three cancers, transfers
   to 30 others (D-71). Within a cancer it ranks tumours almost as well as the exome MSI callers
   (D-72).

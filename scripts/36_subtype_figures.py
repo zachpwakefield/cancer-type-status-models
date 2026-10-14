@@ -27,6 +27,7 @@ One question per figure, in the order the story is told in results/SUBTYPE.md:
     U24 how does the repeat-exon model compare with the exome MSI callers (D-72, A-19)?
     U25 where do the model and the exome measures agree and disagree (D-73)?
     U26 does the splicing model transfer better than expression models trained the same way (D-74)?
+    U27 how large is the MSI splicing shift, and how is it spread over exons and tumours (D-75)?
 
 Captions are figure legends: "**Figure Un. Title.**", then (a), (b) ... for the panels. `legends`
 copies each legend (without its bullet list of tests) under the figure in results/SUBTYPE.md.
@@ -3054,6 +3055,289 @@ the exome measures score 0.999–1.000 against each other (Figure U24). E2 poole
 {e2('M4'):.3f}, expression {e2('X1'):.3f}. Per-tumour points are kept locally (D-12)."""
 
 
+MAG = [("R_down", "R_down, runs 10–19", INK2), ("R_up", "R_up, runs ≥ 20, bp ≥ 36", ACCENT), ("B", "B, runs ≤ 5", MUTED)]
+EXAMPLE_TITLES = {"MRE11": "MRE11 exon 5 · T11", "METTL8": "METTL8 · T14", "BOD1L1": "BOD1L1 · T24", "CCNDBP1": "CCNDBP1 · T30"}
+
+
+def U27() -> None:
+    d = CODE_DIR / "magnitude"
+    pr = pd.read_csv(d / "predictions.csv").set_index("id")
+    ex = pd.read_csv(d / "exploratory.csv")
+    hist = pd.read_csv(d / "shift_histogram.csv")
+    bins = pd.read_csv(d / "bins_interior.csv")
+    pct = pd.read_csv(d / "percentiles.csv")
+    exc = pd.read_csv(d / "tumour_excess.csv")
+    pur = pd.read_csv(d / "purity_bins.csv")
+    eg = pd.read_csv(d / "example_psi.csv")
+    band = pd.read_csv(d / "tails_by_band.csv")
+    loc = pd.read_parquet(MSI_LOCAL / "magnitude_tumour_excess.parquet")
+    fig = plt.figure(figsize=(DOUBLE - 0.2, 6.2))
+    gs = fig.add_gridspec(3, 1, hspace=0.62, height_ratios=[1.0, 0.62, 1.0])
+    r1 = gs[0].subgridspec(1, 2, wspace=0.32, width_ratios=[1.05, 1.0])
+    r2 = gs[1].subgridspec(1, 4, wspace=0.28)
+    r3 = gs[2].subgridspec(1, 4, wspace=0.62, width_ratios=[0.8, 0.8, 1.05, 1.05])
+    rows = []
+    # a. two-sided tail shares of exon shifts (interior exons, training cancers)
+    ax = fig.add_subplot(r1[0])
+    tr = hist[hist.group.eq("training")]
+    for c, lab, col in MAG:
+        h = tr[tr.mclass.eq(c)].sort_values("bin_low")
+        n = int(h.n_exons.iloc[0])
+        cnt = h["count"].to_numpy()
+        lo_edges, hi_edges = h.bin_low.to_numpy(), h.bin_high.to_numpy()
+        neg = lo_edges < -1e-9
+        x_neg = hi_edges[neg]                                                 # share below each negative upper edge
+        y_neg = np.cumsum(cnt[neg]) / n
+        pos = hi_edges > 1e-9
+        x_pos = lo_edges[pos]
+        y_pos = np.cumsum(cnt[pos][::-1])[::-1] / n                          # share >= each positive lower edge
+        keep_n, keep_p = x_neg <= -0.02 + 1e-9, x_pos >= 0.02 - 1e-9
+        for xs, ys in [(x_neg[keep_n], y_neg[keep_n]), (x_pos[keep_p], y_pos[keep_p])]:
+            ys = np.where(ys > 0, ys, np.nan)
+            ax.plot(xs, ys, color=col, linewidth=1.0 if c != "B" else 0.9,
+                    linestyle="-" if c != "B" else (0, (3, 1.5)), marker="o", markersize=1.8)
+        for xs, ys, side in [(x_neg[keep_n], y_neg[keep_n], "shift <= x"), (x_pos[keep_p], y_pos[keep_p], "shift >= x")]:
+            for xv, yv in zip(xs, ys):
+                rows.append({"panel": "a", "class": c, "n_exons": n, "tail": side, "x": round(float(xv), 3),
+                             "share": float(yv)})
+    for v in (-0.1, 0.1):
+        ax.axvline(v, color=GRID, linewidth=0.6, zorder=0)
+    rows.append({"panel": "a", "class": "reference lines: shift -0.10 and +0.10"})
+    ax.set_yscale("log")
+    ax.set_ylim(2e-3, 1.6)
+    ax.set_xlim(-0.42, 0.42)
+    ax.set_xticks([-0.4, -0.2, -0.1, 0, 0.1, 0.2, 0.4])
+    ax.set_xticklabels(["−0.4", "−0.2", "−0.1", "0", "+0.1", "+0.2", "+0.4"])
+    ax.set_yticks([0.003, 0.01, 0.03, 0.1, 0.3])
+    ax.set_yticklabels(["0.003", "0.01", "0.03", "0.1", "0.3"])
+    ax.minorticks_off()
+    ax.set_xlabel("exon shift x, PSI (MMR-deficient − proficient)", fontsize=6)
+    ax.set_ylabel("share of exons beyond x", fontsize=6)
+    from matplotlib.lines import Line2D
+    hand = [Line2D([], [], color=col, linewidth=1.0, linestyle="-" if c != "B" else (0, (3, 1.5)),
+                   label=f"{lab} ({int(tr[tr.mclass.eq(c)].n_exons.iloc[0]):,})") for c, lab, col in MAG]
+    ax.legend(handles=hand, loc="upper left", fontsize=5.2, frameon=False, handlelength=1.6, borderaxespad=0.1)
+    # b. share of exons moving >= 0.10 by run-length bin (interior exons)
+    bx = fig.add_subplot(r1[1])
+    order = ["B (run ≤ 5)", "10–11", "12–13", "14–15", "16–19", "≥ 20, bp < 36 or none", "≥ 20, bp ≥ 36"]
+    short = ["≤ 5", "10–11", "12–13", "14–15", "16–19", "≥ 20,\nbp < 36", "≥ 20,\nbp ≥ 36"]
+    for i, b in enumerate(order):
+        for g, off, fill in [("training", -0.09, True), ("held out", 0.09, False)]:
+            r = bins[bins.group.eq(g) & bins.bin.eq(b)]
+            if r.empty:
+                continue
+            r = r.iloc[0]
+            for k, col, mk, dx_ in [("n_down10", INK2, "v", -0.17), ("n_up10", ACCENT, "^", 0.17)]:
+                x = i + dx_ + off
+                sh = r[k] / r.n_exons
+                lo_, hi_ = _wilson(int(r[k]), int(r.n_exons))
+                bx.vlines(x, lo_, hi_, color=col, linewidth=0.6)
+                bx.scatter(x, sh, s=13, marker=mk, color=col if fill else "white", edgecolors=col, linewidths=0.7, zorder=3)
+                rows.append({"panel": "b", "bin": b, "group": g, "direction": "drop >= 0.10" if k == "n_down10" else "rise >= 0.10",
+                             "n_exons": int(r.n_exons), "k": int(r[k]), "share": sh, "wilson_low": lo_, "wilson_high": hi_})
+    bx.set_xticks(range(len(order)))
+    ntr = bins[bins.group.eq("training")].set_index("bin").n_exons
+    bx.set_xticklabels([f"{s_}\n({int(ntr.get(b, 0)):,})" for s_, b in zip(short, order)], fontsize=5.2)
+    bx.tick_params(axis="x", length=0)
+    bx.set_xlim(-0.6, len(order) - 0.4)
+    bx.set_ylim(0, 0.33)
+    bx.set_xlabel("acceptor T-run, nt (training exons)", fontsize=6)
+    bx.set_ylabel("share of exons moving ≥ 0.10", fontsize=6)
+    hb = [Line2D([], [], marker="v", color=INK2, linestyle="", markersize=3.5, label="drop"),
+          Line2D([], [], marker="^", color=ACCENT, linestyle="", markersize=3.5, label="rise"),
+          Line2D([], [], marker="o", color=INK, linestyle="", markersize=3.2, label="training"),
+          Line2D([], [], marker="o", color=INK, markerfacecolor="white", linestyle="", markersize=3.2, label="held out")]
+    bx.legend(handles=hb, loc="upper left", fontsize=5.4, frameon=False, ncol=2, handletextpad=0.3, columnspacing=0.8)
+    # c. four exons: PSI in proficient and MMR-deficient tumours of the training cancers
+    cxs = []
+    for j, gene in enumerate(EXAMPLE_TITLES):
+        cx = fig.add_subplot(r2[j])
+        cxs.append(cx)
+        for status, col, fill in [("proficient", MUTED, True), ("MMR-deficient", INK2 if eg[eg.gene.eq(gene)].mclass.iloc[0] == "R_down" else ACCENT, False)]:
+            h = eg[eg.gene.eq(gene) & eg.status.eq(status)].sort_values("bin_low")
+            dens = h["count"].to_numpy() / h["count"].sum() / 0.04
+            edges = np.r_[h.bin_low.to_numpy(), 1.0]
+            if fill:
+                cx.stairs(dens, edges, fill=True, color=GRID, zorder=1)
+                cx.stairs(dens, edges, color=MUTED, linewidth=0.6, zorder=2)
+            else:
+                cx.stairs(dens, edges, color=col, linewidth=1.0, zorder=3)
+            med = float(h["median"].iloc[0])
+            cx.axvline(med, color=col, linewidth=0.7, linestyle=(0, (2, 1.5)), zorder=4)
+            for r in h.itertuples():
+                rows.append({"panel": "c", "gene": gene, "feature_id": r.feature_id, "status": status,
+                             "bin_low": r.bin_low, "bin_high": r.bin_high, "count": int(r.count), "n": int(r.n),
+                             "median": med})
+        cx.set_xlim(0, 1)
+        cx.set_xticks([0, 0.5, 1])
+        cx.set_xticklabels(["0", "0.5", "1"])
+        cx.set_yticks([])
+        cx.spines["left"].set_visible(False)
+        cx.set_title(EXAMPLE_TITLES[gene], fontsize=6, pad=2)
+        cx.set_xlabel("PSI", fontsize=6)
+    hc = [plt.Rectangle((0, 0), 1, 1, facecolor=GRID, edgecolor=MUTED, linewidth=0.6, label="proficient"),
+          Line2D([], [], color=INK2, linewidth=1.0, label="MMR-deficient (R_down exon)"),
+          Line2D([], [], color=ACCENT, linewidth=1.0, label="MMR-deficient (R_up exon)"),
+          Line2D([], [], color=INK2, linewidth=0.7, linestyle=(0, (2, 1.5)), label="median")]
+    cxs[0].legend(handles=hc, loc="upper left", fontsize=5.2, frameon=False, ncol=4, bbox_to_anchor=(0.0, 1.42),
+                  handlelength=1.4, columnspacing=1.2)
+    # d. per tumour: exons beyond 0.10, in excess of the median proficient tumour of the same cancer
+    dx = fig.add_subplot(r3[0])
+    ex2 = fig.add_subplot(r3[1])
+    groups = ["COAD", "STAD", "UCEC", "held out"]
+    for a_, measure, col, lab in [(dx, "n_down10_R_down", INK2, "R_down exons dropped ≥ 0.10"),
+                                  (ex2, "n_up10_R_up", ACCENT, "R_up exons risen ≥ 0.10")]:
+        for i, g in enumerate(groups):
+            for status, off, c_ in [("proficient", -0.18, MUTED), ("MMR-deficient", 0.18, col)]:
+                r = exc[exc.measure.eq(measure) & exc.group.eq(g) & exc.status.eq(status)].iloc[0]
+                x = i + off
+                a_.add_patch(plt.Rectangle((x - 0.14, r.q25), 0.28, r.q75 - r.q25, facecolor="white", edgecolor=c_,
+                                           linewidth=0.7, zorder=2))
+                a_.vlines(x, r.q05, r.q25, color=c_, linewidth=0.6)
+                a_.vlines(x, r.q75, r.q95, color=c_, linewidth=0.6)
+                a_.scatter(x, r.q50, marker="D", s=9, color=c_, edgecolors="white", linewidths=0.4, zorder=4)
+                rows.append({"panel": "d", "measure": measure, "group": g, "status": status, "n": int(r.n),
+                             "q05": r.q05, "q25": r.q25, "median": r.q50, "q75": r.q75, "q95": r.q95})
+        a_.axhline(0, color=GRID, linewidth=0.6, zorder=0)
+        a_.set_xticks(range(len(groups)))
+        a_.set_xticklabels(["COAD", "STAD", "UCEC", "held out"], fontsize=5.4, rotation=90)
+        a_.tick_params(axis="x", length=0)
+        a_.set_xlim(-0.6, len(groups) - 0.4)
+        a_.set_title(lab, fontsize=5.8, pad=2)
+    dx.set_ylabel("exons per tumour, minus proficient median", fontsize=6)
+    rows.append({"panel": "d", "measure": "reference line: 0 (the proficient median of the cancer)"})
+    # e. where MMR-deficient tumours fall among proficient ones (interior exons, training cancers)
+    fx = fig.add_subplot(r3[2])
+    p_ = pct[pct.group.eq("training") & pct.band.eq("interior")]
+    for c, lab, col in MAG:
+        h = p_[p_.mclass.eq(c)].sort_values("bin")
+        edges = np.linspace(0, 1, len(h) + 1)
+        fx.stairs(h.density.to_numpy(), edges, color=col, linewidth=1.0 if c != "B" else 0.9,
+                  linestyle="-" if c != "B" else (0, (3, 1.5)), zorder=3 if c != "B" else 2)
+        for r in h.itertuples():
+            rows.append({"panel": "e", "class": c, "percentile_low": edges[r.bin], "percentile_high": edges[r.bin + 1],
+                         "count": int(r.count), "density": r.density})
+    fx.axhline(1, color=GRID, linewidth=0.6, zorder=0)
+    rows.append({"panel": "e", "class": "reference line: density 1 (no difference)"})
+    fx.set_xlim(0, 1)
+    fx.set_ylim(0.5, 2.3)
+    fx.set_xlabel("percentile among proficient tumours", fontsize=6)
+    fx.set_ylabel("density, MMR-deficient tumour × exon", fontsize=6)
+    # f. arm shifts by purity
+    gx = fig.add_subplot(r3[3])
+    for arm, col in [("arm_down", INK2), ("arm_up", ACCENT)]:
+        for status, fill, off in [("MMR-deficient", True, 0.006), ("proficient", False, -0.006)]:
+            q = pur[pur.arm.eq(arm) & pur.status.eq(status)].sort_values("purity_bin")
+            x = q.purity_median.to_numpy() + off
+            gx.plot(x, q["mean"] * 100, color=col, linewidth=0.6, zorder=2)
+            gx.vlines(x, q.ci_low * 100, q.ci_high * 100, color=col, linewidth=0.6, zorder=2)
+            gx.scatter(x, q["mean"] * 100, s=13, color=col if fill else "white", edgecolors=col, linewidths=0.7, zorder=3)
+            for r in q.itertuples():
+                rows.append({"panel": "f", "arm": arm, "status": status, "purity_low": r.purity_low,
+                             "purity_high": r.purity_high, "purity_median": r.purity_median, "n": int(r.n),
+                             "mean_x100": r.mean * 100, "ci_low_x100": r.ci_low * 100, "ci_high_x100": r.ci_high * 100})
+    gx.axhline(0, color=GRID, linewidth=0.6, zorder=0)
+    rows.append({"panel": "f", "arm": "reference line: 0"})
+    gx.set_xlim(0.25, 0.95)
+    gx.set_xlabel("tumour purity (ABSOLUTE)", fontsize=6)
+    gx.set_ylabel("mean arm shift, PSI × 100", fontsize=6)
+    hf = [Line2D([], [], marker="o", color=INK2, linestyle="-", linewidth=0.6, markersize=3.2, label="R_down"),
+          Line2D([], [], marker="o", color=ACCENT, linestyle="-", linewidth=0.6, markersize=3.2, label="R_up"),
+          Line2D([], [], marker="o", color=INK, linestyle="", markersize=3.2, label="MMR-def."),
+          Line2D([], [], marker="o", color=INK, markerfacecolor="white", linestyle="", markersize=3.2, label="proficient")]
+    gx.set_ylim(-1.35, 3.3)
+    gx.legend(handles=hf, loc="upper center", fontsize=5.2, frameon=False, handletextpad=0.3, ncol=2, columnspacing=0.8,
+              borderaxespad=0.1)
+    from _figbase import panel_letters
+    panel_letters([(ax, -0.14), (bx, -0.13), (cxs[0], -0.1), (dx, -0.62), (fx, -0.3), (gx, -0.32)], y=1.07)
+    save(fig, OUT, "U27_msi_shift_magnitude", data=pd.DataFrame(rows),
+         caption=CAPTIONS["U27"](pr, ex, bins, pct, exc, pur, eg, band, pd.read_csv(d / "largest_movers.csv")),
+         local_data=(SCFG.base_data_dir / "figure_data", loc.assign(panel="d")))
+
+
+def _cap_u27(pr, ex, bins, pct, exc, pur, eg, band, mv):
+    t = pr
+    v = lambda i: f"{signed(t.loc[i, 'effect'])}, p = {fp(t.loc[i, 'p'])}, q = {fp(t.loc[i, 'q'])}, {t.loc[i, 'verdict']}"
+    sup = int(t.verdict.eq("supported").sum())
+    agn = int(t.verdict.eq("against").sum())
+    inter = ex[ex.band.eq("interior (A-20)")]
+    sh = lambda w, g, c: float(inter[inter.what.eq(w) & inter.group.eq(g) & inter["class"].eq(c)].value.iloc[0])
+    dn, up = "share of exons with shift <= -0.10", "share of exons with shift >= +0.10"
+    pc = lambda x: f"{100 * x:.0f}%" if x >= 0.095 else f"{100 * x:.1f}%"
+    _m = lambda x: f"{x:.2f}".replace("-", "−")
+    mre = mv[mv.role.str.startswith("positive control")].iloc[0]
+    drops = "; ".join(f"{g} {pc(sh(dn, g, 'R_down'))} against {pc(sh(dn, g, 'B'))}" for g in ["COAD", "STAD", "UCEC", "held out"])
+    rises = "; ".join(f"{g} {pc(sh(up, g, 'R_up'))} against {pc(sh(up, g, 'B'))}" for g in ["COAD", "STAD", "UCEC", "held out"])
+    med = lambda c, g: f"{sh('exon shift (PSI), quantile 0.5', g, c):+.3f}".replace("+", "+").replace("-", "−")
+    q05 = lambda c, g: f"{sh('exon shift (PSI), quantile 0.05', g, c):+.2f}".replace("-", "−")
+    xm = lambda m, g, s="MMR-deficient": exc[exc.measure.eq(m) & exc.group.eq(g) & exc.status.eq(s)].iloc[0]
+    xs = lambda m, g: f"{xm(m, g).q50:+.0f} ({xm(m, g).q25:+.0f} to {xm(m, g).q75:+.0f})".replace("-", "−")
+    dens = lambda g, c, b: float(pct[pct.group.eq(g) & pct.band.eq("interior") & pct.mclass.eq(c) & pct.bin.eq(b)].density.iloc[0])
+    egm = lambda gene, s: float(eg[eg.gene.eq(gene) & eg.status.eq(s)]["median"].iloc[0])
+    ex_ = ", ".join(f"{g} {egm(g, 'proficient'):.2f} → {egm(g, 'MMR-deficient'):.2f}" for g in ["MRE11", "METTL8", "BOD1L1", "CCNDBP1"])
+    b = band.set_index(["band", "mclass"])
+    lx = lambda bd, c: f"{b.loc[(bd, c), 'low_excess']:+.3f}".replace("-", "−")
+    hx = lambda bd, c: f"{b.loc[(bd, c), 'high_excess']:+.3f}".replace("-", "−")
+    pm = pur[pur.status.eq("MMR-deficient")]
+    rd = pm[pm.arm.eq("arm_down")]["mean"] * 100
+    ru = pm[pm.arm.eq("arm_up")]["mean"] * 100
+    e2 = lambda g, c: float(ex[ex.what.eq("variance of PSI explained by MMR status (eta2), median") & ex.group.eq(g)
+                                & ex["class"].eq(c)].value.iloc[0])
+    e2s = ", ".join(f"{100 * e2(g, 'R_down'):.1f}%" for g in ["COAD", "STAD", "UCEC"])
+    n_int = {c: int(inter[inter.what.eq(dn) & inter.group.eq("COAD") & inter["class"].eq(c)].n.iloc[0]) for c in ["R_down", "R_up", "B"]}
+    return f"""**How large is the MSI splicing shift, and how is it spread over exons and tumours?**
+
+Pre-specified (config/followup.yaml: msi_magnitude, D-75) before any shift was measured in PSI units. All shifts are
+within cancer: the MMR-deficient tumours (MC3 ≥ 10 homopolymer deletions; 150 in COAD, STAD and UCEC, 50 in 30
+held-out cancers) against the proficient tumours of the same cancer, on cassette exons measured in ≥ 80% of the
+cancer's tumours. Panels a, b and e use the exons whose proficient median PSI lies between 0.1 and 0.9 (A-20), where
+a shift is not capped by 0 or 1 (COAD: {n_int['R_down']} R_down, {n_int['R_up']} R_up, {n_int['B']:,} background exons).
+
+(a) Share of exons whose shift (median PSI of MMR-deficient minus proficient tumours) lies below x (left) or above x
+(right), the three training cancers pooled over exon × cancer; grey lines at ±0.10. (b) Share of exons dropping (▼)
+or rising (▲) by at least 0.10, by acceptor T-run length and branch-point (bp) distance; filled = training cancers,
+hollow = held-out cancers (an exon's shift there is the median over held-out MMR-deficient tumours, ≥ 20, of its
+deviation from the proficient median of each tumour's cancer); bars = 95% Wilson intervals; n = training exons.
+(c) PSI of four exons in the proficient (grey) and MMR-deficient tumours (line) of the training cancers; dashed lines
+= medians. MRE11 exon 5 is the known MSI target; METTL8 and BOD1L1 have the largest mean shifts among the R_down and
+R_up exons measured in all three training cancers; CCNDBP1 is the MSI event of Figure U7. (d) Per tumour, the R_down
+exons with PSI at least 0.10 below the proficient median (left) and the R_up exons at least 0.10 above it (right),
+minus the count of the cancer's median proficient tumour; boxes = quartiles, whiskers = 5th–95th percentiles.
+(e) Where the MMR-deficient tumours of the training cancers fall among the proficient tumours of their cancer:
+density of mid-rank percentiles over tumour × exon pairs (A-20); lines as in (a); 1 = no difference. (f) Mean arm shift (a tumour's
+mean deviation over its R_down or R_up exons, minus its mean over background exons of the same PSI decile) by purity
+fifth of the MMR-deficient tumours, and for proficient tumours in the same bins; bars = 95% bootstrap intervals.
+
+- MG1, R_down arm more negative at higher purity among MMR-deficient tumours (partial Spearman ρ): {v('MG1')}.
+- MG2, R_up arm more positive at higher purity: {v('MG2')}.
+- MG3, purity × MMR interaction on the R_down arm: {v('MG3')}.
+- MG4, larger lower-tail excess in R_down than background exons: {v('MG4')}.
+- MG5, larger upper-tail excess in R_up than background exons: {v('MG5')}.
+
+{sup} of 5 supported, {agn} against (family MG). The tail excess of MG4 and MG5 is the share of MMR-deficient
+tumours beyond the proficient 5th (95th) percentile minus the share expected if all moved by the exon's median
+shift; that expectation lets proficient values pass 0 and 1 (A-20). Lower-tail excess of background exons runs from
+{lx('< 0.1', 'B')} (proficient median < 0.1) to {lx('≥ 0.98', 'B')} (≥ 0.98); where the bound is not reached
+(0.5–0.9, 0.9–0.98 and ≥ 0.98), R_down exons score {lx('0.5–0.9', 'R_down')}, {lx('0.9–0.98', 'R_down')} and
+{lx('≥ 0.98', 'R_down')} against {lx('0.5–0.9', 'B')}, {lx('0.9–0.98', 'B')} and {lx('≥ 0.98', 'B')}; upper tail below
+0.1 and 0.1–0.5, R_up {hx('< 0.1', 'R_up')} and {hx('0.1–0.5', 'R_up')} against {hx('< 0.1', 'B')} and
+{hx('0.1–0.5', 'B')}. Exons dropping ≥ 0.10, R_down against background: {drops}. Rising ≥ 0.10, R_up against
+background: {rises}. Median shift of R_down exons: {med('R_down', 'COAD')}, {med('R_down', 'STAD')},
+{med('R_down', 'UCEC')} and {med('R_down', 'held out')} (COAD, STAD, UCEC, held out); 5th percentiles
+{q05('R_down', 'COAD')}, {q05('R_down', 'STAD')}, {q05('R_down', 'UCEC')} and {q05('R_down', 'held out')}. Panel (c),
+proficient → MMR-deficient medians: {ex_}; {100 * mre.low_obs:.0f}% of the MMR-deficient
+tumours fall below the proficient 5th percentile of MRE11 exon 5 (mean over the three cancers). Panel (d), MMR-deficient median (IQR), R_down: COAD
+{xs('n_down10_R_down', 'COAD')}, STAD {xs('n_down10_R_down', 'STAD')}, UCEC {xs('n_down10_R_down', 'UCEC')}, held out
+{xs('n_down10_R_down', 'held out')}; R_up: {xs('n_up10_R_up', 'COAD')}, {xs('n_up10_R_up', 'STAD')},
+{xs('n_up10_R_up', 'UCEC')}, {xs('n_up10_R_up', 'held out')}. Panel (e), lowest 5% of the proficient range: R_down
+{dens('training', 'R_down', 0):.2f}, background {dens('training', 'B', 0):.2f}; highest 5%: R_up
+{dens('training', 'R_up', 19):.2f}, background {dens('training', 'B', 19):.2f}; held out {dens('held out', 'R_down', 0):.2f}
+against {dens('held out', 'B', 0):.2f} and {dens('held out', 'R_up', 19):.2f} against {dens('held out', 'B', 19):.2f}.
+Panel (f), MMR-deficient means across the purity fifths: R_down {_m(rd.min())} to {_m(rd.max())}, R_up {ru.min():.2f}
+to {ru.max():.2f} (× 100). MMR status explains a median {e2s} of an R_down exon's PSI variance (COAD, STAD, UCEC).
+Per-tumour values are kept locally (D-12)."""
+
+
 TITLES = {
     "U1": "Splicing matches expression on lineage and genome-state subtypes, and fusing the two adds little.",
     "U2": "Splicing loses most on small classes defined by one programme.",
@@ -3081,6 +3365,7 @@ TITLES = {
     "U24": "Within each cancer, the repeat-exon model ranks tumours almost as well as the exome MSI callers.",
     "U25": "The model agrees with the exome measures on its confident calls; its own extra calls are borderline.",
     "U26": "Expression models trained the same way transfer almost as well; splicing adds to them.",
+    "U27": "A minority of exons move by a tenth of PSI or more; the typical exon moves by a few hundredths.",
 }
 
 
@@ -3101,10 +3386,10 @@ CAPTIONS = {k: (lambda k, f: (lambda *a: tidy(legend(k, f(*a)))))(k, f) for k, f
              "U10": _cap_u10, "U11": _cap_u11, "U12": _cap_u12, "U13": _cap_u13, "U14": _cap_u14, "U15": _cap_u15,
              "U16": _cap_u16, "U17": _cap_u17, "U18": _cap_u18, "U19": _cap_u19, "U20": _cap_u20,
              "U21": _cap_u21, "U22": _cap_u22, "U23": _cap_u23, "U24": _cap_u24, "U25": _cap_u25,
-             "U26": _cap_u26}.items()}
+             "U26": _cap_u26, "U27": _cap_u27}.items()}
 
 if __name__ == "__main__":
     run({"U1": U1, "U2": U2, "U3": U3, "U4": U4, "U5": U5, "U6": U6, "U7": U7, "U8": U8, "U9": U9, "U10": U10, "U11": U11,
          "U12": U12, "U13": U13, "U14": U14, "U15": U15, "U16": U16, "U17": U17,
-         "U18": U18, "U19": U19, "U20": U20, "U21": U21, "U22": U22, "U23": U23, "U24": U24, "U25": U25, "U26": U26,
+         "U18": U18, "U19": U19, "U20": U20, "U21": U21, "U22": U22, "U23": U23, "U24": U24, "U25": U25, "U26": U26, "U27": U27,
          "legends": legends})

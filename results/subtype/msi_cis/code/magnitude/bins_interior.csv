@@ -1,0 +1,15 @@
+group,bin,n_exons,n_down10,n_up10,median_shift
+held out,10–11,136,1,4,0
+held out,12–13,58,5,1,-0.00175
+held out,14–15,74,7,1,-0.02188
+held out,16–19,76,6,1,-0.01025
+held out,B (run ≤ 5),5340,86,69,0
+held out,"≥ 20, bp < 36 or none",24,0,1,-0.0035
+held out,"≥ 20, bp ≥ 36",26,1,1,0.01475
+training,10–11,373,36,17,-0.018
+training,12–13,165,20,11,-0.013
+training,14–15,205,35,16,-0.02
+training,16–19,223,53,10,-0.0395
+training,B (run ≤ 5),15632,592,983,0
+training,"≥ 20, bp < 36 or none",77,6,3,-0.005
+training,"≥ 20, bp ≥ 36",73,3,9,0.009

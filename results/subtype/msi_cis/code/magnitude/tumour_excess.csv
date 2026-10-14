@@ -1,0 +1,33 @@
+measure,group,status,n,q05,q25,q50,q75,q95,mean
+n_down10_R_down,COAD,proficient,212,-19,-8.25,0,11,27.45,1.981
+n_down10_R_down,COAD,MMR-deficient,44,12.45,22,35,46.25,70.4,37.27
+n_down10_R_down,STAD,proficient,292,-29,-10.25,0,12,31,1.075
+n_down10_R_down,STAD,MMR-deficient,59,-10.4,19,32,50.5,71.2,33.58
+n_down10_R_down,UCEC,proficient,125,-30,-10,0,11,28.8,-0.232
+n_down10_R_down,UCEC,MMR-deficient,47,-35.8,1,12,24,43.2,8.617
+n_down10_R_down,held out,proficient,7635,-28,-11,0,11.5,31,0.5836
+n_down10_R_down,held out,MMR-deficient,50,-21.75,-1.75,16,28,52.1,14.41
+n_up10_R_up,COAD,proficient,212,-4,-2,0,2.25,7,0.7642
+n_up10_R_up,COAD,MMR-deficient,44,0.15,3,7,9,15.85,6.795
+n_up10_R_up,STAD,proficient,292,-5,-2,0,4,11,1.455
+n_up10_R_up,STAD,MMR-deficient,59,-2,2,5,7,11.1,4.831
+n_up10_R_up,UCEC,proficient,125,-5,-2,0,4,8.8,0.696
+n_up10_R_up,UCEC,MMR-deficient,47,-3.7,0,2,5,10.7,2.936
+n_up10_R_up,held out,proficient,7635,-5,-2,0,3,9,0.6995
+n_up10_R_up,held out,MMR-deficient,50,-5.55,-0.75,4,7,13.2,3.78
+n_down10_B,COAD,proficient,212,-306.6,-141,0,167,476.3,26.96
+n_down10_B,COAD,MMR-deficient,44,-355.2,-89.5,26.5,209.2,360.9,66.8
+n_down10_B,STAD,proficient,292,-455.3,-196.5,0,230.2,536.8,24.92
+n_down10_B,STAD,MMR-deficient,59,-425.9,-208.5,-43.5,116,451.8,-23.94
+n_down10_B,UCEC,proficient,125,-552.8,-226,0,212,585.8,9.304
+n_down10_B,UCEC,MMR-deficient,47,-460.3,-150.5,-6,210,473.1,-4.894
+n_down10_B,held out,proficient,7635,-363.6,-157,0,173.2,490.6,22.45
+n_down10_B,held out,MMR-deficient,50,-256,-79.88,129,262.2,437.9,121.8
+n_up10_B,COAD,proficient,212,-366.7,-199.2,0,240,788.9,77.01
+n_up10_B,COAD,MMR-deficient,44,-125.9,22,209,414.5,732.9,247.3
+n_up10_B,STAD,proficient,292,-535.7,-231.5,0,304.5,869.7,65.56
+n_up10_B,STAD,MMR-deficient,59,-558.9,-296,-99,198.5,739.3,-33.69
+n_up10_B,UCEC,proficient,125,-416.4,-213,0,291,1011,106.4
+n_up10_B,UCEC,MMR-deficient,47,-452.5,-153,27,381.5,670.9,92.77
+n_up10_B,held out,proficient,7635,-461.3,-216.2,0,264,796.1,67.01
+n_up10_B,held out,MMR-deficient,50,-455.3,-170.8,98.25,306.2,709.5,124.5

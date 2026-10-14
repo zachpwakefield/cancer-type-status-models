@@ -817,6 +817,27 @@ and asks two questions about their nature:
 score G over all tumours. Nothing in PSI units, nothing on purity within MMR-deficient tumours, and
 no tail analysis.
 
+**Outcome (computed 2026-10-13; none of MG1–MG5 supported: MG4 against, the others not resolved).**
+- **Purity (MG1–MG3).** Among MMR-deficient tumours the R_down arm leans the predicted way with
+  purity (MG1 ρ = −0.15, p = 0.047, q = 0.12), but the R_up arm does not (MG2 ρ = −0.05). The
+  purity × MMR interaction is zero (MG3 −0.001, 95% CI −0.010 to +0.007). Across purity fifths the
+  R_down arm stays at −0.006 to −0.007 PSI, where dilution predicts a 2.5-fold change. Purity
+  neither places the shift in tumour cells nor in the infiltrate.
+- **Tails (MG4 against, MG5 not resolved).** R_down exons have a smaller lower-tail excess than
+  background exons (−0.027, q = 0.001). The statistic was mis-specified (A-20): its location-shift
+  expectation moves proficient values past 0 and 1, which inflates the expected tail of any exon
+  that shifts near a bound. Background exons score −0.072 below a proficient median of 0.1 and
+  +0.001 above 0.98. Where neither bound is reached, R_down exons exceed background by
+  0.002–0.010. The verdict stands as computed; the reading is that the test does not show
+  concentration in a subset of tumours, not that it shows the opposite.
+- **Size** (exploratory). Typical shifts are a few hundredths of PSI: the median R_down exon whose
+  proficient median lies within 0.1–0.9 falls by 0.021, 0.028 and 0.015 in COAD, STAD and UCEC.
+  16–18% of these exons fall by ≥ 0.10 in COAD and STAD, against 4% of background exons. An
+  MMR-deficient COAD or STAD tumour has about 33 more R_down exons down by ≥ 0.10 than the median
+  proficient tumour of its cancer. MMR status explains a median 0.4–0.5% of an R_down exon's PSI
+  variance. The largest movers: METTL8 T14 0.58 → 0.22, BOD1L1 T24 0.13 → 0.43, CCNDBP1 T30
+  0.04 → 0.25. Figure U27.
+
 ---
 
 ## Amendments and deviations
@@ -841,6 +862,7 @@ no tail analysis.
 | A-17 | 2026-10-13, after the D-71 features were built, before any model was fitted | The per-exon pool is computed over D-71's own tumours (the 8,464 with MC3 calls), as its tumour definition requires: 30,632 exons, 1,562 with an acceptor run ≥ 10. The pre-specification quoted 30,568 and 1,555, a count made beforehand over all 9,034 tumours | The pre-registration's count and its rule disagreed; the rule was followed | No: no model had been fitted and no label was used |
 | A-18 | 2026-10-13, after the E1 AUROCs of M0–M6 were read, before the LR family was computed | Exploratory checks of what the per-exon models learn (`scripts/54 --only posthoc`, `posthoc.csv`, `posthoc_exons.csv`): M4 refitted on the E1 training set at its chosen C, standardised coefficients summarised by sequence class (runs 10–19; runs ≥ 20 with the branch point ≥ 36 nt; other runs ≥ 20) and the 20 largest; the share of M5's top-500 ANOVA exons with a run ≥ 10 against the pool's share, and their genes; M5 refitted on the E1 training set at its chosen K and C, its standardised coefficients by sequence class and the 20 largest; three ablations fitted on E1 with the grid and tuning of the model they modify, described with bootstrap intervals against M2 and no q: M5 on the pool exons without a run ≥ 10 (M5n); M4 on the exons of the 2 arms only (M4a, per-exon weights on the exons score G uses); and M4 on the repeat exons outside the arms (M4x). No test, cut or verdict changed | M4 and M5 beat the 10 bins held out, against LR4 and LR5's predicted sign; these checks ask whether the gain comes from the repeat sequence or from other exons | Yes: chosen after the results; reported as exploratory |
 | A-19 | 2026-10-13, after D-71, D-72 and A-18 were computed and read | At the user's request, figures U23 and U24 and the write-ups show one fitted model: logistic regression on the repeat exons (M4), with score G as the unfitted reference in U23. The pre-registered tests are unchanged and still reported: the LR family compares M0–M6, and BM1–BM6 test the all-exon model (M5). M4's benchmark differences are exploratory (same paired bootstrap, no q). Step 55's discordance table is also computed for M4; nothing else is recomputed | Presentation: M4 keeps the sequence prior, so it is the fitted model that reads the code | Yes: chosen after the results, when M4 had the highest leave-one-cancer-out AUROC (0.967); its numbers are labelled exploratory where the tests were on M5 |
+| A-20 | 2026-10-13, after MG1–MG5 and the exploratory tables of D-75 were computed and read | Four exploratory additions to `scripts/60` (`figure_data`): (1) shift summaries and figure panels restricted to exons whose proficient median PSI lies within 0.1–0.9; (2) mid-rank percentiles of MMR-deficient tumours among proficient ones, binned by class (ties count half; the held-out tail shares now use them too, where strict ranks had counted a tumour tied with every proficient value as a low-tail case); (3) MG4 and MG5's statistic by proficient-median band and on the 0.1–0.9 exons; (4) PSI histograms of MRE11 exon 5 and three exons chosen after the largest-movers table was read (METTL8 and BOD1L1, the largest mean shifts of each arm; CCNDBP1, the event of Figure U7) | The median exon shift was exactly 0 in every class (most exons sit at PSI 0 or 1), and MG4's location-shift expectation was found to move proficient values past 0 and 1: the positive control MRE11 exon 5 scored 57% observed against 100% expected in COAD | Yes: all four were added after the results were read; they are exploratory and reported beside the pre-specified tests, whose verdicts are unchanged |
 
 ## Verification that the existing tasks are unchanged
 - `tests/test_subtype.py::TestExistingTasksUnchanged` rebuilds every existing task table from
