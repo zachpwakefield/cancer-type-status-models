@@ -782,6 +782,23 @@ the 30 others) and tuning (leaving one training cancer out):
 the GEX subtype models already classify MSI (U1) and MLH1 is lower there (D-46). No expression model
 had been scored on a held-out cancer, and no held-out MMR-deficient tumour's MLH1 had been read.
 
+**Outcome (computed 2026-10-13; EX3, EX4, EX6 supported, EX1, EX2, EX5 not resolved, none against).**
+- **Transfer is not special to splicing.** Retrained on all genes, expression came close: 0.893 on
+  log CPM and 0.866 on percentiles, against M4's 0.900 (EX2 +0.008, EX1 +0.034; not resolved). Its
+  largest weights went to MLH1, EPM2AIP1 and five of PreMSIm's genes.
+- **Small fixed panels do not transfer.** PreMSIm's genes refitted reached 0.785 (EX3 supported);
+  PreMSIm's own k-NN recipe 0.702; MLH1 alone 0.758 (EX4 supported).
+- **The cause of deficiency mattered less than predicted.** MLH1 was low (bottom tenth of the
+  cancer) in 28 of the 50 held-out MMR-deficient tumours. On the other 22, M4 and X1 tied (0.854
+  and 0.849; EX5 not resolved), and MLH1 alone fell to 0.47.
+- **The two are complementary.** They rank the deficient tumours differently (Spearman ρ 0.36).
+  Together (C1) they reached 0.926 (EX6 +0.060, q = 0.001), AUPRC 0.53, and precision 0.68 at
+  recall 0.5, against 0.30 for M4 and 0.39 for X1. Repeat exons carry 71% of C1's summed |weights|.
+- **Exploratory: splicing stays closer to the exome callers.** Leaving each cancer out (X1 with
+  E1's parameters), within-cancer AUROC against the callers' consensus was 0.998 for M4 and
+  0.975–0.979 for X1. Against MANTIS MSI-H held out: 1.000 against 0.969 (X2) and 0.924 (X1).
+- Tables: `results/subtype/msi_cis/code/expression/`; Figure U26.
+
 ---
 
 ## Amendments and deviations

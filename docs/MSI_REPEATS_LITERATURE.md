@@ -83,6 +83,7 @@ date; claims are limited to what those records state. Nothing here is a result. 
   way in three organs could give shared, predictable splice neoantigens.*
 - **Detection from RNA.** Expression-based MSI callers exist: MSIsensor-RNA (Jia et al. 2024) and
   MSI expresso. Ours differs: a mechanism-based score from the reference genome with no training.
+  Section 5 compares the two directly.
 - **An experimental model.** MLH1-knockout human colon organoids accumulate the
   mismatch-repair-deficient mutation profile over passages (Drost et al. 2017).
 
@@ -223,6 +224,59 @@ against PubMed (PMIDs given).
   - with a long run placed upstream of the branch point, as RV5 asks.
 - **The tumours' own alleles** at the R_up loci (D-56's slices).
 - **hnRNP C occupancy.** hnRNP C eCLIP at the R_up tracts against R_down tracts.
+
+## 5. Where the finding stands (literature search and D-74, 2026-10-13)
+
+A second search (PubMed, Europe PMC including bioRxiv and medRxiv, the web; 2015–2026) asked what
+has been done on RNA detection of MSI. Every PMID below was checked against PubMed.
+
+**What others have done.**
+- **Expression classifiers.** All were trained on TCGA COAD, STAD and UCEC, or on colon alone:
+  - Danaher et al. 2019 (PMID 30665466): 14 genes, including EPM2AIP1 and the MMR genes.
+  - Pačínková and Popovici 2019 (PMID 31008109): 25 genes; colon 0.94, STAD 0.90, UCEC 0.71
+    (abstract).
+  - PreMSIm (Li et al. 2020, PMID 32257050): 15 genes, k-NN.
+  - MSIsensor-RNA (Jia et al. 2024, PMID 39341794): 109 genes, SVM, external AUC 0.95–0.99 within
+    the three cancers. Its authors note weaker results when the test cancer differs from training
+    (full text as read by the search; not re-checked).
+  - Sorokin et al. 2021 (PMID 34888350) re-tested published signatures on two more cancers.
+- **Repeat lengths read in RNA.** MIRACLE (Choi et al. 2024, PMID 39210504) uses 3′ UTR repeats;
+  its pan-cancer calls are distributions, not held-out AUROCs. MSI expresso (Tubacher et al. 2025,
+  PMID 40342963) uses 192 repeats, with about 99% concordance in mostly colon samples.
+- **An independent benchmark** found RNA tools outperformed by DNA tools run on the same RNA data
+  (Anthony et al. 2024, PMID 39129364, abstract). By the full text, as read by the search and not
+  re-checked: in 143 colon tumours, PreMSIm and MSIsensor-RNA had precision 0.22 and 0.15 at their
+  defaults, against F1 about 0.82 for DNA tools on the RNA alignments.
+- **Splicing.** Jonchère et al. 2024 (PMID 39107855) is colon-only. It has no classifier, and it
+  reports mostly exclusion with no length- or branch-point-dependent sign change. No
+  splicing-based MSI classifier was found.
+- **Endometrium.** MSI endometrial cancers shift their repeats less than colon cancers (Wang et
+  al. 2017, PMID 27810331; Wu et al. 2019, PMID 30443012; Chung et al. 2023, PMID 37953261).
+  That fits the model's 19 endometrial misses (D-73).
+- **Outside the three cancers.** MMR deficiency is more often MSH2/MSH6 or Lynch-associated there
+  (Latham et al. 2019, PMID 30376427). Guidelines find too little evidence to recommend a
+  specific assay outside the gastrointestinal tract and endometrium (Bartley et al. 2022, PMID
+  35920830).
+
+**What D-74 added (Figure U26).** Expression models trained exactly as the splicing model
+transferred almost as well to the 30 other cancers:
+- held-out AUROC 0.893 on log CPM and 0.866 on percentiles, against 0.900 for splicing;
+- fixed panels did not (PreMSIm genes 0.70–0.79);
+- MLH1 was silenced in 28 of the 50 held-out deficient tumours, and where it was not, the two tied;
+- the two were complementary, together reaching 0.926 and precision 0.68 at half recall;
+- splicing agreed more closely with the exome callers within a cancer (0.998 against 0.975–0.979).
+
+**Verdict.**
+- **Novel.** Three things are new:
+  - the rising arm (long tracts with a distant branch point gain inclusion);
+  - a sequence rule, read from the genome, for which exons move;
+  - a held-out test across 30 cancers against DNA calls.
+- **Not novel.** Skipping at MSI tracts, RNA detection of MSI, and weak endometrial signal.
+- **Weaker than first framed.** "Transfers across organs" is not special to splicing; a retrained
+  expression model does nearly as well. What splicing adds is complementarity (better together),
+  closer agreement with exome callers within a cancer, and a mechanism.
+- **The comparison still missing** is a read-length caller on the RNA alignments (MSIsensor-pro,
+  MIRACLE). It needs the RNA BAMs, which are controlled access.
 
 ## References
 

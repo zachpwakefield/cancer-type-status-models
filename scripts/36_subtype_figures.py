@@ -26,6 +26,7 @@ One question per figure, in the order the story is told in results/SUBTYPE.md:
     U23 does logistic regression on the repeat exons, fitted in three cancers, transfer (D-71, A-19)?
     U24 how does the repeat-exon model compare with the exome MSI callers (D-72, A-19)?
     U25 where do the model and the exome measures agree and disagree (D-73)?
+    U26 does the splicing model transfer better than expression models trained the same way (D-74)?
 
 Captions are figure legends: "**Figure Un. Title.**", then (a), (b) ... for the panels. `legends`
 copies each legend (without its bullet list of tests) under the figure in results/SUBTYPE.md.
@@ -2878,6 +2879,181 @@ genes and POLE ({c['MMR and POLE mutations'].project}) and the lowest MLH1 expre
 Per-tumour points are kept locally (D-12)."""
 
 
+# ============================================================ D-74 splicing against expression
+EXPR = [("M4", "splicing (repeat exons)", ACCENT), ("X2", "expression, log CPM", INK),
+        ("X1", "expression, percentiles", INK), ("X3", "PreMSIm genes, refitted", INK2),
+        ("X3k", "PreMSIm recipe (k-NN)", INK2), ("X0", "MLH1 alone", MUTED),
+        ("C1", "splicing + expression", ACCENT_DARK)]
+EXPR_REFS = [("MANTIS", "MC3 + MSIsensor"), ("MSIsensor", "MC3 + MANTIS"), ("MC3", "MANTIS + MSIsensor")]
+
+
+def U26() -> None:
+    d = MSI_DIR / "code" / "expression"
+    met = pd.read_csv(d / "metrics.csv").set_index("model")
+    pr = pd.read_csv(d / "predictions.csv")
+    ex = pd.read_csv(d / "exploratory.csv")
+    p1 = pd.read_parquet(MSI_LOCAL / "expr_e1_predictions.parquet")
+    fig = plt.figure(figsize=(DOUBLE - 0.6, 4.5))
+    gs = fig.add_gridspec(2, 1, hspace=0.55, height_ratios=[1.0, 1.0])
+    top = gs[0].subgridspec(1, 2, wspace=0.08)
+    bot = gs[1].subgridspec(1, 3, wspace=1.05, width_ratios=[1.15, 0.95, 0.8])
+    rows, local = [], []
+    ypos = {m: (i if m != "C1" else i + 0.6) for i, (m, _, _) in enumerate(EXPR)}
+    # a, b. held-out AUROC and AUPRC with 95% intervals
+    ax = fig.add_subplot(top[0])
+    bx = fig.add_subplot(top[1], sharey=ax)
+    for a_, key in [(ax, "auroc"), (bx, "auprc")]:
+        for m, name, col in EXPR:
+            r = met.loc[m]
+            a_.hlines(ypos[m], r[f"{key}_lo"], r[f"{key}_hi"], color=col, linewidth=0.9)
+            a_.scatter(r[key], ypos[m], s=18, color=col, zorder=3, marker="D" if m == "C1" else "o")
+            rows.append({"panel": "a" if key == "auroc" else "b", "model": m, "name": name, "value": r[key],
+                         "lo": r[f"{key}_lo"], "hi": r[f"{key}_hi"], "positives": int(r.positives), "n": int(r.n)})
+        a_.axvline(met.loc["M4", key], color=ACCENT, linewidth=0.6, linestyle=(0, (3, 2)), zorder=1)
+        rows.append({"panel": "a" if key == "auroc" else "b", "model": "reference line: splicing model",
+                     "value": met.loc["M4", key]})
+        a_.tick_params(axis="y", length=0)
+        a_.spines["left"].set_visible(False)
+    ax.set_yticks([ypos[m] for m, _, _ in EXPR])
+    ax.set_yticklabels([n for _, n, _ in EXPR], fontsize=5.8)
+    ax.set_ylim(ypos["C1"] + 0.6, -0.6)
+    ax.axvline(0.5, color=GRID, linewidth=0.6, zorder=0)
+    ax.set_xlim(0.45, 1.0)
+    ax.set_xlabel("held-out AUROC", fontsize=6)
+    plt.setp(bx.get_yticklabels(), visible=False)
+    bx.axvline(float(p1.mmr.mean()), color=GRID, linewidth=0.6, zorder=0)
+    rows.append({"panel": "b", "model": "reference line: prevalence", "value": float(p1.mmr.mean())})
+    bx.set_xlim(0, 0.7)
+    bx.set_xlabel("held-out AUPRC", fontsize=6)
+    # c. MLH1 low vs not low
+    cx = fig.add_subplot(bot[0])
+    sub = ex[ex.what.str.startswith("AUROC, MMR-deficient with MLH1")]
+    order = [m for m, _, _ in EXPR if m != "X3k"]
+    for i, m in enumerate(order):
+        col = dict((k, c_) for k, _, c_ in EXPR)[m]
+        lo_ = sub[sub.model.eq(m) & sub.what.str.contains("MLH1 low")].iloc[0]
+        hi_ = sub[sub.model.eq(m) & sub.what.str.contains("not low")].iloc[0]
+        cx.plot([lo_.value, hi_.value], [i, i], color=col, linewidth=0.6, zorder=1)
+        cx.scatter(lo_.value, i, s=16, color=col, zorder=3)
+        cx.scatter(hi_.value, i, s=16, color="white", edgecolors=col, linewidths=0.9, zorder=3)
+        for lab, r in [("MLH1 low", lo_), ("MLH1 not low", hi_)]:
+            rows.append({"panel": "c", "model": m, "group": lab, "value": r.value, "positives": int(r.n)})
+    cx.set_yticks(range(len(order)))
+    cx.set_yticklabels([dict((k, n) for k, n, _ in EXPR)[m] for m in order], fontsize=5.6)
+    cx.set_ylim(len(order) - 0.5, -0.5)
+    cx.axvline(0.5, color=GRID, linewidth=0.6, zorder=0)
+    cx.set_xlim(0.4, 1.0)
+    cx.tick_params(axis="y", length=0)
+    cx.spines["left"].set_visible(False)
+    cx.set_xlabel("held-out AUROC", fontsize=6)
+    # d. the two read-outs on the held-out MMR-deficient tumours
+    dx = fig.add_subplot(bot[1])
+    top_ = lambda m: p1.groupby("project")[m].rank(ascending=False, pct=True)     # 1/n for the top tumour
+    q = p1.assign(pM4=top_("M4"), pX1=top_("X1"))
+    q = q[q.mmr]
+    low = q.MLH1_pct < 0.10
+    dx.plot([7e-4, 1.3], [7e-4, 1.3], color=GRID, linewidth=0.6, zorder=0)
+    dx.scatter(q.pX1[low], q.pM4[low], s=11, color=INK, zorder=3)
+    dx.scatter(q.pX1[~low], q.pM4[~low], s=11, color="white", edgecolors=INK, linewidths=0.8, zorder=3)
+    for _, r in q.iterrows():
+        local.append({"panel": "d", "file_id": r.file_id, "project": r.project, "top_M4": r.pM4, "top_X1": r.pX1,
+                      "mlh1_low": bool(r.MLH1_pct < 0.10)})
+    rows.append({"panel": "d", "model": "reference line: y = x"})
+    dx.set_xscale("log")
+    dx.set_yscale("log")
+    dx.set_xlim(1.3, 7e-4)
+    dx.set_ylim(1.3, 7e-4)
+    dx.set_xticks([1e-3, 1e-2, 1e-1, 1])
+    dx.set_yticks([1e-3, 1e-2, 1e-1, 1])
+    dx.set_xticklabels(["0.001", "0.01", "0.1", "1"])
+    dx.set_yticklabels(["0.001", "0.01", "0.1", "1"])
+    dx.minorticks_off()
+    dx.set_xlabel("expression rank (top fraction)", fontsize=6)
+    dx.set_ylabel("splicing rank (top fraction)", fontsize=6)
+    # e. within-cancer AUROC against the exome consensus, leaving each cancer out (E2)
+    ex_ = fig.add_subplot(bot[2])
+    w = ex[ex.what.str.startswith("E2 within-cancer AUROC against the consensus excluding")]
+    for i, (ref, lab) in enumerate(EXPR_REFS):
+        for m, mk, col, off in [("M4", "o", ACCENT, -0.13), ("X1", "s", INK, 0.13)]:
+            r = w[w.what.str.endswith(f"excluding {ref}") & w.model.eq(m)].iloc[0]
+            ex_.scatter(r.value, i + off, s=16, marker=mk, color=col, zorder=3)
+            rows.append({"panel": "e", "reference": lab, "model": m, "value": r.value, "positives": int(r.n)})
+    ex_.set_yticks(range(len(EXPR_REFS)))
+    ex_.set_yticklabels([f"{lab}" for _, lab in EXPR_REFS], fontsize=5.6)
+    ex_.set_ylim(len(EXPR_REFS) - 0.5, -0.5)
+    ex_.set_xlim(0.96, 1.001)
+    ex_.set_xticks([0.96, 0.98, 1.0])
+    ex_.tick_params(axis="y", length=0)
+    ex_.spines["left"].set_visible(False)
+    ex_.set_xlabel("within-cancer AUROC", fontsize=6)
+    from matplotlib.lines import Line2D
+    n_lo, n_hi = int(low.sum()), int((~low).sum())
+    handles = [Line2D([], [], marker="o", color=INK, linestyle="", markersize=3.5, label=f"MLH1 low ({n_lo})"),
+               Line2D([], [], marker="o", color=INK, markerfacecolor="white", linestyle="", markersize=3.5,
+                      label=f"MLH1 not low ({n_hi})"),
+               Line2D([], [], marker="o", color=ACCENT, linestyle="", markersize=3.5, label="splicing"),
+               Line2D([], [], marker="s", color=INK, linestyle="", markersize=3.5, label="expression, percentiles")]
+    fig.legend(handles=handles, loc="lower center", ncol=4, fontsize=5.6, frameon=False, bbox_to_anchor=(0.5, -0.04),
+               handletextpad=0.3, columnspacing=1.5)
+    from _figbase import panel_letters
+    panel_letters([(ax, -0.62), (bx, -0.05), (cx, -0.95), (dx, -0.4), (ex_, -1.05)], y=1.05)
+    save(fig, OUT, "U26_msi_splicing_vs_expression", data=pd.DataFrame(rows),
+         caption=CAPTIONS["U26"](met, pr, ex, q),
+         local_data=(SCFG.base_data_dir / "figure_data", pd.DataFrame(local)))
+
+
+def _cap_u26(met, pr, ex, q):
+    a = lambda m, k="auroc": f"{met.loc[m, k]:.3f} ({met.loc[m, k + '_lo']:.3f}–{met.loc[m, k + '_hi']:.3f})"
+    t = pr.set_index("id")
+    e = lambda i: f"{signed(t.loc[i, 'effect'])} ({signed(t.loc[i, 'ci_low'])} to {signed(t.loc[i, 'ci_high'])}), q = {fp(t.loc[i, 'q'])}"
+    sup = int(t.verdict.eq("supported").sum())
+    g = lambda w, m: float(ex[ex.what.eq(w) & ex.model.eq(m)].value.iloc[0])
+    w2 = "E2 within-cancer AUROC against the consensus excluding"
+    wm = [g(f"{w2} {r_}", "M4") for r_, _ in EXPR_REFS]
+    wx = [g(f"{w2} {r_}", "X1") for r_, _ in EXPR_REFS]
+    mt = "E1 with MANTIS MSI-H vs MSS as the label: AUROC"
+    rho = g("Spearman rho with M4 among held-out MMR-deficient tumours (within-cancer percentile)", "X1")
+    pp = lambda m: f"{met.loc[m, 'precision_at_recall_0.5']:.2f}"
+    e2 = lambda m: g("E2 pooled AUROC (X1 with E1's parameters)", m)
+    k_ = lambda m: met.loc[m, "chosen"].replace("=", " = ")
+    ch = (f"chosen for both: {k_('X1')}" if k_("X1") == k_("X2") else
+          f"chosen: {k_('X1')} on percentiles, {k_('X2')} on log CPM")
+    rng = lambda v: f"{min(v):.3f}" if f"{min(v):.3f}" == f"{max(v):.3f}" else f"{min(v):.3f}–{max(v):.3f}"
+    return f"""**Does the splicing model transfer better than expression models trained the same way?**
+
+Pre-specified (config/followup.yaml: msi_vs_expression, D-74) before any expression model was scored on a held-out
+cancer. Every model was trained on COAD, STAD and UCEC with the same label (MC3 ≥ 10 homopolymer deletions) and tuned
+by leaving one training cancer out; each was tested on the 30 other cancers ({int(met.loc['M4', 'n']):,} tumours,
+{int(met.loc['M4', 'positives'])} MMR-deficient). All are L2 logistic regressions with balanced class weights except
+the PreMSIm recipe (5 nearest neighbours on its 15 genes scaled to [0, 1]) and MLH1 alone (unfitted). The two
+whole-transcriptome models keep the top K of 23,640 genes by ANOVA F on the training tumours ({ch}).
+
+(a) Held-out AUROC and (b) AUPRC; bars = 95% bootstrap intervals over tumours within cancer and label; dashed = the
+splicing model; grey = chance and prevalence. (c) AUROC of each model for the held-out MMR-deficient tumours whose
+MLH1 is low (filled; below the 10th percentile of their cancer) or not (hollow), each against all held-out proficient
+tumours. (d) The held-out MMR-deficient tumours: rank of each within its cancer by the splicing score against the
+rank by the expression model on percentile inputs (fraction of the cancer at or above it; log axes, best at the top
+right); grey line = equality. (e) Leaving each cancer out of training (E2), AUROC
+within cancer against the tumours on which the two named exome measures agree (as Figure U24), for the splicing model and the
+expression model on percentile inputs (refitted with its E1 parameters, without inner tuning).
+
+- EX1, splicing against expression on percentile inputs: {e('EX1')}, {t.loc['EX1', 'verdict']}.
+- EX2, against expression on log CPM: {e('EX2')}, {t.loc['EX2', 'verdict']}.
+- EX3, against PreMSIm's genes refitted: {e('EX3')}, {t.loc['EX3', 'verdict']}.
+- EX4, against MLH1 alone: {e('EX4')}, {t.loc['EX4', 'verdict']}.
+- EX5, MMR-deficient tumours with MLH1 not low: {e('EX5')}, {t.loc['EX5', 'verdict']}.
+- EX6, splicing + expression against expression: {e('EX6')}, {t.loc['EX6', 'verdict']}.
+
+{sup} of 6 supported, none against (family EX). Held-out AUROC: splicing {a('M4')}; expression, log CPM {a('X2')};
+percentiles {a('X1')}; PreMSIm genes {a('X3')}; PreMSIm recipe {a('X3k')}; MLH1 {a('X0')}; splicing + expression
+{a('C1')}. AUPRC {met.loc['M4', 'auprc']:.2f}, {met.loc['X2', 'auprc']:.2f}, {met.loc['X1', 'auprc']:.2f} and {met.loc['C1', 'auprc']:.2f}
+for splicing, the two expression models and the combination; precision at recall 0.5: {pp('M4')}, {pp('X2')}, {pp('X1')} and {pp('C1')}.
+Against MANTIS MSI-H (17 held out): splicing {g(mt, 'M4'):.3f}, expression {g(mt, 'X2'):.3f} (log CPM) and {g(mt, 'X1'):.3f}
+(percentiles). Panel (d), Spearman ρ = {rho:.2f}. Panel (e): splicing {rng(wm)}, expression {rng(wx)};
+the exome measures score 0.999–1.000 against each other (Figure U24). E2 pooled AUROC, all 33 cancers: splicing
+{e2('M4'):.3f}, expression {e2('X1'):.3f}. Per-tumour points are kept locally (D-12)."""
+
+
 TITLES = {
     "U1": "Splicing matches expression on lineage and genome-state subtypes, and fusing the two adds little.",
     "U2": "Splicing loses most on small classes defined by one programme.",
@@ -2904,6 +3080,7 @@ TITLES = {
     "U23": "Logistic regression on repeat exons, fitted in three cancers, finds MMR deficiency in 30 others.",
     "U24": "Within each cancer, the repeat-exon model ranks tumours almost as well as the exome MSI callers.",
     "U25": "The model agrees with the exome measures on its confident calls; its own extra calls are borderline.",
+    "U26": "Expression models trained the same way transfer almost as well; splicing adds to them.",
 }
 
 
@@ -2923,9 +3100,11 @@ CAPTIONS = {k: (lambda k, f: (lambda *a: tidy(legend(k, f(*a)))))(k, f) for k, f
              "U7": _cap_u7, "U8": _cap_u8, "U9": _cap_u9,
              "U10": _cap_u10, "U11": _cap_u11, "U12": _cap_u12, "U13": _cap_u13, "U14": _cap_u14, "U15": _cap_u15,
              "U16": _cap_u16, "U17": _cap_u17, "U18": _cap_u18, "U19": _cap_u19, "U20": _cap_u20,
-             "U21": _cap_u21, "U22": _cap_u22, "U23": _cap_u23, "U24": _cap_u24, "U25": _cap_u25}.items()}
+             "U21": _cap_u21, "U22": _cap_u22, "U23": _cap_u23, "U24": _cap_u24, "U25": _cap_u25,
+             "U26": _cap_u26}.items()}
 
 if __name__ == "__main__":
     run({"U1": U1, "U2": U2, "U3": U3, "U4": U4, "U5": U5, "U6": U6, "U7": U7, "U8": U8, "U9": U9, "U10": U10, "U11": U11,
          "U12": U12, "U13": U13, "U14": U14, "U15": U15, "U16": U16, "U17": U17,
-         "U18": U18, "U19": U19, "U20": U20, "U21": U21, "U22": U22, "U23": U23, "U24": U24, "U25": U25, "legends": legends})
+         "U18": U18, "U19": U19, "U20": U20, "U21": U21, "U22": U22, "U23": U23, "U24": U24, "U25": U25, "U26": U26,
+         "legends": legends})

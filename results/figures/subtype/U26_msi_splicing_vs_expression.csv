@@ -1,0 +1,37 @@
+panel,model,name,value,lo,hi,positives,n,group,reference
+a,M4,splicing (repeat exons),0.900115,0.863697,0.93563,50.0,7685.0,,
+a,X2,"expression, log CPM",0.892521,0.848986,0.929913,50.0,7685.0,,
+a,X1,"expression, percentiles",0.866381,0.80919,0.916215,50.0,7685.0,,
+a,X3,"PreMSIm genes, refitted",0.785208,0.721863,0.845211,50.0,7685.0,,
+a,X3k,PreMSIm recipe (k-NN),0.701658,0.634456,0.769047,50.0,7685.0,,
+a,X0,MLH1 alone,0.757818,0.693828,0.817741,50.0,7685.0,,
+a,C1,splicing + expression,0.926394,0.898349,0.951284,50.0,7685.0,,
+a,reference line: splicing model,,0.900115,,,,,,
+b,M4,splicing (repeat exons),0.438943,0.348183,0.543513,50.0,7685.0,,
+b,X2,"expression, log CPM",0.398292,0.307675,0.51036,50.0,7685.0,,
+b,X1,"expression, percentiles",0.428128,0.334125,0.536537,50.0,7685.0,,
+b,X3,"PreMSIm genes, refitted",0.123428,0.0892118,0.169456,50.0,7685.0,,
+b,X3k,PreMSIm recipe (k-NN),0.149926,0.0850581,0.24154,50.0,7685.0,,
+b,X0,MLH1 alone,0.172295,0.0947697,0.272966,50.0,7685.0,,
+b,C1,splicing + expression,0.532018,0.431278,0.637172,50.0,7685.0,,
+b,reference line: splicing model,,0.438943,,,,,,
+b,reference line: prevalence,,0.006506180871828237,,,,,,
+c,M4,,0.936032,,,28.0,,MLH1 low,
+c,M4,,0.854403,,,22.0,,MLH1 not low,
+c,X2,,0.948854,,,28.0,,MLH1 low,
+c,X2,,0.820825,,,22.0,,MLH1 not low,
+c,X1,,0.879858,,,28.0,,MLH1 low,
+c,X1,,0.849229,,,22.0,,MLH1 not low,
+c,X3,,0.88992,,,28.0,,MLH1 low,
+c,X3,,0.651938,,,22.0,,MLH1 not low,
+c,X0,,0.987253,,,28.0,,MLH1 low,
+c,X0,,0.465809,,,22.0,,MLH1 not low,
+c,C1,,0.961245,,,28.0,,MLH1 low,
+c,C1,,0.882038,,,22.0,,MLH1 not low,
+d,reference line: y = x,,,,,,,,
+e,M4,,0.998057,,,139.0,,,MC3 + MSIsensor
+e,X1,,0.974534,,,139.0,,,MC3 + MSIsensor
+e,M4,,0.997637,,,143.0,,,MC3 + MANTIS
+e,X1,,0.97906,,,143.0,,,MC3 + MANTIS
+e,M4,,0.998314,,,135.0,,,MANTIS + MSIsensor
+e,X1,,0.978691,,,135.0,,,MANTIS + MSIsensor

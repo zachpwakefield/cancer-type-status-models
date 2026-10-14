@@ -1206,7 +1206,7 @@ upstream of the run. One was found for 83% of 1,580 exons, a median 40 nt from t
 - **Why.** That call set does not genotype long homopolymers. The test needs one that does, for
   instance from long reads or a repeat genotyper.
 
-### The sequence code: thirty other cancers, specificity, endometrium, infiltration, MSI callers, the rising arm, fitted models (D-65 to D-73, Figures U18–U25)
+### The sequence code: thirty other cancers, specificity, endometrium, infiltration, MSI callers, the rising arm, fitted models (D-65 to D-74, Figures U18–U26)
 
 D-63 suggested a code: whether an MSI repeat exon falls or rises depends on its tract length and
 on where its branch point lies.
@@ -1216,7 +1216,7 @@ on where its branch point lies.
 - **Score G** reads both arms against matched background exons. Score A, D-52's, reads every
   repeat exon as falling.
 
-Nine sets of tests, each written down before it was computed, asked whether the code works
+Ten sets of tests, each written down before it was computed, asked whether the code works
 (`results/subtype/msi_cis/code/`):
 - whether it travels to cancers never used to define it (D-66, Figure U18);
 - whether it is about the branch point and about mismatch repair (D-65, Figure U19a–b);
@@ -1226,7 +1226,8 @@ Nine sets of tests, each written down before it was computed, asked whether the 
 - whether its rising arm is real, and why (D-70, Figure U22);
 - whether a model fitted on its exons transfers to cancers never used (D-71, Figure U23);
 - how that model compares with the exome MSI callers (D-72, Figure U24);
-- where the model and the exome measures disagree (D-73, Figure U25).
+- where the model and the exome measures disagree (D-73, Figure U25);
+- how it compares with expression models trained the same way (D-74, Figure U26).
 
 #### Thirty cancers never used (D-66, Figure U18)
 
@@ -1708,6 +1709,64 @@ whether the calls no exome measure makes look like missed MMR deficiency or like
   - **Borderline cases.** 38 more are called by MC3 alone. These are hypermutated, with half the
     deletions per SNV of clear MSI, and both callers put them in their between zones. They are as
     much borderline for the exome as for the model.
+
+#### Against expression models trained the same way (D-74, Figure U26)
+
+MSI can already be called from expression: MSIsensor-RNA (Jia et al. 2024), PreMSIm (Li et al. 2020)
+and others, built and tested mainly in colon, stomach and endometrium. D-74 asked whether the
+splicing model's transfer to other cancers is special. Expression models got its tumours, label,
+split (train on COAD, STAD and UCEC; test on the 30 others) and tuning.
+
+**How to read Figure U26.**
+- **Panels (a, b)** give each model's held-out AUROC and AUPRC. The dashed line is the splicing
+  model.
+- **Panel (c)** splits the held-out MMR-deficient tumours by whether MLH1 is silenced.
+- **Panel (d)** places each of those tumours by its rank within its cancer under splicing (up) and
+  expression (across).
+- **Panel (e)** repeats Figure U24's comparison with the exome callers for the expression model.
+
+![U26](figures/subtype/U26_msi_splicing_vs_expression.png)
+
+<!-- legend U26: copied from figures/subtype/U26_msi_splicing_vs_expression.caption.md by the figure script's 'legends' step -->
+> **Figure U26. Expression models trained the same way transfer almost as well; splicing adds to them.**
+> Pre-specified (config/followup.yaml: msi_vs_expression, D-74) before any expression model was scored on a held-out
+> cancer. Every model was trained on COAD, STAD and UCEC with the same label (MC3 ≥ 10 homopolymer deletions) and
+> tuned by leaving one training cancer out; each was tested on the 30 other cancers (7,685 tumours, 50
+> MMR-deficient). All are L2 logistic regressions with balanced class weights except the PreMSIm recipe (5 nearest
+> neighbours on its 15 genes scaled to [0, 1]) and MLH1 alone (unfitted). The two whole-transcriptome models keep
+> the top K of 23,640 genes by ANOVA F on the training tumours (chosen for both: K = 500, C = 0.1).
+>
+> (a) Held-out AUROC and (b) AUPRC; bars = 95% bootstrap intervals over tumours within cancer and label; dashed =
+> the splicing model; grey = chance and prevalence. (c) AUROC of each model for the held-out MMR-deficient tumours
+> whose MLH1 is low (filled; below the 10th percentile of their cancer) or not (hollow), each against all held-out
+> proficient tumours. (d) The held-out MMR-deficient tumours: rank of each within its cancer by the splicing score
+> against the rank by the expression model on percentile inputs (fraction of the cancer at or above it; log axes,
+> best at the top right); grey line = equality. (e) Leaving each cancer out of training (E2), AUROC within cancer
+> against the tumours on which the two named exome measures agree (as Figure U24), for the splicing model and the
+> expression model on percentile inputs (refitted with its E1 parameters, without inner tuning).
+>
+> 3 of 6 supported, none against (family EX). Held-out AUROC: splicing 0.900 (0.864–0.936); expression, log CPM
+> 0.893 (0.849–0.930); percentiles 0.866 (0.809–0.916); PreMSIm genes 0.785 (0.722–0.845); PreMSIm recipe 0.702
+> (0.634–0.769); MLH1 0.758 (0.694–0.818); splicing + expression 0.926 (0.898–0.951). AUPRC 0.44, 0.40, 0.43 and
+> 0.53 for splicing, the two expression models and the combination; precision at recall 0.5: 0.30, 0.26, 0.39 and
+> 0.68. Against MANTIS MSI-H (17 held out): splicing 1.000, expression 0.969 (log CPM) and 0.924 (percentiles).
+> Panel (d), Spearman ρ = 0.36. Panel (e): splicing 0.998, expression 0.975–0.979; the exome measures score
+> 0.999–1.000 against each other (Figure U24). E2 pooled AUROC, all 33 cancers: splicing 0.967, expression 0.941.
+> Per-tumour points are kept locally (D-12).
+<!-- /legend -->
+
+**What it shows** (EX3, EX4, EX6 supported; EX1, EX2, EX5 not resolved; family EX).
+- **Transfer is not special to splicing.** Retrained on all 23,640 genes, expression came close:
+  0.893 on log CPM and 0.866 on percentiles, against 0.900 for splicing. Its largest weights went
+  to MLH1, EPM2AIP1 and genes of PreMSIm's panel.
+- **Small fixed panels do not transfer.** PreMSIm's 15 genes reached 0.785 refitted and 0.702 with
+  PreMSIm's own recipe; MLH1 alone 0.758.
+- **MLH1 silencing is common outside the three cancers too** (28 of 50 held-out deficient tumours).
+  Where it is absent, splicing and expression tie (0.854 and 0.849), and MLH1 alone is at chance.
+- **The two read-outs are complementary.** They rank the deficient tumours differently (ρ = 0.36).
+  Together they reach 0.926 and double the precision at half recall (0.68, against 0.30 and 0.39).
+- **Splicing stays closer to the exome callers within a cancer** (exploratory): 0.998 against
+  0.975–0.979 for expression.
 
 #### Reading
 

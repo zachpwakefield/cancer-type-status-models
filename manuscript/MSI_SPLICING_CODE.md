@@ -1,8 +1,8 @@
 # Mismatch-repair deficiency moves splicing by a two-arm code written in acceptor poly-T tracts
 
-*Working draft, 13 October 2026. Every analysis is in this repository (`scripts/42`–`56`). Each was
+*Working draft, 13 October 2026. Every analysis is in this repository (`scripts/42`–`57`). Each was
 pre-specified in [`config/followup.yaml`](../config/followup.yaml) before it was computed, with
-decisions D-52 to D-73 and amendments A-9 to A-19 in
+decisions D-52 to D-74 and amendments A-9 to A-19 in
 [`docs/SUBTYPE_METHODS.md`](../docs/SUBTYPE_METHODS.md). Figure files carry fuller legends with
 every test; this text gives the journal version.*
 
@@ -34,7 +34,8 @@ cancers never used to build the rule.
 - **A model can learn it.** Logistic regression on the inclusion of the 1,562 repeat exons, trained
   in three cancers, reached AUROC 0.90 in the 30 others. Within each cancer it ranked tumours
   almost exactly as the exome MSI callers did (AUROC 0.998–1.000 against their consensus), from
-  RNA alone.
+  RNA alone. An expression model trained the same way came close (0.89) but agreed less well with
+  the callers, and the two together reached 0.93.
 - **The rising arm is real; its cause is open.** The rise of long-tract exons held out of sample.
   It was independent of each tumour's overall inclusion level, required the tract, and was absent
   from hypermutated MMR-proficient tumours. Long-run exons fell when the branch point lay within
@@ -44,7 +45,9 @@ cancers never used to build the rule.
 
 **Conclusions.** MMR deficiency moves 3′ splice-site use in both directions by rules written in the
 reference genome. That gives an interpretable RNA read-out of MMR deficiency that works across
-organs and, once fitted, ranks tumours within a cancer about as well as exome-based callers. Why the longest tracts gain inclusion remains to be established experimentally.
+organs, adds to expression-based detection and, once fitted, ranks tumours within a cancer about
+as well as exome-based callers. Why the longest tracts gain inclusion remains to be established
+experimentally.
 
 ---
 
@@ -58,7 +61,10 @@ common in colorectal, gastric and endometrial cancer and present at low frequenc
 matters clinically because MMR-deficient tumours respond to PD-1 blockade whatever their organ
 (Le et al. 2017). Every MSI-high patient is therefore worth finding, including in cancers where
 MSI is rare. MSI is usually called from DNA, for instance by MANTIS or MSIsensor from exome reads
-(Bonneville et al. 2017; Niu et al. 2014).
+(Bonneville et al. 2017; Niu et al. 2014). It can also be called from RNA, from gene expression
+(Danaher et al. 2019; Li et al. 2020; Jia et al. 2024) or from repeat lengths in RNA reads (Choi
+et al. 2024; Tubacher et al. 2025). Those classifiers were built, and mostly tested, in colorectal,
+gastric and endometrial cancer.
 
 Mononucleotide runs are the repeats MMR loss destabilises most, and many sit inside introns. Just
 upstream of most 3′ splice sites lies a polypyrimidine tract, bound by U2AF2, between the branch
@@ -386,10 +392,48 @@ tumours MSI when each cancer was left out of training.
   scattered over 18 cancers where MSI is rare. Against tumours of the same cancer that no measure
   called, their MLH1 and other MMR-gene expression was not detectably lower, and their MANTIS scores
   and deletion counts were not detectably higher. Only their MSIsensor scores were slightly higher
-  (AUROC 0.65, q = 0.019), and these were far below its stable cut. Most are therefore false calls, though a stomach tumour one deletion short of the
-  MC3 cut and a hypermutated pancreatic tumour with MMR-gene and POLE mutations may be real.
+  (AUROC 0.65, q = 0.019), and these were far below its stable cut. Most are therefore false
+  calls, though a stomach tumour one deletion short of the MC3 cut and a hypermutated pancreatic
+  tumour with MMR-gene and POLE mutations may be real.
 - **Missed by the model.** Of the tumours all three exome measures called, the model missed 20; 19
-  were endometrial.
+  were endometrial. MSI endometrial cancers shift their repeats less than colorectal ones (Wang et
+  al. 2017; Wu et al. 2019; Chung et al. 2023), which would leave less for splicing to read.
+
+### Expression models trained the same way transfer almost as well; the two read-outs add up
+
+Expression-based MSI classifiers already exist. Is transfer to other organs special to splicing?
+We trained expression models exactly as the splicing model: same tumours, label, split and tuning
+(D-74; Fig. 9). We had predicted that splicing would transfer better, because expression models
+learn how deficiency looks in their training cancers, mostly MLH1 promoter silencing, whereas the
+code reads its consequence.
+
+![Figure 9](../results/figures/subtype/U26_msi_splicing_vs_expression.png)
+
+**Figure 9. Expression models trained the same way transfer almost as well; splicing adds to
+them.** All models were trained on COAD, STAD and UCEC and tested on the 30 other cancers. (a)
+Held-out AUROC and (b) AUPRC; bars = 95% bootstrap intervals; dashed line = the splicing model.
+(c) AUROC for held-out MMR-deficient tumours with MLH1 in the bottom tenth of their cancer
+(filled) or not (hollow), each against all proficient tumours. (d) Each held-out MMR-deficient
+tumour's rank within its cancer under splicing and under expression (fraction of the cancer at or
+above it; log axes); grey line = equality. (e) Leaving each cancer out of training, within-cancer
+AUROC against the tumours on which two exome measures agree.
+
+- **Retrained expression models came close.** On all 23,640 genes, logistic regression reached
+  0.893 on log CPM and 0.866 on within-cancer percentiles, against 0.900 for splicing (differences
+  +0.008 and +0.034, not resolved). Their largest weights went to MLH1, its promoter partner
+  EPM2AIP1, and five genes of the PreMSIm panel.
+- **Small fixed panels did not transfer.** PreMSIm's 15 genes reached 0.785 refitted and 0.702 with
+  PreMSIm's own nearest-neighbour recipe; MLH1 alone, 0.758. Splicing beat the refitted panel and
+  MLH1 (q = 0.001 for each).
+- **The cause of deficiency mattered less than we predicted.** MLH1 was silenced in 28 of the 50
+  held-out MMR-deficient tumours. In the other 22, splicing and expression did equally well (0.854
+  and 0.849; not resolved), while MLH1 alone fell to chance.
+- **The two read-outs are complementary.** They ranked the deficient tumours differently (Spearman
+  ρ = 0.36; Fig. 9d). Together they reached 0.926 (+0.060 over expression, q = 0.001) and an AUPRC
+  of 0.53. At half recall, precision was 0.68, against 0.30 for splicing and 0.39 for expression.
+- **Splicing agreed more closely with the exome callers within a cancer** (exploratory; Fig. 9e).
+  Its within-cancer AUROC against their consensus was 0.998; expression's was 0.975–0.979.
+  Against MANTIS MSI-H calls in the held-out cancers, it reached 1.000 against 0.969.
 
 ### What the data did not support
 
@@ -403,6 +447,10 @@ Several pre-registered tests failed or could not be run:
   reading frame: MRE11 exon 5 and an exon of GFM1.
 - **Germline (D-64).** A germline test could not be run: GTEx v8 splicing QTLs contain no variant
   inside any of the 1,580 runs, because standard call sets do not genotype long homopolymers.
+- **Better transfer than expression (D-74; Fig. 9).** We predicted that splicing would transfer to
+  new organs better than expression models trained the same way, above all where MLH1 is not
+  silenced. Neither difference was resolved (+0.008 and +0.034 overall; +0.005 without MLH1
+  silencing).
 
 ---
 
@@ -423,6 +471,13 @@ MSI callers.
   exclusion; inclusion appears only in a supplementary panel, unanalysed. The one MSI-linked
   inclusion effect we found acts in trans: RPL22 frameshifts raise MDM4 exon 6 inclusion
   (Weinstein et al. 2024).
+- **RNA detection of MSI.** Expression classifiers (Danaher et al. 2019; Pačínková and Popovici
+  2019; Li et al. 2020; Jia et al. 2024) and callers that read repeat lengths in RNA (Choi et al.
+  2024; Tubacher et al. 2025) were built and judged mostly in colon, stomach and endometrium. An
+  independent benchmark found the RNA tools outperformed by DNA tools run on the same RNA data
+  (Anthony et al. 2024). We found no splicing-based classifier, and no RNA classifier tested across
+  many held-out organs against DNA-based calls. Our own comparison tempers the claim, though: an
+  expression model retrained the same way transferred almost as well (Fig. 9).
 - **Why it matters for detection.** The rising arm explains why a one-sided repeat score failed in
   endometrium and in the 30 held-out cancers: the rising exons cancelled the falling ones.
 
@@ -488,8 +543,11 @@ from RNA alone (Fig. 8). It does not replace them:
 - it was benchmarked only against exome callers, not against PCR or immunohistochemistry;
 - TCGA is the only resource it has seen.
 
-Where RNA-seq is already done and DNA is not, it is a candidate screen; where the DNA measures
-disagree, it is a third opinion.
+An expression model retrained in the same way transfers almost as well (Fig. 9), so the case for
+splicing rests on three things: closer agreement with exome callers within a cancer, an
+explanation exon by exon, and errors that differ from expression's. Combined with expression, it
+doubled the precision at half recall. Where RNA-seq is already done and DNA is not, the combination
+is a candidate screen; where the DNA measures disagree, it is a third opinion.
 
 ---
 
@@ -574,6 +632,17 @@ All annotation was done without labels.
 - **Comparisons.** Differences used the paired bootstrap above. A non-inferiority margin of 0.05
   was fixed before computing. The pre-registered tests were on the all-exon model.
 
+**Comparison with expression models (D-74).**
+- **Tumours, label, split and tuning** as for the fitted model, primary split only.
+- **Expression inputs.** log2(CPM + 1) of 23,640 genes, either as they are or as percentiles within
+  each cancer. The top K genes (500, 2,000 or all) were ranked by ANOVA F on the fitting tumours
+  only; K and C were tuned together.
+- **Fixed panels.** PreMSIm's 15 genes (Li et al. 2020), refitted as above, and PreMSIm's own
+  recipe: 5 nearest neighbours on expression scaled to [0, 1] per gene over the training tumours.
+  MLH1 alone, unfitted.
+- **Combination.** The 1,562 repeat-exon inputs plus the top K genes, tuned as above.
+- **Comparisons.** Held-out AUROC differences, paired bootstrap as above; family EX, six tests.
+
 **Statistics and pre-registration.**
 - **Pre-registration.** Every test was committed to `config/followup.yaml` with its predicted sign
   and its false-discovery family before it was computed. What had already been seen was listed
@@ -646,16 +715,20 @@ calls. Rings mark three model-only tumours discussed in the text.
 
 ## References
 
+- Anthony H et al. (2024) Performance assessment of computational tools to detect microsatellite instability. *Brief Bioinform* 25:bbae390. PMID 39129364.
 - Bonneville R et al. (2017) Landscape of microsatellite instability across 39 cancer types. *JCO Precis Oncol* 2017:PO.17.00073. PMID 29850653.
 - Cancer Genome Atlas Network (2012) Comprehensive molecular characterization of human colon and rectal cancer. *Nature* 487:330–337. PMID 22810696.
 - Cancer Genome Atlas Research Network (2013) Integrated genomic characterization of endometrial carcinoma. *Nature* 497:67–73. PMID 23636398.
 - Cancer Genome Atlas Research Network (2014) Comprehensive molecular characterization of gastric adenocarcinoma. *Nature* 513:202–209. PMID 25079317.
 - Carter SL et al. (2012) Absolute quantification of somatic DNA alterations in human cancer. *Nat Biotechnol* 30:413–421. PMID 22544022.
+- Choi JW et al. (2024) Detecting microsatellite instability by length comparison of microsatellites in the 3′ untranslated region with RNA-seq. *Brief Bioinform* 25:bbae423. PMID 39210504.
 - Chua K, Reed R (2001) An upstream AG determines whether a downstream AG is selected during catalytic step II of splicing. *Mol Cell Biol* 21:1509–1514. PMID 11238888.
+- Chung Y et al. (2023) Evaluation of an eight marker-panel including long mononucleotide repeat markers to detect microsatellite instability in colorectal, gastric, and endometrial cancers. *BMC Cancer* 23:1100. PMID 37953261.
 - Collura A et al. (2014) Patients with colorectal tumors with microsatellite instability and large deletions in HSP110 T17 have improved response to 5-fluorouracil–based chemotherapy. *Gastroenterology* 146:401–411. PMID 24512910.
 - Coolidge CJ, Seely RJ, Patton JG (1997) Functional analysis of the polypyrimidine tract in pre-mRNA splicing. *Nucleic Acids Res* 25:888–896. PMID 9016643.
 - Cortes-Ciriano I et al. (2017) A molecular portrait of microsatellite instability across multiple cancers. *Nat Commun* 8:15180. PMID 28585546.
 - Corvelo A et al. (2010) Genome-wide association between branch point properties and alternative splicing. *PLoS Comput Biol* 6:e1001016. PMID 21124863.
+- Danaher P et al. (2019) A gene expression assay for simultaneous measurement of microsatellite instability and anti-tumor immune activity. *J Immunother Cancer* 7:15. PMID 30665466.
 - Dorard C et al. (2011) Expression of a mutant HSP110 sensitizes colorectal cancer cells to chemotherapy and improves disease prognosis. *Nat Med* 17:1283–1289. PMID 21946539.
 - Ellrott K et al. (2018) Scalable open science approach for mutation calling of tumor exomes using multiple genomic pipelines. *Cell Syst* 6:271–281. PMID 29596782.
 - Fiszbein A et al. (2022) Widespread occurrence of hybrid internal-terminal exons in human transcriptomes. *Sci Adv* 8:eabk1752. PMID 35044812.
@@ -665,17 +738,23 @@ calls. Rings mark three model-only tumours discussed in the text.
 - Hamanaka K et al. (2023) Genome-wide identification of tandem repeats associated with splicing variation across 49 tissues in humans. *Genome Res* 33:435–447. PMID 37307504.
 - Hause RJ et al. (2016) Classification and characterization of microsatellite instability across 18 cancer types. *Nat Med* 22:1342–1350. PMID 27694933.
 - Hefferon TW et al. (2004) A variable dinucleotide repeat in the CFTR gene contributes to phenotype diversity by forming RNA secondary structures that alter splicing. *Proc Natl Acad Sci USA* 101:3504–3509. PMID 14993601.
+- Jia P et al. (2024) MSIsensor-RNA: microsatellite instability detection for bulk and single-cell gene expression data. *Genomics Proteomics Bioinformatics* 22:qzae004. PMID 39341794.
 - Jonchère V et al. (2024) Microsatellite instability at U2AF-binding polypyrimidic tract sites perturbs alternative splicing during colorectal cancer initiation. *Genome Biol* 25:210. PMID 39107855.
 - Jourdy Y et al. (2018) Reccurrent F8 intronic deletion found in mild hemophilia A causes Alu exonization. *Am J Hum Genet* 102:199–206. PMID 29357978.
 - Kim TM, Laird PW, Park PJ (2013) The landscape of microsatellite instability in colorectal and endometrial cancer genomes. *Cell* 155:858–868. PMID 24209623.
 - Le DT et al. (2017) Mismatch repair deficiency predicts response of solid tumors to PD-1 blockade. *Science* 357:409–413. PMID 28596308.
+- Li L et al. (2020) PreMSIm: an R package for predicting microsatellite instability from the expression profiling of a gene panel in cancer. *Comput Struct Biotechnol J* 18:668–675. PMID 32257050.
 - Llorian M et al. (2010) Position-dependent alternative splicing activity revealed by global profiling of alternative splicing events regulated by PTB. *Nat Struct Mol Biol* 17:1114–1123. PMID 20711188.
 - Meili D et al. (2009) Disease-causing mutations improving the branch site and polypyrimidine tract: pseudoexon activation of LINE-2 and antisense Alu lacking the poly(T)-tail. *Hum Mutat* 30:823–831. PMID 19280650.
 - Niu B et al. (2014) MSIsensor: microsatellite instability detection using paired tumor-normal sequence data. *Bioinformatics* 30:1015–1016. PMID 24371154.
+- Pačínková A, Popovici V (2019) Cross-platform data analysis reveals a generic gene expression signature for microsatellite instability in colorectal cancer. *Biomed Res Int* 2019:6763596. PMID 31008109.
 - Pineda JMB, Bradley RK (2018) Most human introns are recognized via multiple and tissue-specific branchpoints. *Genes Dev* 32:577–591. PMID 29666160.
 - Reed R (1989) The organization of 3′ splice-site sequences in mammalian introns. *Genes Dev* 3:2113–2123. PMID 2628164.
 - Shen S et al. (2014) rMATS: robust and flexible detection of differential alternative splicing from replicate RNA-Seq data. *Proc Natl Acad Sci USA* 111:E5593–E5601. PMID 25480548.
 - Taggart AJ et al. (2017) Large-scale analysis of branchpoint usage across species and cell lines. *Genome Res* 27:639–649. PMID 28119336.
+- Tubacher E et al. (2025) MSI expresso: a software for determining MSI status and detecting MSI-related transcription events from RNA sequencing data. *Front Genet* 16:1523278. PMID 40342963.
 - Vilar E et al. (2011) MRE11 deficiency increases sensitivity to poly(ADP-ribose) polymerase inhibition in microsatellite unstable colorectal cancers. *Cancer Res* 71:2632–2642. PMID 21300766.
+- Wang Y et al. (2017) Differences in microsatellite instability profiles between endometrioid and colorectal cancers: a potential cause for false-negative results? *J Mol Diagn* 19:57–64. PMID 27810331.
 - Weinstein HNW et al. (2024) RPL22 is a tumor suppressor in MSI-high cancers and a splicing regulator of MDM4. *Cell Rep* 43:114622. PMID 39146182.
+- Wu X et al. (2019) Minimal microsatellite shift in microsatellite instability high endometrial cancer: a significant pitfall in diagnostic interpretation. *Mod Pathol* 32:650–658. PMID 30443012.
 - Zarnack K et al. (2013) Direct competition between hnRNP C and U2AF65 protects the transcriptome from the exonization of Alu elements. *Cell* 152:453–466. PMID 23374342.

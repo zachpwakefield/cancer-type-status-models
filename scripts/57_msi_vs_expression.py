@@ -261,7 +261,7 @@ def report() -> None:
     ch = tun[tun.chosen.astype(bool)].set_index("model")
     met["chosen"] = met.model.map(lambda m: f"K={ch.loc[m, 'K']}, C={ch.loc[m, 'C']:g}" if m in ch.index else "")
     met["inner_auroc"] = met.model.map(lambda m: ch.loc[m, "inner_auroc"] if m in ch.index else np.nan)
-    met.to_csv(OUT / "metrics.csv", index=False, float_format="%.4g")
+    met.to_csv(OUT / "metrics.csv", index=False, float_format="%.6g")
     log(f"metrics:\n{met.round(3).to_string(index=False)}")
     # exploratory
     ex = []
@@ -319,7 +319,7 @@ def report() -> None:
                            "n": int((lab == 1).sum()), "value": m55.auc_within(b[m].to_numpy()[k], lab[k] == 1,
                                                                              b.project.to_numpy()[k])})
     ex = pd.DataFrame(ex)
-    ex.to_csv(OUT / "exploratory.csv", index=False, float_format="%.4g")
+    ex.to_csv(OUT / "exploratory.csv", index=False, float_format="%.6g")
     log(f"exploratory:\n{ex.round(3).to_string(index=False)}")
     top = co[co.model.eq("X1")].assign(a=lambda d: d.coefficient.abs()).nlargest(30, "a").drop(columns="a")
     top.to_csv(OUT / "coefficients_top_x1.csv", index=False, float_format="%.4g")
