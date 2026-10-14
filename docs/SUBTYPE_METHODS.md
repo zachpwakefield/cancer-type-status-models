@@ -4,7 +4,7 @@ The third task of the repository: **within one cancer, which subtype is a primar
 modelled, like the other two, independently in each of the nine views (AFE, ALE, HIT, SE, A5SS,
 A3SS, MXE, RI, GEX). Decisions are numbered from D-30 (D-48..D-51, which span the three tasks, are in
 [ACROSS_TASKS_METHODS.md](ACROSS_TASKS_METHODS.md), as is amendment A-8; D-52..D-56, the MSI-repeat
-follow-up, and D-57..D-60, the BRCA follow-up, D-61..D-64, the MSI follow-up, and D-65..D-74, the MSI sequence code, are here; D-01..D-12 are in
+follow-up, and D-57..D-60, the BRCA follow-up, D-61..D-64, the MSI follow-up, and D-65..D-75, the MSI sequence code, are here; D-01..D-12 are in
 [DECISIONS.md](DECISIONS.md), D-13..D-29 in [BIOLOGY_METHODS.md](BIOLOGY_METHODS.md)). Values live
 in [config/subtype.yaml](../config/subtype.yaml); this file explains them.
 
@@ -798,6 +798,24 @@ had been scored on a held-out cancer, and no held-out MMR-deficient tumour's MLH
   E1's parameters), within-cancer AUROC against the callers' consensus was 0.998 for M4 and
   0.975–0.979 for X1. Against MANTIS MSI-H held out: 1.000 against 0.969 (X2) and 0.924 (X1).
 - Tables: `results/subtype/msi_cis/code/expression/`; Figure U26.
+
+---
+
+### D-75 How large is the MSI splicing shift? · `config/followup.yaml` · `scripts/60`
+Written 2026-10-13, after D-74. Every MSI result so far was in percentiles within a cancer, which
+rank tumours but say nothing about how far an exon moves. D-75 measures the shifts in PSI units
+and asks two questions about their nature:
+- **Where do they happen?** Deletions in tumour cells are diluted by normal cells, so the shift
+  should grow with purity among MMR-deficient tumours (MG1–MG3). A signal from the immune infiltrate
+  would grow at lower purity instead.
+- **How are they spread?** A deletion at one tract occurs in some MMR-deficient tumours and not
+  others. Each exon's change should then sit in a subset of tumours, beyond what a uniform small
+  shift would put in the tail of the proficient distribution (MG4, MG5). Background exons absorb any
+  general widening of MMR-deficient distributions.
+
+**Seen when written.** Every earlier MSI result in percentile units, and D-68's purity adjustment of
+score G over all tumours. Nothing in PSI units, nothing on purity within MMR-deficient tumours, and
+no tail analysis.
 
 ---
 

@@ -1248,3 +1248,64 @@ msi_vs_expression:                       # D-74 · scripts/57_msi_vs_expression.
                      there (D-46); D-73's MLH1 percentiles of the RNA-only calls. Not seen - any
                      expression model scored on a held-out cancer, and MLH1 expression of any
                      held-out MMR-deficient tumour
+
+msi_magnitude:                           # D-75 · scripts/60_msi_magnitude.py
+  # How large are the MSI splicing shifts, in PSI units rather than percentiles; do they behave like
+  # deletions inside tumour cells (scaling with purity); and is a shift a small move in every
+  # MMR-deficient tumour or a large move in some of them?
+  tumours: D-71's 8,464 tumours (33 cancers); MMR-deficient = MC3 >= 10 homopolymer deletions (200;
+           150 in COAD, STAD and UCEC), proficient = the rest; ABSOLUTE purity where called
+  exons: cassette exons of the pan-cancer SE matrix with a valid acceptor (D-65) measured in >= 80%
+         of a cancer's tumours; classes as D-66/D-70 - R_down (run 10-19 nt), R_up (run >= 20 nt,
+         branch point >= 36 nt), other long runs, B (run <= 5 nt, the background)
+  quantities:   # all within cancer, raw PSI (0-1)
+    dev: a tumour's PSI minus the median PSI of its cancer's proficient tumours
+    adj: dev minus the tumour's mean dev over B exons of the same mean-PSI decile (removes any
+         tumour-wide inclusion level)
+    exon_shift: per exon, median PSI of MMR-deficient minus proficient tumours (per training cancer;
+                held out, the median dev of the 50 MMR-deficient tumours)
+    arm_shift: per tumour, mean adj over its measured R_down exons, and over its R_up exons
+    tail_excess: per exon in a training cancer, the share of MMR-deficient tumours beyond the
+                 proficient 5th percentile (R_down, B lower tail) or 95th (R_up, B upper tail), minus
+                 the share expected if every MMR-deficient tumour moved by the exon's exon_shift
+                 (the proficient values shifted by it)
+  tests:
+    - id: MG1
+      claim: among MMR-deficient tumours, the R_down arm_shift is more negative at higher purity
+             (partial Spearman with cancer as covariate, rho < 0)
+      why: if the shifts come from deletions in tumour cells, normal cells dilute them; if they came
+           from the immune infiltrate of MSI tumours, they would grow at lower purity
+    - id: MG2
+      claim: among MMR-deficient tumours, the R_up arm_shift is more positive at higher purity
+             (rho > 0)
+      why: as MG1
+    - id: MG3
+      claim: the purity slope of the R_down arm_shift is more negative in MMR-deficient than in
+             proficient tumours (OLS arm_shift ~ purity * MMR + cancer, interaction < 0, HC3)
+      why: separates the dilution of a tumour-cell change from any purity trend common to all tumours
+    - id: MG4
+      claim: R_down exons have a larger lower-tail excess than B exons (training cancers; difference
+             of means, p by permuting class within cancer x mean-PSI decile, 10,000, seed 0)
+      why: a deletion at one tract occurs in some MMR-deficient tumours and not others, so its
+           effect should sit in a subset of tumours rather than shift all of them a little; B exons
+           absorb any general widening of MMR-deficient distributions
+    - id: MG5
+      claim: R_up exons have a larger upper-tail excess than B exons (as MG4)
+      why: as MG4
+  fdr_family: MG, the 5 tests MG1-MG5 (Benjamini-Hochberg)
+  reading: MG1-MG3 supported would place the shifts in tumour cells; MG4-MG5 supported would make a
+           typical MSI exon change a large change in a subset of tumours, as locus-by-locus deletion
+           predicts; against would point to a tumour-wide or microenvironmental shift
+  exploratory: exon_shift distributions by class (median, IQR, shares with |shift| >= 0.05 and
+               >= 0.10) per training cancer and held out; exon_shift by run-length bin and
+               branch-point class; per tumour, the number of R_down exons at dev <= -0.10 and R_up at
+               dev >= +0.10 (with B in both directions as reference); the arm_shift extrapolated to
+               purity 1; the share of each exon's PSI variance explained by MMR status within cancer;
+               held-out tail shares by class; the largest movers with MRE11 exon 5 as positive
+               control; per-tumour rows kept locally (data.nosync), medians of fewer than 5 tumours
+               blanked
+  seen_when_written: every earlier MSI result in percentile units (D-52-D-74), including the
+                     percentile shifts by class and run length (U11, U22) and D-68's adjustment of
+                     score G for purity over all tumours (purity coefficient near zero). Not seen -
+                     any shift in PSI units, any purity relation within MMR-deficient tumours, any
+                     tail analysis

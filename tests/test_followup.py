@@ -524,5 +524,63 @@ class TestMsiVsExpression(unittest.TestCase):
         self.assertIn(3, r["cols"])                       # the informative column is selected
 
 
+class TestMsiMagnitude(unittest.TestCase):
+    """D-75's statistics on synthetic data (no real labels)."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.m = load_script("60_msi_magnitude.py")
+
+    def test_deviations_remove_a_tumour_wide_level(self):
+        rng = np.random.default_rng(0)
+        X = rng.uniform(0.3, 0.7, size=(40, 20))
+        prof = np.arange(40) >= 10
+        X[~prof] += 0.05                                    # tumour-wide shift in the first 10
+        X[~prof, 0] -= 0.20                                 # one exon moves further
+        dec = np.repeat([0, 1], 10)
+        is_b = np.zeros(20, bool)
+        is_b[[2, 3, 4, 12, 13, 14]] = True
+        dev, adj = self.m.deviations(X, prof, dec, is_b)
+        self.assertAlmostEqual(float(np.median(dev[prof, 5])), 0.0, 9)
+        self.assertLess(abs(np.mean(adj[~prof][:, 5:10])), 0.05)   # the common shift is removed
+        self.assertLess(np.mean(adj[~prof, 0]), -0.15)               # the exon's own move is kept
+
+    def test_tail_excess_is_zero_under_a_pure_location_shift(self):
+        rng = np.random.default_rng(1)
+        P = rng.normal(0.5, 0.05, size=(4000, 3))
+        M = rng.normal(0.5, 0.05, size=(4000, 3))
+        M[:, 1] -= 0.04                                     # everyone moves a little
+        M[:1000, 2] -= 0.15                                 # a quarter move a lot, the rest not at all
+        shift = np.median(M, 0) - np.median(P, 0)
+        obs, exp = self.m.tail_excess(P, M, shift, lower=True)
+        self.assertLess(abs(obs[0] - exp[0]), 0.02)
+        self.assertLess(abs(obs[1] - exp[1]), 0.03)
+        self.assertGreater(obs[2] - exp[2], 0.15)
+        self.assertAlmostEqual(obs[0], 0.05, delta=0.015)
+
+    def test_tail_excess_handles_missing_values(self):
+        P = np.array([[0.1, np.nan], [0.2, np.nan], [0.3, np.nan], [0.4, np.nan]])
+        M = np.array([[0.0, 0.5], [np.nan, 0.5]])
+        obs, exp = self.m.tail_excess(P, M, np.zeros(2), lower=True)
+        self.assertEqual(obs[0], 1.0)                       # 1 of 1 finite value below the 5th percentile
+        self.assertTrue(np.isnan(exp[1]))
+
+    def test_strat_perm_matches_strata_and_detects_a_shift(self):
+        rng = np.random.default_rng(2)
+        strata = np.repeat(["s0", "s1"], 200)
+        x = np.where(strata == "s1", 1.0, 0.0) + rng.normal(0, 0.1, 400)
+        is_a = np.zeros(400, bool)
+        is_a[150:200] = True                                # 50 of s0 and 150 of s1 are class a, so the
+        is_a[200:350] = True                                # raw difference reflects only the strata
+        obs, matched, p = self.m.strat_perm(x, is_a, strata, np.random.default_rng(0), 2000)
+        self.assertGreater(obs, 0.3)                        # raw difference is confounded by stratum
+        self.assertLess(abs(matched), 0.03)
+        self.assertGreater(p, 0.05)
+        x2 = x + 0.1 * is_a
+        _, matched2, p2 = self.m.strat_perm(x2, is_a, strata, np.random.default_rng(0), 2000)
+        self.assertAlmostEqual(matched2, 0.1, delta=0.03)
+        self.assertLess(p2, 0.001)
+
+
 if __name__ == "__main__":
     unittest.main()
