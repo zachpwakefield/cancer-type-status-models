@@ -4,7 +4,7 @@ The third task of the repository: **within one cancer, which subtype is a primar
 modelled, like the other two, independently in each of the nine views (AFE, ALE, HIT, SE, A5SS,
 A3SS, MXE, RI, GEX). Decisions are numbered from D-30 (D-48..D-51, which span the three tasks, are in
 [ACROSS_TASKS_METHODS.md](ACROSS_TASKS_METHODS.md), as is amendment A-8; D-52..D-56, the MSI-repeat
-follow-up, and D-57..D-60, the BRCA follow-up, D-61..D-64, the MSI follow-up, and D-65..D-75, the MSI sequence code, are here; D-01..D-12 are in
+follow-up, and D-57..D-60, the BRCA follow-up, D-61..D-64, the MSI follow-up, and D-65..D-76, the MSI sequence code, are here; D-01..D-12 are in
 [DECISIONS.md](DECISIONS.md), D-13..D-29 in [BIOLOGY_METHODS.md](BIOLOGY_METHODS.md)). Values live
 in [config/subtype.yaml](../config/subtype.yaml); this file explains them.
 
@@ -837,6 +837,24 @@ no tail analysis.
   proficient tumour of its cancer. MMR status explains a median 0.4–0.5% of an R_down exon's PSI
   variance. The largest movers: METTL8 T14 0.58 → 0.22, BOD1L1 T24 0.13 → 0.43, CCNDBP1 T30
   0.04 → 0.25. Figure U27.
+
+
+### D-76 What does a rising exon do to its transcript? · `config/followup.yaml` · `scripts/61`
+Written 2026-10-13, after D-75. Rising-arm exons are mostly skipped in proficient tumours (median
+PSI 0.06), so MSI raises the use of exons that are normally near-silent. D-76 asks what that
+inclusion does:
+- **Annotation** (label-blind). Each exon is placed in its gene's canonical protein-coding
+  transcript. An exon whose flanking exons are joined directly inside the coding sequence is an
+  *inserted* exon. Translating through it classes it as an in-frame peptide insertion, a premature
+  stop that NMD should see (a "poison" exon), or a premature stop that escapes NMD.
+- **Positive control** (CQ1). Across tumours, poison background exons should be included less
+  where their gene's mRNA is higher. If this fails, the read-out is not validated.
+- **The rising arm** (CQ2–CQ4). The same coupling for R_up exons, and whether MSI's rise in poison
+  R_up exons lowers their genes' mRNA, as D-62 asked of the skipped exons.
+
+**Seen when written.** D-62's null NMD result for skipped exons and D-75's sizes and examples. No
+consequence annotation of rising or background exons, no expression of their genes, no
+normal-tissue PSI.
 
 ---
 

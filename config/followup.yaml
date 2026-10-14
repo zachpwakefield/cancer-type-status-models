@@ -1309,3 +1309,69 @@ msi_magnitude:                           # D-75 · scripts/60_msi_magnitude.py
                      score G for purity over all tumours (purity coefficient near zero). Not seen -
                      any shift in PSI units, any purity relation within MMR-deficient tumours, any
                      tail analysis
+
+msi_rising_consequence:                  # D-76 · scripts/61_msi_rising_consequence.py
+  # What does including a rising-arm (R_up) exon do to its transcript, and does MSI's rise in these
+  # exons show up in the host gene? R_up exons are mostly skipped in proficient tumours (median PSI
+  # 0.06, D-75), so MSI raises the use of exons that are normally near-silent. If inclusion puts a
+  # premature stop codon where nonsense-mediated decay (NMD) sees it ("poison" exons), the rise is a
+  # second route by which MSI lowers gene output; if it inserts an in-frame peptide, MSI tumours make
+  # isoforms rare in normal tissue.
+  tumours: D-71's 8,464 tumours (33 cancers); MMR-deficient = MC3 >= 10 homopolymer deletions
+  exons: D-75's classes (R_up, R_down, B, other long runs), measured in >= 80% of a cancer's tumours
+  annotation:   # label-blind; GENCODE v45, the Ensembl_canonical protein_coding transcript of the
+                # exon's gene; GRCh38 sequence
+    canonical: the exon equals an internal exon of the canonical transcript lying wholly in its CDS
+               (inclusion gives the canonical protein)
+    inserted: the canonical transcript joins the exon's two flanking exons directly and that junction
+              lies inside the CDS (CDS on both sides of it); inclusion inserts the exon there
+    inserted_classes:   # translating the canonical frame through the exon and on into the downstream
+                        # canonical exons (stop = TAA, TAG or TGA)
+      in_frame: length a multiple of 3 and no stop codon among the codons that contain exon bases
+                (a peptide of length/3 residues is inserted)
+      ptc_nmd: inclusion creates a stop (a frameshift, or an in-frame stop inside the exon) whose first
+               base lies more than 55 nt upstream of the last exon-exon junction of the new transcript
+               (predicted NMD; "poison")
+      ptc_escape: the stop lies in the last exon or within 55 nt of the last junction (truncated
+                  protein)
+    other: everything else (UTR or non-coding context, non-canonical neighbours); not classified
+  expression: host gene log2(CPM + 1), GEX view, gene matched by Ensembl gene id
+  coupling: per exon and cancer, across all the cancer's tumours, the partial Spearman of PSI with
+            host-gene expression adjusting for the tumour's mean PSI over all measured exons (D-24's
+            global axis); per exon, the mean over the cancers in which it is measured
+  tests:
+    - id: CQ1
+      claim: B exons inserted into the CDS (all 33 cancers) - median coupling of ptc_nmd exons is lower
+             than of in_frame exons (difference < 0; Mann-Whitney over exons)
+      why: positive control of the annotation and the read-out - tumours that include a poison exon
+           more should carry less of its gene's mRNA; if this fails, CQ2-CQ4 cannot be read
+    - id: CQ2
+      claim: R_up exons inserted into the CDS (all 33 cancers) - as CQ1 (difference < 0)
+      why: if the rising exons include poison exons, inclusion should cost mRNA in the same way
+    - id: CQ3
+      claim: training cancers, R_up exons inserted into the CDS, one per gene and cancer (the one with
+             the largest exon shift) - the host gene's change (mean log2 CPM of MMR-deficient minus
+             proficient tumours) is lower for ptc_nmd than for in_frame exons (AUROC - 0.5 > 0;
+             Mann-Whitney over exon x cancer rows)
+      why: MSI raising a poison exon should lower its gene's mRNA (D-62's NM1-NM3 for the rising arm)
+    - id: CQ4
+      claim: as CQ3 - Spearman(exon shift, host-gene change) is lower for ptc_nmd than for in_frame
+             exons (difference < 0; bootstrap over rows, 2,000, seed 0)
+      why: the more a poison exon rises, the more mRNA its gene should lose (D-62's NM4)
+  fdr_family: CQ, the 4 tests CQ1-CQ4 (Benjamini-Hochberg)
+  reading: CQ1 supported and CQ2-CQ4 supported would make part of the rising arm a route to lower gene
+           output; CQ1 supported and CQ2-CQ4 not would mean the rising poison exons, if any, are too
+           few or move too little to be seen; CQ1 not supported leaves the read-out unvalidated
+  exploratory: consequence classes of R_up, R_down and B exons (B matched to R_up by proficient-PSI
+               decile), training cancers and held out; in_frame R_up exons reaching a median PSI >= 0.10
+               in a training cancer's MMR-deficient tumours while <= 0.05 in its proficient tumours and
+               in its TCGA normal tissue (COAD 39, STAD 31, UCEC 13 normals), with the inserted peptide
+               length (tumour-specific isoform candidates), and the same held out (median over the held-
+               out MMR-deficient tumours, exons measured in >= 20); the ptc_nmd R_up exons with the
+               largest shifts and their genes' change; CQ3 in the held-out cancers (per tumour, the
+               gene's deviation from its cancer's proficient mean, median over tumours)
+  seen_when_written: D-62 (no NMD signature in host-gene expression for skipped frameshifting repeat
+                     exons, canonical exons only); D-75 (R_up exons mostly near-silent in proficient
+                     tumours; METTL8, BOD1L1, CCNDBP1 the largest movers; their PSI histograms). Not
+                     seen - any consequence annotation of R_up or B exons, any inserted-exon class, any
+                     expression of their host genes, any normal-tissue PSI

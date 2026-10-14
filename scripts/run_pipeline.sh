@@ -81,6 +81,7 @@ run scripts/55_msi_benchmark.py                # D-72, against MANTIS, MSIsensor
 run scripts/56_msi_rna_only.py                 # D-73, what the model calls that the exome does not
 run scripts/57_msi_vs_expression.py            # D-74, the splicing model against expression models
 run scripts/60_msi_magnitude.py                # D-75, the MSI shift in PSI units: purity and tails
+run scripts/61_msi_rising_consequence.py       # D-76, what a rising exon does to its transcript
 run scripts/44_repeat_dna.py --only loci    # D-56: loci and the BAM manifest; the slices are fetched
 run scripts/44_repeat_dna.py --only manifest #   by the data user with their own GDC token (see step 44)
 if [ -d data.nosync/ctsm_v1/msi/slices ]; then

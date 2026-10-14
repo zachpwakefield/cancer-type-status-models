@@ -589,5 +589,51 @@ class TestMsiMagnitude(unittest.TestCase):
         self.assertLess(p2, 0.001)
 
 
+class TestMsiRisingConsequence(unittest.TestCase):
+    """D-76's annotation helpers on synthetic transcripts."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.m = load_script("61_msi_rising_consequence.py")
+
+    def test_parse_feature(self):
+        f = self.m.parse_feature("ENSG00000020922.13#chr11:94479673-94479761#-;94478734-94478876;94485923-94486084")
+        self.assertEqual((f["gene"], f["chrom"], f["strand"], f["es"], f["ee"]), ("ENSG00000020922", "chr11", "-", 94479673, 94479761))
+        self.assertEqual((f["le"], f["rs"]), (94478876, 94485923))
+
+    def test_place_canonical_and_inserted_on_both_strands(self):
+        ex = [(100, 200), (300, 400), (600, 700), (900, 1000)]
+        plus = {"chrom": "chr1", "strand": "+", "exons": ex, "cds": [(150, 200), (300, 400), (600, 700), (900, 950)]}
+        f = {"chrom": "chr1", "strand": "+", "es": 299, "ee": 400, "le": 200, "rs": 599}
+        self.assertEqual(self.m.place(f, plus), ("canonical", 1))
+        g = {"chrom": "chr1", "strand": "+", "es": 449, "ee": 500, "le": 400, "rs": 599}   # joins exons 2 and 3
+        self.assertEqual(self.m.place(g, plus), ("inserted", 1))
+        utr = dict(plus, cds=[None, (320, 400), (600, 700), (900, 950)])
+        h = {"chrom": "chr1", "strand": "+", "es": 249, "ee": 260, "le": 200, "rs": 299}   # junction before the CDS
+        self.assertEqual(self.m.place(h, utr)[0], "utr")
+        minus = {"chrom": "chr1", "strand": "-", "exons": ex[::-1], "cds": [(900, 950), (600, 700), (300, 400), (150, 200)]}
+        k = {"chrom": "chr1", "strand": "-", "es": 449, "ee": 500, "le": 400, "rs": 599}   # between 600-700 and 300-400
+        self.assertEqual(self.m.place(k, minus), ("inserted", 1))
+        self.assertEqual(self.m.place(dict(k, strand="+"), minus)[0], "other")
+
+    def test_consequence_classes(self):
+        down = ["GCC" * 40, "GCC" * 10]                       # 120 nt, then the last exon
+        r = self.m.consequence("", "ATGAAA", down)
+        self.assertEqual((r["consequence"], r["peptide"]), ("in_frame", 2))
+        r = self.m.consequence("", "TAAGGG", down)            # in-frame stop at 0; last junction at 6 + 120
+        self.assertEqual(r["consequence"], "ptc_nmd")
+        self.assertEqual(r["dist"], 126)
+        r = self.m.consequence("G", "GA", ["TAA" + "C" * 30])  # codon GGA, then TAA in the last exon
+        self.assertEqual(r["consequence"], "ptc_escape")
+        r = self.m.consequence("", "GG", ["C" * 91, "TAGC"])   # frameshift: TAG at 93, in the last exon
+        self.assertEqual(r["consequence"], "ptc_escape")
+        r = self.m.consequence("", "GG", ["CCCCTGA" + "C" * 90, "AAA"])   # frame GGC CCC CTG A.. -> no stop at 3k
+        self.assertIn(r["consequence"], {"ptc_nmd", "ptc_escape", "no_stop"})
+        r = self.m.consequence("", "G", ["GTAA" + "C" * 80, "AAAA"])    # GGT AAC ... -> no TAA in frame
+        self.assertEqual(r["consequence"], "no_stop")
+        r = self.m.consequence("", "G", ["GCTAA" + "C" * 80, "AAAA"])   # GGC TAA: stop at 3, junction at 86
+        self.assertEqual((r["consequence"], r["dist"]), ("ptc_nmd", 83.0))
+
+
 if __name__ == "__main__":
     unittest.main()
