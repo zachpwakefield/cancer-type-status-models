@@ -203,7 +203,7 @@ def inject_legends(md: Path) -> int:
     while i < len(lines):
         line = lines[i]
         out.append(line)
-        m = re.match(r"^!\[([STUX]\d+)\]\((figures/[a-z_]+)/(.+)\.png\)$", line)
+        m = re.match(r"^!\[([STUX]\d+|RP\d+|RPM)\]\((figures/[a-z_]+)/(.+)\.png\)$", line)
         i += 1
         if not m:
             continue

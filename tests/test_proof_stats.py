@@ -834,7 +834,7 @@ class TestVerdict(unittest.TestCase):
         self.assertTrue(any(r.startswith("RP7") for r in v["reasons"]))
         v = M.claim_verdict(self.table(RP5b=("not resolved", 0.01, np.nan), RP6c=("not testable", np.nan, np.nan)), self.PASS)
         self.assertEqual(v["verdict"], "partial")
-        self.assertTrue({"RP5b supported (not resolved)", "RP6c supported (not testable)"} <= set(v["reasons"]))
+        self.assertTrue({"RP5b not resolved (needed: supported)", "RP6c not testable (needed: supported)"} <= set(v["reasons"]))
         v = M.claim_verdict(self.table(RP7=("not resolved", 0.0, np.nan)), self.PASS)
         self.assertEqual(v["verdict"], "partial")                 # RP7's estimate must be > 0
 

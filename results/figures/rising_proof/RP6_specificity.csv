@@ -1,0 +1,63 @@
+panel,group,n_tumours,median_z,q25,q75,p05,p95,auroc,test,estimate,p,q,q_family,verdict,n_a,n_b,s,abs_s,exceeds_msi
+a,MMRd,50.0,0.9752088926047058,-0.0440260901945627,1.7555580603325922,-1.343631971973815,2.7100775407362767,,,,,,,,,,,,
+a,hypermutated MMRp,408.0,-0.17497688687220225,-0.7969885153194218,0.6458956684491364,-1.7628489269107848,1.677380383909935,,,,,,,,,,,,
+a,other MMRp,7227.0,-0.002565231473895889,-0.6297771595970243,0.6028895807149028,-1.5809183390105825,1.6034369570357558,,,,,,,,,,,,
+a,MMRd vs hypermutated MMRp,,,,,,,0.721422,RP6a,0.221422,3.17173e-07,3.80607e-06,BH within family RP (12 tests; D-77),supported,,,,,
+b,PCPG_mRNA Pseudohypoxia vs Wnt-altered,,,,,,,,,,,,,,61.0,22.0,2.32577e-05,2.32577e-05,False
+b,THCA Classical vs Follicular,,,,,,,,,,,,,,340.0,98.0,-0.000101356,0.000101356,False
+b,SARC MFS vs UPS,,,,,,,,,,,,,,24.0,45.0,0.000155563,0.000155563,False
+b,LGG Astrocytoma vs Oligodendroglioma,,,,,,,,,,,,,,187.0,184.0,-0.000186933,0.000186933,False
+b,BRCA_PAM50 LumB vs Normal-like,,,,,,,,,,,,,,201.0,36.0,0.000402705,0.000402705,False
+b,HNSC_HPV HPV-negative vs HPV-positive,,,,,,,,,,,,,,77.0,32.0,0.000408472,0.000408472,False
+b,BRCA_PAM50 LumA vs LumB,,,,,,,,,,,,,,506.0,201.0,0.00048399,0.00048399,False
+b,BRCA Ductal vs Lobular,,,,,,,,,,,,,,721.0,157.0,-0.00057824,0.00057824,False
+b,STAD Diffuse vs Intestinal,,,,,,,,,,,,,,57.0,132.0,0.000603036,0.000603036,False
+b,STAD_TCGA CIN vs GS,,,,,,,,,,,,,,196.0,43.0,0.00067496,0.00067496,False
+b,PRAD_ETS ERG vs Other,,,,,,,,,,,,,,151.0,86.0,-0.000833864,0.000833864,False
+b,HNSC_mRNA Classical vs Mesenchymal,,,,,,,,,,,,,,49.0,74.0,0.000875731,0.000875731,False
+b,PRAD_ETS ETV1 vs Other,,,,,,,,,,,,,,28.0,86.0,0.000980615,0.000980615,False
+b,BRCA_PAM50 LumA vs Normal-like,,,,,,,,,,,,,,506.0,36.0,0.00110551,0.00110551,False
+b,LGG_IDH IDHmut-codel vs IDHmut-non-codel,,,,,,,,,,,,,,171.0,242.0,-0.00142906,0.00142906,False
+b,UCEC_TCGA CN-high vs CN-low,,,,,,,,,,,,,,82.0,27.0,0.00180345,0.00180345,False
+b,PCPG_mRNA Kinase signaling vs Pseudohypoxia,,,,,,,,,,,,,,68.0,61.0,-0.00193242,0.00193242,False
+b,THCA Classical vs Tall cell,,,,,,,,,,,,,,340.0,34.0,0.00199333,0.00199333,False
+b,PCPG Paraganglioma vs Pheochromocytoma,,,,,,,,,,,,,,30.0,148.0,0.00206608,0.00206608,False
+b,THCA Follicular vs Tall cell,,,,,,,,,,,,,,98.0,34.0,0.00221821,0.00221821,False
+b,HNSC_mRNA Atypical vs Basal,,,,,,,,,,,,,,66.0,85.0,-0.00226909,0.00226909,False
+b,HNSC_mRNA Basal vs Mesenchymal,,,,,,,,,,,,,,85.0,74.0,-0.00240876,0.00240876,False
+b,BRCA_PAM50 Basal vs Her2,,,,,,,,,,,,,,169.0,74.0,0.00242459,0.00242459,False
+b,PRAD_ETS ERG vs ETV1,,,,,,,,,,,,,,151.0,28.0,-0.0025258,0.0025258,False
+b,PCPG_mRNA Kinase signaling vs Wnt-altered,,,,,,,,,,,,,,68.0,22.0,-0.00260428,0.00260428,False
+b,BRCA_PAM50 Basal vs Normal-like,,,,,,,,,,,,,,169.0,36.0,-0.00299184,0.00299184,False
+b,LGG_IDH IDHmut-codel vs IDHwt,,,,,,,,,,,,,,171.0,90.0,0.00305398,0.00305398,False
+b,TGCT Non-seminoma vs Seminoma,,,,,,,,,,,,,,49.0,61.0,0.0031104,0.0031104,False
+b,HNSC_mRNA Basal vs Classical,,,,,,,,,,,,,,85.0,49.0,-0.00313808,0.00313808,False
+b,BRCA_ER ER-negative vs ER-positive,,,,,,,,,,,,,,216.0,724.0,-0.0034247,0.0034247,False
+b,SARC DDLPS vs UPS,,,,,,,,,,,,,,46.0,45.0,0.00363169,0.00363169,False
+b,BRCA_PAM50 Basal vs LumA,,,,,,,,,,,,,,169.0,506.0,-0.00380844,0.00380844,False
+b,SARC DDLPS vs MFS,,,,,,,,,,,,,,46.0,24.0,0.00400638,0.00400638,False
+b,COAD_TCGA CIN vs GS,,,,,,,,,,,,,,162.0,33.0,0.0040613,0.0040613,False
+b,CESC Adenocarcinoma vs Squamous,,,,,,,,,,,,,,42.0,218.0,-0.00437428,0.00437428,False
+b,LGG_IDH IDHmut-non-codel vs IDHwt,,,,,,,,,,,,,,242.0,90.0,0.00441307,0.00441307,False
+b,BRCA_PAM50 Basal vs LumB,,,,,,,,,,,,,,169.0,201.0,-0.00453496,0.00453496,False
+b,MESO Biphasic vs Epithelioid,,,,,,,,,,,,,,20.0,51.0,-0.00469617,0.00469617,False
+b,THYM A/AB vs B1-B3,,,,,,,,,,,,,,51.0,55.0,0.00484032,0.00484032,False
+b,BRCA_PAM50 Her2 vs LumB,,,,,,,,,,,,,,74.0,201.0,-0.00484085,0.00484085,False
+b,PRAD_ETS ERG vs SPOP,,,,,,,,,,,,,,151.0,36.0,0.00488458,0.00488458,False
+b,BRCA_PAM50 Her2 vs Normal-like,,,,,,,,,,,,,,74.0,36.0,-0.00509459,0.00509459,False
+b,HNSC_mRNA Atypical vs Mesenchymal,,,,,,,,,,,,,,66.0,74.0,-0.00514568,0.00514568,False
+b,STAD_TCGA EBV vs GS,,,,,,,,,,,,,,26.0,43.0,-0.00521868,0.00521868,False
+b,BRCA_PAM50 Her2 vs LumA,,,,,,,,,,,,,,74.0,506.0,-0.00562452,0.00562452,False
+b,HNSC_mRNA Atypical vs Classical,,,,,,,,,,,,,,66.0,49.0,-0.00563342,0.00563342,False
+b,STAD_TCGA CIN vs EBV,,,,,,,,,,,,,,196.0,26.0,0.00573599,0.00573599,False
+b,ESCA Adenocarcinoma vs Squamous,,,,,,,,,,,,,,78.0,80.0,-0.00622715,0.00622715,False
+b,PRAD_ETS Other vs SPOP,,,,,,,,,,,,,,86.0,36.0,0.00643617,0.00643617,False
+b,PCPG_mRNA Cortical admixture vs Kinase signaling,,,,,,,,,,,,,,22.0,68.0,-0.00658262,0.00658262,False
+b,UCEC Endometrioid vs Serous,,,,,,,,,,,,,,62.0,53.0,-0.00686921,0.00686921,False
+b,PRAD_ETS ETV1 vs SPOP,,,,,,,,,,,,,,28.0,36.0,0.00709258,0.00709258,False
+b,PCPG_mRNA Cortical admixture vs Pseudohypoxia,,,,,,,,,,,,,,22.0,61.0,-0.00843655,0.00843655,False
+b,PCPG_mRNA Cortical admixture vs Wnt-altered,,,,,,,,,,,,,,22.0,22.0,-0.00993641,0.00993641,True
+b,SARC DDLPS vs LMS,,,,,,,,,,,,,,46.0,88.0,-0.01063,0.01063,True
+b,SARC LMS vs MFS,,,,,,,,,,,,,,88.0,24.0,0.0139738,0.0139738,True
+b,SARC LMS vs UPS,,,,,,,,,,,,,,88.0,45.0,0.0149432,0.0149432,True
+b,MSI held out,,,,,,,,RP6c,0.00872998,0.0862069,0.0963176,BH within family RP (12 tests; D-77),not resolved,,,,0.00872998,

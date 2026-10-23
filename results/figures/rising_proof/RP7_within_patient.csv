@@ -1,0 +1,13 @@
+cancer,training_cancer,mmr,n_pairs,mean_pair_arm,note,test,estimate,p,q,q_family,verdict
+COAD,True,MMRp,17.0,0.0002238003561574082,,,,,,,
+COAD,True,MMRd,6.0,0.017044458695498848,,,,,,,
+STAD,True,MMRp,23.0,-0.010212178171166871,,,,,,,
+STAD,True,MMRd,3.0,,mean blanked (< 5 pairs),,,,,,
+UCEC,True,MMRp,3.0,,mean blanked (< 5 pairs),,,,,,
+UCEC,True,MMRd,1.0,,mean blanked (< 5 pairs),,,,,,
+BRCA,False,MMRp,106.0,0.001171230930339492,,,,,,,
+BRCA,False,MMRd,1.0,,mean blanked (< 5 pairs),,,,,,
+PRAD,False,MMRp,51.0,-0.004952719492311593,,,,,,,
+PRAD,False,MMRd,1.0,,mean blanked (< 5 pairs),,,,,,
+all,,MMRd vs MMRp,,,,RP7,0.0193767,9.999e-05,0.00019998,BH within family RPP (2 tests; D-77),supported
+reference line,,,,0.0,,,,,,,

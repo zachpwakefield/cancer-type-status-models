@@ -1000,6 +1000,54 @@ shuffled labels and permuted SHAP inputs, are the only test outputs seen; no rea
 (mechanism) and RP0, a ladder with one row per step giving its question, the effect with its
 95% interval and the verdict. Write-up: `results/MSI_RISING_ARM_PROOF.md`.
 
+**Outcome (computed 2026-10-23 with the real labels, code at 4b34f60, committed as computed in
+41b0214; claim verdict partial: 9 of the 12 family-RP tests supported).**
+- **The rise, held out, in junction reads** (RP2a supported). +0.0070 PSI, 95% interval 0.0033 to
+  0.0107, above the SESOI of 0.003. The falling arm falls (RPC2a −0.0030, −0.0047 to −0.0013).
+  - The class mean is carried by a minority of exons. The median R_up exon moves by +0.0019, and 62%
+    move up. The ten largest of 92 hold 81% of the summed delta, and the mean of the rest is +0.0015.
+  - RP2c (+7.6 points of rising exons over matched background exons) and the gene-level mean
+    (+0.0068) are reported beside RP2a.
+- **Both features.**
+  - The tract is needed (RP3a +0.0074, supported).
+  - In the held-out cancers the rise is rank-associated with the gap from the run to the mapped
+    branch point at fixed run length and offset: RP3e partial Spearman +0.44, p = 0.004, supported;
+    leave-one-out 0.40–0.47. RP3c (heuristic branch point) is +0.33.
+  - By gap bin (descriptive, bins chosen after the results), the rise sits at gaps above 5 nt,
+    highest at 6–10 nt, and is not monotone (means +0.0031, +0.0182 and +0.0081 at 1–5, 6–10 and
+    ≥ 11 nt).
+  - The gap association does not replicate in the training cancers (RPD3b +0.07, p = 0.61; 62 exons,
+    150 MMRd tumours). It rests on the held-out set alone.
+  - The 36-nt cut on distance is not supported: RP3b and RP3d are not resolved. For mapped branch
+    points, d_exp = offset + length + gap − 1 exactly, so the cut mixes run geometry with the gap.
+    The pre-specified sensitivity cuts for R_up (no q) give +0.0068 at ≥ 50 nt (p = 0.091) and
+    +0.0077 at > 60 nt (p = 0.026).
+- **Controls.**
+  - Supported: long pyrimidine tracts, deep-intron T-runs and Alu acceptors (RP4b, RP4c, RP4e).
+  - Not resolved: poly-A (RP4a) and donor-side runs (RP4d). These are underpowered: the
+    exon-permutation null SD is 0.0037 and 0.0028, so the difference detectable with 80% power is
+    about 0.010 and 0.008. Their label-permutation p is 0.005 and 0.010.
+  - Outside Alu (31 of 92 R_up exons) RP3a is +0.0057, p = 0.068.
+- **Confounders and specificity.**
+  - RP5a and RP5b are supported.
+  - RP6a is supported: AUROC 0.72 against hypermutated MMRp, 0.74 within cancer. RP6b (MANTIS) is
+    supported.
+  - RP6c is not resolved (p = 0.086). Four of 57 subtype contrasts reach MSI's s: three involve
+    SARC leiomyosarcoma, one a PCPG admixture class.
+- **Within patient** (RP7 supported, +0.019). This is not held out: 10 of 12 MMRd pairs are in COAD,
+  STAD and UCEC, and the two held-out pairs (BRCA, PRAD) go one each way.
+- **Dose and mechanism.** Dose is not resolved (RP8a–c), nor is the mechanism (RPM1–RPM3).
+- **Models.** RP1 is supported (AUROC 0.719 against a matched median of 0.506), and so is RPD1a (36
+  of 41 directions positive). M4 refitted without its 119 R_up inputs changes its held-out AUROC by
+  +0.0001 (68.5th percentile of 200 random removals). M4 does not need the rising arm.
+- **Instrument check failed narrowly.** Median draw −1.92 against −2.00; 47.6% of draws below, where
+  80% is needed. It gates only refuted clause (i), so the verdict is unaffected. Non-resolution of
+  contrasts of RP2a's size is weak evidence of absence.
+- **Wording change after the run** (report stage only, no recomputation; from the Gate 3 review).
+  verdict.json's unmet conditions now read "RP4a not resolved (needed: supported)", in place of
+  "RP4a supported (not resolved)"; likewise for RP4d and RP6c. The figures (RP0–RP8, RPM;
+  `scripts/63`) and the write-up `results/MSI_RISING_ARM_PROOF.md` were made after the run.
+
 ---
 
 ## Amendments and deviations

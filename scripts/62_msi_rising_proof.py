@@ -2237,13 +2237,14 @@ def claim_verdict(tests: pd.DataFrame, instrument: dict, sesoi: float = SESOI) -
                    rp2a == "supported" and ((e3e <= 0 and e3c <= 0) if rp3e_testable else e3c <= 0)}
     rp_ids = ["RP2a", "RP3a", branch_id, "RP4a", "RP4b", "RP4c", "RP4d", "RP4e", "RP5a", "RP5b", "RP6a", "RP6c"]
     unmet = []
+    # each unmet condition reads "<what was found> (needed: <the condition>)"
     if v("RPC2a") != "supported":
-        unmet.append("RPC2a supported")
-    unmet += [f"{i} supported ({v(i)})" for i in rp_ids if v(i) != "supported"]
+        unmet.append(f"RPC2a {v('RPC2a')} (needed: supported)")
+    unmet += [f"{i} {v(i)} (needed: supported)" for i in rp_ids if v(i) != "supported"]
     if not ub >= sesoi:
-        unmet.append(f"RP2a's 95% upper bound reaches the SESOI ({ub:.4g} < {sesoi})")
+        unmet.append(f"RP2a's 95% upper bound {ub:.4g} (needed: reaches the SESOI, {sesoi})")
     if not (est("RP7") > 0 and v("RP7") != "against"):
-        unmet.append(f"RP7's estimate > 0 and not against ({est('RP7'):.4g}, {v('RP7')})")
+        unmet.append(f"RP7 {est('RP7'):.4g}, {v('RP7')} (needed: estimate > 0 and not against)")
     reasons = []
     if v("RPC2a") != "supported":
         verdict = "uninterpretable"

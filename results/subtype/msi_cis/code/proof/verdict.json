@@ -1,9 +1,9 @@
 {
  "verdict": "partial",
  "reasons": [
-  "RP4a supported (not resolved)",
-  "RP4d supported (not resolved)",
-  "RP6c supported (not resolved)"
+  "RP4a not resolved (needed: supported)",
+  "RP4d not resolved (needed: supported)",
+  "RP6c not resolved (needed: supported)"
  ],
  "branch_point_test": "RP3e",
  "refuted_clauses": {
