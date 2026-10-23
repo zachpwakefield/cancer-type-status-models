@@ -606,12 +606,12 @@ that is too long.
   - **Not unique to MSI.** The held-out rise (+3.5 percentile points at 20 against 20) beats 55 of
     57 other subtype contrasts (RV1, q = 0.083). Sarcoma LMS against MFS (4.2) and LMS against
     UPS (3.6) move these exons as much.
-  - **Geometry not confirmed.** The AG exclusion zone does not predict the rise (ρ −0.04; RV4), and
-    it does not track the predicted branch point either (ρ −0.04). Runs upstream of a branch point
-    rise about as often (26 of 42; RV5). Within MMR-deficient tumours the rise does not follow
-    deletion load (ρ +0.08; RV6).
-  - **PTB relief is ruled out.** The more PTBP1 represses an exon, the *less* it rises (ρ +0.20
-    against the predicted negative; RV8).
+  - **Geometry not confirmed.** A link between the AG exclusion zone and the rise was not shown
+    (ρ −0.04; RV4, not resolved), and the zone does not track the predicted branch point either
+    (ρ −0.04). Runs upstream of a branch point rise about as often (26 of 42; RV5, not resolved).
+    Within MMR-deficient tumours a rise with deletion load was not shown (ρ +0.08; RV6, not resolved).
+  - **PTB relief was not supported (the data ran the other way).** The more PTBP1 represses an exon,
+    the *less* it rises (ρ +0.20 against the predicted negative; RV8).
   - Tables: `results/subtype/msi_cis/code/reversal/`; figure U22.
 
 ### D-71 Fitted models on the code · `config/followup.yaml` · `scripts/54`
@@ -1035,11 +1035,13 @@ shuffled labels and permuted SHAP inputs, are the only test outputs seen; no rea
   - RP6c is not resolved (p = 0.086). Four of 57 subtype contrasts reach MSI's s: three involve
     SARC leiomyosarcoma, one a PCPG admixture class.
 - **Within patient** (RP7 supported, +0.019). This is not held out: 10 of 12 MMRd pairs are in COAD,
-  STAD and UCEC, and the two held-out pairs (BRCA, PRAD) go one each way.
+  STAD and UCEC; of the two held-out pairs, BRCA lies well above its cancer's MMRp mean and PRAD is
+  about level with it.
 - **Dose and mechanism.** Dose is not resolved (RP8a–c), nor is the mechanism (RPM1–RPM3).
 - **Models.** RP1 is supported (AUROC 0.719 against a matched median of 0.506), and so is RPD1a (36
   of 41 directions positive). M4 refitted without its 119 R_up inputs changes its held-out AUROC by
-  +0.0001 (68.5th percentile of 200 random removals). M4 does not need the rising arm.
+  +0.0001 (68.5th percentile of 200 random removals). No loss was detected (interval −0.015 to
+  +0.015).
 - **Instrument check failed narrowly.** Median draw −1.92 against −2.00; 47.6% of draws below, where
   80% is needed. It gates only refuted clause (i), so the verdict is unaffected. Non-resolution of
   contrasts of RP2a's size is weak evidence of absence.
@@ -1047,6 +1049,8 @@ shuffled labels and permuted SHAP inputs, are the only test outputs seen; no rea
   verdict.json's unmet conditions now read "RP4a not resolved (needed: supported)", in place of
   "RP4a supported (not resolved)"; likewise for RP4d and RP6c. The figures (RP0–RP8, RPM;
   `scripts/63`) and the write-up `results/MSI_RISING_ARM_PROOF.md` were made after the run.
+- RP0 was redrawn as a step overview (question, plain answer, marker) at the user's request
+  (2026-10-23); effects with intervals moved to the table in §5 of the write-up.
 
 ---
 

@@ -1,0 +1,11 @@
+step,question,answer,marker,tests,verdicts,outside_the_verdict
+1,Do models use the rising arm?,"Yes. Held out, it separates MMR-deficient tumours better than matched exon sets (AUROC 0.72). Removing it from the fitted model costs no detectable accuracy (+0.0001).",filled,RP1; RPD1a,RP1 supported; RPD1a supported,False
+2,Does it rise in junction reads?,"Yes, held out: by 0.007 PSI on average, carried mostly by a few of its exons.",filled,RP2a; RP2b; RP2c,RP2a supported; RP2b supported; RP2c supported,False
+3,Does it need both features?,"Partly. It needs the T-run, but a step at 36 nt is not supported, and the link to the branch-point gap is seen in held-out cancers only.",half,RP3a; RP3b; RP3c; RP3d; RP3e,RP3a supported; RP3b not resolved; RP3c supported; RP3d not resolved; RP3e supported,False
+4,Is it the microsatellite?,"Partly. It exceeds pyrimidine tracts, deep T-runs and Alu acceptors; poly-A and donor-side runs are not resolved.",half,RP4a; RP4b; RP4c; RP4d; RP4e,RP4a not resolved; RP4b supported; RP4c supported; RP4d not resolved; RP4e supported,False
+5,Does it survive confounders?,Yes. It remains after exon and tumour covariates.,filled,RP5a; RP5b,RP5a supported; RP5b supported,False
+6,Is it mismatch repair?,"Partly. It separates MMR deficiency from mutation load, but four other subtype contrasts (three in sarcoma) move it more than MSI.",half,RP6a; RP6b; RP6c,RP6a supported; RP6b supported; RP6c not resolved,False
+7,Is it there within the same patient?,"Yes, tumour above its own normal tissue, but 10 of the 12 deficient patients are in training cancers.",filled,RP7,RP7 supported,False
+8,Does it follow dose?,"Not shown: no relation to instability score, deletion count or run length was resolved.",hollow,RP8a; RP8b; RP8c,RP8a not resolved; RP8b not resolved; RP8c not resolved,False
+M,Mechanism: branch-point geometry or hnRNP C?,Not separated: none of the three tests is resolved.,hollow,RPM1; RPM2; RPM3,RPM1 not resolved; RPM2 not resolved; RPM3 not resolved,True
+verdict,claim,"partial: The rise holds out of sample but is small and carried by a few exons. Not shown: that it beats poly-A and donor-side runs, that it is unique to MSI, the 36-nt cut, a dose relation, or the mechanism.",,RP4a not resolved (needed: supported); RP4d not resolved (needed: supported); RP6c not resolved (needed: supported),,False

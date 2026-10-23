@@ -30,8 +30,9 @@ the splicing marks of microsatellite instability, grew into a study of its own (
 - **Within a cancer**, splicing recovers lineage and genome-state subtypes about as well as
   expression. It loses where a small class is defined by one gene programme switched on.
 - **The MSI splicing marks are written in the genome.** Mismatch-repair (MMR) deficiency shortens
-  poly-T tracts just upstream of 3′ splice sites. Tract length and branch-point distance then say
-  which exons are skipped and which, a pattern not reported before, are included more. Read from RNA,
+  poly-T tracts just upstream of 3′ splice sites. Tract length, and for the longest tracts a distant
+  predicted branch point, then sort exons into those skipped and those included more, a pattern not
+  reported before. Read from RNA,
   this code finds MMR-deficient tumours in 30 cancers never used to build it (AUROC 0.83 unfitted,
   0.90 fitted). Within a cancer it ranks tumours about as well as exome MSI callers, and it adds to
   expression-based detection (0.93 combined).
@@ -44,8 +45,8 @@ the splicing marks of microsatellite instability, grew into a study of its own (
 | [1. Cancer type](#part-1-cancer-type) | Which of 33 cancers, or normal tissue? | 2–6 | [results/CANCER_TYPE.md](results/CANCER_TYPE.md) |
 | [2. Tumour status](#part-2-tumour-status) | Tumour or adjacent normal tissue? | 7–12 | [results/TUMOUR_STATUS.md](results/TUMOUR_STATUS.md) |
 | [3. Subtype](#part-3-subtype) | Which subtype of this cancer? | 13–21 | [results/SUBTYPE.md](results/SUBTYPE.md) |
-| [4. The MSI study](#part-4-the-msi-study) | Does MMR deficiency move splicing by a rule written in the genome? | 22–31 | [manuscript/MSI_SPLICING_CODE.md](manuscript/MSI_SPLICING_CODE.md) |
-| [5. Across the tasks](#part-5-connections-across-the-tasks) | How do the three tasks' models relate? | 32–35 | [results/ACROSS_TASKS.md](results/ACROSS_TASKS.md) |
+| [4. The MSI study](#part-4-the-msi-study) | Does MMR deficiency move splicing by a rule written in the genome? | 22–33 | [manuscript/MSI_SPLICING_CODE.md](manuscript/MSI_SPLICING_CODE.md) |
+| [5. Across the tasks](#part-5-connections-across-the-tasks) | How do the three tasks' models relate? | 34–37 | [results/ACROSS_TASKS.md](results/ACROSS_TASKS.md) |
 
 The rest of this page has three more sections:
 - [Methods in brief](#methods-in-brief);
@@ -767,7 +768,8 @@ events. (d) High-group frequency in LumA against basal-like tumours, per event.
 ## Part 4. The MSI study
 
 *Journal-style write-up: [manuscript/MSI_SPLICING_CODE.md](manuscript/MSI_SPLICING_CODE.md) ·
-methods: [docs/SUBTYPE_METHODS.md](docs/SUBTYPE_METHODS.md) (D-52 to D-56, D-61 to D-74) ·
+methods: [docs/SUBTYPE_METHODS.md](docs/SUBTYPE_METHODS.md) (D-52 to D-56, D-61 to D-75 and D-77) ·
+step-wise test of the rising arm: [results/MSI_RISING_ARM_PROOF.md](results/MSI_RISING_ARM_PROOF.md) ·
 literature: [docs/MSI_REPEATS_LITERATURE.md](docs/MSI_REPEATS_LITERATURE.md).*
 
 Tumours that lose DNA mismatch repair cannot correct slippage at short repeats. They accumulate
@@ -832,27 +834,33 @@ with the largest shifts shared across cancers, labelled with run and exon length
 
 <sub>Figure file U11: [caption with every statistic](results/figures/subtype/U11_msi_long_tracts.caption.md) · [plotted values](results/figures/subtype/U11_msi_long_tracts.csv)</sub>
 
-**The branch point's distance sets the direction.** What separates rising from falling tracts? A
+**The predicted branch point's distance goes with the direction.** What separates rising from
+falling tracts? A
 poly-T tract lies between the branch point and the AG, and the 3′ splice site works best with the
 branch point about 19–23 nt away. An exon whose sequence-predicted branch point lay further from the
 AG gained inclusion in MSI, beyond its run length (adjusted ρ 0.11–0.16, supported in all three
 cancers; Figure 25). Among runs of 20 nt or more, 48% moved up when the branch point was near and
 73% when it was far. A contraction that brings a distant branch point toward the optimum would fit.
+When the 36-nt cut was tested later in junction reads, it was not resolved (D-77, below).
 
-<img src="results/figures/subtype/U17_msi_branchpoint.png" width="697" alt="Figure 25: The branch point's distance from the 3′ splice site sets the direction of the MSI shift.">
+<img src="results/figures/subtype/U17_msi_branchpoint.png" width="697" alt="Figure 25: The predicted branch point's distance from the 3′ splice site goes with the direction of the MSI shift.">
 
-**Figure 25. The branch point's distance from the 3′ splice site sets the direction of the MSI
-shift.** (a) Distance from the sequence-predicted branch point to the AG, by run length; grey band,
-the 19–23 nt optimum. (b) Share of repeat exons more included in MSI, by branch-point tertile within
-each run class. (c) Correlation of the MSI shift with branch-point distance (filled) and with the
-run's far end (hollow), adjusted for run length.
+**Figure 25. The predicted branch point's distance from the 3′ splice site goes with the direction
+of the MSI shift.** (a) Distance from the sequence-predicted branch point to the AG, by run length;
+grey band, the 19–23 nt optimum. (b) Share of repeat exons more included in MSI, by branch-point
+tertile within each run class. (c) Correlation of the MSI shift with branch-point distance (filled)
+and with the run's far end (hollow), adjusted for run length.
 
 <sub>Figure file U17: [caption with every statistic](results/figures/subtype/U17_msi_branchpoint.caption.md) · [plotted values](results/figures/subtype/U17_msi_branchpoint.csv)</sub>
 
 **A two-arm code finds MMR-deficient tumours in 30 cancers never used to build it.** These
 observations define score G, which has two arms:
 - runs of 10–19 nt count as falling;
-- runs of 20 nt or more with the branch point at least 36 nt from the AG count as rising.
+- runs of 20 nt or more with the predicted branch point at least 36 nt from the AG count as rising.
+
+The 36-nt cut is the first tertile of that distance among runs of 20 nt or more. It was computed
+without labels, but chosen after the reversal had been seen. It defines the rising class; a later
+test in junction reads did not support it as a threshold (D-77, below).
 
 We fixed the code in advance and applied it, without refitting, to the 30 TCGA cancers outside
 colon, stomach and endometrium. MMR deficiency there was defined from DNA: at least 10 MC3
@@ -888,13 +896,14 @@ resolved (Figure 27). Supported:
 - **The rise is real.** In the held-out cancers, 98 of 135 rising-arm exons rose.
 - **It is not a tumour-wide shift.** Adjusting for each tumour's mean inclusion left the effect
   unchanged.
-- **It needs the tract.** Exons with an equally distant branch point but no run did not move.
+- **It needs the tract.** Background exons whose predicted branch point is also ≥ 36 nt but which
+  have no T-run did not move.
 - **It is not mutation burden.** Hypermutated MMR-proficient tumours did not show it.
 
 Branch-point geometry, however, did not explain all of it:
 - runs upstream of the branch point rose too;
-- a branch-point-free measure of geometry did not predict the rise;
-- the rise did not grow with deletion count;
+- a link to a branch-point-free measure of geometry was not shown;
+- a rise with deletion count was not shown;
 - relief of PTB repression ran the wrong way.
 
 The leading alternative is loss of a repressor that binds the run itself, such as hnRNP C. Minigenes
@@ -912,16 +921,61 @@ homopolymer deletions in MMR-deficient and MSI tumours.
 
 <sub>Figure file U22: [caption with every statistic](results/figures/subtype/U22_msi_code_rising_arm.caption.md) · [plotted values](results/figures/subtype/U22_msi_code_rising_arm.csv)</sub>
 
+**The rise holds in junction reads, but only part of the claim is supported.** The tests above read
+percentiles of a PSI that counts exon-body reads, used a heuristic branch point, and used cuts set
+after the reversal was seen. We therefore tested the rising arm again in eight pre-specified steps,
+on junction reads only, in the 30 held-out cancers (D-77; Figure 28). The verdict is partial: 9 of
+the 12 required tests were supported.
+- **The rise holds.** Rising-arm exons rose by 0.0070 PSI (95% CI 0.0033–0.0107) in held-out
+  MMR-deficient tumours, and the falling arm fell.
+- **It is carried by a minority of exons.** The ten largest of 92 held 81% of the summed rise; the
+  median exon moved by 0.0019.
+- **It needs the tract,** and it exceeds long pyrimidine tracts, deep T-runs and Alu acceptors. It
+  survives exon and tumour covariates and separates MMR deficiency from mutation load.
+- **The 36-nt cut is not supported as a threshold** (Figure 29). Neither 36-nt test was resolved.
+  Within the rising arm the heuristic and mapped distances are not rank-correlated (Spearman
+  ρ = −0.12, 65 exons; the heuristic distances are all ≥ 36 nt, which limits ρ). Of the 63 exons
+  whose mapped branch point lies upstream of the run, 45 have it ≥ 36 nt from the AG and 18 under
+  36 nt. With experimentally mapped branch points, the rise was rank-associated with the gap between
+  run and branch point in the held-out cancers (partial ρ = 0.44); in the training cancers it did
+  not replicate (not resolved; ρ = 0.07, p = 0.61).
+- **Not shown:** that it beats poly-A and donor-side runs (underpowered), that it is unique to MSI
+  (four of 57 subtype contrasts move it more), a dose relation, or the mechanism.
+
+<img src="results/figures/rising_proof/RP0_overview.png" width="895" alt="Figure 28: In junction reads the rising arm rises in held-out cancers, but the claim is only partly supported.">
+
+**Figure 28. In junction reads the rising arm rises in held-out cancers, but the claim is only
+partly supported.** The eight pre-specified steps of D-77, in order. Each box gives the step's
+question and a plain answer; filled marker, every test of the step supported; half, some; hollow,
+none resolved. Dashed box, the mechanism tests, outside the verdict. Held-out cancers, junction
+reads only.
+
+<sub>Figure file RP0: [caption with every statistic](results/figures/rising_proof/RP0_overview.caption.md) · [plotted values](results/figures/rising_proof/RP0_overview.csv)</sub>
+
+<img src="results/figures/rising_proof/RP3_branch_point.png" width="859" alt="Figure 29: The rise needs the T-run, a step at 36 nt is not supported, and the link to the branch-point gap is seen in held-out cancers only.">
+
+**Figure 29. The rise needs the T-run, a step at 36 nt is not supported, and the link to the
+branch-point gap is seen in held-out cancers only.** Held-out cancers unless stated, junction reads
+only; change in inclusion, MMR-deficient mean minus the proficient mean of the same cancer. (a) The
+rising arm against background exons whose predicted branch point is also ≥ 36 nt from the AG,
+without a T-run; bars, 95% intervals; dashed line, smallest effect of interest. (b) Exons with a
+T-run of 20 nt or more, by predicted branch-point distance; bars, bin means; dashed line, the rule's
+36-nt cut. Descriptive. (c) Rank of the change against rank of the gap to an experimentally mapped
+branch point, at fixed run length and offset, held out (left) and in training cancers (right).
+Descriptive.
+
+<sub>Figure file RP3: [caption with every statistic](results/figures/rising_proof/RP3_branch_point.caption.md) · [plotted values](results/figures/rising_proof/RP3_branch_point.csv)</sub>
+
 **A fitted model on the repeat exons transfers and matches exome callers within a cancer.** Score G
 has no fitted weights. We next fitted one weight per repeat exon: an L2 logistic regression on the
 1,562 exons with an acceptor run of at least 10 nt, trained on colon, stomach and endometrium only,
-with its penalty chosen by leaving one training cancer out (Figure 28). Results:
+with its penalty chosen by leaving one training cancer out (Figure 30). Results:
 - **Held out**, it reached AUROC 0.900 in the 30 other cancers (score G 0.832) and an AUPRC of 0.44
   (0.08).
 - **Its largest weights** reproduce the code: long runs with a far branch point are positive, runs of
   10–19 nt negative.
 - **Against exome callers**, it was benchmarked against MANTIS, MSIsensor and the MC3 count, each
-  judged by the consensus of the other two (Figure 29). Within each cancer it reached 0.998, at
+  judged by the consensus of the other two (Figure 31). Within each cancer it reached 0.998, at
   most 0.002 below the exome measures, from RNA alone.
 - **Across cancers** it is not calibrated, because its inputs are ranks within a cancer: at a
   caller's call volume it found 82–84% of positives, against 94–100% for the callers.
@@ -930,9 +984,9 @@ Where the model and the exome disagreed, its own extra calls sat just above thre
 looked false. Its misses were mostly endometrial (Supplementary Figure 19), where MSI shifts repeats less than in
 colon (Wang et al. 2017; Wu et al. 2019; Chung et al. 2023).
 
-<img src="results/figures/subtype/U23_msi_code_models.png" width="748" alt="Figure 28: Logistic regression on repeat exons, fitted in three cancers, finds MMR deficiency in 30 others.">
+<img src="results/figures/subtype/U23_msi_code_models.png" width="748" alt="Figure 30: Logistic regression on repeat exons, fitted in three cancers, finds MMR deficiency in 30 others.">
 
-**Figure 28. Logistic regression on repeat exons, fitted in three cancers, finds MMR deficiency in
+**Figure 30. Logistic regression on repeat exons, fitted in three cancers, finds MMR deficiency in
 30 others.** L2 logistic regression with balanced class weights on 1,562 repeat exons (each input,
 the exon's inclusion percentile within its cancer minus the tumour's mean percentile of matched
 non-repeat exons), trained on COAD, STAD and UCEC with C chosen by leaving one training cancer out,
@@ -943,9 +997,9 @@ by gene, acceptor T-run length and branch-point distance.
 
 <sub>Figure file U23: [caption with every statistic](results/figures/subtype/U23_msi_code_models.caption.md) · [plotted values](results/figures/subtype/U23_msi_code_models.csv)</sub>
 
-<img src="results/figures/subtype/U24_msi_callers_benchmark.png" width="817" alt="Figure 29: Within each cancer, the repeat-exon model ranks tumours almost as well as the exome MSI callers.">
+<img src="results/figures/subtype/U24_msi_callers_benchmark.png" width="817" alt="Figure 31: Within each cancer, the repeat-exon model ranks tumours almost as well as the exome MSI callers.">
 
-**Figure 29. Within each cancer, the repeat-exon model ranks tumours almost as well as the exome MSI
+**Figure 31. Within each cancer, the repeat-exon model ranks tumours almost as well as the exome MSI
 callers.** Each exome measure is judged against the tumours on which the other two agree, and the
 repeat-exon model against the same tumours; within-cancer AUROC ranks each positive only against
 negatives of its own cancer. (a) Within-cancer AUROC: filled, each cancer left out of training;
@@ -961,7 +1015,7 @@ chance.
 **Splicing against expression.** Expression-based MSI classifiers already exist, built and tested
 mainly in colon, stomach and endometrium. Was transfer to other organs special to splicing? We
 trained expression models exactly as the splicing model, with the same tumours, label, split and
-tuning (Figure 30). We had predicted that splicing would transfer better, and the comparisons did
+tuning (Figure 32). We had predicted that splicing would transfer better, and the comparisons did
 not resolve it:
 - **Retrained expression came close.** On all genes it reached 0.893, against 0.900 for splicing.
 - **A small published panel did not transfer.** PreMSIm's 15 genes reached 0.70–0.79.
@@ -970,9 +1024,9 @@ not resolve it:
   they reached 0.926 and doubled the precision at half recall (0.68 against 0.30 and 0.39).
 - **Splicing stayed closer to the exome callers within a cancer** (0.998 against 0.975–0.979).
 
-<img src="results/figures/subtype/U26_msi_splicing_vs_expression.png" width="844" alt="Figure 30: Expression models trained the same way transfer almost as well; splicing adds to them.">
+<img src="results/figures/subtype/U26_msi_splicing_vs_expression.png" width="844" alt="Figure 32: Expression models trained the same way transfer almost as well; splicing adds to them.">
 
-**Figure 30. Expression models trained the same way transfer almost as well; splicing adds to
+**Figure 32. Expression models trained the same way transfer almost as well; splicing adds to
 them.** All models trained on COAD, STAD and UCEC and tested on the 30 other cancers (50
 MMR-deficient among 7,685), tuned by leaving one training cancer out. (a) Held-out AUROC and (b)
 AUPRC; bars, 95% bootstrap intervals; dashed line, the splicing model. (c) AUROC for held-out
@@ -985,11 +1039,13 @@ exome measures agree.
 <sub>Figure file U26: [caption with every statistic](results/figures/subtype/U26_msi_splicing_vs_expression.caption.md) · [plotted values](results/figures/subtype/U26_msi_splicing_vs_expression.csv)</sub>
 
 **How large are the shifts?** Every result so far ranked tumours within a cancer; none said how far
-an exon moves. Measured in PSI units (Figure 31), the typical repeat exon moves a little and a
+an exon moves. Measured in PSI units (Figure 33), the typical repeat exon moves a little and a
 minority move a lot:
-- **Small per exon.** Among exons that are alternatively spliced in proficient tumours, the median
-  R_down exon falls by 0.02–0.03 PSI in colon and stomach cancer. MMR status explains about 0.5% of
-  a typical repeat exon's variance.
+- **Small per exon.** Among exons that are alternatively spliced in proficient tumours (proficient
+  median PSI 0.1–0.9), the median R_down exon falls by 0.02–0.03 PSI in colon and stomach cancer and
+  by 0.0055 in the held-out cancers. Over all measured exons the median shift is 0 in every class,
+  because most exons sit at PSI 0 or 1. MMR status explains about 0.5% of a typical repeat exon's
+  variance.
 - **Large in a minority.** 16–18% of those exons fall by at least 0.10, against 4% of exons without
   a repeat; the share rises with tract length. The largest move by 0.2–0.4 (METTL8, BOD1L1,
   CCNDBP1).
@@ -1003,9 +1059,9 @@ minority move a lot:
 The rule's power therefore comes from the number of exons it reads, not from the size of any one
 change, which is why a model over many repeat exons transfers where single events do not.
 
-<img src="results/figures/subtype/U27_msi_shift_magnitude.png" width="749" alt="Figure 31: A minority of exons move by a tenth of PSI or more; the typical exon moves by a few hundredths.">
+<img src="results/figures/subtype/U27_msi_shift_magnitude.png" width="749" alt="Figure 33: A minority of exons move by a tenth of PSI or more; the typical exon moves by a few hundredths.">
 
-**Figure 31. A minority of exons move by a tenth of PSI or more; the typical exon moves by a few
+**Figure 33. A minority of exons move by a tenth of PSI or more; the typical exon moves by a few
 hundredths.** Within each cancer, MMR-deficient tumours against proficient tumours; panels a, b and
 e use exons whose proficient median PSI lies between 0.1 and 0.9. (a) Share of exons whose shift
 lies below x (left) or above x (right), three training cancers pooled; log scale. (b) Share of exons
@@ -1101,13 +1157,13 @@ was computed.
 
 **The tasks' models read overlapping genes.** For every subtype cohort, its subtype model, its
 cancer's status model and the type model's explanation of that cancer share top genes 5–8 times more
-often than chance (Figure 32). Almost all of the genes common to all three come from splicing views.
+often than chance (Figure 34). Almost all of the genes common to all three come from splicing views.
 Most are smooth-muscle and stromal switches (TPM1, CHN1, ACTN1) that track tissue composition, which
 varies in every task's samples.
 
-<img src="results/figures/across_tasks/X1_gene_overlap.png" width="664" alt="Figure 32: The three tasks' models read overlapping genes, several-fold more than chance.">
+<img src="results/figures/across_tasks/X1_gene_overlap.png" width="664" alt="Figure 34: The three tasks' models read overlapping genes, several-fold more than chance.">
 
-**Figure 32. The three tasks' models read overlapping genes, several-fold more than chance.** For
+**Figure 34. The three tasks' models read overlapping genes, several-fold more than chance.** For
 each subtype cohort, the top 100 genes per view of three models: the subtype model, its cancer's
 tumour-status model and the cancer-type model's importance over that cancer's samples. (a) Overlap
 of each pair of tasks against chance, one dot per cohort and view; bar, median. (b) The five
@@ -1118,7 +1174,7 @@ with the type list.
 
 **Subtypes resemble the cancers the literature predicts.** The pan-cancer type model never saw a
 subtype label, yet where it spread probability beyond a tumour's own project, it did so as 12 of 13
-pre-specified predictions said (Figure 33):
+pre-specified predictions said (Figure 35):
 - squamous oesophageal and cervical tumours leaned towards head-and-neck and lung squamous carcinoma;
 - oesophageal adenocarcinoma leaned towards stomach;
 - IDH-wildtype lower-grade glioma leaned towards glioblastoma;
@@ -1126,12 +1182,12 @@ pre-specified predictions said (Figure 33):
 
 The tumour-status models, likewise, saw the six predicted subtypes as less tumour-like, among them
 normal-like breast cancer, follicular-variant thyroid cancer, diffuse gastric cancer and lobular breast
-cancer (Figure 34). That held for all six in the splicing models but for only two in expression,
+cancer (Figure 36). That held for all six in the splicing models but for only two in expression,
 whose probabilities sit at the ceiling. Stromal and immune content did not explain it.
 
-<img src="results/figures/across_tasks/X2_type_probability_by_subtype.png" width="860" alt="Figure 33: In the cancer-type model, subtypes resemble the cancers the literature predicts.">
+<img src="results/figures/across_tasks/X2_type_probability_by_subtype.png" width="860" alt="Figure 35: In the cancer-type model, subtypes resemble the cancers the literature predicts.">
 
-**Figure 33. In the cancer-type model, subtypes resemble the cancers the literature predicts.**
+**Figure 35. In the cancer-type model, subtypes resemble the cancers the literature predicts.**
 Thirteen pre-specified predictions, one per row: a subtype, the projects it should resemble (→) and
 its comparison group. (a) Mean summed out-of-fold probability of the target projects in each group,
 GEX + AS fused (log scale). (b) AUROC per model, higher-probability group against lower; filled,
@@ -1139,9 +1195,9 @@ Benjamini–Hochberg q < 0.05 within the model.
 
 <sub>Figure file X2: [caption with every statistic](results/figures/across_tasks/X2_type_probability_by_subtype.caption.md) · [plotted values](results/figures/across_tasks/X2_type_probability_by_subtype.csv)</sub>
 
-<img src="results/figures/across_tasks/X3_status_probability_by_subtype.png" width="885" alt="Figure 34: The splicing status models see the six predicted subtypes as less tumour-like.">
+<img src="results/figures/across_tasks/X3_status_probability_by_subtype.png" width="885" alt="Figure 36: The splicing status models see the six predicted subtypes as less tumour-like.">
 
-**Figure 34. The splicing status models see the six predicted subtypes as less tumour-like.** Six
+**Figure 36. The splicing status models see the six predicted subtypes as less tumour-like.** Six
 pre-specified predictions, one per row: the subtype expected to look less tumour-like against its
 comparison. (a) Mean 1 − P(tumour) in the predicted group (filled) and the comparison (open), for
 GEX and the AS ensemble (log scale). (b) AUROC per model; filled, q < 0.05 within the model. (c)
@@ -1150,14 +1206,14 @@ Spearman ρ of P(tumour) with the stromal and the immune score over each cancer'
 <sub>Figure file X3: [caption with every statistic](results/figures/across_tasks/X3_status_probability_by_subtype.caption.md) · [plotted values](results/figures/across_tasks/X3_status_probability_by_subtype.csv)</sub>
 
 **The same kind of exon in every task.** Whatever separates tumour from normal, tissue from tissue or
-subtype from subtype, the splicing models reached for the same kind of cassette exon (Figure 35).
+subtype from subtype, the splicing models reached for the same kind of cassette exon (Figure 37).
 These exons more often keep the reading frame (49% of subtype exons against 41% of all measured), less
 often fall in a folded domain (39% against 51%) and more often in a disordered region (18% against
 14%). Such exons rewire interaction segments rather than break folded domains.
 
-<img src="results/figures/across_tasks/X4_exon_protein_character.png" width="488" alt="Figure 35: The subtype models' cassette exons share the protein character of the other two tasks' exons.">
+<img src="results/figures/across_tasks/X4_exon_protein_character.png" width="488" alt="Figure 37: The subtype models' cassette exons share the protein character of the other two tasks' exons.">
 
-**Figure 35. The subtype models' cassette exons share the protein character of the other two tasks'
+**Figure 37. The subtype models' cassette exons share the protein character of the other two tasks'
 exons.** Cassette exons in the top 100 of any tumour-status model (blue), any cancer-type class
 (dark blue) or any subtype cohort's SE model (amber), against 6,000 random measured exons (grey):
 the share whose length is divisible by 3, and the shares in a Pfam/CDD domain, a disordered region
@@ -1194,7 +1250,7 @@ and a transmembrane helix. Fisher exact tests against all measured exons.
   (D-01 to D-12). Every later analysis was committed to [config/followup.yaml](config/followup.yaml)
   with its predictions before it was run. Decisions and amendments are explained in three files:
   - [docs/BIOLOGY_METHODS.md](docs/BIOLOGY_METHODS.md), D-13 to D-29;
-  - [docs/SUBTYPE_METHODS.md](docs/SUBTYPE_METHODS.md), D-30 to D-47 and D-52 to D-74;
+  - [docs/SUBTYPE_METHODS.md](docs/SUBTYPE_METHODS.md), D-30 to D-47, D-52 to D-75 and D-77;
   - [docs/ACROSS_TASKS_METHODS.md](docs/ACROSS_TASKS_METHODS.md), D-48 to D-51.
 - **Individual-level data stay local.** Per-sample predictions, SHAP arrays and per-tumour figure
   points are written to the git-ignored `data.nosync/`; only aggregates are committed (D-12).
@@ -1236,6 +1292,7 @@ scripts/      00–06    data, models and summaries (05 runs all jobs)
               40–41    across tasks (X1–X4)
               42–57    MSI study (repeats, code, rising arm, models, benchmarks); 53 draws M1
               60       MSI study: size of the shifts in PSI units (D-75)
+              62–63    MSI study: step-wise test of the rising arm in junction reads (D-77); 63 draws RP0–RP8, RPM
               46–49    breast cancer with DNA
               58–59    overview figure (O1) and this README
               run_pipeline.sh
@@ -1244,8 +1301,9 @@ docs/         METHODS, DECISIONS, LEAKAGE_POLICY, BIOLOGY_METHODS, SUBTYPE_METHO
               MSI_REPEATS_LITERATURE, FIGURE_GUIDELINES, readme/README.template.md
 manuscript/   MSI_SPLICING_CODE.md (journal-style account of Part 4)
 results/      per-task model outputs, summary/, biology/, subtype/, across_tasks/ (tables)
-              figures/{overview,cancer_type,tumour_status,subtype,manuscript,across_tasks}/
-              CANCER_TYPE.md, TUMOUR_STATUS.md, SUBTYPE.md, ACROSS_TASKS.md, RESULTS.md
+              figures/{overview,cancer_type,tumour_status,subtype,rising_proof,manuscript,across_tasks}/
+              CANCER_TYPE.md, TUMOUR_STATUS.md, SUBTYPE.md, MSI_RISING_ARM_PROOF.md, ACROSS_TASKS.md,
+              RESULTS.md
 ```
 
 ### Reproducing
@@ -1334,22 +1392,24 @@ and the write-ups refer to figures by their file IDs.
 | Figure 22 | [M1](results/figures/manuscript/M1_msi_code_model.png) | A two-arm model of how mismatch-repair deficiency moves 3′ splice-site use. |
 | Figure 23 | [U10](results/figures/subtype/U10_msi_repeats.png) | Genome sequence alone says which exons MSI tumours skip. |
 | Figure 24 | [U11](results/figures/subtype/U11_msi_long_tracts.png) | The longest acceptor repeats move toward inclusion in MSI. |
-| Figure 25 | [U17](results/figures/subtype/U17_msi_branchpoint.png) | The branch point's distance from the 3′ splice site sets the direction of the MSI shift. |
+| Figure 25 | [U17](results/figures/subtype/U17_msi_branchpoint.png) | The predicted branch point's distance from the 3′ splice site goes with the direction of the MSI shift. |
 | Figure 26 | [U18](results/figures/subtype/U18_msi_code_pancancer.png) | A two-arm sequence code finds mismatch-repair-deficient tumours in 30 cancers never used to define it. |
 | Figure 27 | [U22](results/figures/subtype/U22_msi_code_rising_arm.png) | The rising arm is specific to mismatch repair and needs the tract, but its mechanism is not settled. |
-| Figure 28 | [U23](results/figures/subtype/U23_msi_code_models.png) | Logistic regression on repeat exons, fitted in three cancers, finds MMR deficiency in 30 others. |
-| Figure 29 | [U24](results/figures/subtype/U24_msi_callers_benchmark.png) | Within each cancer, the repeat-exon model ranks tumours almost as well as the exome MSI callers. |
-| Figure 30 | [U26](results/figures/subtype/U26_msi_splicing_vs_expression.png) | Expression models trained the same way transfer almost as well; splicing adds to them. |
-| Figure 31 | [U27](results/figures/subtype/U27_msi_shift_magnitude.png) | A minority of exons move by a tenth of PSI or more; the typical exon moves by a few hundredths. |
+| Figure 28 | [RP0](results/figures/rising_proof/RP0_overview.png) | In junction reads the rising arm rises in held-out cancers, but the claim is only partly supported. |
+| Figure 29 | [RP3](results/figures/rising_proof/RP3_branch_point.png) | The rise needs the T-run, a step at 36 nt is not supported, and the link to the branch-point gap is seen in held-out cancers only. |
+| Figure 30 | [U23](results/figures/subtype/U23_msi_code_models.png) | Logistic regression on repeat exons, fitted in three cancers, finds MMR deficiency in 30 others. |
+| Figure 31 | [U24](results/figures/subtype/U24_msi_callers_benchmark.png) | Within each cancer, the repeat-exon model ranks tumours almost as well as the exome MSI callers. |
+| Figure 32 | [U26](results/figures/subtype/U26_msi_splicing_vs_expression.png) | Expression models trained the same way transfer almost as well; splicing adds to them. |
+| Figure 33 | [U27](results/figures/subtype/U27_msi_shift_magnitude.png) | A minority of exons move by a tenth of PSI or more; the typical exon moves by a few hundredths. |
 | Supplementary Figure 15 | [U16](results/figures/subtype/U16_msi_deletion_load.png) | Mismatch-repair damage tracks the repeat score in stomach cancer only. |
 | Supplementary Figure 16 | [U19](results/figures/subtype/U19_msi_code_specificity.png) | The code is specific to the branch point and to mismatch repair. |
 | Supplementary Figure 17 | [U20](results/figures/subtype/U20_msi_code_infiltration.png) | The code is not an infiltration readout. |
 | Supplementary Figure 18 | [U21](results/figures/subtype/U21_msi_code_msi_calls.png) | The code finds the tumours that two exome MSI callers call MSI-high. |
 | Supplementary Figure 19 | [U25](results/figures/subtype/U25_msi_model_vs_callers.png) | The model agrees with the exome measures on its confident calls; its own extra calls are borderline. |
-| Figure 32 | [X1](results/figures/across_tasks/X1_gene_overlap.png) | The three tasks' models read overlapping genes, several-fold more than chance. |
-| Figure 33 | [X2](results/figures/across_tasks/X2_type_probability_by_subtype.png) | In the cancer-type model, subtypes resemble the cancers the literature predicts. |
-| Figure 34 | [X3](results/figures/across_tasks/X3_status_probability_by_subtype.png) | The splicing status models see the six predicted subtypes as less tumour-like. |
-| Figure 35 | [X4](results/figures/across_tasks/X4_exon_protein_character.png) | The subtype models' cassette exons share the protein character of the other two tasks' exons. |
+| Figure 34 | [X1](results/figures/across_tasks/X1_gene_overlap.png) | The three tasks' models read overlapping genes, several-fold more than chance. |
+| Figure 35 | [X2](results/figures/across_tasks/X2_type_probability_by_subtype.png) | In the cancer-type model, subtypes resemble the cancers the literature predicts. |
+| Figure 36 | [X3](results/figures/across_tasks/X3_status_probability_by_subtype.png) | The splicing status models see the six predicted subtypes as less tumour-like. |
+| Figure 37 | [X4](results/figures/across_tasks/X4_exon_protein_character.png) | The subtype models' cassette exons share the protein character of the other two tasks' exons. |
 
 ## Related
 

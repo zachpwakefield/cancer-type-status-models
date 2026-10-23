@@ -16,7 +16,8 @@ is that the rise is real and needs both features.
 - **What holds.** In junction reads from the held-out cancers (50 MMRd tumours in 16 of the 30, none
   used to define the arm), R_up exons rise in MMRd tumours by +0.0070 PSI (95% interval 0.0033 to
   0.0107). The whole interval lies above the smallest effect of interest (0.003).
-  - The rise needs the T-run: exons with the same distant branch point but no run do not rise.
+  - The rise needs the T-run: background exons whose predicted branch point is also ≥ 36 nt but
+    which have no T-run do not move (−0.0001, 95% −0.0009 to +0.0006; RP3a +0.0074).
   - At fixed run length and offset, it is rank-associated with the gap between the run and an
     experimentally mapped branch point (partial Spearman 0.44). This rests on the held-out cancers
     alone: it does not replicate in the training cancers.
@@ -28,13 +29,13 @@ is that the rise is real and needs both features.
 - **What the data do not show.**
   - That the rise beats poly-A and donor-side T-run controls. Both tests are not resolved and are
     underpowered.
-  - That the rise is unique to MSI: four of 57 other subtype contrasts move the arm as much, three of
-    them involving leiomyosarcoma.
+  - That the rise is unique to MSI: four of 57 other subtype contrasts move the arm more than MSI
+    does, three of them involving leiomyosarcoma.
   - A dose relation.
   - A mechanism.
   - The 36-nt cut on distance: it is not supported.
-  - The rise is carried by a minority of exons. The class mean is +0.0070, but the median exon moves
-    by only +0.0019.
+  - That the rise is broad: it is carried by a minority of exons. The class mean is +0.0070, but the
+    median exon moves by only +0.0019.
 - **What cannot be shown with these data.** That the T-run at a given locus is shortened in the
   tumour and that this shortening causes the rise. That needs the tumour's DNA at each tract (the
   D-56 exome-slice pilot). Everything here is an association.
@@ -67,34 +68,29 @@ value was compared by MMR status.
   a stricter re-test of the same tumours with a new read-out and new controls.
 
 **How to read Figure RP0.**
-- **Rows.** One row per test shown, top to bottom in the order of the argument; step headings in
-  bold. The 12 tests the verdict needs have bold ids. Six tests are left out of the figure; the legend
-  names them, and all 40 are in `tests.csv` and in section 5.
-- **Columns.** The effect sits in the column of its unit: a PSI difference, a Spearman correlation,
-  or an AUROC or share difference.
-- **Markers.** Filled dots are supported, hollow dots not resolved. Grey diamonds are the same test on
-  the falling arm, which should go the other way.
-- **Right-hand columns.** The raw p and the verdict. The line under the figure gives the claim's
-  verdict.
+- **Boxes.** The eight steps, read left to right and top to bottom. Each box holds the step's
+  question and a one-line answer.
+- **Markers.** Filled: every test of the step is supported. Half: some are. Hollow: none is
+  resolved.
+- **The dashed box.** The mechanism tests, which sit outside the verdict.
+- **The verdict box.** The claim's verdict by the pre-registered rule, and what it does not show.
+- **Where the numbers are.** The overview carries no p values or test ids. Each step's figure follows
+  in section 3, and every test is in the table in section 5.
 
-![RP0](figures/rising_proof/RP0_ladder.png)
+![RP0](figures/rising_proof/RP0_overview.png)
 
-<!-- legend RP0: copied from figures/rising_proof/RP0_ladder.caption.md by the figure script's 'legends' step -->
-> **Figure RP0. The rising arm passes 9 of the 12 pre-registered tests; the claim is partial.** Pre-registered as
-> D-77 (config/followup.yaml: msi_rising_proof; commit 5471b27) before any junction-read value was compared by MMR
-> status. Confirmatory tests use the 30 held-out cancers (50 MMR-deficient tumours in 16 of them) and junction reads
-> only (rMATS JC), in PSI units. delta = an exon's mean adjusted PSI in MMR-deficient (MMRd) tumours minus the
-> proficient (MMRp) mean of the same cancer. One row per test shown, in the order of the argument; the id is bold
-> for the 12 tests the verdict needs (family RP). RPD3b is the gap test of RP3e repeated in the training cancers.
-> Not shown: RP2b, RPC2b, RPD2a, RPD2b, RPD3a, RPM2 (all in tests.csv). Effects in different units sit in different
-> columns: PSI differences (class contrasts, regression coefficients, arm contrasts), Spearman ρ (rank associations
-> and dose), and AUROC or share differences (RP1: AUROC minus the median of matched exon sets; RPD1a: share of
-> positive SHAP directions minus 0.5; RP2c: share of R_up exons rising minus that of matched exons; RP6a: AUROC
-> minus 0.5). Filled = supported (predicted sign and q < 0.05 within the family), hollow = not resolved; bars = 95%
-> intervals where the test has one (RP2a and RPC2a: studentized, Welch–Satterthwaite). Grey diamonds = the same test
-> on the falling arm (runs of 10–19 nt), predicted below 0. p = raw p of the test (the larger of the exon and the
-> label permutation p where both exist); q and families in RP0_ladder.csv. The line under the panel gives the
-> claim's verdict by the pre-registered rule.
+<!-- legend RP0: copied from figures/rising_proof/RP0_overview.caption.md by the figure script's 'legends' step -->
+> **Figure RP0. In junction reads the rising arm rises in held-out cancers, but the claim is only partly
+> supported.** Pre-registered as D-77 (config/followup.yaml: msi_rising_proof; commit 5471b27) before any
+> junction-read value was compared by MMR status. The claim: in MMR-deficient tumours, exons after an acceptor T-run
+> of ≥ 20 nt with the sequence-predicted branch point ≥ 36 nt from the AG (the rising arm) are more included than in
+> MMR-proficient tumours of the same cancer, and the rise needs both features. Confirmatory tests use the 30
+> held-out cancers (50 MMR-deficient tumours in 16 of them) and junction reads only (rMATS JC), in PSI units. The
+> eight steps are read in order; each box gives the step's question, a plain answer and a marker: filled = every
+> test of the step supported (predicted sign and Benjamini–Hochberg q < 0.05 within its family), half = some
+> supported, hollow = none resolved. The mechanism box (dashed) is outside the claim's verdict. The verdict box
+> gives the claim's verdict by the pre-registered rule, under which "established" needs all 12 tests of family RP.
+> Every test, with its effect, p and q, is in section 5 of results/MSI_RISING_ARM_PROOF.md and in tests.csv.
 <!-- /legend -->
 
 ## 3. Step by step
@@ -102,29 +98,33 @@ value was compared by MMR status.
 ### Step 1. Do models use the rising arm? (Figure RP1)
 
 **How to read Figure RP1.**
-- **Panel (a).** Shows whether the training cancers' subtype networks push towards MSI when R_up exons
+- **Panel (a).** Places each arm's held-out AUROC (dot) beside the middle 95% of 1,000 sets of
+  matched background exons (grey bar). Such sets carry any tumour-wide shift too. A dot outside the
+  bar beats the matched sets.
+- **Panel (b).** Shows whether the training cancers' subtype networks push towards MSI when R_up exons
   are more included. A bar above the grey band means more inputs push that way than chance allows.
-- **Panels (b) and (c).** Place the arm's held-out AUROC (line) among 1,000 sets of matched
-  background exons (grey). Such sets carry any tumour-wide shift too.
-- **Panel (d).** Asks whether step 54's fitted logistic regression (M4) loses accuracy without its
-  R_up inputs, compared with removing as many inputs at random.
+- **Panel (c).** Asks whether step 54's fitted logistic regression (M4) loses accuracy without its
+  R_up inputs (blue line), compared with removing as many inputs at random (grey).
 
 ![RP1](figures/rising_proof/RP1_models.png)
 
 <!-- legend RP1: copied from figures/rising_proof/RP1_models.caption.md by the figure script's 'legends' step -->
-> **Figure RP1. The rising arm separates MMR-deficient tumours better than matched exon sets, but the fitted model
-> does not need it.** (a) Training cancers (COAD, STAD, UCEC): the subtype MLPs (SE view, D-38) explain each
-> tumour's own class, so the MSI class's SHAP exists for the MSI test tumours. For each R_up or R_down input and
-> cohort, the direction is the Spearman correlation of the input's value with its SHAP over a fold's MSI test
-> tumours, averaged over the folds; bars = share of input × cohort units with a positive direction (higher inclusion
-> pushes towards MSI); grey band = 2.5th–97.5th percentiles of 1,000 permutations of the inputs' rows among each
-> fold's MSI test tumours (A-22); dashed line = 0.5. (b, c) Held-out cancers (7,685 tumours, 50 MMRd): AUROC for
-> MMRd against MMRp of the R_up (b) and R_down (c) arm (the tumour's mean PSI deviation from its cancer's median
-> over the class's exons, as a percentile within the cancer); line = the class; grey = 1,000 sets of background
-> exons matched to the class on baseline band and coverage tertile within each cancer, which carry any tumour-wide
-> shift as well; dotted line = AUROC 0.5. (d) M4, step 54's logistic regression on all repeat exons (fitted in the
-> training cancers; held-out AUROC 0.900), refitted at the same C without its 119 R_up inputs (line) and without 119
-> inputs drawn at random from its other repeat inputs, 200 times (grey; exploratory, A-25).
+> **Figure RP1. Held out, the rising arm separates MMR-deficient tumours better than matched exon sets, but removing
+> it from the fitted model costs no detectable accuracy.** Rising arm = acceptor T-run ≥ 20 nt with the
+> sequence-predicted branch point ≥ 36 nt from the AG; falling arm = acceptor T-run of 10–19 nt. MMRd =
+> MMR-deficient (≥ 10 MC3 homopolymer deletions); MMRp = MMR-proficient. (a) Held-out cancers (7,685 tumours, 50
+> MMRd): AUROC for MMRd against MMRp tumours of each arm's level (a tumour's mean PSI deviation from its cancer's
+> median over the arm's exons, as a percentile within the cancer); dot = the arm; grey bar = middle 95% of 1,000
+> sets of background exons matched to the arm on baseline band and coverage tertile within each cancer, which carry
+> any tumour-wide shift as well; tick = their median; dotted line = 0.5. The falling arm is predicted below 0.5. (b)
+> Training cancers (COAD, STAD, UCEC): the subtype networks (SE view, D-38) explained with SHAP. For each rising- or
+> falling-arm input and cohort, the direction is the Spearman correlation of the input's value with its SHAP over a
+> fold's MSI test tumours, averaged over the folds; bar = share of input × cohort units whose higher inclusion
+> pushes towards MSI; grey band behind each bar = the range expected by chance, the middle 95% (2.5th–97.5th
+> percentiles) of that share over 1,000 permutations of the inputs' rows among each fold's MSI test tumours (A-22);
+> dotted line = 0.5. (c) M4, step 54's logistic regression on all repeat exons (fitted in the training cancers;
+> held-out AUROC 0.900), refitted at the same C without its 119 rising-arm inputs (line) and without 119 inputs
+> drawn at random from its other repeat inputs, 200 times (grey; exploratory, A-25).
 <!-- /legend -->
 
 - **The arm separates MMR status held out, better than matched sets** (RP1 supported). Held-out
@@ -133,14 +133,15 @@ value was compared by MMR status.
 - **The subtype networks lean on it in the predicted direction** (RPD1a supported, training).
   Higher inclusion of an R_up input pushes towards MSI for 36 of 41 input × cohort units. For R_down
   inputs it does so for 108 of 397.
-- **The fitted logistic model does not need it.** Removing M4's 119 R_up inputs changes its held-out
-  AUROC by +0.0001. That lies at the 68.5th percentile of 200 random removals (median −0.0031). M4
-  is equally accurate without the rising arm, so these results do not say that M4 uses it.
+- **No loss was detected when the fitted model dropped it.** Removing M4's 119 R_up inputs changes its
+  held-out AUROC by +0.0001 (paired bootstrap −0.0145 to +0.0146; 68.5th percentile of 200 random
+  removals). These results do not show that M4 uses it.
 
 ### Step 2. Does it rise in junction reads? (Figure RP2)
 
 **How to read Figure RP2.**
-- **Panel (a).** Class means with 95% intervals; the hollow dot is the R_up median.
+- **Panel (a).** Class means with 95% intervals. The dashed line is the smallest effect of interest
+  (0.003).
 - **Panel (b).** Ranks the 92 R_up exons by their own rise. Dark blue marks the ten largest. The grey
   line shows background exons at the same quantiles, so the gap between bars and line is the rise
   above what any exon shows.
@@ -148,17 +149,18 @@ value was compared by MMR status.
 ![RP2](figures/rising_proof/RP2_junction_reads.png)
 
 <!-- legend RP2: copied from figures/rising_proof/RP2_junction_reads.caption.md by the figure script's 'legends' step -->
-> **Figure RP2. Junction reads confirm the rise in held-out cancers, carried by a minority of the exons.** Held-out
-> cancers, junction reads only (rMATS JC). Per exon, delta = the mean adjusted PSI of the MMRd tumours minus the
-> MMRp mean of the same cancer (≥ 5 MMRd tumours measured); a tumour's adjusted PSI is its deviation from the
-> cancer's median, minus its mean deviation over background exons of the same baseline band. (a) Mean delta of each
+> **Figure RP2. The rising arm rises in held-out junction reads, and a few of its exons carry most of the rise.**
+> Held-out cancers. MMRd = MMR-deficient (≥ 10 MC3 homopolymer deletions); MMRp = MMR-proficient; change in
+> inclusion = an exon's mean adjusted PSI in the MMRd tumours minus the MMRp mean of the same cancer, from junction
+> reads only (rMATS JC); a tumour's adjusted PSI is its deviation from the cancer's median minus its mean deviation
+> over background exons of the same baseline band. Exons need ≥ 5 MMRd tumours measured. (a) Mean change of each
 > class with its 95% interval (studentized SE over MMR labels permuted within cancer, Welch–Satterthwaite df; the
-> intervals of R_up and R_down are those of RP2a and RPC2a, the background's is descriptive); hollow = R_up median;
-> dashed = the smallest effect of interest (SESOI, 0.003). Background = the B sample of exons without an acceptor
-> T-run longer than 5 nt (4,756). (b) The 92 R_up exons ranked by delta; dark blue = the 10 largest; grey line = the
-> background exons' deltas at the same quantiles (rank k of 92 against the background's (1 − (k − 0.5) / 92)
-> quantile; 4,756 exons; middle 95% −0.0313 to 0.0302); lines = R_up mean, median and the SESOI; the three largest
-> labelled.
+> rising- and falling-arm intervals are those of the tests, the background's is descriptive). Rising arm = acceptor
+> T-run ≥ 20 nt with the sequence-predicted branch point ≥ 36 nt from the AG; falling arm = acceptor T-run of 10–19
+> nt; background = exons without an acceptor T-run longer than 5 nt (the B sample). (b) The 92 rising-arm exons
+> ranked by their change; dark = the 10 largest, which hold 81% of the summed change; line = background exons'
+> changes at the same quantiles (rank k of 92 against the background's (1 − (k − 0.5) / 92) quantile; 4,756 exons);
+> the three largest labelled with their gene.
 <!-- /legend -->
 
 - **The rising arm rises** (RP2a, primary test, supported): +0.0070 PSI (0.0033 to 0.0107), p =
@@ -199,27 +201,39 @@ In the count model, 78 of 3,035 fits were separated and dropped (A-23).
 ### Step 3. Does it need both features? (Figure RP3)
 
 **How to read Figure RP3.**
-- **Panel (a).** Groups the exons with a long run and an experimentally mapped branch point by the gap
-  between the run and that branch point.
-- **Panel (b).** Removes run length and position, then asks whether a larger gap still means a larger
-  rise.
+- **Panel (a).** Does the rise need the T-run? R_up against background exons whose predicted branch
+  point is also ≥ 36 nt from the AG, without a T-run.
+- **Panel (b).** Is there a step at 36 nt? Long-run exons grouped by the predicted branch point's
+  distance from the AG, with the rule's cut marked. A step would show as a jump in the bin means
+  across the dashed line. Descriptive.
+- **Panel (c).** Does a larger gap between the run and an experimentally mapped branch point go with
+  a larger rise, at fixed run length and position? Held-out cancers on the left, training cancers on
+  the right. Descriptive; the tests are RP3e and RPD3b.
 
 ![RP3](figures/rising_proof/RP3_branch_point.png)
 
 <!-- legend RP3: copied from figures/rising_proof/RP3_branch_point.caption.md by the figure script's 'legends' step -->
-> **Figure RP3. The rise needs the T-run and, in held-out cancers, is rank-associated with the gap to the mapped
-> branch point; the 36-nt cut is not supported.** Held-out cancers, junction reads. The 52 eligible exons with an
-> acceptor T-run of ≥ 20 nt and an experimentally mapped branch point upstream of the run (BPHunter, lifted to
-> GRCh38; 31 of them in the rising arm). For these exons the branch point's distance from the AG is exactly the
-> offset of the run plus its length plus the gap, minus 1, so a cut on that distance mixes run length and position
-> with the gap; the test therefore asks whether delta is rank-associated with the gap at fixed run length and
-> offset. (a) Delta by gap bin (descriptive, the bins chosen after the results): dots = exons, solid line = mean,
-> dotted = median. (b) The same exons: rank of delta against rank of the gap, each with run length and offset
-> (ranks) regressed out; line = least squares.
+> **Figure RP3. The rise needs the T-run, a step at 36 nt is not supported, and the link to the branch-point gap is
+> seen in held-out cancers only.** MMRd = MMR-deficient (≥ 10 MC3 homopolymer deletions); MMRp = MMR-proficient;
+> change in inclusion = an exon's mean adjusted PSI in the MMRd tumours minus the MMRp mean of the same cancer, from
+> junction reads only (rMATS JC); a tumour's adjusted PSI is its deviation from the cancer's median minus its mean
+> deviation over background exons of the same baseline band. (a) Held-out cancers: mean change with its 95% interval
+> for the rising arm (rising arm = acceptor T-run ≥ 20 nt with the sequence-predicted branch point ≥ 36 nt from the
+> AG) and for background exons whose predicted branch point is also ≥ 36 nt from the AG, without a T-run; dashed =
+> the smallest effect of interest. (b) Held-out cancers, exons with an acceptor T-run ≥ 20 nt and a predicted branch
+> point (rising arm right of the dashed line, the rule's 36-nt cut; long runs with a nearer branch point left of
+> it): change by the predicted branch point's distance from the AG, in D-70's exploratory bins (A-16); dots = exons,
+> bars = bin means (≥ 5 exons). Descriptive. (c) Exons with an acceptor T-run ≥ 20 nt and an experimentally mapped
+> branch point upstream of the run (BPHunter, lifted to GRCh38), in the held-out cancers (left; 52 exons, 31 of them
+> in the rising arm) and in the training cancers (right): rank of the change against rank of the gap from the run to
+> the mapped branch point, each with run length and offset (ranks) regressed out; line = least squares. For these
+> exons the branch point's distance from the AG is the offset of the run plus its length plus the gap, minus 1, so a
+> cut on that distance mixes run length and position with the gap. The scatter is descriptive; the tests are listed
+> below.
 <!-- /legend -->
 
-- **It needs the T-run** (RP3a supported). R_up exons rise more than exons with the same distant
-  branch point and no run: +0.0074, p = 0.0005.
+- **It needs the T-run** (RP3a supported). R_up exons rise more than background exons whose predicted
+  branch point is also ≥ 36 nt from the AG, without a T-run: +0.0074, p = 0.0005.
 - **In the held-out cancers it is rank-associated with the gap to the mapped branch point** (RP3e,
   the verdict's branch-point test, supported).
   - At fixed run length and offset, the partial Spearman of delta with the gap is +0.44, p = 0.004,
@@ -232,6 +246,9 @@ In the count model, 78 of 3,035 fits were separated and dropped (A-23).
 - **It does not replicate in the training cancers.** The same test there gives RPD3b +0.07, p = 0.61
   (62 exons, 150 MMRd tumours, not resolved). The gap association rests on the held-out set alone.
 - **The 36-nt cut on distance is not supported.**
+  - Figure RP3b shows no step at 36 nt. Long runs with the predicted branch point 30–35 nt from the
+    AG rise about as much as those at 36–49 nt (bin means +0.0063 and +0.0050). Only the nearest bin,
+    18–29 nt, lies below 0 (−0.0047, 18 exons). Descriptive; values in `RP3_branch_point.csv`.
   - Neither cut at 36 nt is resolved: RP3b, against long runs with a near heuristic branch point
     (+0.0052, p = 0.16), and RP3d, mapped branch point ≥ 36 against < 36 nt (+0.0012, p = 0.85).
   - The pre-specified sensitivity cuts for R_up (no q): ≥ 50 nt +0.0068, p = 0.091; > 60 nt
@@ -245,22 +262,27 @@ In the count model, 78 of 3,035 fits were separated and dropped (A-23).
 ### Step 4. Is it the microsatellite? (Figure RP4)
 
 **How to read Figure RP4.**
-- **Dots.** The mean rise of each control class, which has no acceptor T-run but shares one other
-  feature with R_up.
-- **Right-hand columns.** The pre-registered contrast: R_up minus the control, within matched strata.
+- **Panel (a).** The pre-registered contrast: R_up minus each control, within matched strata. Each
+  control has no acceptor T-run but shares one other feature with R_up. Filled bars are supported,
+  hollow bars not resolved.
+- **Panel (b).** The difference each contrast could have detected with 80% power, against the whole
+  rise of R_up (blue line). A bar past the line means the contrast could not reliably see a
+  difference as large as the rise itself.
 
 ![RP4](figures/rising_proof/RP4_controls.png)
 
 <!-- legend RP4: copied from figures/rising_proof/RP4_controls.caption.md by the figure script's 'legends' step -->
-> **Figure RP4. The rise exceeds long pyrimidine tracts, deep T-runs and Alu acceptors; poly-A and donor-side runs
-> are not resolved.** Held-out cancers, junction reads. Mean delta (dot) of the rising arm and of each control
-> class, with a descriptive 95% interval (RP2a's construction); dashed = SESOI. Controls have no acceptor T-run
-> longer than 7 nt and differ from R_up in one feature: a distant branch point and no run (B sample), a long
-> pyrimidine tract that is not a microsatellite with a distant branch point, an acceptor inside an Alu, a poly-A run
-> (≥ 15 nt) at the acceptor, a T-run of ≥ 20 nt deep in the intron, or after the donor. The tests compare R_up with
-> each control within strata of baseline band × coverage tertile, coarsened until each R_up stratum holds ≥ 3
-> controls (stratum-weighted difference of mean delta; right-hand columns), so they differ from the raw difference
-> of the dots. p = the larger of the exon-label (class) permutation p and the MMR-label permutation p.
+> **Figure RP4. The rise exceeds that of three other long tracts; the poly-A and donor-side contrasts were
+> underpowered.** Held-out cancers, junction reads. Rising arm = acceptor T-run ≥ 20 nt with the sequence-predicted
+> branch point ≥ 36 nt from the AG. Each control has no acceptor T-run longer than 7 nt and shares one other feature
+> with the rising arm: a long pyrimidine tract that is not a microsatellite (with a distant branch point), an
+> acceptor inside an Alu, a poly-A run (≥ 15 nt) at the acceptor, a T-run of ≥ 20 nt deep in the intron, or one
+> after the donor. (a) The pre-registered contrast: the rising arm's change minus the control's, within strata of
+> baseline band × coverage tertile, coarsened until each rising-arm stratum holds ≥ 3 controls; filled = supported,
+> hollow = not resolved. (b) The difference each contrast could detect with 80% power at two-sided 0.05 (2.80 SD of
+> its exon-permutation null, rebuilt with step 62's code and seed; normal approximation; descriptive), against the
+> whole rise of the rising arm (blue line). Light grey bars = the three contrasts that were supported, dark grey =
+> the two that were not resolved (poly-A and donor-side runs); the shade marks the verdict, not the bar's length.
 <!-- /legend -->
 
 - **Supported.** The rise is larger than in:
@@ -284,20 +306,23 @@ In the count model, 78 of 3,035 fits were separated and dropped (A-23).
 ### Step 5. Does it survive confounders? (Figure RP5)
 
 **How to read Figure RP5.**
-- **Rows.** Each row is the same effect estimated with a different set of covariates.
+- **Rows.** Each row is the same effect estimated with a different set of covariates: per exon in
+  panel (a), per tumour in panel (b).
 - **What to look for.** If a covariate explained the rise, the blue dot would move towards 0.
 
 ![RP5](figures/rising_proof/RP5_confounders.png)
 
 <!-- legend RP5: copied from figures/rising_proof/RP5_confounders.caption.md by the figure script's 'legends' step -->
-> **Figure RP5. Exon and tumour covariates leave the rise unchanged.** Held-out cancers, junction reads. Exon level:
-> OLS of delta on an R_up indicator against the B sample of background exons (92 R_up + 4,756 exons), with exon
-> covariates; the core splice-site score (−3..+3) is blind to the tract, while the full −20..+3 score and the
-> acceptor-Alu flag measure the tract itself and enter only a sensitivity model. Tumour level: OLS of each held-out
-> tumour's R_up arm on MMR status with cancer indicators and the tumour's global inclusion axis, stroma, immune
-> infiltrate, retained-intron level and purity. Blue = the pre-registered models; dark grey = no covariates (the
-> difference of the two class means at exon level; RP2b at tumour level); light grey = sensitivity models. No
-> intervals were computed for these coefficients; p is shown instead.
+> **Figure RP5. The rise remains after exon and tumour covariates.** Held-out cancers, junction reads. MMRd =
+> MMR-deficient (≥ 10 MC3 homopolymer deletions); MMRp = MMR-proficient. (a) OLS of each exon's change in inclusion
+> on a rising-arm indicator against the B sample of background exons (92 rising-arm + 4,756 exons). The
+> pre-registered model adds eight exon covariates: baseline, length, coverage, host-gene change, poison status, the
+> core splice-site score (−3..+3, blind to the tract), GC and Alu exon. The full −20..+3 score and the acceptor-Alu
+> flag measure the tract itself and enter only a sensitivity model. (b) OLS of each held-out tumour's rising-arm
+> level on MMR status with cancer indicators. The pre-registered model adds the tumour's global inclusion axis,
+> stroma, immune infiltrate, retained-intron level and purity. Blue = the pre-registered models; dark grey = no
+> covariates; light grey = sensitivity models. No intervals were computed for these coefficients; their p values are
+> below.
 <!-- /legend -->
 
 - **Exon level** (RP5a supported): the R_up coefficient is +0.0084 (p = 0.004). The covariates are
@@ -313,21 +338,24 @@ In the count model, 78 of 3,035 fits were separated and dropped (A-23).
 **How to read Figure RP6.**
 - **Panel (a).** Compares MMRd tumours with tumours that are hypermutated without MMR deficiency,
   each scored within its own cancer.
-- **Panel (b).** Ranks the MSI effect among the same effect for 57 other subtype contrasts.
+- **Panel (b).** Ranks the MSI shift (blue) among the same shift for 57 other subtype contrasts.
+  The contrasts at or above MSI are named.
 
 ![RP6](figures/rising_proof/RP6_specificity.png)
 
 <!-- legend RP6: copied from figures/rising_proof/RP6_specificity.caption.md by the figure script's 'legends' step -->
-> **Figure RP6. The arm separates mismatch repair from mutation load, but leiomyosarcoma contrasts move it as
-> much.** Held-out cancers, junction reads. (a) Each tumour's R_up arm (mean adjusted PSI over its R_up exons) as a
-> z within its cancer against the cancer's non-hypermutated MMRp tumours: MMRd (50), hypermutated MMRp (408;
-> hypermutated without MMR deficiency) and the other MMRp tumours (7,227); boxes = quartiles, whiskers = 5th–95th
-> percentiles, dots = tumours (other MMRp not drawn). (b) The MSI statistic s (D-70's RV1 in junction reads: 20
-> held-out MMRd tumours, each with a random MMRp tumour of its cancer; mean over R_up exons of the difference in
-> mean adjusted PSI; mean over 50 draws) against the same statistic for each of the 57 non-MSI subtype contrasts of
-> the subtype task (two classes of one cohort with ≥ 20 tumours each, MSI, POLE and MMRd tumours removed; 20 tumours
-> drawn from each class, 50 draws); contrasts at or above MSI's |s| are labelled. The null contrasts are not matched
-> by cancer, while the MSI draws pair tumours within cancer.
+> **Figure RP6. The rise marks mismatch repair rather than mutation load, but four other subtype contrasts (three in
+> sarcoma) move it more than MSI.** Held-out cancers, junction reads. MMRd = MMR-deficient (≥ 10 MC3 homopolymer
+> deletions); MMRp = MMR-proficient; hypermutated MMRp = ≥ 500 single-nucleotide variants without MMR deficiency.
+> (a) Each tumour's rising-arm level (mean adjusted PSI over its rising-arm exons; rising arm = acceptor T-run ≥ 20
+> nt with the sequence-predicted branch point ≥ 36 nt from the AG) as a z within its cancer against the cancer's
+> non-hypermutated MMRp tumours; boxes = quartiles, line = median, whiskers = 5th–95th percentiles, dots = tumours
+> (not drawn for the other MMRp tumours). (b) The shift of the rising-arm exons between two classes (D-70's RV1 in
+> junction reads: 20 tumours drawn from each class, mean over rising-arm exons of the difference in mean adjusted
+> PSI, mean over 50 draws), for MSI (20 held-out MMRd tumours, each with a random MMRp tumour of its cancer) and for
+> each of the 57 non-MSI subtype contrasts of the subtype task (two classes of one cohort with ≥ 20 tumours each,
+> MSI, POLE and MMRd tumours removed), ranked; blue = MSI, grey = the 57 other contrasts, dark grey and labelled =
+> those above MSI. The null contrasts are not matched by cancer, while the MSI draws pair tumours within cancer.
 <!-- /legend -->
 
 - **Mismatch repair, not mutation load** (RP6a supported).
@@ -336,7 +364,7 @@ In the count model, 78 of 3,035 fits were separated and dropped (A-23).
   - With MANTIS MSI-H as the label the arm still rises (RP6b +0.015, p = 0.003); with MSIsensor,
     +0.013.
 - **Not unique to MSI** (RP6c not resolved, p = 0.086). Four of the 57 non-MSI contrasts move the
-  arm at least as much as MSI does (s = 0.0087):
+  arm more than MSI does (s = 0.0087):
   - SARC leiomyosarcoma against undifferentiated pleomorphic sarcoma (0.0149);
   - SARC leiomyosarcoma against myxofibrosarcoma (0.0140);
   - SARC dedifferentiated liposarcoma against leiomyosarcoma (−0.0106);
@@ -344,23 +372,31 @@ In the count model, 78 of 3,035 fits were separated and dropped (A-23).
 
   The first three all involve leiomyosarcoma (smooth muscle), which D-70's RV1 had flagged. The fourth is an
   admixture class. The null contrasts are not matched by cancer, while the MSI draws pair tumours
-  within cancer. So the arm moves with smooth-muscle lineage or composition about as much as with
+  within cancer. So the arm moves with smooth-muscle lineage or composition at least as much as with
   MMR deficiency. Its link to mismatch repair rests on RP6a, not on uniqueness.
 
 ### Step 7. Within the same patient? (Figure RP7)
 
 **How to read Figure RP7.**
-- **Dots.** Each dot is one tumour minus its own normal tissue. Blue marks MMRd patients.
-- **Lines.** Means where a group has at least 5 pairs.
+- **Lines.** Each line joins a patient's own normal tissue (orange) to the tumour (blue). Panel (a)
+  holds the 12 MMRd patients, dashed where the cancer is held out; panel (b) the 200 MMRp patients of
+  the same cancers.
+- **Black line.** The mean of the panel. A rise from normal to tumour in (a) but not in (b) is the
+  within-patient rise.
 
 ![RP7](figures/rising_proof/RP7_within_patient.png)
 
 <!-- legend RP7: copied from figures/rising_proof/RP7_within_patient.caption.md by the figure script's 'legends' step -->
-> **Figure RP7. MMR-deficient tumours rise above their own normal tissue, mostly in training cancers.** The
-> tumour–normal pairs of the cancers with at least one MMRd pair. Pair arm = the tumour's mean PSI deviation over
-> its R_up exons minus that of its own normal tissue (the same exons, the same adjustment for each sample's
-> inclusion level). Dots = pairs; lines = means where a group has ≥ 5 pairs. 12 MMRd and 200 MMRp pairs; 10 of the
-> MMRd pairs are in training cancers (COAD 6, STAD 3, UCEC 1), so this test is not held out (family RPP).
+> **Figure RP7. MMR-deficient tumours rise above their own normal tissue, mostly in training cancers.**
+> Tumour–normal pairs (the tumour and a Solid Tissue Normal file of the same patient) of the cancers with at least
+> one MMR-deficient pair: BRCA, COAD, PRAD, STAD, UCEC. MMRd = MMR-deficient (≥ 10 MC3 homopolymer deletions); MMRp
+> = MMR-proficient. Each line joins a patient's own normal tissue to the tumour: the rising-arm level (rising arm =
+> acceptor T-run ≥ 20 nt with the sequence-predicted branch point ≥ 36 nt from the AG) of each sample, its mean PSI
+> deviation from the cancer's median over the rising-arm exons measured in both samples, minus its mean deviation
+> over background exons of the same baseline band. The tumour minus the normal is the pair arm that the test uses.
+> (a) The 12 MMR-deficient patients; 10 are in training cancers (COAD 6, STAD 3, UCEC 1), so the test is not held
+> out (family RPP). (b) The 200 MMR-proficient patients of the same cancers. Orange = own normal tissue, blue =
+> tumour; black line = mean.
 <!-- /legend -->
 
 - **MMRd tumours rise above their own normal tissue more than MMRp tumours do** (RP7 supported):
@@ -373,39 +409,54 @@ In the count model, 78 of 3,035 fits were separated and dropped (A-23).
 ### Step 8. Does it follow dose? (Figure RP8)
 
 **How to read Figure RP8.**
-- **Panel (a).** Would show a slope if tumours with more instability had more rise.
-- **Panel (b).** Would show one if longer runs rose more.
+- **Panel (a).** Would show a slope if tumours with a higher instability score had more rise.
+- **Panel (b).** Would show one if tumours with more homopolymer deletions had more rise.
+- **Panel (c).** Would show one if longer runs rose more.
 
 ![RP8](figures/rising_proof/RP8_dose.png)
 
 <!-- legend RP8: copied from figures/rising_proof/RP8_dose.caption.md by the figure script's 'legends' step -->
-> **Figure RP8. The rise does not follow dose.** (a) The held-out MMRd tumours (50): R_up arm against the MANTIS
-> score (the exome instability score). (b) The R_up exons: delta against acceptor T-run length (20–40 nt; jittered).
-> Both tests ask for a graded relation, which D-70's percentile read-out had not found (RV6).
+> **Figure RP8. A dose relation is not shown.** MMRd = MMR-deficient (≥ 10 MC3 homopolymer deletions); MMRp =
+> MMR-proficient; rising arm = acceptor T-run ≥ 20 nt with the sequence-predicted branch point ≥ 36 nt from the AG.
+> A tumour's rising-arm level = its mean adjusted PSI deviation from its cancer's median over the rising-arm exons.
+> (a) The 50 held-out MMRd tumours: rising-arm level against the MANTIS score, the exome instability score. (b) All
+> 200 MMRd tumours, training cancers included: rising-arm level against the number of MC3 homopolymer deletions (log
+> scale). (c) The rising-arm exons: change in inclusion against acceptor T-run length (20–40 nt; jittered). The
+> tests ask for a graded relation, which D-70's percentile read-out had not found (RV6); the first two are partial
+> Spearman correlations given cancer.
 <!-- /legend -->
 
-- **No dose relation.** None of the three dose tests is resolved:
+- **A dose relation is not shown.** None of the three dose tests is resolved:
   - MANTIS score among held-out MMRd tumours (RP8a, +0.23, p = 0.22);
   - deletion count among all 200 MMRd tumours (RP8b, +0.11, p = 0.13);
   - run length across R_up exons (RP8c, +0.05, p = 0.68).
-- **The falling arm shows no dose either** (RPC8, −0.30, p = 0.060).
+- **Nor is one shown for the falling arm** (RPC8, −0.30, p = 0.060).
 
 ### Mechanism (Figure RPM, outside the verdict)
 
 **How to read Figure RPM.** The two readings make different predictions:
-- **Branch-point geometry** predicts no rise for a T-run upstream of the branch point (shield exons).
-- **hnRNP C competition** predicts a rise there too, and more in runs inside an antisense Alu.
+- **Branch-point geometry** (panel a) predicts no rise for a T-run upstream of the branch point
+  (shield exons), and a larger rise in R_up.
+- **hnRNP C competition** predicts a rise for shield exons too, and more in runs inside an antisense
+  Alu (panel b).
 
 ![RPM](figures/rising_proof/RPM_mechanism.png)
 
 <!-- legend RPM: copied from figures/rising_proof/RPM_mechanism.caption.md by the figure script's 'legends' step -->
-> **Figure RPM. The mechanism tests are not resolved.** Held-out cancers, junction reads; outside the claim's
-> verdict (family RPM). Mean delta with a descriptive 95% interval; dashed = SESOI. Shield exons have no acceptor
-> T-run but a T-run of ≥ 20 nt upstream of their branch point: shortening it cannot bring the branch point closer to
-> the AG, so the geometry reading predicts no rise there and a rise in R_up above it (RPM1), while the hnRNP C
-> reading (hnRNP C binds long U-runs and represses Alu-derived exons) predicts that shield exons rise too (RPM2) and
-> that runs inside an antisense Alu rise more (RPM3). Long runs = eligible runs of ≥ 20 nt (R_up, near or no branch
-> point), compared within strata and run-length bins.
+> **Figure RPM. The data do not separate branch-point geometry from hnRNP C.** Held-out cancers, junction reads;
+> outside the claim's verdict (family RPM). Change in inclusion = an exon's mean adjusted PSI in the MMRd tumours
+> minus the MMRp mean of the same cancer, from junction reads only (rMATS JC); a tumour's adjusted PSI is its
+> deviation from the cancer's median minus its mean deviation over background exons of the same baseline band. Mean
+> change with a descriptive 95% interval; dashed = the smallest effect of interest. (a) Rising arm = acceptor T-run
+> ≥ 20 nt with the sequence-predicted branch point ≥ 36 nt from the AG; T-run upstream of the branch point = exons
+> without an acceptor T-run of ≥ 10 nt whose intron holds a T-run of ≥ 20 nt upstream of the branch point (shield
+> exons). Shortening that run cannot bring the branch point closer to the AG, so the geometry reading predicts no
+> rise there and a larger rise in the rising arm. (b) Eligible runs of ≥ 20 nt (rising arm, or with a near or no
+> branch point) inside an antisense Alu and outside one. hnRNP C binds long U-runs and represses Alu-derived exons,
+> so the hnRNP C reading predicts that shield exons rise too and that runs inside an antisense Alu rise more.
+> Numbers = exons measured. The tests compare classes within strata of baseline band × coverage tertile (and
+> run-length bins for (b)), keeping the exons that have a partner there (92 against 64 exons, 45 effective controls
+> for (a); 131 against 42 exons, 19 effective controls for (b)), so they differ from the raw difference of the dots.
 <!-- /legend -->
 
 - **Not resolved.** None of the three tests is resolved: R_up minus shield (RPM1, +0.0073, p = 0.11),
@@ -421,7 +472,8 @@ In the count model, 78 of 3,035 fits were separated and dropped (A-23).
 - **A held-out rise in exons with a long acceptor T-run.** In MMRd tumours, these exons are more
   included than in proficient tumours of the same cancer, in held-out cancers (50 MMRd tumours in 16
   of the 30) not used to define the rule.
-- **It needs the T-run.** It is absent in exons with the same distant branch point and no run.
+- **It needs the T-run.** Background exons whose predicted branch point is also ≥ 36 nt but which
+  have no T-run do not move (−0.0001, 95% −0.0009 to +0.0006; RP3a +0.0074).
 - **A rank association with the gap** between the run and an experimentally mapped branch point, at
   fixed run length and offset (partial Spearman 0.44). It does not replicate in the training cancers
   (RPD3b +0.07, p = 0.61) and rests on the held-out set alone.
@@ -430,12 +482,13 @@ In the count model, 78 of 3,035 fits were separated and dropped (A-23).
 - **It is present within patients**, mostly in training cancers.
 
 **Not shown:**
-- **Uniqueness to MSI.** Four of 57 subtype contrasts, three of them in leiomyosarcoma, move the arm as
-  much.
+- **Uniqueness to MSI.** Four of 57 subtype contrasts, three of them in leiomyosarcoma, move the arm
+  more than MSI does.
 - **Beating poly-A and donor-side runs.** These are not resolved and underpowered; the question is
   open.
 - **A dose relation.**
-- **The mechanism.** It leans towards geometry but is formally open.
+- **The mechanism.** Open; the held-out gap association fits geometry but did not replicate in
+  training.
 - **The 36-nt cut on distance.** It is not supported (RP3b, RP3d not resolved).
 - **Locus-level causation.** No tract is observed shortening in the tumour's DNA. That needs the D-56
   exome-slice pilot.
@@ -445,8 +498,10 @@ In the count model, 78 of 3,035 fits were separated and dropped (A-23).
   moves by +0.0019, and without the ten largest the mean is +0.0015. RP2a's interval clearing the
   SESOI describes the mean. RP2c (a 7.6-point excess of rising exons over matched ones) and the
   median should be quoted beside it.
-- **The fitted logistic model does not need the rising arm.** Removing it leaves M4's AUROC
-  unchanged. The arm carries information on its own (RP1), but M4's accuracy does not depend on it.
+- **No loss was detected when the fitted model dropped it.** Removing M4's 119 R_up inputs changes its
+  held-out AUROC by +0.0001 (paired bootstrap −0.0145 to +0.0146; 68.5th percentile of 200 random
+  removals). These results do not show that M4 uses it. The arm carries information on its own
+  (RP1).
 - **The instrument check failed, narrowly.**
   - It draws 92 falling-arm exons at a time to the rising arm's coverage and mirrored baseline. Its
     median statistic was −1.92 against a critical value of −2.00, with 47.6% of draws below
@@ -509,59 +564,56 @@ In the count model, 78 of 3,035 fits were separated and dropped (A-23).
 - `python scripts/63_rising_proof_figures.py`. It redraws the figures from the committed tables and
   local caches, and stops unless every redrawn statistic equals the committed one.
 
-**All 40 tests** (`tests.csv`). p is the raw p (the larger of the exon and the label permutation p
-where both exist). q is Benjamini–Hochberg within the family. Estimates are in PSI except for
-correlations (RP3c, RP3e, RP8a–c, RPC8, RPD3b), AUROC or share differences (RP1, RPC1, RP2c, RP6a,
-RPC6, RPD1a, RPD1b) and the count model.
+**All 40 tests** (`tests.csv`), by step. p is the raw p (the larger of the exon and the label
+permutation p where both exist). q is Benjamini–Hochberg within the family, named in brackets after
+the test id. Effects are in PSI except for correlations (RP3c, RP3e, RPD3b, RP8a–c, RPC8), AUROC or
+share differences (RP1, RPC1, RPD1a, RPD1b, RP2c, RP6a, RPC6), and the four class means, which carry
+their 95% interval. The table is written from `tests.csv` by `scripts/63`'s `legends` step.
 
-| Test | Family | Claim | Estimate | p | q | Verdict |
+<!-- tests-table: written by scripts/63's 'legends' step from tests.csv -->
+| Step | Test | In plain words | Effect | p | q | Verdict |
 |---|---|---|---|---|---|---|
-| RP2a | RP | mean delta over eligible R_up exons (JC, PSI) | +0.0070 | 1.0e-3 | 0.002 | supported |
-| RP3a | RP | R_up minus B_far, stratum-weighted mean delta | +0.0074 | 5.0e-4 | 0.001 | supported |
-| RP3e | RP | partial Spearman of delta with g_exp given L and o | +0.438 | 0.004 | 0.006 | supported |
-| RP4a | RP | R_up minus polyA (≥ 15 nt) | +0.0042 | 0.25 | 0.25 | not resolved |
-| RP4b | RP | R_up minus ppt_far | +0.0089 | 5.0e-4 | 0.001 | supported |
-| RP4c | RP | R_up minus deep | +0.0081 | 0.008 | 0.010 | supported |
-| RP4d | RP | R_up minus donor | +0.0047 | 0.088 | 0.096 | not resolved |
-| RP4e | RP | R_up minus alu | +0.0066 | 5.0e-4 | 0.001 | supported |
-| RP5a | RP | OLS coefficient of R_up on delta, exon covariates (vs B sample) | +0.0084 | 0.004 | 0.006 | supported |
-| RP5b | RP | OLS coefficient of MMRd on the R_up arm, tumour covariates | +0.0082 | 1.0e-4 | 6.0e-4 | supported |
-| RP6a | RP | AUROC of the R_up arm z, MMRd vs hypermutated MMRp, minus 0.5 | +0.221 | 3.2e-7 | 3.8e-6 | supported |
-| RP6c | RP | MMRd contrast s (JC adj) against 57 subtype contrasts | +0.0087 | 0.086 | 0.096 | not resolved |
-| RP1 | RPS | R_up dev-arm AUROC minus the median of 1,000 matched B sets | +0.213 | 1.0e-3 | 0.002 | supported |
-| RP2b | RPS | R_up arm_contrast | +0.0084 | 5.0e-4 | 0.002 | supported |
-| RP2c | RPS | share of R_up exons rising minus the share of matched B-sample exons | +0.0761 | 7.0e-4 | 0.002 | supported |
-| RP3b | RPS | R_up minus near_bp | +0.0052 | 0.16 | 0.24 | not resolved |
-| RP3c | RPS | partial Spearman of delta with g given L and o (heuristic branch point) | +0.333 | 5.0e-4 | 0.002 | supported |
-| RP3d | RPS | experimental branch point d_exp ≥ 36 minus < 36 | +0.0012 | 0.85 | 0.85 | not resolved |
-| RP6b | RPS | R_up arm_contrast, MANTIS MSI-H vs MSS | +0.0151 | 0.003 | 0.006 | supported |
-| RP8a | RPS | partial Spearman of the R_up arm with MANTIS given cancer, MMRd | +0.229 | 0.22 | 0.28 | not resolved |
-| RP8c | RPS | Spearman of delta with run length over R_up | +0.0477 | 0.68 | 0.76 | not resolved |
-| RP7 | RPP | tumour-normal pair arm, MMRd minus MMRp pairs | +0.0194 | 1.0e-4 | 2.0e-4 | supported |
-| RP8b | RPP | partial Spearman of the R_up arm with log(1 + deletions) given cancer, MMRd | +0.114 | 0.13 | 0.13 | not resolved |
-| RPC1 | RPC | R_down dev-arm AUROC minus the median of 1,000 matched B sets | −0.155 | 1.0e-3 | 0.003 | supported |
-| RPC2a | RPC | mean delta over eligible R_down exons | −0.0030 | 0.002 | 0.004 | supported |
-| RPC2b | RPC | R_down arm_contrast | −0.0030 | 0.001 | 0.003 | supported |
-| RPC5a | RPC | OLS coefficient of R_down on delta, exon covariates (vs B sample) | −0.0022 | 0.034 | 0.039 | supported |
-| RPC5b | RPC | OLS coefficient of MMRd on the R_down arm, tumour covariates | −0.0033 | 2.0e-4 | 8.0e-4 | supported |
-| RPC6 | RPC | AUROC of the R_down arm z, MMRd vs hypermutated MMRp, minus 0.5 | −0.183 | 2.3e-5 | 1.8e-4 | supported |
-| RPC7 | RPC | tumour-normal pair arm (R_down), MMRd minus MMRp pairs | −0.0045 | 0.007 | 0.010 | supported |
-| RPC8 | RPC | partial Spearman of the R_down arm with MANTIS given cancer, MMRd | −0.303 | 0.060 | 0.060 | not resolved |
-| RPD1a | RPD | share of R_up SHAP directions > 0, minus 0.5 | +0.378 | 1.0e-3 | 0.001 | supported |
-| RPD1b | RPD | share of R_down SHAP directions > 0, minus 0.5 | −0.228 | 1.0e-3 | 0.001 | supported |
-| RPD2a | RPD | training: mean delta over R_up exons | +0.0111 | 5.0e-4 | 1.0e-3 | supported |
-| RPD2b | RPD | training: mean delta over R_down exons | −0.0091 | 5.0e-4 | 1.0e-3 | supported |
-| RPD3a | RPD | training: R_up minus B_far | +0.0108 | 5.0e-4 | 1.0e-3 | supported |
-| RPD3b | RPD | training: partial Spearman of delta with g_exp given L and o | +0.0702 | 0.61 | 0.61 | not resolved |
-| RPM1 | RPM | R_up minus shield | +0.0073 | 0.11 | 0.33 | not resolved |
-| RPM2 | RPM | mean delta over shield exons | −0.0017 | 0.31 | 0.41 | not resolved |
-| RPM3 | RPM | runs ≥ 20 in an antisense Alu minus not | −0.0030 | 0.41 | 0.41 | not resolved |
-
-Names in the table: B_far, background exons with a branch point ≥ 36 nt and no acceptor T-run;
-near_bp, long runs with a near heuristic branch point; ppt_far, long pyrimidine tracts that are not
-microsatellites; deep and donor, T-runs deep in the intron or after the donor; alu, Alu acceptors
-without a T-run; shield, a T-run upstream of the branch point; g_exp, the gap from the run to the
-mapped branch point; L and o, the run's length and offset from the AG.
+| 1 | RP1 (RPS) | Held out, the rising arm separates MMRd tumours better than matched exon sets (AUROC minus their median) | +0.213 | 1.0e-3 | 0.002 | supported |
+| 1 | RPC1 (RPC) | The same for the falling arm (predicted below) | −0.155 | 1.0e-3 | 0.003 | supported |
+| 1 | RPD1a (RPD) | Training: the subtype networks push towards MSI when rising-arm inputs rise (share minus 0.5) | +0.378 | 1.0e-3 | 0.001 | supported |
+| 1 | RPD1b (RPD) | The same for falling-arm inputs (predicted below) | −0.228 | 1.0e-3 | 0.001 | supported |
+| 2 | RP2a (RP) | Mean change of the rising-arm exons (primary test) | +0.0070 (0.0033 to 0.0107) | 1.0e-3 | 0.002 | supported |
+| 2 | RPC2a (RPC) | Mean change of the falling-arm exons | −0.0030 (−0.0047 to −0.0013) | 0.002 | 0.004 | supported |
+| 2 | RP2b (RPS) | Per tumour: rising-arm level, MMRd minus MMRp | +0.0084 | 5.0e-4 | 0.002 | supported |
+| 2 | RPC2b (RPC) | Per tumour: falling-arm level, MMRd minus MMRp | −0.0030 | 0.001 | 0.003 | supported |
+| 2 | RP2c (RPS) | Share of rising-arm exons that rise, minus that of matched background exons | +0.076 | 7.0e-4 | 0.002 | supported |
+| 2 | RPD2a (RPD) | Training: mean change of the rising-arm exons | +0.0111 (0.0088 to 0.0134) | 5.0e-4 | 1.0e-3 | supported |
+| 2 | RPD2b (RPD) | Training: mean change of the falling-arm exons | −0.0091 (−0.0104 to −0.0077) | 5.0e-4 | 1.0e-3 | supported |
+| 3 | RP3a (RP) | Rising arm minus exons with a distant branch point and no T-run | +0.0074 | 5.0e-4 | 0.001 | supported |
+| 3 | RPD3a (RPD) | Training: the same | +0.0108 | 5.0e-4 | 1.0e-3 | supported |
+| 3 | RP3b (RPS) | Rising arm minus long runs with a near predicted branch point (the 36-nt cut) | +0.0052 | 0.16 | 0.24 | not resolved |
+| 3 | RP3d (RPS) | Mapped branch point ≥ 36 nt minus < 36 nt | +0.0012 | 0.85 | 0.85 | not resolved |
+| 3 | RP3c (RPS) | Change against the gap to the predicted branch point, at fixed run length and offset (ranks) | +0.333 | 5.0e-4 | 0.002 | supported |
+| 3 | RP3e (RP) | Change against the gap to the mapped branch point, at fixed run length and offset (ranks) | +0.438 | 0.004 | 0.006 | supported |
+| 3 | RPD3b (RPD) | Training: the same as RP3e | +0.070 | 0.61 | 0.61 | not resolved |
+| 4 | RP4b (RP) | Rising arm minus long pyrimidine tracts | +0.0089 | 5.0e-4 | 0.001 | supported |
+| 4 | RP4e (RP) | Rising arm minus Alu acceptors without a T-run | +0.0066 | 5.0e-4 | 0.001 | supported |
+| 4 | RP4c (RP) | Rising arm minus T-runs deep in the intron | +0.0081 | 0.008 | 0.010 | supported |
+| 4 | RP4a (RP) | Rising arm minus poly-A runs at the acceptor | +0.0042 | 0.25 | 0.25 | not resolved |
+| 4 | RP4d (RP) | Rising arm minus T-runs after the donor | +0.0047 | 0.088 | 0.096 | not resolved |
+| 5 | RP5a (RP) | Rising-arm coefficient with eight exon covariates | +0.0084 | 0.004 | 0.006 | supported |
+| 5 | RPC5a (RPC) | Falling-arm coefficient, the same model | −0.0022 | 0.034 | 0.039 | supported |
+| 5 | RP5b (RP) | MMRd coefficient on the rising-arm level, five tumour covariates | +0.0082 | 1.0e-4 | 6.0e-4 | supported |
+| 5 | RPC5b (RPC) | The same on the falling-arm level | −0.0033 | 2.0e-4 | 8.0e-4 | supported |
+| 6 | RP6a (RP) | Rising-arm level, MMRd against hypermutated MMRp (AUROC minus 0.5) | +0.221 | 3.2e-7 | 3.8e-6 | supported |
+| 6 | RPC6 (RPC) | The same for the falling arm | −0.183 | 2.3e-5 | 1.8e-4 | supported |
+| 6 | RP6b (RPS) | Rising-arm level, MANTIS MSI-high against stable | +0.0151 | 0.003 | 0.006 | supported |
+| 6 | RP6c (RP) | MSI shift ranked against 57 other subtype contrasts | +0.0087 | 0.086 | 0.096 | not resolved |
+| 7 | RP7 (RPP) | Tumour minus own normal tissue, MMRd minus MMRp pairs (rising arm; not held out) | +0.0194 | 1.0e-4 | 2.0e-4 | supported |
+| 7 | RPC7 (RPC) | The same for the falling arm | −0.0045 | 0.007 | 0.010 | supported |
+| 8 | RP8a (RPS) | Rising-arm level against MANTIS score, held-out MMRd (partial ρ) | +0.229 | 0.22 | 0.28 | not resolved |
+| 8 | RPC8 (RPC) | Falling-arm level against MANTIS score | −0.303 | 0.060 | 0.060 | not resolved |
+| 8 | RP8b (RPP) | Rising-arm level against deletion count, all MMRd (partial ρ) | +0.114 | 0.13 | 0.13 | not resolved |
+| 8 | RP8c (RPS) | Change against run length over the rising arm (ρ) | +0.048 | 0.68 | 0.76 | not resolved |
+| M | RPM1 (RPM) | Rising arm minus T-runs upstream of the branch point | +0.0073 | 0.11 | 0.33 | not resolved |
+| M | RPM2 (RPM) | T-runs upstream of the branch point, against 0 | −0.0017 | 0.31 | 0.41 | not resolved |
+| M | RPM3 (RPM) | Runs in an antisense Alu minus other long runs | −0.0030 | 0.41 | 0.41 | not resolved |
+<!-- /tests-table -->
 
 ## 6. References
 

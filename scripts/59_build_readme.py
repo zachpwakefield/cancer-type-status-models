@@ -28,7 +28,7 @@ from _common import log
 
 REPO = Path(__file__).resolve().parents[1]
 TEMPLATE = REPO / "docs" / "readme" / "README.template.md"
-FIG_DIRS = ["overview", "cancer_type", "tumour_status", "subtype", "manuscript", "across_tasks"]
+FIG_DIRS = ["overview", "cancer_type", "tumour_status", "subtype", "rising_proof", "manuscript", "across_tasks"]
 BLOCK = re.compile(r"^::: (figure|sfigure) (\S+)\n(.*?)\n:::$", re.S | re.M)
 MAX_W, PX_PER_IN = 900, 125
 

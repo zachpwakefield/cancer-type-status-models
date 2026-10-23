@@ -1,10 +1,11 @@
 # Mismatch-repair deficiency moves splicing by a two-arm code written in acceptor poly-T tracts
 
-*Working draft, 13 October 2026. Every analysis is in this repository (`scripts/42`–`57`, `60`). Each was
-pre-specified in [`config/followup.yaml`](../config/followup.yaml) before it was computed, with
-decisions D-52 to D-75 and amendments A-9 to A-20 in
-[`docs/SUBTYPE_METHODS.md`](../docs/SUBTYPE_METHODS.md). Figure files carry fuller legends with
-every test; this text gives the journal version.*
+*Working draft, 23 October 2026. Every analysis is in this repository (`scripts/42`–`57`, `60`,
+`62`–`63`). Each was pre-specified in [`config/followup.yaml`](../config/followup.yaml) before it
+was computed, with decisions D-52 to D-75 and D-77 and amendments A-9 to A-20 and A-22 to A-25 in
+[`docs/SUBTYPE_METHODS.md`](../docs/SUBTYPE_METHODS.md). The step-wise test of the rising arm (D-77)
+is written up in full in [`results/MSI_RISING_ARM_PROOF.md`](../results/MSI_RISING_ARM_PROOF.md).
+Figure files carry fuller legends with every test; this text gives the journal version.*
 
 ---
 
@@ -26,12 +27,16 @@ cancers never used to build the rule.
   poly-T run of 10 nt or more at the acceptor: 40 and 34 of their top 50 exons, against about 5%
   of all exons.
 - **Two directions.** Runs of 10–19 nt were skipped in MSI tumours. Runs of 20 nt or more were
-  *included more* when the sequence-predicted branch point lay far from the 3′ splice site.
+  *included more*, most clearly where the sequence-predicted branch point lay far from the 3′ splice
+  site. We defined the rising class with a branch-point cut at 36 nt; a later test did not support
+  that cut as a threshold.
 - **The code travels.** A score built from this two-arm rule, with no refitting, found
   MMR-deficient tumours in 30 cancers it had never seen (AUROC 0.83; 0.85 against hypermutated
   tumours whose repair is intact). It was not explained by immune infiltration. It separated
   MSI-high tumours called by two independent exome callers (AUROC 0.97 and 0.89).
-- **Many small shifts.** The typical repeat exon moved by 0.02–0.03 in PSI. About one in six
+- **Many small shifts.** Among exons with a proficient median PSI of 0.1–0.9, the typical
+  falling-arm exon moved by 0.02–0.03 in PSI in colon and stomach cancer. Over all exons the median
+  shift was 0, because most exons sit at PSI 0 or 1. About one in six
   alternatively spliced R_down exons fell by 0.10 or more in colon and stomach cancer, against 4%
   of exons without a repeat, so each MMR-deficient tumour carried a few dozen such changes. The
   shift did not scale with tumour purity.
@@ -40,18 +45,23 @@ cancers never used to build the rule.
   almost exactly as the exome MSI callers did (AUROC 0.998–1.000 against their consensus), from
   RNA alone. An expression model trained the same way came close (0.89) but agreed less well with
   the callers, and the two together reached 0.93.
-- **The rising arm is real; its cause is open.** The rise of long-tract exons held out of sample.
-  It was independent of each tumour's overall inclusion level, required the tract, and was absent
-  from hypermutated MMR-proficient tumours. Long-run exons fell when the branch point lay within
-  30 nt of the AG and rose beyond it (exploratory). But the rise did not follow a branch-point-free
-  measure of geometry, did not require the run to lie between branch point and AG, and did not
-  scale with deletion load. Relief of PTB repression was excluded.
+- **The rising arm holds in junction reads; its cause is open.** The rise of long-tract exons held
+  out of sample. It was independent of each tumour's overall inclusion level, required the tract,
+  and was not seen in hypermutated MMR-proficient tumours. A step-wise test in junction reads gave
+  the pre-registered verdict "partial", with 9 of 12 required tests supported. In the held-out
+  cancers, rising-arm exons rose by 0.0070 PSI (95% CI 0.0033–0.0107). The ten largest of 92 exons
+  carried 81% of the summed rise, and the median exon moved by 0.0019. The rise was rank-associated
+  with the gap to an experimentally mapped branch point (partial ρ = 0.44); in the training cancers
+  it did not replicate (not resolved), and the 36-nt cut was not supported as a threshold. Links to
+  a branch-point-free measure of geometry, to the run lying between branch point and AG, and to
+  deletion load were not shown. Relief of PTB repression was not supported (the data ran the other
+  way).
 
 **Conclusions.** MMR deficiency moves 3′ splice-site use in both directions by rules written in the
 reference genome. That gives an interpretable RNA read-out of MMR deficiency that works across
 organs, adds to expression-based detection and, once fitted, ranks tumours within a cancer about
-as well as exome-based callers. Why the longest tracts gain inclusion remains to be established
-experimentally.
+as well as exome-based callers. Why the longest tracts gain inclusion, and what part the branch
+point plays, remains to be established experimentally.
 
 ---
 
@@ -97,9 +107,11 @@ contraction of its T-run (blue bar). The triangle marks the branch-point adenosi
 cassette exon and the bracket the branch-point-to-AG distance. The arrow is the predicted change in
 inclusion. (a) Runs of 10–19 nt: contraction weakens the tract and the exon is skipped more. (b)
 Runs of 20 nt or more between a distant branch point and the AG: the tract stays long, and the
-branch point moves toward the optimal distance, so the exon is included more. (c) A long run
-upstream of the branch point: contraction leaves the branch-point-to-AG distance unchanged. Panels
-(a) and (b) are the code tested in Figs 4–6; panel (c) is a control in Fig. 6.
+branch point moves toward the optimal distance, so the exon is included more. Panel (b) is the
+hypothesis the code was built on. The rise held in junction reads (verdict partial), but no
+branch-point threshold was supported, and the mechanism is unresolved (Figs 11 and 13). (c) A long
+run upstream of the branch point: contraction leaves the branch-point-to-AG distance unchanged.
+Panels (a) and (b) are the code tested in Figs 4–6 and 11–13; panel (c) is a control in Fig. 6.
 
 ---
 
@@ -173,7 +185,7 @@ This reversal was found after the first tests had been read, so we treated it as
   replicated in 2 of 6 pre-registered tests, and all 6 medians lay in the predicted direction
   (D-54; Fig. 3b).
 
-### The branch point's distance sets the direction
+### The predicted branch point's distance goes with the direction
 
 A long T-run sits between the branch point and the AG, so it also pushes the branch point away
 from the 3′ splice site. Step II of splicing works best when the branch point lies 19–23 nt from
@@ -187,12 +199,12 @@ STAD, 0.11 COAD, 0.11 UCEC; all q = 0.001; Fig. 4).
 
 ![Figure 4](../results/figures/subtype/U17_msi_branchpoint.png)
 
-**Figure 4. The branch point's distance from the 3′ splice site sets the direction of the MSI
-shift.** (a) Distance from the predicted branch point to the AG, by run class; the grey band is the
-19–23 nt optimum (Chua and Reed 2001). (b) Share of repeat exons more included in MSI, by tertile
-of that distance within each run class and cancer; Wilson 95% intervals. (c) Spearman correlation
-of the MSI shift with branch-point distance after adjustment for run length and mean inclusion.
-Hollow markers use the run's far end instead of the branch point.
+**Figure 4. The predicted branch point's distance from the 3′ splice site goes with the direction of
+the MSI shift.** (a) Distance from the predicted branch point to the AG, by run class; the grey band
+is the 19–23 nt optimum (Chua and Reed 2001). (b) Share of repeat exons more included in MSI, by
+tertile of that distance within each run class and cancer; Wilson 95% intervals. (c) Spearman
+correlation of the MSI shift with branch-point distance after adjustment for run length and mean
+inclusion. Hollow markers use the run's far end instead of the branch point.
 
 The relation was specific (D-65; Supplementary Fig. S2):
 - **Beyond the run's end.** It held for the gap between the run and the branch point, adjusted for
@@ -201,16 +213,21 @@ The relation was specific (D-65; Supplementary Fig. S2):
 - **Absent in proficient contrasts.** It was weaker or absent in two MMR-proficient contrasts: POLE
   against the rest in UCEC, and chromosomally unstable against genomically stable tumours in STAD.
 
-Among long runs, inclusion switched on sharply near 30 nt. With the branch point 20–29 nt from the
-AG, 12% of long-run exons were more included; at 30–39 nt, 73%.
+Among long runs, inclusion switched on sharply near 30 nt (exploratory, read after the tests). With
+the branch point 20–29 nt from the AG, 12% of long-run exons were more included; at 30–39 nt, 73%.
+D-77 later tested the 36-nt cut in junction reads, and it was not resolved (Fig. 13); two longer
+sensitivity cuts carried no q. Its descriptive junction-read bins change sign between 18–29 nt
+(−0.0047) and 30–35 nt (+0.0063); a cut near 30 nt has not been tested.
 
 ### A two-arm code finds MMR-deficient tumours in 30 cancers never used to build it
 
 These results define a code (Fig. 1). Runs of 10–19 nt fall in MSI (the falling arm, R_down). Runs
-of 20 nt or more whose branch point lies at least 36 nt from the AG rise (the rising arm, R_up).
-The 36 nt cut is the first tertile of that distance, chosen without labels. Score G subtracts the
-rising arm from the falling arm, each against matched exons without a tract. The original score
-(score A) treated all repeat exons as falling.
+of 20 nt or more whose predicted branch point lies at least 36 nt from the AG rise (the rising arm,
+R_up). The 36-nt cut is the first tertile of that distance among runs of 20 nt or more. It was
+computed without labels, but chosen after the reversal had been seen in the training cancers. The
+cut defines the class; it is not a demonstrated property of the biology, and D-77 did not support it
+as a threshold (Fig. 13). Score G subtracts the rising arm from the falling arm, each against
+matched exons without a tract. The original score (score A) treated all repeat exons as falling.
 
 We tested the code, without refitting, in the 30 other TCGA cancers (D-66). The DNA truth came from
 public exome calls (MC3; Ellrott et al. 2018):
@@ -258,7 +275,8 @@ Three checks addressed confounding:
 
 The rising arm is the counter-intuitive half of the code, and it carries more of the held-out
 signal (AUROC 0.73 for the rising arm alone, 0.61 for the falling arm). We therefore pre-registered
-eight further tests of it (D-70; Fig. 6).
+eight further tests of it (D-70; Fig. 6). These tests read percentiles of a PSI that counts
+exon-body reads. A later step-wise test re-examined the arm in junction reads (D-77; Fig. 11).
 
 ![Figure 6](../results/figures/subtype/U22_msi_code_rising_arm.png)
 
@@ -270,7 +288,7 @@ paired with a proficient tumour of the same cancer (bar = 95% of draws). Hollow:
 training cancers (in-sample). (b) Held-out exon shifts by class:
 - falling arm (runs 10–19 nt);
 - rising arm;
-- exons with an equally distant branch point but no run;
+- background exons whose predicted branch point is also ≥ 36 nt but which have no T-run;
 - exons whose long run lies upstream of a branch point.
 
 (c) Exploratory: exons with runs of 20 nt or more, share more included by branch-point distance;
@@ -284,8 +302,8 @@ against homopolymer deletions in MMR-deficient (blue) and training-cohort MSI tu
   immune expression and the retained-intron level left the MMR effect unchanged (+0.236 against
   +0.237). Adding PTBP1, HNRNPC, U2AF2 and MKI67 expression did not reduce it either (+0.248;
   exploratory).
-- **It needs the tract (RV3).** Exons whose branch point was as distant but which carried no run
-  did not move (median −0.04 points; AUROC 0.69 for the difference).
+- **It needs the tract (RV3).** Background exons whose predicted branch point is also ≥ 36 nt but
+  which have no T-run did not move (median −0.04 points; AUROC 0.69 for the difference).
 - **Mismatch repair, not burden (RV7).** Hypermutated proficient tumours did not show it (AUROC 0.74
   against them; Fig. 6d). Neither did tumours called MSI-high by MANTIS alone (AUROC 0.87;
   exploratory).
@@ -296,25 +314,29 @@ against homopolymer deletions in MMR-deficient (blue) and training-cohort MSI tu
   exons as much: leiomyosarcoma against myxofibrosarcoma (+4.2) and against undifferentiated
   pleomorphic sarcoma (+3.6).
 - **Branch-point-free geometry (RV4).** The AG exclusion zone bounds where a branch point can lie
-  without any branch-point model (Gooding et al. 2006). It did not predict the rise (ρ = −0.04), and
-  it was itself uncorrelated with our predicted branch point.
+  without any branch-point model (Gooding et al. 2006). A link to the rise was not shown (ρ = −0.04,
+  not resolved), and it was itself uncorrelated with our predicted branch point.
 - **Side of the branch point (RV5).** A long run that lies upstream of a branch point cannot move
   the branch point when it contracts. Such exons rose in 26 of 42 cases, not significantly
   different from the rising arm.
-- **Dose (RV6).** Within MMR-deficient tumours the rise did not grow with deletion count (ρ = +0.08;
+- **Dose (RV6).** Within MMR-deficient tumours a rise with deletion count was not shown (ρ = +0.08;
   Fig. 6e). Score G's dose relation comes from the falling arm.
 - **PTB relief (RV8, against).** Long tracts with distant branch points are the textbook
   PTB-repressed exons (Gooding et al. 2006; Llorian et al. 2010). If contraction relieved PTB, the
   most repressed exons should rise most. The opposite held (ρ = +0.20).
 
-**What the branch point does do (exploratory, A-16).** Among long runs in the held-out cancers,
-branch-point distance split the direction sharply (Fig. 6c):
+**What the predicted branch point goes with (exploratory, A-16).** Among long runs in the held-out
+cancers, branch-point distance split the direction sharply (Fig. 6c):
 - **Within 30 nt of the AG:** 5 of 25 exons were more included.
 - **From 30 nt on:** 60–84% were, in every bin.
 
 This repeats the switch first seen in the training cancers (12% against 73%) in tumours never used
 to find it. The rise also grew with run length (ρ = 0.23). It grew with exon length within the
-rising arm (ρ = 0.20), which matters for the caveat on exon-body reads below.
+rising arm (ρ = 0.20), which matters for the caveat on exon-body reads below. D-77 later tested
+the branch point in junction reads, with experimentally mapped branch points (Fig. 13). The rise
+was rank-associated with the gap between the run and the mapped branch point in the held-out
+cancers; in the training cancers it did not replicate (not resolved; ρ = 0.07, p = 0.61), and the
+36-nt cut was not supported as a threshold.
 
 ### A model fitted on the repeat exons transfers, and matches exome callers within a cancer
 
@@ -460,9 +482,11 @@ percentiles. (e) Density of MMR-deficient tumours' percentiles among proficient 
 difference. (f) Mean arm shift by purity fifth; filled = MMR-deficient, hollow = proficient; bars =
 95% bootstrap intervals.
 
-- **The typical repeat exon moves a little.** The median R_down exon fell by 0.021, 0.028 and 0.015
-  PSI in colon, stomach and endometrial cancer, and by 0.005 in the held-out cancers. MMR status
-  explained a median 0.4–0.5% of an R_down exon's PSI variance.
+- **The typical repeat exon moves a little.** Among exons with a proficient median PSI of 0.1–0.9,
+  the median R_down exon fell by 0.021, 0.028 and 0.015 PSI in colon, stomach and endometrial
+  cancer, and by 0.0055 in the held-out cancers. Over all exons the median shift was 0 in every
+  class, because most exons sit at PSI 0 or 1. MMR status explained a median 0.4–0.5% of an R_down
+  exon's PSI variance.
 - **A minority move a lot.** In colon and stomach cancer 18% and 16% of R_down exons fell by at least
   0.10, against 3.8% and 3.6% of background exons (UCEC 9.4% against 4.0%; held out 5.5% against
   1.6%). The share rose with tract length, from 10% at 10–11 nt to 24% at 16–19 nt (Fig. 10b). The
@@ -478,6 +502,123 @@ difference. (f) Mean arm shift by purity fifth; filled = MMR-deficient, hollow =
 - **The change is graded, not confined to a few tumours.** MMR-deficient tumours fell below the
   lowest 5% of the proficient range at 2.1 times the expected rate for R_down exons, against 1.1
   for background exons, and leaned low across the whole lower half (Fig. 10e).
+
+### A step-wise test in junction reads: the rising arm is partly confirmed
+
+The rising arm rested on three choices that the tests above could not check (D-77):
+- **The read-out.** It was first seen in percentiles of a PSI that counts exon-body reads as
+  inclusion.
+- **The branch point.** It came from a sequence heuristic.
+- **The cuts.** The 20-nt and 36-nt cuts were set on the three training cancers after the reversal
+  was seen.
+
+We therefore tested the claim again in eight steps, each able to fail. All were fixed in writing
+before any junction-read value was compared by MMR status (Fig. 11).
+- **Data.** The 30 held-out cancers: 7,685 tumours, 50 of them MMR-deficient, in 16 cancers. These
+  tumours are not new; D-70 read them in percentiles. Junction reads only, in PSI units.
+- **Exon shift.** Each tumour's PSI was taken against its cancer's median and adjusted by its own
+  shift over background exons of the same baseline. An exon's delta is the mean in MMR-deficient
+  tumours minus the proficient mean of the same cancer.
+- **Inference.** Class means used a studentized permutation of MMR labels within cancer. Class
+  contrasts also permuted exon labels within strata, and took the larger of the two p-values. The
+  smallest effect of interest was 0.003 PSI. The claim needed all 12 tests of family RP to be
+  established.
+- **Process.** The pipeline was first run on shuffled labels, and four amendments were made then
+  (A-22 to A-25). The real labels were run once. A reviewer checked the pre-specification and the
+  implementation, and recomputed the key tests from the raw arrays after the run.
+
+Figure 11 gives the eight steps and their answers. Figures 12 and 13 show steps 2 and 3. The
+figures of the other steps are in `results/MSI_RISING_ARM_PROOF.md` (Figures RP1 and RP4–RP8, and
+RPM for the mechanism).
+
+![Figure 11](../results/figures/rising_proof/RP0_overview.png)
+
+**Figure 11. In junction reads the rising arm rises in held-out cancers, but the claim is only
+partly supported.** The eight pre-registered steps of D-77, read left to right and top to bottom.
+Each box gives the step's question and a plain answer. Filled marker = every test of the step
+supported (predicted sign and Benjamini–Hochberg q < 0.05 within its family); half = some
+supported; hollow = none resolved. The dashed box holds the mechanism tests, which sit outside the
+verdict. The last box gives the claim's verdict by the pre-registered rule. Held-out cancers (50
+MMR-deficient tumours in 16 of 30), junction reads only. Each step's own figure and all 40 tests,
+with effects, p and q, are in the repository's write-up of D-77.
+
+**What held** (9 of the 12 required tests supported).
+- **The rise.** Rising-arm exons rose by 0.0070 PSI (95% CI 0.0033–0.0107) in held-out
+  MMR-deficient tumours (Fig. 12a). The whole interval lies above the smallest effect of interest.
+  The falling arm fell (−0.0030).
+- **But unevenly.** The ten largest of 92 exons held 81% of the summed rise, and the median exon
+  moved by 0.0019 (Fig. 12b). Without the ten, the mean of the other 82 was 0.0015.
+- **It needs the tract.** Background exons whose predicted branch point is also ≥ 36 nt from the AG,
+  without a T-run, rose less (difference 0.0074; Fig. 13a).
+- **It is not any long tract.** The rise exceeded that of long pyrimidine tracts, T-runs deep in the
+  intron and Alu acceptors without a run (differences 0.0089, 0.0081 and 0.0066).
+- **Confounders.** It survived exon covariates (coefficient 0.0084) and tumour covariates, including
+  purity and the tumour's overall inclusion level (0.0082).
+- **Mismatch repair, not burden.** The arm separated MMR-deficient from hypermutated proficient
+  tumours (AUROC 0.72). It was also higher in tumours called MSI-high by MANTIS than in stable
+  tumours (difference 0.015).
+- **The mapped branch point.** In 52 long-run exons with an experimentally mapped branch point, the
+  rise was rank-associated with the gap between the run and that branch point, at fixed run length
+  and offset (partial ρ = 0.44, p = 0.004; Fig. 13c).
+- **Within patients.** MMR-deficient tumours rose above their own normal tissue more than proficient
+  ones did (0.019). But 10 of the 12 deficient pairs are in the training cancers, so this is
+  supporting evidence, not a held-out test.
+
+![Figure 12](../results/figures/rising_proof/RP2_junction_reads.png)
+
+**Figure 12. The rising arm rises in held-out junction reads, and a few of its exons carry most of
+the rise.** Held-out cancers, junction reads only. Change in inclusion = an exon's mean adjusted PSI
+in MMR-deficient (MMRd) tumours minus the MMR-proficient (MMRp) mean of the same cancer. (a) Mean
+change of the rising arm (acceptor T-run of 20 nt or more, predicted branch point 36 nt or more from
+the AG; 92 exons), of background exons without a tract (4,756) and of the falling arm (T-run of
+10–19 nt; 1,121 exons), with 95% intervals. Dashed line = smallest effect of interest (0.003). (b)
+The 92 rising-arm exons ranked by their change. Dark bars = the ten largest, which hold 81% of the
+summed change; line = background exons at the same rank. The three largest are labelled with their
+gene.
+
+**What was not shown.**
+- **Other runs as controls.** Poly-A runs and T-runs after the donor were not resolvably different
+  from the rising arm (p = 0.25 and 0.088). Both tests were underpowered.
+- **Uniqueness to MSI.** Four of 57 other subtype contrasts moved the arm more than MMR deficiency
+  did, three of them involving leiomyosarcoma.
+- **The gap, outside the held-out set.** The gap association did not replicate in the training
+  cancers (partial ρ = 0.07, p = 0.61; Fig. 13c).
+- **A threshold at 36 nt.** The bin means show no step at 36 nt, but change sign between 18–29 and
+  30–35 nt (Fig. 13b; descriptive). Neither 36-nt test was resolved: against long runs with a near
+  heuristic branch point, 0.0052 (p = 0.16); mapped branch point at least 36 against under 36 nt,
+  0.0012 (p = 0.85). The pre-specified sensitivity cuts at 50 nt or more and above 60 nt gave 0.0068
+  (p = 0.091) and 0.0077 (p = 0.026), uncorrected. For mapped branch points, the distance to the AG
+  is the run's offset plus its length plus the gap, minus 1. A cut on distance therefore mixes run
+  length and position with the gap.
+- **Agreement of the two branch points.** Within the rising arm the heuristic and mapped distances
+  are not rank-correlated (Spearman ρ = −0.12, 65 exons; the heuristic distances are all ≥ 36 nt,
+  which limits ρ). Of the 63 exons whose mapped branch point lies upstream of the run, 45 have it ≥
+  36 nt from the AG and 18 under 36 nt.
+- **Dose.** None of the three dose tests was resolved: MANTIS score, deletion count and run length.
+- **Mechanism.** The tests that set branch-point geometry against a run-binding repressor were not
+  resolved.
+- **A role in the fitted model.** Removing M4's 119 rising-arm inputs changed its held-out AUROC by
+  +0.0001 (interval −0.015 to +0.015): no loss was detected.
+
+![Figure 13](../results/figures/rising_proof/RP3_branch_point.png)
+
+**Figure 13. The rise needs the T-run, a step at 36 nt is not supported, and the link to the
+branch-point gap is seen in held-out cancers only.** Junction reads only; change in inclusion as in
+Fig. 12. (a) Held-out cancers: mean change with its 95% interval for the rising arm and for
+background exons whose predicted branch point is also ≥ 36 nt from the AG, without a T-run. Dashed
+line = smallest effect of interest. (b) Held-out cancers: the 139 exons with an acceptor T-run of 20
+nt or more and a predicted branch point, by that branch point's distance from the AG (the bins of
+D-70's exploratory check). Dots = exons, bars = bin means, dashed line = the rule's 36-nt cut.
+Descriptive. (c) Exons with an acceptor T-run of 20 nt or more and an experimentally mapped branch
+point (BPHunter): rank of the change against rank of the gap between the run and that branch point,
+each with run length and offset regressed out, in the held-out cancers (52 exons; partial ρ = 0.44)
+and the training cancers (62 exons; 0.07). Line = least squares. Descriptive; the tests are given in
+the text.
+
+**What these data cannot show.** That the tract at each locus is shortened in the tumour, and that
+this causes the rise. That needs the tumour's DNA at each tract (D-56). Everything here is an
+association. Three required tests were not resolved, so the pre-registered verdict is partial, not
+established.
 
 ### What the data did not support
 
@@ -503,14 +644,18 @@ Several pre-registered tests failed or could not be run:
   subset of MMR-deficient tumours, beyond what a uniform shift predicts. The pre-specified test went
   the other way (q = 0.001). Its uniform-shift expectation lets values pass 0 and 1 (A-20). Where
   that does not happen, repeat exons exceeded background by only 0.002–0.010.
+- **Three of the rising arm's required tests (D-77; Fig. 11).** Poly-A and donor-side controls, and
+  uniqueness among subtype contrasts, were not resolved, so the rising arm's verdict is partial. The
+  36-nt branch-point cut was not supported either.
 
 ---
 
 ## Discussion
 
 MMR deficiency shifts splicing at 3′ splice sites by rules that can be read from the reference
-genome: tract length and branch-point distance say, exon by exon, which way an exon moves. Read in
-RNA, these rules find MMR-deficient tumours in organs never used to define them. They do not
+genome: tract length, and for the longest tracts a distant predicted branch point, sort exons by
+the way they move. The branch-point cut defines the rising class; it is not shown to be a cause.
+Read in RNA, these rules find MMR-deficient tumours in organs never used to define them. They do not
 mistake hypermutation or immune infiltration for MMR deficiency, and they agree with two DNA-based
 MSI callers.
 
@@ -522,7 +667,9 @@ MSI callers.
   more included. Jonchère et al. report mostly exclusion, with larger deletions giving more
   exclusion; inclusion appears only in a supplementary panel, unanalysed. The one MSI-linked
   inclusion effect we found acts in trans: RPL22 frameshifts raise MDM4 exon 6 inclusion
-  (Weinstein et al. 2024).
+  (Weinstein et al. 2024). In our data the rise held in junction reads in the held-out cancers,
+  but a step-wise test returned only a partial verdict, and the rise is carried by a minority of
+  exons (Figs 11 and 12).
 - **RNA detection of MSI.** Expression classifiers (Danaher et al. 2019; Pačínková and Popovici
   2019; Li et al. 2020; Jia et al. 2024) and callers that read repeat lengths in RNA (Choi et al.
   2024; Tubacher et al. 2025) were built and judged mostly in colon, stomach and endometrium. An
@@ -531,16 +678,20 @@ MSI callers.
   many held-out organs against DNA-based calls. Our own comparison tempers the claim, though: an
   expression model retrained the same way transferred almost as well (Fig. 9).
 - **Why it matters for detection.** The rising arm explains why a one-sided repeat score failed in
-  endometrium and in the 30 held-out cancers: the rising exons cancelled the falling ones.
+  endometrium and in the 30 held-out cancers: the rising exons cancelled the falling ones. It
+  matters for score G; for the fitted model no loss was detected: M4 refitted without its 119
+  rising-arm inputs changed its held-out AUROC by +0.0001 (interval −0.015 to +0.015; D-77).
 
 **Why do the longest tracts gain inclusion?** Our first reading was geometry. Contraction shortens
 a branch-point-to-AG distance that lies beyond the 19–23 nt optimum (Chua and Reed 2001), and a
 long tract stays above the length at which it saturates (Coolidge et al. 1997). Several lines of
 evidence fit:
-- the predicted branch point's distance sets the direction beyond run length, in all three
-  training cancers and again held out;
+- the predicted branch point's distance goes with the direction beyond run length, in all three
+  training cancers and again held out (percentiles);
+- in junction reads, the rise was rank-associated with the gap to an experimentally mapped branch
+  point in the held-out cancers (partial ρ = 0.44);
 - long-run exons with a near branch point (20–29 nt), which contraction would push below the
-  optimum, fall rather than rise;
+  optimum, fall rather than rise (exploratory);
 - exons with distant branch points are skipped more genome-wide (Corvelo et al. 2010; Taggart et
   al. 2017);
 - germline repeat changes that move a branch point change 3′ splice-site use in the predicted
@@ -548,20 +699,28 @@ evidence fit:
   pseudoexon (Hamanaka et al. 2023), and a deletion of an Alu poly(T) tail that brings a branch
   point closer activates a PTS pseudoexon (Meili et al. 2009).
 
-But two pre-registered corollaries of geometry failed:
-- The AG exclusion zone did not predict the rise.
+But two pre-registered corollaries of geometry were not supported:
+- A link to the AG exclusion zone was not shown.
 - Long runs upstream of a branch point rose about as often as the rising arm.
 
-The literature also cuts both ways. With 11 or more uridines a tract's position between branch
-point and AG stops mattering (Coolidge et al. 1997), and a 26-nt tract allows a branch point over
-100 nt away (Reed 1989). Branch-point spacing failed to explain the CFTR repeat-length effect when
-it was tested directly (Hefferon et al. 2004). The leading alternative is loss of a repressor that
-binds the run itself. hnRNP C binds U-tracts of 9 U or more and competes with U2AF2; weakening such
-a tract raises inclusion (Zarnack et al. 2013), and a germline poly(T) deletion exonizes an F8 Alu
+The junction-read test (D-77) added cautions:
+- the gap association did not replicate in the training cancers (p = 0.61; Fig. 13c);
+- no cut on branch-point distance at 36 nt was supported (Fig. 13b);
+- within the rising arm the heuristic and mapped distances are not rank-correlated (Spearman ρ =
+  −0.12, 65 exons; the heuristic distances are all ≥ 36 nt, which limits ρ);
+- its mechanism tests, which set geometry against a run-binding repressor, were not resolved.
+
+The literature also cuts both ways. With 11 or more uridines a tract's position between branch point
+and AG stops mattering (Coolidge et al. 1997), and a 26-nt tract allows a branch point over 100 nt
+away (Reed 1989). Branch-point spacing failed to explain the CFTR repeat-length effect when it was
+tested directly (Hefferon et al. 2004). The leading alternative is loss of a repressor that binds
+the run itself. hnRNP C binds U-tracts of 9 U or more and competes with U2AF2; weakening such a
+tract raises inclusion (Zarnack et al. 2013), and a germline poly(T) deletion exonizes an F8 Alu
 through hnRNP C (Jourdy et al. 2018). Our pre-registered hnRNP C test asked about dependence on
 baseline inclusion, and it failed, but it did not exclude hnRNP C. A repressor that binds the run
-would explain why the side of the branch point does not matter. We excluded PTB relief. We regard
-the mechanism of the rising arm as open; the minigene experiments below would settle it.
+would explain why no difference by the side of the branch point was detected. PTB relief was not
+supported (the data ran the other way). We regard the mechanism of the rising arm as open; the
+minigene experiments below would settle it.
 
 **Limitations.**
 - **No tumour DNA at the loci.** Contraction at the R_up loci is inferred from the MSI label, not
@@ -572,13 +731,20 @@ the mechanism of the rising arm as open; the minigene experiments below would se
   MANTIS, MSIsensor), not PCR or immunohistochemistry.
 - **One resource.** All data are TCGA. An RNA cohort processed elsewhere is the external test the
   code has not had.
-- **Predicted branch points.** Branch points are sequence predictions, and most introns use several
-  branch points (Pineda and Bradley 2018).
-- **Exon-body reads.** Whether the rMATS inclusion levels count exon-body reads is not recorded. If
-  they do, unspliced RNA could inflate apparent inclusion. The rise growing with exon length makes
-  this worth settling.
+- **Predicted branch points.** The code's branch points are sequence predictions, and most introns
+  use several branch points (Pineda and Bradley 2018). Against experimentally mapped branch points
+  (BPHunter; Zhang et al. 2022), the heuristic and mapped distances within the rising arm are not
+  rank-correlated (Spearman ρ = −0.12, 65 exons; the heuristic distances are all ≥ 36 nt, which
+  limits ρ). Of the 63 exons whose mapped branch point lies upstream of the run, 45 have it ≥ 36 nt
+  from the AG and 18 under 36 nt. The class therefore rests on a heuristic that the mapped branch
+  points match in class for about seven exons in ten, but not in rank.
+- **Exon-body reads.** The percentile analyses read rMATS inclusion levels that count exon-body
+  reads as inclusion, so unspliced RNA could inflate apparent inclusion. D-77 re-tested the rising
+  arm on junction reads only, and the rise held (0.0070 PSI; 0.0077 with exon-body reads counted;
+  Fig. 12).
 - **Not unique to MSI.** The rising-arm exons also move between some sarcoma subtypes, so they are
-  a responsive set and not an MSI-only one.
+  a responsive set and not an MSI-only one. In junction reads, four of 57 subtype contrasts moved
+  them more than MMR deficiency did (D-77).
 - **Small numbers.** Per-cancer AUROCs rest on 3–11 MMR-deficient tumours.
 
 **What would decide the mechanism.** Minigenes that shorten the tract of rising-arm exons by 2–5
@@ -711,6 +877,32 @@ All annotation was done without labels.
 - **Exploratory (A-20).** Exons with proficient median PSI 0.1–0.9 for the size estimates;
   mid-rank percentiles of MMR-deficient tumours among proficient ones, ties counting half.
 
+**Step-wise test of the rising arm (D-77).**
+- **Read-out.** rMATS junction-read PSI (JC), counted where a tumour has at least 10 junction reads
+  at the exon. An exon enters a cancer's set when it is measured in at least 50% of its tumours.
+- **Adjustment.** A tumour's value is its deviation from the cancer's median PSI, minus its mean
+  deviation over background exons of the same baseline band (13 bands). An exon's delta is the mean
+  adjusted PSI of the MMR-deficient tumours minus that of the proficient tumours of the same cancer.
+  An exon is eligible held out when at least 20 held-out MMR-deficient tumours sit in cancers that
+  measure it.
+- **Tests.** Class means: a studentized statistic under MMR labels permuted within cancer (2,000;
+  Chung and Romano 2013), with a Welch–Satterthwaite interval. Class contrasts: exon labels permuted
+  within strata of baseline band × coverage tertile (10,000), and MMR labels permuted within cancer;
+  p is the larger of the two, an intersection–union test. Regressions: Freedman–Lane permutation of
+  the HC3 t statistic (Freedman and Lane 1983). Correlations: partial Spearman, permuted within
+  cells.
+- **Families and verdicts.** Benjamini–Hochberg within each family: RP (12 tests, all required for
+  the claim), RPS (9, supporting), RPP (2, within patient), RPC (8, the falling arm as positive
+  control), RPD (6, training cancers) and RPM (3, mechanism, outside the verdict). The smallest
+  effect of interest was 0.003 PSI. The claim's verdict followed the pre-registered rule, checked in
+  order: uninterpretable, refuted, established, partial.
+- **Branch points and repeats.** Experimentally mapped branch points from BPHunter Dataset S1 (Zhang
+  et al. 2022; hg19), lifted to GRCh38 with the UCSC hg19ToHg38 chain. The gap is the distance from
+  the run to the mapped branch point upstream of it. Alu elements from the UCSC hg38 RepeatMasker
+  table.
+- **Order of work.** The pipeline was run first on shuffled labels; amendments A-22 to A-25 were
+  made then, before the single real-label run.
+
 **Statistics and pre-registration.**
 - **Pre-registration.** Every test was committed to `config/followup.yaml` with its predicted sign
   and its false-discovery family before it was computed. What had already been seen was listed
@@ -730,7 +922,7 @@ SHAP; versions are recorded per job.
 **Data and code availability.** Code, pre-registrations, aggregate tables and figures are in this
 repository. TCGA RNA-seq and the derived per-sample tables require dbGaP authorisation. MC3,
 ABSOLUTE and the PanCanAtlas labels are open access from the GDC; MANTIS and MSIsensor scores are
-public through cBioPortal.
+public through cBioPortal. BPHunter's branch points and the UCSC RepeatMasker table are public.
 
 ---
 
@@ -747,10 +939,11 @@ tumours by cancer, with each cancer's AUROC for the original score.
 
 **Supplementary Figure S2. The code is specific to the branch point and to mismatch repair.** (a)
 Share of repeat exons more included in MSI, by 10-nt bins of branch-point distance, for runs of
-10–19 nt and of 20 nt or more; the grey line marks the 36-nt cut. (b) Adjusted correlation of the
-MSI shift with branch-point distance, against matched controls: exons without a tract, POLE against
-the rest in endometrium, and chromosomally unstable against genomically stable stomach tumours. (c)
-AUROC of scores A and G for MSI in the three training cancers.
+10–19 nt and of 20 nt or more; the grey line marks the 36-nt cut (not supported by D-77; Fig. 13).
+(b) Adjusted correlation of the MSI shift with branch-point distance, against matched controls:
+exons without a tract, POLE against the rest in endometrium, and chromosomally unstable against
+genomically stable stomach tumours. (c) AUROC of scores A and G for MSI in the three training
+cancers.
 
 ![Supplementary Figure S3](../results/figures/subtype/U20_msi_code_infiltration.png)
 
@@ -791,6 +984,7 @@ calls. Rings mark three model-only tumours discussed in the text.
 - Carter SL et al. (2012) Absolute quantification of somatic DNA alterations in human cancer. *Nat Biotechnol* 30:413–421. PMID 22544022.
 - Choi JW et al. (2024) Detecting microsatellite instability by length comparison of microsatellites in the 3′ untranslated region with RNA-seq. *Brief Bioinform* 25:bbae423. PMID 39210504.
 - Chua K, Reed R (2001) An upstream AG determines whether a downstream AG is selected during catalytic step II of splicing. *Mol Cell Biol* 21:1509–1514. PMID 11238888.
+- Chung E, Romano JP (2013) Exact and asymptotically robust permutation tests. *Ann Stat* 41:484–507. doi:10.1214/13-AOS1090.
 - Chung Y et al. (2023) Evaluation of an eight marker-panel including long mononucleotide repeat markers to detect microsatellite instability in colorectal, gastric, and endometrial cancers. *BMC Cancer* 23:1100. PMID 37953261.
 - Collura A et al. (2014) Patients with colorectal tumors with microsatellite instability and large deletions in HSP110 T17 have improved response to 5-fluorouracil–based chemotherapy. *Gastroenterology* 146:401–411. PMID 24512910.
 - Coolidge CJ, Seely RJ, Patton JG (1997) Functional analysis of the polypyrimidine tract in pre-mRNA splicing. *Nucleic Acids Res* 25:888–896. PMID 9016643.
@@ -800,6 +994,7 @@ calls. Rings mark three model-only tumours discussed in the text.
 - Dorard C et al. (2011) Expression of a mutant HSP110 sensitizes colorectal cancer cells to chemotherapy and improves disease prognosis. *Nat Med* 17:1283–1289. PMID 21946539.
 - Ellrott K et al. (2018) Scalable open science approach for mutation calling of tumor exomes using multiple genomic pipelines. *Cell Syst* 6:271–281. PMID 29596782.
 - Fiszbein A et al. (2022) Widespread occurrence of hybrid internal-terminal exons in human transcriptomes. *Sci Adv* 8:eabk1752. PMID 35044812.
+- Freedman D, Lane D (1983) A nonstochastic interpretation of reported significance levels. *J Bus Econ Stat* 1:292–298. doi:10.1080/07350015.1983.10509354.
 - Giannini G et al. (2002) Human MRE11 is inactivated in mismatch repair-deficient cancers. *EMBO Rep* 3:248–254. PMID 11850399.
 - Giannini G et al. (2004) Mutations of an intronic repeat induce impaired MRE11 expression in primary human cancer with microsatellite instability. *Oncogene* 23:2640–2647. PMID 15048091.
 - Gooding C et al. (2006) A class of human exons with predicted distant branch points revealed by analysis of AG dinucleotide exclusion zones. *Genome Biol* 7:R1. PMID 16507133.
@@ -826,3 +1021,4 @@ calls. Rings mark three model-only tumours discussed in the text.
 - Weinstein HNW et al. (2024) RPL22 is a tumor suppressor in MSI-high cancers and a splicing regulator of MDM4. *Cell Rep* 43:114622. PMID 39146182.
 - Wu X et al. (2019) Minimal microsatellite shift in microsatellite instability high endometrial cancer: a significant pitfall in diagnostic interpretation. *Mod Pathol* 32:650–658. PMID 30443012.
 - Zarnack K et al. (2013) Direct competition between hnRNP C and U2AF65 protects the transcriptome from the exonization of Alu elements. *Cell* 152:453–466. PMID 23374342.
+- Zhang P et al. (2022) Genome-wide detection of human variants that disrupt intronic branchpoints. *Proc Natl Acad Sci USA* 119:e2211194119. PMID 36306325.

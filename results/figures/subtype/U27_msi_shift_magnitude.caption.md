@@ -36,7 +36,7 @@ exons score −0.001, +0.005 and +0.011 against −0.002, −0.001 and +0.001; u
 +0.001 and −0.008 against −0.002 and −0.020. Exons dropping ≥ 0.10, R_down against background: COAD 18% against
 3.8%; STAD 16% against 3.6%; UCEC 9.4% against 4.0%; held out 5.5% against 1.6%. Rising ≥ 0.10, R_up against
 background: COAD 17% against 8.5%; STAD 8.3% against 4.4%; UCEC 12% against 6.2%; held out 3.8% against 1.3%. Median
-shift of R_down exons: −0.021, −0.028, −0.015 and −0.005 (COAD, STAD, UCEC, held out); 5th percentiles −0.20, −0.21,
+shift of R_down exons: −0.021, −0.028, −0.015 and −0.0055 (COAD, STAD, UCEC, held out); 5th percentiles −0.20, −0.21,
 −0.13 and −0.10. Panel (c), proficient → MMR-deficient medians: MRE11 1.00 → 0.96, METTL8 0.58 → 0.22, BOD1L1 0.13 →
 0.43, CCNDBP1 0.04 → 0.25; 52% of the MMR-deficient tumours fall below the proficient 5th percentile of MRE11 exon 5
 (mean over the three cancers). Panel (d), MMR-deficient median (IQR), R_down: COAD +35 (+22 to +46), STAD +32 (+19

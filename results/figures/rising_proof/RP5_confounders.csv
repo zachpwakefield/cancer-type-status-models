@@ -1,10 +1,10 @@
 level,row,estimate,p,source,q,q_family,verdict
-exon level,no covariates (difference of means),0.00698765,,R_up mean − B-sample mean,,,
-exon level,RP5a: eight exon covariates,0.00844716,0.003998,RP5a,0.005997,BH within family RP (12 tests; D-77),supported
-exon level,"+ full splice-site score, acceptor Alu",0.00807711,0.005997,sensitivity,,,
-exon level,+ longest T-run in the coding sequence,0.00921286,0.001999,sensitivity,,,
-tumour level,no covariates (RP2b arm contrast),0.00840439,0.00049975,RP2b,0.00209979,BH within family RPS (9 tests; D-77),supported
-tumour level,RP5b: five tumour covariates,0.00821517,9.999e-05,RP5b,0.00059994,BH within family RP (12 tests; D-77),supported
-tumour level,without purity (all tumours),0.0083523,9.999e-05,sensitivity,,,
-tumour level,+ MKI67 expression,0.00872323,9.999e-05,sensitivity,,,
+Exon level,no covariates,0.00698765,,none,,,
+Exon level,eight exon covariates (pre-registered),0.00844716,0.003998,RP5a,0.005997,BH within family RP (12 tests; D-77),supported
+Exon level,+ full splice-site score and acceptor Alu,0.00807711,0.005997,sensitivity,,,
+Exon level,+ longest T-run in the coding sequence,0.00921286,0.001999,sensitivity,,,
+Tumour level,no covariates,0.00840439,0.00049975,RP2b,0.00209979,BH within family RPS (9 tests; D-77),supported
+Tumour level,five tumour covariates (pre-registered),0.00821517,9.999e-05,RP5b,0.00059994,BH within family RP (12 tests; D-77),supported
+Tumour level,"without purity, all tumours",0.0083523,9.999e-05,sensitivity,,,
+Tumour level,+ MKI67 expression,0.00872323,9.999e-05,sensitivity,,,
 ,reference line,0.0,,,,,

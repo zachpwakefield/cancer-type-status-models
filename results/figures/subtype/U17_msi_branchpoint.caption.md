@@ -1,8 +1,8 @@
-**Figure U17. The branch point's distance from the 3′ splice site sets the direction of the MSI shift.**
-Pre-specified (config/followup.yaml: msi_branchpoint, D-63). Exons whose acceptor carries a T-run ≥ 10 (R exons,
-D-52), read from the GRCh38 primary assembly. Branch point = the A nearest the 3′ splice site that lies upstream of
-the run, within 100 nt, and matches yUnAy; found for 83% of 1,580 exons. MSI shift = D-52's background-adjusted
-difference in inclusion percentile, MSI minus the rest.
+**Figure U17. The predicted branch point's distance from the 3′ splice site goes with the direction of the MSI
+shift.** Pre-specified (config/followup.yaml: msi_branchpoint, D-63). Exons whose acceptor carries a T-run ≥ 10 (R
+exons, D-52), read from the GRCh38 primary assembly. Branch point = the A nearest the 3′ splice site that lies
+upstream of the run, within 100 nt, and matches yUnAy; found for 83% of 1,580 exons. MSI shift = D-52's
+background-adjusted difference in inclusion percentile, MSI minus the rest.
 
 (a) Distance from the branch point to the 3′ss, by run length (1,133 exons with runs of 10–19 nt, 179 with ≥ 20 nt);
 grey band = 19–23 nt, the optimum for a 3′ss AG (Chua and Reed 2001). (b) Share of R exons more included in MSI, by

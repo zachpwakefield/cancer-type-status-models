@@ -3269,7 +3269,7 @@ def _cap_u27(pr, ex, bins, pct, exc, pur, eg, band, mv):
     mre = mv[mv.role.str.startswith("positive control")].iloc[0]
     drops = "; ".join(f"{g} {pc(sh(dn, g, 'R_down'))} against {pc(sh(dn, g, 'B'))}" for g in ["COAD", "STAD", "UCEC", "held out"])
     rises = "; ".join(f"{g} {pc(sh(up, g, 'R_up'))} against {pc(sh(up, g, 'B'))}" for g in ["COAD", "STAD", "UCEC", "held out"])
-    med = lambda c, g: f"{sh('exon shift (PSI), quantile 0.5', g, c):+.3f}".replace("+", "+").replace("-", "−")
+    med = lambda c, g: f"{sh('exon shift (PSI), quantile 0.5', g, c):+.4g}".replace("-", "−")  # 4 significant digits: −0.0055, not −0.005
     q05 = lambda c, g: f"{sh('exon shift (PSI), quantile 0.05', g, c):+.2f}".replace("-", "−")
     xm = lambda m, g, s="MMR-deficient": exc[exc.measure.eq(m) & exc.group.eq(g) & exc.status.eq(s)].iloc[0]
     xs = lambda m, g: f"{xm(m, g).q50:+.0f} ({xm(m, g).q25:+.0f} to {xm(m, g).q75:+.0f})".replace("-", "−")
@@ -3563,7 +3563,7 @@ TITLES = {
     "U14": "Splice-site mutations skip their exons, and SF3B1 hotspot tumours use cryptic acceptors.",
     "U15": "Without the ABSOLUTE ceiling, splicing matches expression on ERBB2 amplification but does not beat it.",
     "U16": "Mismatch-repair damage tracks the repeat score in stomach cancer only.",
-    "U17": "The branch point's distance from the 3′ splice site sets the direction of the MSI shift.",
+    "U17": "The predicted branch point's distance from the 3′ splice site goes with the direction of the MSI shift.",
     "U18": "A two-arm sequence code finds mismatch-repair-deficient tumours in 30 cancers never used to define it.",
     "U19": "The code is specific to the branch point and to mismatch repair.",
     "U20": "The code is not an infiltration readout.",

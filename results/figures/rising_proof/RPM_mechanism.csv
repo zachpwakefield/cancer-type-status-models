@@ -1,9 +1,9 @@
-class,label,n_exons,mean_delta,ci_low,ci_high,test,estimate,p,q,q_family,verdict,sesoi
-R_up,rising arm (R_up),92.0,0.007012603919124392,0.003308210271701539,0.010716997566547246,,,,,,,
+class,label,n_exons,mean_change,ci_low,ci_high,test,estimate,p,q,q_family,verdict,sesoi
+R_up,rising arm,92.0,0.007012603919124392,0.003308210271701539,0.010716997566547246,,,,,,,
 shield,T-run upstream of the branch point,64.0,-0.0017249056231944736,-0.00563120054404379,0.0021813892976548436,,,,,,,
-"long, antisense Alu",run ≥ 20 nt in an antisense Alu,132.0,0.0033626460334081386,0.0004922168890488803,0.006233075177767397,,,,,,,
-"long, other","run ≥ 20 nt, not in an antisense Alu",51.0,0.009130272100476018,0.005048319687840024,0.013212224513112013,,,,,,,
-R_up − shield,,,,,,RPM1,0.00731967,0.108789,0.326367,BH within family RPM (3 tests; D-77),not resolved,
-shield against 0,,,,,,RPM2,-0.00172491,0.312844,0.411359,BH within family RPM (3 tests; D-77),not resolved,
-antisense Alu − other,,,,,,RPM3,-0.00295018,0.411359,0.411359,BH within family RPM (3 tests; D-77),not resolved,
+"long, antisense Alu",run in an antisense Alu,132.0,0.0033626460334081386,0.0004922168890488803,0.006233075177767397,,,,,,,
+"long, other",run outside an antisense Alu,51.0,0.009130272100476018,0.005048319687840024,0.013212224513112013,,,,,,,
+RPM1,,,,,,RPM1,0.00731967,0.108789,0.326367,BH within family RPM (3 tests; D-77),not resolved,
+RPM2,,,,,,RPM2,-0.00172491,0.312844,0.411359,BH within family RPM (3 tests; D-77),not resolved,
+RPM3,,,,,,RPM3,-0.00295018,0.411359,0.411359,BH within family RPM (3 tests; D-77),not resolved,
 reference lines,,,0.0,,,,,,,,,0.003
