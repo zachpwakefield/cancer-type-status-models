@@ -1,0 +1,65 @@
+{
+ "verdict": "partial",
+ "reasons": [
+  "RP4a supported (not resolved)",
+  "RP4d supported (not resolved)",
+  "RP6c supported (not resolved)"
+ ],
+ "branch_point_test": "RP3e",
+ "refuted_clauses": {
+  "(0) RP2a against": false,
+  "(i) RP2a not resolved, instrument check passes, no rise of interest": false,
+  "(ii) RP2a supported and RP3a's estimate <= 0": false,
+  "(iii) RP2a supported and the branch-point estimates <= 0": false
+ },
+ "instrument_passes": false,
+ "rp2a": {
+  "verdict": "supported",
+  "estimate": 0.0070126039191243,
+  "ci_high": 0.0107169975665472,
+  "sesoi": 0.003
+ },
+ "rp7": {
+  "verdict": "supported",
+  "estimate": 0.019376676822207
+ },
+ "labels": "real",
+ "families": {
+  "RP": {
+   "tests": 12,
+   "testable": 12,
+   "supported": 9,
+   "against": 0
+  },
+  "RPS": {
+   "tests": 9,
+   "testable": 9,
+   "supported": 5,
+   "against": 0
+  },
+  "RPP": {
+   "tests": 2,
+   "testable": 2,
+   "supported": 1,
+   "against": 0
+  },
+  "RPC": {
+   "tests": 8,
+   "testable": 8,
+   "supported": 7,
+   "against": 0
+  },
+  "RPD": {
+   "tests": 6,
+   "testable": 6,
+   "supported": 5,
+   "against": 0
+  },
+  "RPM": {
+   "tests": 3,
+   "testable": 3,
+   "supported": 0,
+   "against": 0
+  }
+ }
+}
