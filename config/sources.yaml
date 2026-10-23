@@ -45,3 +45,37 @@ reference:
 subtype_labels:
   # TCGA Clinical Data Resource, Liu et al. 2018 Cell 173:400, Table S1 (one row per patient)
   tcga_cdr: "${CTSM_TCGA_CDR}"
+
+# rMATS junction counts of the same RNA files, re-extracted 2026-10-14 (read-only; its README.md
+# documents the layout). One CSR matrix per view, samples x events: sparse/se_jc and se_jcec hold
+# IJC, SJC, IncFormLen, SkipFormLen and PSI; events/se.events.tsv.gz ids equal the SE feature_ids;
+# samples.tsv row i = sample_idx i. Its JCEC PSI equals matrices/se. Read by step 62 (D-77) only.
+# A directory of about 50 GB, so step 00 does not hash it; step 62 records the store's own
+# layout_sha256 and manifest_sha256 in its QC file.
+splice_counts: "${CTSM_SPLICE_COUNTS}"
+
+# External reference files of step 62 (D-77): git-ignored under data.nosync/ctsm_v1/external/
+# (repository-relative paths), each pinned by bytes and MD5 in scripts/62 (a mismatch stops it).
+external_d77:
+  ucsc_rmsk:                     # RepeatMasker hg38 table; schema rmsk.sql beside it (1,920 bytes)
+    path: data.nosync/ctsm_v1/external/ucsc_rmsk/rmsk.txt.gz
+    source: https://hgdownload.soe.ucsc.edu/goldenPath/hg38/database/rmsk.txt.gz
+    bytes: 155633856
+    md5: b2e108b535550ba9e3cf83c77417380f
+    sha256: db60e6aa7ac175f8f5465cd01b48b550e67e1fb0fd828608d8343481867bb276
+    obtained: 2026-10-23, downloaded with the data user's approval (server Last-Modified 2022-10-19)
+  bphunter_s1:                   # Zhang et al. 2022 PNAS 119:e2211194119 (PMID 36306325), Dataset S1
+    path: data.nosync/ctsm_v1/external/bphunter/pnas.2211194119.sd01.txt
+    source: PNAS supplementary Dataset S1 (pnas.2211194119.sd01.txt)
+    bytes: 35549965
+    md5: 47da2af8d85024e417ed3b7610d5fe1b
+    sha256: 61c9d487322e81830d2f8ea6e1ef4e3e109af19d49b2ed6d708d3b4bb5118a8c
+    obtained: 2026-10-23, downloaded by the data user in their browser
+    layout: tab-separated CHROM, BP_POS (1-based), STRAND, BP_NAME, SOURCE; hg19 (lifted by step 62)
+  ucsc_chain_hg19_to_hg38:       # for the BPHunter lift; point liftover implemented in scripts/62
+    path: data.nosync/ctsm_v1/external/ucsc_chain/hg19ToHg38.over.chain.gz
+    source: https://hgdownload.soe.ucsc.edu/goldenPath/hg19/liftOver/hg19ToHg38.over.chain.gz
+    bytes: 227698
+    md5: 35887f73fe5e2231656504d1f6430900
+    sha256: 5c0598e500ceb5a78c73086929e8ef993aec309bcafb595139b53d440b125a1d
+    obtained: 2026-10-23, copied from the data user's existing UCSC download (sha256 matches its receipt)

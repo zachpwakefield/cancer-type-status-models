@@ -870,6 +870,133 @@ normal-tissue PSI.
 - **No global NMD weakening** (A-21). Background poison exons do not rise in MMR-deficient
   tumours in any baseline band, training or held out. Figure U28.
 
+
+### D-77 A step-wise test of the rising arm · `config/followup.yaml` · `scripts/62`
+Written 2026-10-23, after D-76 and before any junction-read value was compared by MMR status;
+revised the same day after the Gate 1 review, still before any outcome. The claim under test: in
+MMR-deficient tumours, exons after a T-run of 20 nt or more with a branch point at least 36 nt from
+the AG are more included than in proficient tumours of the same cancer, and the rise needs both
+features. D-70 showed the rise in percentiles. Three weaknesses remained. The repository's PSI
+counts exon-body reads as inclusion (rMATS JCEC). The branch point is a crude heuristic. And the
+20-nt and 36-nt cuts were set on COAD, STAD and UCEC after the reversal was seen. D-77 tests the
+claim in eight steps that it must pass, each able to fail:
+- **The read-out.** Confirmatory tests use the 30 held-out cancers (50 MMR-deficient tumours) and
+  junction reads only (rMATS JC, from the 2026-10-14 count store), in PSI units. These tumours are
+  not new: D-70 read them in JCEC percentiles. What is new is the read-out and the tests of steps
+  3–8. Each tumour's value at an exon is taken against the cancer's median over all tumours. It is
+  then adjusted by the tumour's own shift over background exons of the same baseline band, which
+  removes the tumour's inclusion level and the pull of the 0 and 1 bounds on near-silent exons.
+  Each MMR-deficient tumour is compared with the proficient tumours of its own cancer.
+- **Inference.** MMR labels are permuted within cancer, which keeps exons that share tumours
+  together. Tests of a class mean permute a studentized statistic (Chung and Romano 2013). Class
+  contrasts also permute class labels within strata of baseline × coverage, coarsened by a fixed
+  rule until every stratum holding rising-arm exons holds at least 3 controls. Their p is the larger
+  of the exon and the label permutation p (an intersection–union test). The regression tests use
+  Freedman–Lane residual permutation (Freedman and Lane 1983).
+- **Step 1, the models.** Does the rising arm separate MMR status held out better than matched
+  background exon sets, which also carry any tumour-wide shift (RP1)? Do the training cancers'
+  subtype MLPs push towards MSI when these exons are more included (RPD1)?
+- **Step 2, junction reads.** Do rising-arm exons rise in JC counts, per exon (RP2a, the primary
+  test) and per tumour (RP2b)? Does the rule pick out the exons that rise, against matched
+  insensitive exons (RP2c, after DeBoever et al. 2015)?
+- **Step 3, both features.** Exons with a distant branch point but no tract should not rise (RP3a).
+  Long runs with a near branch point should rise less (RP3b). Because the heuristic's distance is
+  tied to the run's length and position, the branch-point half is also tested as a dose: does the
+  rise grow with the gap between the run and the branch point at fixed run length and position
+  (RP3c)? The same split and dose are repeated on branch points mapped by experiment (BPHunter,
+  lifted to GRCh38; RP3d, RP3e). RP3e is the primary test of the branch-point half.
+- **Step 4, controls.** Poly-A runs at the same place, long pyrimidine tracts that are not
+  microsatellites with a distant branch point, T-runs deep in the intron or after the donor, and
+  acceptors inside an Alu without a T-run should all rise less than the rising arm (RP4a–RP4e).
+  The last matters because 67% of rising-arm acceptors lie in an Alu, against 2.6% of background
+  ones.
+- **Step 5, confounders.** Baseline, exon length, coverage, the host gene's mRNA change, poison
+  status, the core splice-site score (−3..+3, blind to the tract), GC and Alu-derived exons
+  (RP5a).
+  The model leaves out the full −20..+3 splice-site score and the acceptor-Alu flag, which measure
+  the tract itself; they enter a sensitivity model. The tumour's global inclusion axis, stroma,
+  immune infiltrate, retained introns and purity (RP5b).
+- **Step 6, specificity.** Against hypermutated proficient tumours (RP6a), with MANTIS MSI-H as the
+  label (RP6b), and against the 57 non-MSI subtype contrasts (RP6c, D-70's RV1 in junction reads).
+- **Step 7, the same patient** (RP7). MMR-deficient tumour minus its own normal, against proficient
+  tumour–normal pairs. There are 12 MMR-deficient pairs, 10 of them in training cancers, so this
+  test is not held out. It can detect a difference of about 0.010 PSI with 80% power.
+- **Step 8, dose** (RP8a–c). MANTIS score and deletion count among MMR-deficient tumours, and run
+  length across exons. Expected to be weak, since D-70's RV6 failed.
+- **Positive controls.** The falling arm (runs of 10–19 nt) is tested in every design that allows
+  it (family RPC). An instrument check also draws 92 falling-arm exons at a time to the rising
+  arm's coverage and *mirrored* baseline (one minus it), so they have as much room to fall as the
+  rising exons have to rise. It asks whether junction reads held out can see a near-silent class
+  move, and it is needed before a missing rise can be read as no rise.
+- **Mechanism** (family RPM, outside the verdict). Branch-point geometry predicts a rise that grows
+  with the gap and is absent when the run lies upstream of the branch point. hnRNP C competition
+  predicts a rise in runs on either side of the branch point, and more in Alu-derived runs.
+
+**Families.** RP holds the 12 tests the verdict needs: RP2a, RP3a, RP3e, RP4a–RP4e, RP5a, RP5b,
+RP6a and RP6c. RPS holds 9 secondary held-out tests and RPP the 2 tests that are not held out (RP7,
+RP8b). RPC (falling arm), RPD (training, discovery) and RPM (mechanism) are separate families.
+
+**Verdict for the claim** (fixed in advance; never causal at the locus). The first that applies,
+in this order:
+- *Uninterpretable* if the falling arm (RPC2a) is not supported.
+- *Refuted* if RP2a is against (the rising arm falls significantly; no instrument check needed),
+  or if RP2a is not resolved, the instrument check passes, and RP2a's estimate is ≤ 0 or
+  its 95% upper bound lies below the smallest effect of interest (SESOI). It is also refuted if
+  RP2a is supported but RP3a's estimate is ≤ 0 (no need for the tract), or both RP3e's and RP3c's
+  estimates are ≤ 0 (no need for a distant branch point).
+- *Established* as a reproducible, sequence-specific, MMR-specific association when all 12 tests
+  of family RP are supported (the branch-point half by RP3c if fewer than 40 exons carry a mapped
+  branch point), RP2a's 95% upper bound reaches the SESOI, and RP7 lies above 0 and is not against.
+- *Partial* otherwise, naming each condition not met. This includes a supported rise whose whole
+  interval lies below the SESOI, and an absent rise that the instrument check could not have seen.
+- **SESOI = 0.003 PSI**, a rise smaller than the falling arm's own held-out shift. D-75's held-out
+  arm medians put the falling arm at −0.0040 in MMR-deficient against −0.0010 in proficient
+  tumours. Those are JCEC medians over tumours and RP2a is a JC mean over exons, so the scales are
+  related, not identical. RP2a's interval is the estimate ± t × the SE of its studentized
+  statistic, with t at the Welch–Satterthwaite degrees of freedom. The MMR-deficient variance is
+  pooled within cancer with N − K degrees of freedom (held out, 50 tumours in 16 cancers: 34).
+- Not provable here: the tumour's own allele at each locus (the D-56 BAM pilot) and the mechanism,
+  unless the RPM tests separate the readings.
+
+**Label-blind preparation** (`scripts/62 --only annotate|branchpoints|counts|sizes|strata`).
+- **Annotation.** The annotation reproduces steps 42–52 and 61 exactly: acceptor runs for 71,208
+  exons, branch points for 61,892, class memberships and consequences. The core splice-site score
+  separates annotated acceptors from decoy AGs on held-out chromosomes with AUROC 0.791 (the
+  full score 0.936).
+- **Class sizes.** Eligible held out: rising arm 92, falling arm 1,121, near-branch-point long runs
+  47, distant-branch-point background 1,219, poly-A (≥ 15 nt) 61, pyrimidine tracts 287, deep
+  T-runs 153, donor-side T-runs 122, Alu acceptors 1,262, shield 64. Poly-A runs of 20 nt or more
+  are too rare (19 eligible), so poly-A is kept at ≥ 15 nt.
+- **Matching.** Each class contrast uses its strata coarsened by the fixed rule, with a merged
+  stratum spanning at most 3 bands (`strata_contrasts.csv`). All 92 rising-arm exons are kept in
+  every contrast except poly-A (85). The effective number of controls ranges from 26 (near branch
+  point) to 994 (Alu acceptors). The experimental split keeps 31 and 19 exons (effective 10). The
+  exon-in-Alu flag has VIF 1.35 in RP5a's design, so it stays in the primary model.
+- **Experimentally mapped branch points.** They cover 65 of the 233 rising-arm exons. Where both
+  exist, they agree poorly with the heuristic (Spearman −0.12; 34% within 3 nt). 52 eligible long
+  runs have a mapped branch point upstream of the run.
+- **Count store.** Its JCEC PSI equals the repository's SE PSI within 5 × 10⁻⁴.
+
+**External files** (git-ignored under `data.nosync/ctsm_v1/external/`, pinned by bytes and MD5
+in `scripts/62`, listed with SHA-256 in `config/sources.yaml`):
+- the UCSC hg38 RepeatMasker table (downloaded with the data user's approval);
+- BPHunter Dataset S1 (Zhang et al. 2022, hg19);
+- the UCSC hg19-to-hg38 chain.
+
+The point liftover is implemented in `scripts/62` and unit-tested. Of the lifted branch points
+named A, 99.998% read A in GRCh38 (20.5% if BP_POS were read as 0-based), so BP_POS is 1-based.
+About 23% of the experimental branch points are named C, G or T. Of the 198,256 experimental branch
+points, 50 do not lift and 73 lift to another chromosome; both are dropped.
+
+**Seen when written.** Everything of D-52–D-76 and A-1–A-21, and the label-blind quantities
+above. Also seen: the reviewer's label-blind checks, among them the pair arm's spread over all 212
+tumour–normal pairs. No junction-read value had been compared by MMR status, no tumour–normal
+difference by MMR status, no count model, no SHAP direction by class and no M4 ablation.
+
+**Planned figures.** Series RP in `results/figures/rising_proof/`: RP1–RP8 (one per step), RPM
+(mechanism) and RP0, a ladder with one row per step giving its question, the effect with its
+95% interval and the verdict. Write-up: `results/MSI_RISING_ARM_PROOF.md`.
+
 ---
 
 ## Amendments and deviations

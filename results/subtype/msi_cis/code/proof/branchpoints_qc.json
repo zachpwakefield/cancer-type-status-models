@@ -1,0 +1,11 @@
+{
+ "rows": 546559,
+ "experimental_rows": 198256,
+ "experimental_unliftable": 50,
+ "experimental_to_another_chrom": 73,
+ "experimental_named_A_read_A_grch38": 0.9999803144439486,
+ "experimental_named_A_read_A_if_0based": 0.20545158665581773,
+ "experimental_named_base_equals_grch38": 0.9999495288518319,
+ "experimental_read_A_grch38_any_name": 0.7691651567381507,
+ "all_named_base_equals_grch38": 0.9999615386024227
+}

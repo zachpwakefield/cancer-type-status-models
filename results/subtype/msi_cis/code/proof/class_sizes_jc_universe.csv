@@ -1,0 +1,75 @@
+class,universe_share,n_annotated,in_universe_ge1_held_out,eligible_held_out,in_universe_ge1_training,eligible_training,median_jc_reads_in_universe
+R_up,0.5,233,152,92,122,122,48.0
+R_up,0.8,233,122,72,91,91,70.0
+R_down,0.5,2658,1821,1121,1394,1394,48.0
+R_down,0.8,2658,1382,834,1098,1098,72.5
+long_near,0.5,187,133,91,107,107,52.0
+long_near,0.8,187,103,64,87,87,74.0
+B_far,0.5,3755,2553,1490,1809,1809,59.5
+B_far,0.8,3755,1876,1150,1399,1399,84.0
+B_near,0.5,10240,7145,4166,5188,5188,65.0
+B_near,0.8,10240,5265,3243,3960,3960,89.0
+mid (run 6-9),0.5,1423,986,653,792,792,49.0
+mid (run 6-9),0.8,1423,774,504,634,634,70.0
+ctl_polyA,0.5,37,29,19,26,26,94.0
+ctl_polyA,0.8,37,24,8,14,14,109.5
+ctl_polyA15,0.5,116,87,61,73,73,98.0
+ctl_polyA15,0.8,116,72,44,55,55,129.0
+ctl_ppt_far,0.5,698,514,287,365,365,61.0
+ctl_ppt_far,0.8,698,382,219,284,284,84.0
+ctl_deep,0.5,317,221,153,179,179,55.0
+ctl_deep,0.8,317,174,119,136,136,72.0
+ctl_deep_far,0.5,106,69,52,59,59,60.75
+ctl_deep_far,0.8,106,58,42,47,47,78.0
+ctl_don,0.5,270,188,122,146,146,60.0
+ctl_don,0.8,270,149,95,116,116,87.0
+ctl_don_far,0.5,109,70,43,53,53,56.5
+ctl_don_far,0.8,109,55,32,38,38,80.25
+shield,0.5,124,84,64,71,71,55.0
+shield,0.8,124,71,53,61,61,79.0
+"ctl_alu (acc_T <= 7, acceptor 1..50 in an Alu)",0.5,2721,1870,1262,1508,1508,54.0
+"ctl_alu (acc_T <= 7, acceptor 1..50 in an Alu)",0.8,2721,1499,992,1216,1216,76.0
+"ctl_alu, the Alu antisense to the gene",0.5,2202,1504,998,1205,1205,51.5
+"ctl_alu, the Alu antisense to the gene",0.8,2202,1200,784,965,965,74.5
+"R_up, acceptor 1..50 in an antisense Alu",0.5,154,96,60,78,78,42.0
+"R_up, acceptor 1..50 in an antisense Alu",0.8,154,82,48,60,60,59.0
+"R_up, run 20-24 nt",0.5,142,93,63,79,79,49.0
+"R_up, run 20-24 nt",0.8,142,76,49,61,61,71.25
+"runs >= 20, branch point >= 50",0.5,145,93,52,68,68,51.0
+"runs >= 20, branch point >= 50",0.8,145,72,42,50,50,71.0
+"runs >= 20, branch point > 60",0.5,106,66,38,49,49,58.0
+"runs >= 20, branch point > 60",0.8,106,52,33,37,37,70.0
+"runs >= 20, no branch point within 100",0.5,93,65,44,52,52,62.0
+"runs >= 20, no branch point within 100",0.8,93,51,30,42,42,86.25
+"runs >= 20, run in an Alu",0.5,300,202,134,162,162,46.0
+"runs >= 20, run in an Alu",0.8,300,163,100,131,131,66.0
+"runs >= 20, run in an antisense Alu",0.5,298,200,132,160,160,46.0
+"runs >= 20, run in an antisense Alu",0.8,298,161,98,129,129,65.0
+"R_up, run in an antisense Alu",0.5,154,96,60,78,78,42.0
+"R_up, run in an antisense Alu",0.8,154,82,48,60,60,59.0
+"R_down, run in an antisense Alu",0.5,1297,898,581,713,713,43.0
+"R_down, run in an antisense Alu",0.8,1297,710,432,572,572,69.0
+"shield, run in an antisense Alu",0.5,85,57,42,48,48,54.0
+"shield, run in an antisense Alu",0.8,85,48,34,40,40,75.0
+"B, exon overlaps an Alu",0.5,1022,701,490,563,563,57.0
+"B, exon overlaps an Alu",0.8,1022,597,398,472,472,78.0
+"runs >= 20, experimental bp upstream of the run",0.5,93,71,52,62,62,52.75
+"runs >= 20, experimental bp upstream of the run",0.8,93,63,43,53,53,68.0
+  of which d_exp >= 36,0.5,58,46,33,40,40,49.0
+  of which d_exp >= 36,0.8,58,41,27,35,35,70.5
+  of which d_exp < 36,0.5,35,25,19,22,22,57.0
+  of which d_exp < 36,0.8,35,22,16,18,18,66.0
+"runs >= 20, experimental bp between the run and the AG",0.5,3,3,1,2,2,8004.0
+"runs >= 20, experimental bp between the run and the AG",0.8,3,2,1,1,1,8317.0
+R_up with an experimental bp,0.5,65,48,32,41,41,48.0
+R_up with an experimental bp,0.8,65,41,27,33,33,63.0
+"B, experimental d_exp >= 36",0.5,794,609,409,483,483,67.0
+"B, experimental d_exp >= 36",0.8,794,468,338,387,387,87.25
+"B, experimental d_exp < 36",0.5,4770,3638,2277,2712,2712,91.0
+"B, experimental d_exp < 36",0.8,4770,2643,1811,2099,2099,112.0
+B sample (all),0.5,12000,8292,4756,5912,5912,64.0
+B sample (all),0.8,12000,6035,3689,4494,4494,89.0
+B_far in the B sample (RP3a),0.5,3141,2111,1219,1478,1478,59.0
+B_far in the B sample (RP3a),0.8,3141,1528,941,1132,1132,83.5
+"B in the B sample, acceptor 1..50 in an Alu",0.5,298,208,145,167,167,69.5
+"B in the B sample, acceptor 1..50 in an Alu",0.8,298,169,120,138,138,92.0

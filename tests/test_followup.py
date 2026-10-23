@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import importlib.util
 import os
+import re
 import sys
 import unittest
 from pathlib import Path
@@ -633,6 +634,237 @@ class TestMsiRisingConsequence(unittest.TestCase):
         self.assertEqual(r["consequence"], "no_stop")
         r = self.m.consequence("", "G", ["GCTAA" + "C" * 80, "AAAA"])   # GGC TAA: stop at 3, junction at 86
         self.assertEqual((r["consequence"], r["dist"]), ("ptc_nmd", 83.0))
+
+
+class TestMsiRisingProof(unittest.TestCase):
+    """D-77's label-blind helpers (scripts/62): sequence features, the 3'ss PWM, Alu overlap, the
+    count-store slicing and the PSI recomputation, on synthetic data."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.m = load_script("62_msi_rising_proof.py")
+
+    def test_preregistration_names_each_test_once_in_a_declared_family(self):
+        pre = FOLLOWUP["msi_rising_proof"]
+        ids = [t["id"] for t in pre["tests"]]
+        self.assertEqual(len(ids), len(set(ids)))
+        fams = {t["family"] for t in pre["tests"]}
+        self.assertEqual(fams, set(pre["families"]))
+        self.assertEqual(fams, {"RP", "RPS", "RPP", "RPC", "RPD", "RPM"})
+        fam = {t["id"]: t["family"] for t in pre["tests"]}
+        for t in pre["tests"]:
+            self.assertTrue({"unit", "claim", "why"} <= set(t), t["id"])
+            pre_ = re.match(r"(RP[CDM]?)\d", t["id"]).group(1)
+            if pre_ != "RP":                               # controls, discovery and mechanism keep their prefix
+                self.assertEqual(pre_, t["family"], t["id"])
+        size = {f: sum(t["family"] == f for t in pre["tests"]) for f in fams}
+        for f, text in pre["families"].items():          # "... the 12 tests of the verdict ..."
+            self.assertIn(f"the {size[f]} tests", text, f)
+        # the verdict's family: exactly the tests the established rule needs, RP4e included
+        verdict = {"RP2a", "RP3a", "RP3e", "RP4a", "RP4b", "RP4c", "RP4d", "RP4e", "RP5a", "RP5b", "RP6a", "RP6c"}
+        self.assertEqual({i for i, f in fam.items() if f == "RP"}, verdict)
+        self.assertIn(f"all {len(verdict)} tests of family RP", " ".join(pre["verdict"]["established"].split()))
+        self.assertEqual({i for i, f in fam.items() if f == "RPP"}, {"RP7", "RP8b"})
+        self.assertEqual({i for i, f in fam.items() if f == "RPS"},
+                         {"RP1", "RP2b", "RP2c", "RP3b", "RP3c", "RP3d", "RP6b", "RP8a", "RP8c"})
+        self.assertTrue(pre["sesoi"].startswith("0.003 PSI"))
+        v = {k: " ".join(str(x).split()) for k, x in pre["verdict"].items()}
+        self.assertEqual(v["precedence"], "uninterpretable > refuted > established > partial")
+        self.assertIn("RPC2a not supported", v["uninterpretable"])
+        self.assertNotIn("instrument", v["uninterpretable"])     # the instrument check gates refuted only
+        self.assertIn("the instrument check passes", v["refuted"])
+        self.assertIn("RP2a's 95% upper bound reaches the SESOI", v["established"])
+        self.assertIn("rise below the smallest effect of interest", v["partial"])
+        self.assertIn("mirrored", " ".join(pre["instrument_check"]["design"].split()))
+        self.assertIn("Welch-Satterthwaite", pre["inference"]["interval"])
+        self.assertNotIn("bootstrap", pre["inference"])
+        self.assertEqual(self.m.LONG, 20)                 # the claim's cuts, as written in the block
+        self.assertEqual(self.m.FAR, 36)
+        self.assertEqual(self.m.MIN_MMR_ELIGIBLE, 20)
+        self.assertEqual(self.m.MIN_CTRL, 3)              # the coarsening rule's control minimum
+
+    def test_longest_run_ties_and_window(self):
+        rev = "GA" + "CC" + "TTTT" + "G" + "TTTT" + "G" * 50 + "T" * 30
+        self.assertEqual(self.m.longest_run(rev, r"T+"), (5, 8))            # tie: the run nearest the 3'ss
+        self.assertEqual(self.m.longest_run(rev, r"[CT]+"), (3, 8))
+        self.assertIsNone(self.m.longest_run("G" * 60 + "T" * 30, r"T+"))   # starts beyond position 50
+
+    def test_ppt_geometry_branch_point_upstream_of_the_tract(self):
+        # position order: AG reversed, a 14-nt pyrimidine run (CT-mixed), then yUnAy read 3' to 5'
+        ppt = "TTCTTTCCTTCTTT"
+        rev = "GA" + ppt + "C" + "A" + "G" + "T" + "C" + "G" * 40
+        g = self.m.ppt_geometry(rev)
+        self.assertEqual((g["ppt_near"], g["ppt_far"], g["ppt_len"]), (3, 17, 15))
+        self.assertEqual(g["d_bp_ppt"], 18)
+        self.assertEqual((g["ppt_max_T"], g["ppt_max_C"]), (3, 2))
+        self.assertAlmostEqual(g["pyr_bp_ag"], 1.0)                          # positions 3..17
+        self.assertEqual(self.m.max_alternation("TTCTCTCTCTCTT"), 11)
+        self.assertEqual(self.m.max_alternation("TTTTCCCC"), 2)
+
+    def test_intervals_and_windows_agree_on_both_strands(self):
+        comp = str.maketrans("ACGT", "TGCA")
+        rng = np.random.default_rng(3)
+        rand = lambda n: "".join(rng.choice(list("ACGT"), n))
+        up, exon, down = rand(200) + "G" + "T" * 22 + "CAG", "ATG" + rand(40), "GTAAGT" + rand(300)
+        plus = rand(100) + up + exon + down + rand(100)
+        es = 100 + len(up)
+        ee = es + len(exon)
+        r = pd.Series({"strand": "+", "es": es, "ee": ee, "left_end": 100, "right_start": ee + len(down)})
+        L = len(plus)
+        minus = plus.translate(comp)[::-1]
+        rm = pd.Series({"strand": "-", "es": L - ee, "ee": L - es, "left_end": L - ee - len(down), "right_start": L - es + len(up)})
+        for seq, rr in [(plus, r), (minus, rm)]:
+            rev = self.m.upstream_rev(seq, rr, 450)
+            self.assertEqual(rev[:3], "GAC")
+            g = self.m.longest_run(rev, r"T+")
+            lo, hi = self.m.run_interval(rr.strand, int(rr.es), int(rr.ee), *g)
+            run = seq[lo:hi] if rr.strand == "+" else seq[lo:hi].translate(comp)[::-1]
+            self.assertEqual(run, "T" * 22)
+            self.assertEqual(self.m.acceptor_window(seq, rr.strand, int(rr.es) if rr.strand == "+" else int(rr.ee)),
+                             up[-20:] + exon[:3])
+            dn, n = self.m.downstream_seq(seq, rr, 50)
+            self.assertEqual((dn, n), (down[:50], len(down)))
+
+    def test_decoy_stays_in_its_span(self):
+        n = 1000
+        tail = "C" * 700
+        tail = tail[:300] + "AG" + tail[302:]                    # the intron's last 700 nt with one AG
+        j = self.m.decoy(tail, n, np.random.default_rng(0))
+        self.assertEqual(j, n - len(tail) + 302)
+        self.assertTrue(self.m.DECOY_SPAN[0] <= n - j <= self.m.DECOY_SPAN[1])
+        self.assertIsNone(self.m.decoy("C" * 700, n, np.random.default_rng(0)))
+        near = "C" * 650 + "AG" + "C" * 48                         # 48 nt from the exon: outside the span
+        self.assertIsNone(self.m.decoy(near, n, np.random.default_rng(0)))
+
+    def test_pwm_separates_tract_rich_acceptors(self):
+        rng = np.random.default_rng(1)
+        pos = ["".join(rng.choice(list("CT"), 18)) + "AG" + "GTA" for _ in range(300)]
+        neg = ["".join(rng.choice(list("ACGT"), 18)) + "AG" + "GTA" for _ in range(300)]
+        W = self.m.pwm_fit(pos, neg)
+        self.assertEqual(W.shape, (23, 4))
+        self.assertAlmostEqual(float(W[18, 0]), 0.0, places=6)               # the AG carries no information
+        sp, sn = self.m.pwm_score(pos, W), self.m.pwm_score(neg, W)
+        self.assertGreater(np.median(sp), np.median(sn) + 5)
+        self.assertTrue(np.isnan(self.m.pwm_score(["N" * 23, "ACG"], W)).all())
+
+    def test_alu_hit_overlap_pad_and_strand(self):
+        alu = {"chr1": (np.array([100, 500]), np.array([400, 800]), np.array(["+", "-"]), 300)}
+        self.assertEqual(self.m.alu_hit(alu, "chr1", 390, 420), (True, "+"))
+        self.assertEqual(self.m.alu_hit(alu, "chr1", 405, 420), (False, ""))
+        self.assertEqual(self.m.alu_hit(alu, "chr1", 405, 420, pad=10), (True, "+"))
+        self.assertEqual(self.m.alu_hit(alu, "chr1", 380, 700), (True, "-"))   # overlaps the second more
+        self.assertEqual(self.m.alu_hit(alu, "chr2", 0, 10), (False, ""))
+
+    def test_csr_take_and_psi(self):
+        # 3 samples x 6 events; sample 1 has no entries
+        indptr = np.array([0, 3, 3, 5])
+        indices = np.array([0, 2, 5, 2, 4], dtype=np.int32)
+        ijc = np.array([5, 0, 7, 3, 1], dtype=np.int32)
+        sjc = np.array([5, 4, 0, 9, 0], dtype=np.int32)
+        inc = np.array([2, 2, 2, 2, 2], dtype=np.int32)
+        skip = np.array([1, 1, 1, 1, 1], dtype=np.int32)
+        psi = np.array([0.333, 0.0, 1.0, 0.143, 1.0], dtype=np.float32)
+        got = self.m.csr_take(indptr, indices, {"ijc": ijc, "sjc": sjc, "inc_len": inc, "skip_len": skip, "psi": psi},
+                              [2, 0, 1], np.array([5, 2, 0]))
+        np.testing.assert_array_equal(got["ijc"], [[0, 3, 0], [7, 0, 5], [0, 0, 0]])
+        np.testing.assert_array_equal(got["sjc"], [[0, 9, 0], [0, 4, 5], [0, 0, 0]])
+        self.assertTrue(np.isnan(got["psi"][2]).all() and np.isnan(got["psi"][0, 0]))
+        ratio = np.where(got["skip_len"] > 0, got["inc_len"] / np.maximum(got["skip_len"], 1), np.nan)
+        rec = self.m.psi_from_counts(got["ijc"], got["sjc"], ratio)
+        fin = np.isfinite(got["psi"])
+        np.testing.assert_array_equal(np.isfinite(rec), fin)
+        self.assertLess(np.max(np.abs(rec[fin] - got["psi"][fin])), 5e-4)
+        I, S, li, ls = 30.0, 12.0, 198.0, 99.0                              # rMATS: (I/li) / (I/li + S/ls)
+        self.assertAlmostEqual(float(self.m.psi_from_counts(I, S, li / ls)), (I / li) / (I / li + S / ls))
+
+    def test_chain_lift_both_query_strands(self):
+        import gzip
+        import tempfile
+        text = ("chain 100 chrA 1000 + 100 300 chrB 2000 + 500 690 1\n50\t10\t0\n140\n\n"
+                "chain 50 chrA 1000 + 400 500 chrC 800 - 100 200 2\n100\n\n")
+        with tempfile.TemporaryDirectory() as d:
+            path = Path(d) / "x.chain.gz"
+            with gzip.open(path, "wt") as fh:
+                fh.write(text)
+            ch = self.m.read_chain(path, pin=None)
+        out = self.m.lift_points(ch, "chrA", np.array([120, 155, 160, 299, 300, 450, 450]),
+                                 np.array(["+", "+", "+", "+", "+", "+", "-"]))
+        self.assertEqual(out.q_chrom.tolist(), ["chrB", "", "chrB", "chrB", "", "chrC", "chrC"])
+        self.assertEqual(out.q_pos.tolist(), [520, -1, 550, 689, -1, 800 - 1 - 150, 649])
+        self.assertEqual(out.q_strand.tolist(), ["+", "", "+", "+", "", "-", "+"])
+        self.assertEqual(self.m.lift_points(ch, "chrZ", np.array([5]), np.array(["+"])).q_chrom.tolist(), [""])
+
+    def test_exon_bps_primary_nearest_and_gap(self):
+        a = pd.DataFrame({"feature_id": ["p", "m"], "chrom": "chr1", "strand": ["+", "-"], "es": [1000, 5000],
+                          "ee": [1100, 5100], "acc_intron_len": 500, "run_near": [5, 5], "run_far": [25, 25]})
+        bp = pd.DataFrame({"chrom": "chr1", "strand": ["+", "+", "+", "-", "+", "-"],
+                           "pos": [970, 960, 996, 970, 850, 5100 + 30 - 1], "n_ebp": [1, 2, 1, 3, 4, 1]})
+        e = self.m.exon_bps(a, bp).set_index("feature_id")
+        self.assertEqual((e.loc["p", "n_exp_bp"], e.loc["p", "d_exp"], e.loc["p", "d_exp_near"]), (3, 40, 4))
+        self.assertTrue(e.loc["p", "exp_bp_run_to_ag"])
+        self.assertEqual((e.loc["p", "g_exp"], e.loc["p", "exp_primary_in_run"]), (15, False))
+        self.assertEqual((e.loc["m", "n_exp_bp"], e.loc["m", "d_exp"], e.loc["m", "g_exp"]), (1, 30, 5))
+
+    def test_classes(self):
+        a = pd.DataFrame({"acc_T": [25, 25, 12, 3, 3, 7, 4, 2, 6], "d_bp": [40, 30, 22, 50, 20, np.nan, 40, 30, np.nan],
+                          "d_bp_ppt": [40, 30, 22, 50, 20, 40, 40, 60, 40], "struct": True,
+                          "acc_A": [0, 0, 0, 0, 0, 0, 22, 0, 0], "acc_C": [2, 2, 2, 2, 2, 3, 2, 2, 2],
+                          "ppt_len": [30, 30, 15, 5, 5, 24, 4, 3, 5], "ppt_max_T": [25, 25, 12, 3, 3, 7, 4, 2, 6],
+                          "ppt_max_C": [2, 2, 2, 2, 2, 3, 2, 2, 2], "ppt_alt": [2, 2, 2, 2, 2, 4, 2, 2, 2],
+                          "deep_T": [0, 0, 0, 0, 0, 0, 0, 24, 0], "don2_T": [0, 0, 0, 0, 0, 0, 0, 0, 21],
+                          "sh_start": np.nan,
+                          "acc_alu": [True, False, True, True, False, True, False, False, False],
+                          "acc_alu_antisense": [True, False, False, False, False, True, False, False, False]})
+        c = self.m.classes(a)
+        self.assertEqual(c.cls.tolist(), ["R_up", "long_near", "R_down", "B_far", "B_near", "mid", "B_far", "B_near", "mid"])
+        self.assertEqual(c.ctl_ppt_far.tolist(), [False] * 5 + [True] + [False] * 3)
+        self.assertEqual(c.ctl_polyA.tolist(), [False] * 6 + [True] + [False] * 2)
+        self.assertEqual((c.ctl_deep.tolist()[7], c.ctl_deep_far.tolist()[7], c.ctl_don_far.tolist()[8]), (True, True, True))
+        # RP4e's control: acc_T <= 7 and the acceptor window in an Alu (runs >= 8 excluded)
+        self.assertEqual(c.ctl_alu.tolist(), [False, False, False, True, False, True, False, False, False])
+        self.assertEqual(c.ctl_alu_antisense.tolist(), [False] * 5 + [True] + [False] * 3)
+
+    def test_coarsen_merges_tertiles_then_neighbouring_bands(self):
+        # first class in band 0 (tertiles 0, 1) and band 5; controls: band 0 tertile 0 (3), band 1 (2),
+        # band 2 (5), band 5 tertile 2 (4)
+        band = np.array([0, 0, 5] + [0, 0, 0] + [1, 1] + [2] * 5 + [5] * 4)
+        terc = np.array([0, 1, 1] + [0, 0, 0] + [0, 1] + [0] * 5 + [2] * 4)
+        first = np.r_[np.ones(3, bool), np.zeros(14, bool)]
+        ctrl = ~first
+        lab, kept = self.m.coarsen(band, terc, first, ctrl)
+        # band 0: cell (0, 1) has no control, so band 0's tertiles merge (3 controls: enough)
+        self.assertEqual(set(lab[:2]), {"0-0"})
+        # band 5: the first-class cell (5, 1) has no control, tertiles merge, 4 controls: enough
+        self.assertEqual(lab[2], "5-5")
+        self.assertTrue(kept[:3].all())
+        self.assertFalse(kept[6:13].any())                 # bands 1 and 2 hold no first-class exon
+        e = self.m.effective_n(lab, first, ctrl, kept)
+        self.assertEqual((e["first_kept"], e["control_kept"]), (3, 7))
+        self.assertAlmostEqual(e["control_effective_n"], 1 / ((2 / 3) ** 2 / 3 + (1 / 3) ** 2 / 4))
+        # with 4 controls required, band 0 merges with its neighbour holding more controls
+        # (band 1, 2 controls), then the group still short of 4? 5 >= 4: stops
+        lab4, kept4 = self.m.coarsen(band, terc, first, ctrl, min_ctrl=4)
+        self.assertEqual(lab4[0], "0-1")
+        self.assertEqual(lab4[2], "5-5")
+        # matched draws without replacement: 5 controls per first-class exon (band 0's two exons only)
+        f0 = first & (band == 0)
+        lab5, _ = self.m.coarsen(band, terc, f0, ctrl, per_first=5)
+        self.assertEqual(lab5[0], "0-2")                   # 2 first-class exons need 10 controls: 3 + 2 + 5
+        self.assertEqual(lab5[13], "5-5:2")                # untouched: holds no first-class exon
+        # a cap on the merged span stops the merging; the short stratum is kept if it holds both
+        labc, keptc = self.m.coarsen(band, terc, f0, ctrl, per_first=5, max_span=2)
+        self.assertEqual(labc[0], "0-1")
+        self.assertTrue(keptc[0])
+
+    def test_cds_max_run_and_core_window(self):
+        chrom = "N" + "ATGAAAAAAAGC" + "CCC" + "TTTTGA"       # 1-based CDS parts (2, 13) and (17, 22)
+        model = {"strand": "+", "cds": [(2, 13), None, (17, 22)]}
+        self.assertEqual(self.m.cds_max_run(chrom, model), 7.0)
+        minus = {"strand": "-", "cds": [(17, 22), (2, 13)]}  # transcript order on the minus strand
+        self.assertEqual(self.m.cds_max_run(chrom, minus), 7.0)
+        self.assertTrue(np.isnan(self.m.cds_max_run(chrom, {"strand": "+", "cds": [None]})))
+        w = "T" * 17 + "CAG" + "GTA"                       # -20..-1, +1..+3
+        self.assertEqual(w[self.m.CORE], "CAGGTA")
 
 
 if __name__ == "__main__":

@@ -1,0 +1,17 @@
+contrast,side,first_eligible,control_eligible,first_kept_band_x_tertile_uncoarsened,first_kept,control_kept,control_effective_n,strata_with_first,max_bands_per_stratum
+RP3a,held_out,92,1219,92,92,1103,502.2,25,1
+RP3b,held_out,92,47,72,92,47,26.1,9,3
+RP3d,held_out,33,19,9,31,19,10.2,5,3
+RP4a,held_out,92,61,68,85,61,26.9,4,3
+RP4b,held_out,92,287,89,92,264,170.5,20,1
+RP4c,held_out,92,153,87,92,152,85.8,13,3
+RP4d,held_out,92,122,85,92,121,57.7,13,3
+RP4e,held_out,92,1262,92,92,1194,994.0,24,1
+"RP4e, antisense Alu (sensitivity)",held_out,60,998,60,60,761,604.3,15,1
+"RP4a, R_up run 20-24 (sensitivity)",held_out,63,61,46,59,61,27.6,4,3
+RPM1,held_out,92,64,79,92,64,44.9,8,3
+"RPM3, L 20-24",held_out,99,30,79,99,30,12.2,5,3
+"RPM3, L >= 25",held_out,33,21,22,32,12,11.7,2,3
+RP2c (5 matched B-sample exons per R_up exon),held_out,92,4756,92,92,4319,1960.1,25,1
+RPD3a,training,122,1478,122,122,1345,666.0,27,1
+instrument check (R_down drawn to R_up's mirrored baseline),held_out,92,1121,92,92,952,515.1,22,1

@@ -1375,3 +1375,560 @@ msi_rising_consequence:                  # D-76 · scripts/61_msi_rising_consequ
                      tumours; METTL8, BOD1L1, CCNDBP1 the largest movers; their PSI histograms). Not
                      seen - any consequence annotation of R_up or B exons, any inserted-exon class, any
                      expression of their host genes, any normal-tissue PSI
+
+# ---- MSI rising arm: a step-wise test in junction reads, 2026-10-23 (after D-76) ----
+# Written before any junction-read (JC) PSI, count model, SHAP direction or M4 ablation was compared
+# between MMR-deficient and proficient tumours, or between tumours and their normals by MMR status;
+# revised the same day after the Gate 1 review (seven required changes), still before any of them.
+# What had been seen is listed in seen_when_written. All tests two-sided; supported = the predicted
+# sign and BH q < 0.05 within the named family; against = the opposite sign with q < 0.05; not
+# resolved otherwise. A test whose minimum n is not met is "not testable" and leaves its family.
+
+msi_rising_proof:                        # D-77 · scripts/62_msi_rising_proof.py
+  # The claim C - in MMR-deficient tumours, cassette exons whose acceptor carries a long poly-T tract
+  # (longest T-run overlapping intron -1..-50 >= 20 nt) and a distant predicted branch point
+  # (>= 36 nt from the AG) are more included than in proficient tumours of the same cancer, and the
+  # rise needs both features. Eight steps, each a necessary consequence of C or a test of a named
+  # alternative; the falling arm (R_down, runs 10-19 nt, the known biology) is the positive control
+  # wherever it applies. Confirmatory = the 30 held-out cancers (the 20-nt and 36-nt cuts were set on
+  # COAD, STAD and UCEC after the reversal was seen) and junction reads only (rMATS JC), in PSI units.
+  # The held-out tumours are not new - D-70 read them in JCEC percentiles; what is new is the read-out
+  # (junction reads only, PSI units) and the tests of steps 3-8.
+  tumours: D-71's 8,464 primary tumours (33 cancers, one per patient); MMR-deficient (MMRd) = MC3
+           >= 10 homopolymer deletions (200 - 150 in COAD, STAD and UCEC; 50 in the 30 held-out
+           cancers - BRCA 11, CESC 8, HNSC 5, PRAD 4, ACC 3, LUSC 3, ESCA, LGG, LIHC, LUAD, READ and
+           SARC 2 each, BLCA, KIRC, THYM and UCS 1 each); proficient (MMRp) = the rest; hypermutated
+           MMRp = < 10 homopolymer deletions and >= 500 SNVs (D-66; 408 held out); MANTIS and
+           MSIsensor calls as D-69 (held out only)
+  normals: Solid Tissue Normal files of the 33 cancers in the count store (720); a pair = a D-71
+           tumour and a normal of the same case (the first normal file id in sort order if several) -
+           12 MMRd pairs (COAD 6, STAD 3, UCEC 1, BRCA 1, PRAD 1; 2 of them held out) and, in those
+           five cancers, 200 MMRp pairs (BRCA 106, PRAD 51, STAD 23, COAD 17, UCEC 3)
+  counts: rMATS junction counts of the same RNA files (sources.yaml splice_counts); view se_jc
+          (primary - junction reads only) and se_jcec (sensitivity - also exon-body reads; equal to the
+          repository's SE PSI within 5e-4); PSI = IJC / (IJC + SJC x IncFormLen / SkipFormLen)
+  measured: a tumour x exon cell with IJC + SJC >= 10 in the view used; otherwise missing
+  universe: per cancer and label-blind, the exons measured in >= 50% of its tumours
+  eligible: held out - the held-out cancers whose universe holds the exon carry >= 20 MMRd tumours
+            together (a per-cancer label count, unchanged by within-cancer permutation); training - in
+            the universe of COAD, STAD or UCEC (each carries >= 44 MMRd tumours)
+  classes:   # label-blind (scripts/62 --only annotate), GRCh38 and GENCODE v45; positions count
+             # upstream from the exon, 1 = the last intron base; acc_T = longest T-run overlapping
+             # 1..50 (D-52); d_bp = D-65's yUnAy branch point upstream of the run, within 100 nt.
+             # Sizes - with a valid acceptor; eligible held out; eligible training
+    R_up: acc_T >= 20 and d_bp >= 36 (step 52's class) - 233; 92; 122
+    R_down: acc_T 10-19 - 2,658; 1,121; 1,394
+    near_bp: acc_T >= 20 with a branch point found < 36 nt from the AG - 94; 47; 55
+    no_bp: acc_T >= 20 with no yUnAy branch point within 100 nt - 93; 44; 52
+    B: acc_T <= 5; the B sample = 12,000 B exons drawn at random from all B exons with a valid
+       acceptor (seed 0), whatever their other memberships, so its members of any B subset are a
+       random sample of that subset - 12,000; 4,756; 5,912
+    B_far: the B-sample exons with d_bp >= 36 (a random subset of all such exons; RP3a's exons with
+           a distant branch point and no tract) - 3,141; 1,219; 1,478
+    shield: step 52's shield class (acc_T < 10; a T-run >= 20 nt starting >= 25 nt and ending
+            <= 200 nt from the exon; a yUnAy branch point between the run and the AG) - 124; 64; 71
+    controls:   # each with acc_T <= 7 - no acceptor T-run that a contraction could shorten much;
+                # every member stored
+      polyA: longest sense-strand A-run overlapping 1..50 >= 15 nt - 116; 61; 73 (poly-A >= 20 nt
+             has 37 exons, 19 eligible held out - too few; kept as a sensitivity analysis). An A15
+             tract is less unstable than a T20 tract (instability grows with length), so polyA
+             controls for a homopolymer at the same place, not for an equal mutation rate
+      ppt_far: the longest pure-pyrimidine (C/T) run overlapping 1..50 is >= 20 nt and holds no T- or
+               C-run > 7 nt and no CT/TC alternation >= 10 nt, acc_C <= 7, and the yUnAy branch point
+               upstream of it lies >= 36 nt from the AG - 698; 287; 365 (a long tract with a distant
+               branch point that is not a microsatellite)
+      deep: longest T-run in 201..400 >= 20 nt (step 42's deep window) - 317; 153; 179
+      donor: longest T-run in the downstream intron +10..+100 after the donor >= 20 nt, downstream
+             intron >= 250 nt - 270; 122; 146
+      alu: the acceptor window 1..50 overlaps an Alu (UCSC RepeatMasker, repFamily Alu) - 2,721;
+           1,262; 1,508. alu_antisense, the Alu antisense to the gene - 2,202; 998; 1,205
+  geometry:   # runs >= 20 nt with a branch point upstream of the run
+    L: run length
+    o: offset of the run's near end from the exon (>= 3, positions 1-2 being the AG)
+    g: gap from the run's far end to the branch point (d minus the far end)
+    d: branch point to exon distance (d_bp)
+    bins: L 20-24, 25-29, >= 30; o 3-4, 5-9, >= 10 (eligible held-out runs with a branch point,
+          139 - L 20-24 holds 100)
+  experimental_bp: BPHunter Dataset S1 (Zhang et al. 2022, PMID 36306325; sources.yaml external_d77),
+                   its experimentally mapped branch points (eBP sources - Mercer, Taggart, Pineda,
+                   Briese, Talhouarne, DBR1 RNA-seq), hg19 lifted to GRCh38 through the UCSC chain
+                   (point liftover in scripts/62; BP_POS is 1-based; of the lifted branch points named
+                   A, 99.998% read A in GRCh38 - about 23% of experimental branch points are named C,
+                   G or T, so the share reading A over all is 0.769), placed 3..100 nt upstream of
+                   each exon on the gene strand. Primary - the branch point with the most eBP sources
+                   (ties - nearest the AG); sensitivity - the nearest. d_exp, g_exp as d, g. Runs >= 20
+                   with an experimental branch point upstream of the run (g_exp > 0) - 93; 52 (33 at
+                   d_exp >= 36, 19 below); 62. Three runs >= 20 have one between the run and the AG
+                   (left out)
+  exon_covariates:   # label-blind
+    core_3ss: the 3'ss log-odds PWM restricted to -3..-1 and +1..+3 (the same label-blind fit -
+              every annotated acceptor against one decoy AG per intron; PWM columns are fitted
+              independently, so this is the refit on those six positions); it cannot see the tract
+              upstream of -3 (AUROC 0.791 on held-out chromosomes, against 0.936 for -20..+3)
+    pwm_20_3: the full PWM over -20..+3 (scores the tract; sensitivity model only)
+    cds_max_run: the longest single-base run in the coding sequence of the host gene's canonical
+                 transcript (a frameshift target in MMRd tumours)
+  quantities:   # per cancer, in the view used (JC unless stated)
+    m: per exon, the median PSI over the cancer's measured tumours, all of them (label-blind, so a
+       label permutation leaves it unchanged; with 0-11 MMRd tumours per held-out cancer it is the
+       proficient median in all but name)
+    band: 13 fixed bands of m - [0, 0.02), [0.02, 0.05), [0.05, 0.10), then tenths to 0.90, then
+          [0.90, 0.95), [0.95, 1]
+    dev: a measured cell's PSI minus m
+    adj: dev minus the tumour's mean dev over its measured B-sample exons of the same band (the band
+         and its two neighbours when fewer than 10 are measured; the cell is dropped if fewer than 10
+         even then) - removes the tumour's own inclusion level near that baseline, including the
+         pull of the 0 and 1 bounds
+    delta: per eligible exon, the mean over the measured MMRd tumours of the cancers (held out, or
+           training) in whose universe it lies of (adj minus the mean adj of the measured MMRp
+           tumours of the same cancer); exons with fewer than 5 measured MMRd tumours are dropped
+    arm: per tumour, the mean adj over its measured exons of a class in its cancer's universe
+         (missing if fewer than 5)
+    arm_contrast: the mean over MMRd tumours of (arm minus the mean arm of the MMRp tumours of the
+                  same cancer)
+    baseline: per eligible exon, the mean of m over its held-out (or training) universe cancers,
+              weighted by their MMRd counts
+    strata: band of baseline x tertile of the exon's median JC reads (IJC + SJC) over all tumours of
+            those cancers (tertile cuts over all eligible stored exons of the side)
+    coarsening: per class contrast, fixed before any outcome (scripts/62 coarsen) - start from band x
+                tertile; in a band where a cell holding first-class exons has fewer than 3 control
+                exons, merge the band's tertiles; then, lowest band first, merge a band group still
+                short of 3 controls with its neighbouring group holding more control exons (ties -
+                the lower), until every stratum holding first-class exons holds >= 3 or a merged
+                stratum would span more than 3 bands; exons in strata still without both classes are
+                dropped. min_n applies to the exons kept on each side; the first class kept and the
+                first-class-weighted effective control n, 1 / sum_s (w_s^2 / c_s), are reported
+                (label-blind, strata_contrasts.csv - R_up kept 92 of 92 in every contrast but RP4a,
+                85; effective controls RP3a 502, RP3b 26, RP4a 27, RP4b 170, RP4c 86, RP4d 58,
+                RP4e 994, RPM1 45; RP3d keeps 31 and 19 exons, effective 10)
+    global_axis: per tumour, the mean dev over its measured B-sample exons, as a percentile within its
+                 cancer
+  inference:
+    label_perm: MMR labels permuted among the tumours of each cancer (counts kept), 2,000 permutations,
+                seed 0; everything that uses the label is recomputed over the exon and tumour sets of
+                the observed data; p = (1 + number of |null| >= |observed|) / 2,001. Tumours shared
+                across exons stay together, so exon dependence is kept in the null
+    studentized: RP2a, RP2b, RP6b, RPC2a and RPC2b permute the statistic divided by its standard
+                 error, recomputed in every permutation (Chung and Romano 2013, Ann Stat 41 484-507,
+                 doi 10.1214/13-AOS1090) - each statistic is a sum of per-tumour contributions (MMRd
+                 positive, MMRp negative); SE^2 = sum over cancers of (n_MMRd x s2_MMRd + n_MMRp x
+                 s2_MMRp,c), with s2_MMRp,c the variance of the MMRp contributions in cancer c and
+                 s2_MMRd the variance of the MMRd contributions pooled within cancer, s2_MMRd =
+                 sum_c sum_t (x_t - xbar_c)^2 / (N - K), N the MMRd tumours and K the cancers holding
+                 any (held out 50 - 16 = 34; most cancers hold 1-3 MMRd tumours)
+    freedman_lane: RP5a, RP5b, RPC5a and RPC5b permute the residuals of the covariates-only model and
+                   refit the full model, on the HC3 t of the tested term (Freedman and Lane 1983,
+                   J Bus Econ Stat 1 292-298, doi 10.1080/07350015.1983.10509354) - RP5b and RPC5b
+                   permute tumour residuals within cancer; RP5a and RPC5a permute exon residuals within
+                   strata and also take the label_perm p of the t (delta and the host-gene change
+                   recomputed, the model refitted)
+    class_perm: class labels permuted among the exons of the two compared classes within each
+                coarsened stratum, 10,000 permutations, seed 0; statistic = the stratum-weighted
+                difference of class means (weights = the first class's kept exons per stratum);
+                p = (1 + number of |null| >= |observed|) / 10,001
+    intersection_union: every test that permutes exons (RP1, RP2c, RP3a-RP3e, RP4a-RP4e, RP5a, RP8c,
+                        RPM1, RPM3 and their controls and discovery versions) also computes its
+                        statistic under label_perm; p = max(p_exon, p_label), both reported. An exon
+                        permutation conditions on the tumours, a label permutation on the exons; the
+                        larger p is valid for both sources of sampling error
+    interval: RP2a's 95% interval - estimate +/- t x SE, with the SE of its studentized statistic
+              (the pooled within-cancer MMRd variance plus each cancer's MMRp variance) and t at the
+              Welch-Satterthwaite df, SE^4 / sum_k (V_k^2 / df_k), over the variance components V_k
+              (the MMRd component, df = N - K as in inference.studentized, 34 held out; each
+              cancer's MMRp component, df = its MMRp tumours minus 1)
+    min_n: a class comparison needs >= 20 exons kept per class, a tumour-level test >= 10 MMRd
+           tumours; RP3d >= 15 exons kept per side, RP3e >= 40 exons, RPD1a-b >= 10 inputs; else not
+           testable
+  families:
+    RP: confirmatory, held out and JC - the 12 tests of the verdict, RP2a, RP3a, RP3e, RP4a-RP4e,
+        RP5a, RP5b, RP6a and RP6c (RP3c takes RP3e's place if RP3e is not testable)
+    RPS: secondary confirmatory, held out and JC - the 9 tests RP1, RP2b, RP2c, RP3b, RP3c, RP3d, RP6b,
+         RP8a and RP8c (RP3c leaves if it takes RP3e's place in RP)
+    RPP: supporting, not held out - the 2 tests RP7 and RP8b
+    RPC: positive controls - the falling arm in the same designs; the 8 tests RPC1-RPC8
+    RPD: discovery - training cancers, in-sample (the cuts were set there); the 6 tests RPD1a-RPD3b
+    RPM: mechanism - which reading the rise follows; the 3 tests RPM1-RPM3; not part of the verdict
+  sesoi: 0.003 PSI of mean delta - a rise smaller than the known falling arm's own held-out shift.
+         D-75's held-out per-tumour arm medians put the R_down arm at -0.0040 in MMRd against -0.0010
+         in MMRp tumours, a shift of 0.003 (the R_up arm +0.0064 against +0.0003). D-75's numbers are
+         medians over tumours in JCEC and RP2a is a mean over exons in JC, so the two scales are
+         related, not identical
+  instrument_check:   # gates "refuted" only; no q
+    design: held out - 1,000 draws (seed 0) of 92 R_down exons, one per R_up exon, drawn without
+            replacement from the eligible R_down exons in the band of (1 - baseline) of that R_up exon
+            and in its coverage tertile - the mirrored baseline, leaving R_down room to move down as
+            R_up has room to move up (strata coarsened as above, up to 3 bands, with as many R_down as
+            R_up exons required; label-blind, all 92 R_up exons find draws without any merging, from
+            952 R_down exons); per draw, RP2a's studentized statistic with the observed labels (the
+            closed-form stratified SE of inference.studentized)
+    critical_value: the 2.5th percentile of RPC2a's studentized permutation null (the R_down exons,
+                    the 2,000 label permutations)
+    pass: the median draw's statistic is < 0 and >= 80% of draws have a statistic below the
+          critical value
+    reading: RPC2a gates the whole verdict; this check gates "refuted" only. If it fails, junction
+             reads held out are not shown to see a near-silent falling class move, so a missing rise
+             cannot be read as no rise. If RP2a is supported, the read-out has visibly seen a
+             near-silent class move, and the check is not needed
+  tests:
+    # ---- step 1: do the models rely on these exons, and do they carry signal no matched set has?
+    - id: RP1
+      family: RPS
+      unit: tumour
+      claim: held out - the AUROC (MMRd against MMRp, pooled) of the R_up dev-arm (each tumour's mean
+             dev over its measured R_up universe exons, as a mid-rank percentile within its cancer)
+             exceeds the median AUROC of 1,000 matched sets (seed 0), each R_up exon of each cancer
+             replaced by a B-sample exon of the same universe, band and tertile of median JC reads
+             (AUROC minus the null median > 0); p_exon = (1 + sets with |AUROC - null median| >=
+             |observed - null median|) / 1,001; under label_perm the observed and the 1,000 set
+             AUROCs are recomputed with the permuted labels; p = max(p_exon, p_label)
+      why: dev keeps any tumour-wide shift of MMRd tumours, which matched sets carry as well; only
+           signal specific to the rising-arm exons beats them
+    - id: RPC1
+      family: RPC
+      unit: tumour
+      claim: as RP1 for the R_down dev-arm (AUROC minus the null median < 0)
+      why: the falling arm should separate the same way
+    - id: RPD1a
+      family: RPD
+      unit: exon x cohort
+      claim: training - in the subtype MLPs (SE view) of STAD_TCGA, COAD_TCGA and UCEC_TCGA, the share
+             of R_up inputs whose direction is positive > 0.5 (binomial test); direction = Spearman of
+             the input's standardised value with its SHAP for the MSI class (class 1 in each run's
+             job_done.json) over a fold's test tumours, from shap.npz for every input, averaged over
+             the folds that selected it
+      why: higher inclusion should push these models towards MSI
+    - id: RPD1b
+      family: RPD
+      unit: exon x cohort
+      claim: as RPD1a for R_down inputs (share < 0.5)
+      why: the falling arm's control
+    # ---- step 2: is the rise in junction reads, in PSI units, per exon and per tumour?
+    - id: RP2a
+      family: RP
+      unit: exon (p from tumour labels)
+      claim: held out - the mean delta over eligible R_up exons > 0; label_perm, studentized; with
+             its 95% interval (inference.interval)
+      why: rules out exon-body reads (JCEC) and percentile scaling as the source of D-70's rise; it is
+           not an independent replication, since D-70 read the same tumours
+    - id: RP2b
+      family: RPS
+      unit: tumour
+      claim: held out - the R_up arm_contrast > 0; label_perm, studentized
+      why: the same per tumour, using every R_up exon in each cancer's universe
+    - id: RP2c
+      family: RPS
+      unit: exon
+      claim: held out - the rule as a predictor of which exons rise, against matched insensitive
+             exons (after DeBoever et al. 2015) - the share of eligible R_up exons that rise minus the
+             share among matched controls (5 eligible B-sample exons per R_up exon, drawn without
+             replacement within strata coarsened with 5 controls required per R_up exon, seed 0) > 0;
+             an exon rises when its studentized delta exceeds c, the 97.5th percentile of the
+             studentized delta of all eligible B-sample exons over the 2,000 label permutations (one
+             cut, so the call can be recomputed under every permutation); p_exon by permuting the
+             class label within each matched set (10,000, seed 0); p = max(p_exon, p_label)
+      why: a sequence rule that is real should pick out responding exons, not only move a class mean
+    - id: RPC2a
+      family: RPC
+      unit: exon (p from tumour labels)
+      claim: as RP2a for R_down (mean delta < 0)
+      why: if JC counts held out cannot see the known falling arm, they cannot judge the rise
+    - id: RPC2b
+      family: RPC
+      unit: tumour
+      claim: as RP2b for R_down (< 0)
+      why: as RPC2a
+    - id: RPD2a
+      family: RPD
+      unit: exon (p from tumour labels)
+      claim: training - as RP2a over COAD, STAD and UCEC (> 0)
+      why: discovery reference in junction reads
+    - id: RPD2b
+      family: RPD
+      unit: exon (p from tumour labels)
+      claim: training - as RPC2a (< 0)
+      why: as RPD2a
+    # ---- step 3: does the rise need both a long tract and a distant branch point?
+    - id: RP3a
+      family: RP
+      unit: exon
+      claim: held out - R_up minus B_far (B-sample exons with the branch point >= 36 nt and no
+             tract), mean delta > 0; class_perm and label_perm, p = max
+      why: the tract half - a distant branch point without a tract should not rise
+    - id: RP3b
+      family: RPS
+      unit: exon
+      claim: held out - R_up minus near_bp, mean delta > 0; class_perm and label_perm, p = max
+      why: the branch-point half on the heuristic, at the claim's 36-nt cut
+    - id: RP3c
+      family: RPS
+      unit: exon
+      claim: held out - eligible runs >= 20 with a heuristic branch point (139), partial Spearman of
+             delta with g given L and o (the correlation of the residuals of rank(delta) and rank(g),
+             each regressed on rank(L) and rank(o)) > 0; p_exon by permuting g within L bin x o bin
+             cells (10,000, seed 0); p = max(p_exon, p_label)
+      why: if contraction helps by moving a distant branch point towards the optimum, the rise should
+           grow with how far the branch point lies beyond the run, at fixed run length and position
+           (the heuristic's d is collinear with L and o by construction)
+    - id: RP3d
+      family: RPS
+      unit: exon
+      claim: held out - eligible runs >= 20 with an experimental branch point upstream of the run,
+             d_exp >= 36 minus d_exp < 36, mean delta > 0; class_perm and label_perm, p = max
+      why: the 36-nt split on branch points mapped by experiment, not predicted
+    - id: RP3e
+      family: RP
+      unit: exon
+      claim: held out - the same exons, partial Spearman of delta with g_exp given L and o > 0; p_exon
+             by permuting g_exp within L (20-24, >= 25) x o (3-4, >= 5) cells (10,000, seed 0);
+             p = max(p_exon, p_label)
+      why: the primary test of the branch-point half - geometry on mapped branch points
+    - id: RPD3a
+      family: RPD
+      unit: exon
+      claim: training - as RP3a (> 0)
+      why: discovery reference
+    - id: RPD3b
+      family: RPD
+      unit: exon
+      claim: training - as RP3e (> 0)
+      why: discovery reference
+    # ---- step 4: is it the acceptor poly-T microsatellite, not any repeat, tract or Alu?
+    - id: RP4a
+      family: RP
+      unit: exon
+      claim: held out - R_up minus polyA, mean delta > 0; class_perm and label_perm, p = max
+      why: a homopolymer at the same place that is not a tract
+    - id: RP4b
+      family: RP
+      unit: exon
+      claim: held out - R_up minus ppt_far, mean delta > 0; class_perm and label_perm, p = max
+      why: separates contraction of the T-run in cis from a factor in trans acting on every exon with
+           a long tract and a distant branch point
+    - id: RP4c
+      family: RP
+      unit: exon
+      claim: held out - R_up minus deep, mean delta > 0; class_perm and label_perm, p = max
+      why: an MSI effect on T-runs anywhere in the intron would lift these too
+    - id: RP4d
+      family: RP
+      unit: exon
+      claim: held out - R_up minus donor, mean delta > 0; class_perm and label_perm, p = max
+      why: as RP4c, for T-runs on the other side of the exon
+    - id: RP4e
+      family: RP
+      unit: exon
+      claim: held out - R_up minus alu (acceptor in an Alu, no T-run > 7 nt), mean delta > 0;
+             class_perm and label_perm, p = max
+      why: 67% of R_up acceptors lie in an Alu (2.6% of B acceptors); if Alu-derived exons rose in
+           MMRd tumours for another reason, these controls would rise too
+    # ---- step 5: does it survive exon-level and tumour-level confounders?
+    - id: RP5a
+      family: RP
+      unit: exon
+      claim: held out - over eligible R_up and B-sample exons, OLS delta ~ R_up + C(band of baseline) +
+             log exon length + log median JC reads + host-gene change + poison (D-76 ptc_nmd) +
+             core_3ss + exon GC + exon overlaps an Alu (kept - its VIF is 1.35, label-blind, under the
+             pre-set limit of 5); the coefficient of R_up > 0; host-gene change = delta's definition
+             applied to the host gene's log2(CPM + 1) (D-76; 0 with an indicator where the gene is not
+             measured); p = max(Freedman-Lane exon-residual p, label_perm p), both on the
+             HC3 t of R_up. The model leaves out the -20..+3 PWM (it scores the tract) and the
+             acceptor-Alu term (67% of R_up against 2.6% of B), which would adjust for the treatment
+      why: regression to the mean on near-silent exons, length, coverage, a change in the gene's
+           mRNA, NMD, splice-site strength, GC and Alu-derived exons could each make an exon set look
+           as if it rose
+    - id: RP5b
+      family: RP
+      unit: tumour
+      claim: held-out tumours with ABSOLUTE purity - OLS R_up arm ~ MMRd + C(project) + global_axis +
+             stromal_p + immune_p + ri_mean_p + purity_p (D-68's covariates); the MMRd coefficient > 0;
+             p by Freedman-Lane (tumour residuals permuted within cancer) on its HC3 t
+      why: a tumour-wide splicing shift, infiltration, retained introns or purity
+    - id: RPC5a
+      family: RPC
+      unit: exon
+      claim: as RP5a for R_down against B (< 0)
+      why: the falling arm should survive the same covariates
+    - id: RPC5b
+      family: RPC
+      unit: tumour
+      claim: as RP5b for the R_down arm (< 0)
+      why: as RPC5a
+    # ---- step 6: is it mismatch repair specifically?
+    - id: RP6a
+      family: RP
+      unit: tumour
+      claim: held out - each tumour's R_up arm as a z within its cancer (minus the mean, over the SD,
+             of the cancer's non-hypermutated MMRp arms); AUROC of MMRd (50) against hypermutated MMRp
+             tumours (408) > 0.5; Mann-Whitney
+      why: mutation burden without mismatch-repair loss should not raise these exons
+    - id: RP6b
+      family: RPS
+      unit: tumour
+      claim: held out - as RP2b with MANTIS MSI-H (17) against MANTIS MSS (7,321) as the label, MC3
+             status ignored, tumours called between or without a score left out (> 0); label_perm
+             with this label, studentized
+      why: an independent DNA call of the instability
+    - id: RP6c
+      family: RP
+      unit: contrast
+      claim: as D-70's RV1 in JC - the held-out MMRd statistic s is positive and beats every non-MSI
+             subtype contrast's |s|; s = mean over 50 draws (seed 0) of 20 against 20 tumours of the
+             mean over R_up exons (>= 10 measured tumours per group) of the difference in mean adj;
+             null = the 57 pairs of classes with >= 20 tumours in the 22 subtype cohorts, D-71
+             tumours only, MSI-, POLE-labelled and MMRd tumours removed; held-out draw = 20 of the 50
+             MMRd tumours, each with a random MMRp tumour of its cancer; p = (1 + null contrasts with
+             |s| >= s) / 58
+      why: any-subtype responsiveness (RV1 found two sarcoma contrasts as large in percentiles); the
+           p floor is 1/58 = 0.017
+    - id: RPC6
+      family: RPC
+      unit: tumour
+      claim: as RP6a for the R_down arm (AUROC < 0.5)
+      why: the falling arm should also be specific to mismatch repair
+    # ---- step 7: within the same patient
+    - id: RP7
+      family: RPP
+      unit: tumour-normal pair
+      claim: all cancers with an MMRd pair (COAD, STAD, UCEC, BRCA, PRAD; not held out) - per pair, for
+             each R_up exon of the cancer's universe measured in both samples, tumour PSI minus normal
+             PSI, minus the pair's mean tumour-minus-normal over B-sample exons of the same band
+             measured in both; pair arm = mean over its R_up exons (>= 5); statistic = mean over the
+             12 MMRd pairs of (pair arm minus the mean pair arm of the MMRp pairs of the same cancer)
+             > 0; p by permuting MMR labels among each cancer's pairs (10,000, seed 0)
+      why: tissue, individual and germline differences cancel within a patient. Minimum detectable
+           effect - the pair arm's SD over all 212 pairs, pooled within cancer, is 0.0129 PSI
+           (label-blind), so 12 MMRd against 200 MMRp pairs detect about 0.010 PSI with 80% power at
+           alpha 0.05; 10 of the 12 pairs are in training cancers
+    - id: RPC7
+      family: RPC
+      unit: tumour-normal pair
+      claim: as RP7 for R_down (< 0)
+      why: the paired design's positive control
+    # ---- step 8: dose
+    - id: RP8a
+      family: RPS
+      unit: tumour
+      claim: held-out MMRd tumours (50, all with a MANTIS score) - partial Spearman of the R_up arm
+             with the MANTIS score given cancer (ranks residualised on cancer indicators) > 0; p by
+             permuting MANTIS within cancer (10,000, seed 0)
+      why: more instability, more contraction, more rise (expected weak - RV6 failed)
+    - id: RP8b
+      family: RPP
+      unit: tumour
+      claim: all 200 MMRd tumours (not held out, for n) - as RP8a with log(1 + MC3 homopolymer
+             deletions) in place of MANTIS, which the training cancers lack (> 0)
+      why: RV6 in junction reads
+    - id: RP8c
+      family: RPS
+      unit: exon
+      claim: held out - eligible R_up exons, Spearman of delta with run length L > 0; p_exon by
+             permuting L among exons within baseline band (10,000, seed 0); p = max(p_exon, p_label)
+      why: longer runs contract more often
+    - id: RPC8
+      family: RPC
+      unit: tumour
+      claim: as RP8a for the R_down arm (< 0)
+      why: the dose read-out's positive control
+    # ---- mechanism (not part of the claim's verdict)
+    - id: RPM1
+      family: RPM
+      unit: exon
+      claim: held out - R_up minus shield, mean delta > 0; class_perm and label_perm, p = max (sign
+             from the geometry reading)
+      why: contracting a run upstream of the branch point cannot bring the branch point closer
+    - id: RPM2
+      family: RPM
+      unit: exon (p from tumour labels)
+      claim: held out - shield exons, mean delta > 0; label_perm (sign from the hnRNP C reading)
+      why: hnRNP C binds continuous U-runs and represses Alu exons (Zarnack et al. 2013); shortening
+           its run would raise inclusion whichever side of the branch point the run lies
+    - id: RPM3
+      family: RPM
+      unit: exon
+      claim: held out - eligible runs >= 20 (R_up, near_bp, no_bp), run in an antisense Alu minus not,
+             mean delta > 0; class_perm within coarsened strata x L bin (20-24, >= 25) and label_perm,
+             p = max; min_n applies to the exons kept over both L bins together (sign from the hnRNP
+             C reading)
+      why: as RPM2
+  reading: geometry predicts RP3c, RP3e and RPM1 supported and RPM2, RPM3 not; hnRNP C predicts RPM2
+           and RPM3 supported, RPM1 not, and no dependence on g; anything else leaves the mechanism
+           open
+  verdict:   # the claim as a whole, fixed in advance; causation at the locus is never claimed
+    precedence: uninterpretable > refuted > established > partial
+    uninterpretable: RPC2a not supported - junction reads held out cannot see the known falling arm,
+                     so they cannot judge the rise
+    refuted: (0) RP2a against (the rising arm falls; the read-out has visibly seen movement, so the
+             instrument check is not needed); or (i) RP2a not resolved, the instrument check passes,
+             and RP2a's estimate is <= 0 or its
+             95% upper bound lies below the SESOI (no rise of interest); or (ii) RP2a supported and
+             RP3a's estimate <= 0 (the rise does not need the tract); or (iii) RP2a supported and the
+             estimates of RP3e and RP3c both <= 0 (RP3c alone if RP3e is not testable - the rise does
+             not need a distant branch point)
+    established: as a reproducible, sequence-specific, MMR-specific association, when RPC2a is
+                 supported, all 12 tests of family RP are supported (the branch-point half by RP3e,
+                 or RP3c if RP3e is not testable), RP2a's 95% upper bound reaches the SESOI, and RP7's
+                 estimate is > 0 and not against (RP7 supported or not resolved is reported beside it)
+    partial: anything else, naming every condition not met - among them "rise below the smallest
+             effect of interest" (RP2a supported, its whole interval below the SESOI) and "instrument
+             cannot see a near-silent falling class" (clause (i) of refuted met but the instrument
+             check failed)
+  sensitivity:   # pre-specified, reported beside the tests, no q
+    - JCEC counts for RP2a-RP4e and RPC2a-b
+    - count-level - per eligible exon, quasi-binomial GLM (statsmodels, scale X2) of IJC out of IJC +
+      SJC over the tumours of its universe cancers, offset log(IncFormLen / SkipFormLen), cancer fixed
+      effects, global_axis and MMRd; a cancer with no inclusion read at the exon in any of its tumours
+      is dropped for that exon; class means of the MMRd coefficient (logit units) weighted by inverse
+      variance; RP2a, RP3a, RP3b and RP4a-RP4e on that coefficient, class_perm and label_perm (200
+      permutations, seed 0, models refitted)
+    - cells with JC reads >= 30; universe at 80%; eligibility at >= 10 and >= 30 MMRd tumours
+    - exons with baseline >= 0.90 left out; mean delta by baseline band for every class
+    - gene level - delta averaged within gene before class means (92 R_up exons lie in 81 genes)
+    - RP2a on R_up exons that are not D-76 ptc_nmd (poison); RP5a with cds_max_run added
+    - RP2a and RP2b without BRCA, and without CESC (the two held-out cancers with most MMRd tumours)
+    - the median instead of the mean delta in RP2a; RP2a in D-66's percentile units on JC
+    - RP3b with R_up cut at >= 50 and > 60 nt (Pineda and Bradley 2018; Taggart et al. 2017); the
+      Spearman of delta with d over runs >= 20 with a heuristic branch point; no_bp against B_far
+    - RP3d and RP3e with the nearest experimental branch point
+    - polyA >= 20 nt; R_up runs of 20-24 nt against polyA; deep and donor restricted to a branch
+      point >= 36 nt (52 and 43 eligible); ppt_far at >= 15 and >= 25 nt
+    - RP4e within the antisense-Alu subset (R_up acceptors in an antisense Alu against alu_antisense)
+    - RP3a and RP4a-RP4d on exons whose acceptor does not overlap an Alu (31 R_up eligible)
+    - RP5a's full model - the -20..+3 PWM, the acceptor Alu and the exon Alu added, with VIFs
+    - RP5b without purity (all held-out tumours) and with MKI67 log2(CPM + 1) as a percentile within
+      cancer; RP6a within cancer (MMRd against hypermutated MMRp of the same cancer, where both
+      exist); RP6b with MSIsensor MSI-H (23); RP8b with purity
+  descriptive:
+    - the instrument check (every draw's statistic); RP2a's 95% interval against the SESOI
+    - M4 refitted with step 54's code at its chosen C (stop if the held-out AUROC is not 0.900 within
+      0.001); per-exon standardised coefficients by class; M4 refitted without its R_up inputs, the
+      held-out AUROC change with a paired bootstrap interval (2,000, seed 0; no q)
+    - mean delta by L bin x d bin (heuristic and experimental) - the 2-D dose-response of step 3
+    - each control class's own mean delta against 0; per-cancer RP2b where a cancer has >= 3 MMRd
+      tumours; the largest R_up movers in PSI units; per-tumour values kept locally (data.nosync),
+      medians of fewer than 5 tumours blanked
+  not_proven: the tumour's own allele at each locus (the D-56 BAM pilot would read it) and the
+              molecular mechanism unless RPM and RP3c/RP3e separate the readings; a supported claim
+              remains an association across tumours
+  seen_when_written: everything of D-52-D-76 and A-1-A-21, among it the held-out R_up rise in
+                     percentiles (98 of 135 exons up; RV2, RV3 and RV7 supported, RV1 and RV4-RV6
+                     not resolved, RV8 against), A-16's branch-point bins, M4's coefficients by
+                     class and its 20 largest (A-18), D-75's PSI shifts (JCEC; including the held-out
+                     per-tumour arm medians used for the SESOI) and D-76's consequence classes.
+                     Label-blind, computed 2026-10-23 for this step - the annotation and its
+                     reproduction of steps 42-52 and 61; the class sizes in this block (annotation, JC
+                     universe, eligibility, coarsened strata - strata_contrasts.csv); the 3'ss PWM
+                     (AUROC 0.936 on held-out chromosomes) and the core score (0.791); RP5a's
+                     covariate VIFs (rp5a_vif.csv); the Alu shares; the experimental branch-point
+                     coverage and its poor agreement with the heuristic (R_up - 65 of 233 covered,
+                     Spearman -0.12, 34% within 3 nt); the band occupancy of B and R_up exons (44% of
+                     held-out R_up exon x cancer cells have m < 0.02); that the count store's JCEC PSI
+                     equals the repository's SE PSI; per-cancer counts of MMRd, hypermutated and
+                     MANTIS MSI-H tumours, of tumour-normal pairs and of RP6c's null contrasts (57).
+                     From the Gate 1 review, also label-blind - the pair arm's SD over all 212
+                     tumour-normal pairs (0.0129 PSI, pooled within cancer), the coverage of R_up
+                     cells (median 49-93 junction reads per held-out cancer, about 30% of measured
+                     cells with no inclusion read) and stratum counts on the first B sample; the
+                     instrument check's label-blind feasibility (R_down exons per mirrored band).
+                     Not seen - any JC or JCEC value compared by MMR status, any tumour-normal
+                     difference by MMR status, any count model, any SHAP direction by class, any M4
+                     ablation

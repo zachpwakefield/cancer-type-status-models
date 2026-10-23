@@ -1,0 +1,9 @@
+class,n,with_exp_bp,share_with_exp_bp,median_exp_bps,heuristic_and_exp_bp,spearman_d_bp_vs_d_exp,share_within_3nt,share_within_3nt_nearest,exp_bp_between_run_and_ag,primary_exp_bp_upstream_of_run,primary_exp_bp_in_run,upstream_d_exp_ge_36,upstream_d_exp_lt_36
+R_up,233,65,0.279,1,65,-0.1175,0.3385,0.2923,2,63,1,45,18
+long_near,187,31,0.1658,1,17,0.9956,0.8824,0.7647,1,30,0,13,17
+runs >= 20,420,96,0.2286,1,82,0.1925,0.4512,0.3902,3,93,1,58,35
+R_down,2658,763,0.2871,1,656,0.3675,0.372,0.3796,59,705,4,226,479
+B_far,15451,6281,0.4065,1,6281,-0.1363,0.1111,0.1001,,,,,
+B_near,43291,18417,0.4254,1,13914,0.1796,0.4592,0.4592,,,,,
+B,58742,24698,0.4204,1,20195,0.1322,0.351,0.3476,,,,,
+shield,124,31,0.25,1,22,0.381,0.5,0.5,3,28,0,2,26

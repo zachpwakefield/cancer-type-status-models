@@ -1,0 +1,18 @@
+model,covariate,vif,n_exons
+primary,R_up,1.261,4848
+primary,log_exon_length,1.068,4848
+primary,log_median_reads,1.103,4848
+primary,poison,1.796,4848
+primary,core_3ss,1.036,4848
+primary,exon_gc,1.068,4848
+primary,exon_alu,1.351,4848
+full (sensitivity),R_up,1.323,4848
+full (sensitivity),log_exon_length,1.073,4848
+full (sensitivity),log_median_reads,1.104,4848
+full (sensitivity),poison,1.796,4848
+full (sensitivity),core_3ss,1.122,4848
+full (sensitivity),exon_gc,1.079,4848
+full (sensitivity),exon_alu,2.345,4848
+full (sensitivity),pwm_20_3,1.134,4848
+full (sensitivity),acceptor_alu,2.213,4848
+pairwise,exon_alu with R_up,1.250,4848

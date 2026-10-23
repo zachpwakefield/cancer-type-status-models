@@ -1,0 +1,17 @@
+{
+ "store": "${CTSM_SPLICE_COUNTS}",
+ "layout_sha256": "46afacf3492d4153ba4f8feddefc2b73dc45b46c82ba68905b09f5b341b7b484",
+ "manifest_sha256": "7bc375b2183f22ff9c49d69eb6a5a7906247747450c93563443df6a349d2a38d",
+ "se_jc_nnz": 460709168,
+ "n_exons": 18496,
+ "n_tumours": 8464,
+ "n_normals": 720,
+ "max_abs_psi_diff": {
+  "jc": 0.0005000317469238125,
+  "jcec": 0.0005000329692846917
+ },
+ "psi_nan_mismatch": {
+  "jc": 0,
+  "jcec": 0
+ }
+}

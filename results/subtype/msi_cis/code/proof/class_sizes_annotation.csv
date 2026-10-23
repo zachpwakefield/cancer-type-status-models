@@ -1,0 +1,72 @@
+class,rule,n
+R_up,pre-registered draft,233
+R_down,pre-registered draft,2658
+long_near,pre-registered draft,187
+B_far,pre-registered draft,15451
+B_near,pre-registered draft,43291
+mid (run 6-9),pre-registered draft,9299
+ctl_polyA,pre-registered draft,37
+ctl_polyA15,pre-registered draft,116
+ctl_ppt_far,pre-registered draft,698
+ctl_deep,pre-registered draft,317
+ctl_deep_far,pre-registered draft,106
+ctl_don,pre-registered draft,270
+ctl_don_far,pre-registered draft,109
+shield,pre-registered draft,124
+"ctl_alu (acc_T <= 7, acceptor 1..50 in an Alu)",pre-registered draft,2721
+"ctl_alu, the Alu antisense to the gene",pre-registered draft,2202
+"R_up, acceptor 1..50 in an antisense Alu",pre-registered draft,154
+"R_up, run 20-24 nt",pre-registered draft,142
+"runs >= 20, branch point >= 50",pre-registered draft,145
+"runs >= 20, branch point > 60",pre-registered draft,106
+"runs >= 20, no branch point within 100",pre-registered draft,93
+"runs >= 20, run in an Alu",pre-registered draft,300
+"runs >= 20, run in an antisense Alu",pre-registered draft,298
+"R_up, run in an antisense Alu",pre-registered draft,154
+"R_down, run in an antisense Alu",pre-registered draft,1297
+"shield, run in an antisense Alu",pre-registered draft,85
+"B, exon overlaps an Alu",pre-registered draft,1464
+ctl_polyA,"acc_A >= 15, acc_T <= 7",116
+ctl_polyA,"acc_A >= 20, acc_T <= 7",37
+ctl_ppt,"PPT >= 15, homopolymers <= 7, acc_T <= 7, any bp",5028
+ctl_ppt_far,"PPT >= 15, homopolymers <= 7, acc_T <= 7, bp >= 36",2391
+ctl_ppt,"PPT >= 15, homopolymers <= 9, acc_T <= 7, any bp",5054
+ctl_ppt_far,"PPT >= 15, homopolymers <= 9, acc_T <= 7, bp >= 36",2408
+ctl_ppt,"PPT >= 20, homopolymers <= 7, acc_T <= 7, any bp",1269
+ctl_ppt_far,"PPT >= 20, homopolymers <= 7, acc_T <= 7, bp >= 36",698
+ctl_ppt,"PPT >= 20, homopolymers <= 9, acc_T <= 7, any bp",1280
+ctl_ppt_far,"PPT >= 20, homopolymers <= 9, acc_T <= 7, bp >= 36",705
+ctl_ppt,"PPT >= 25, homopolymers <= 7, acc_T <= 7, any bp",370
+ctl_ppt_far,"PPT >= 25, homopolymers <= 7, acc_T <= 7, bp >= 36",218
+ctl_ppt,"PPT >= 25, homopolymers <= 9, acc_T <= 7, any bp",378
+ctl_ppt_far,"PPT >= 25, homopolymers <= 9, acc_T <= 7, bp >= 36",222
+ctl_deep,"deep_T >= 15, acc_T <= 7",773
+ctl_deep_far,"deep_T >= 15, acc_T <= 7, bp >= 36",295
+ctl_deep,"deep_T >= 20, acc_T <= 7",317
+ctl_deep_far,"deep_T >= 20, acc_T <= 7, bp >= 36",106
+ctl_don,"don2_T >= 15, acc_T <= 7",634
+ctl_don_far,"don2_T >= 15, acc_T <= 7, bp >= 36",242
+ctl_don,"don2_T >= 20, acc_T <= 7",270
+ctl_don_far,"don2_T >= 20, acc_T <= 7, bp >= 36",109
+ctl_polyA,"acc_A >= 15, acc_T <= 9",121
+ctl_polyA,"acc_A >= 20, acc_T <= 9",38
+ctl_ppt,"PPT >= 15, homopolymers <= 7, acc_T <= 9, any bp",5065
+ctl_ppt_far,"PPT >= 15, homopolymers <= 7, acc_T <= 9, bp >= 36",2416
+ctl_ppt,"PPT >= 15, homopolymers <= 9, acc_T <= 9, any bp",5590
+ctl_ppt_far,"PPT >= 15, homopolymers <= 9, acc_T <= 9, bp >= 36",2655
+ctl_ppt,"PPT >= 20, homopolymers <= 7, acc_T <= 9, any bp",1278
+ctl_ppt_far,"PPT >= 20, homopolymers <= 7, acc_T <= 9, bp >= 36",703
+ctl_ppt,"PPT >= 20, homopolymers <= 9, acc_T <= 9, any bp",1468
+ctl_ppt_far,"PPT >= 20, homopolymers <= 9, acc_T <= 9, bp >= 36",812
+ctl_ppt,"PPT >= 25, homopolymers <= 7, acc_T <= 9, any bp",374
+ctl_ppt_far,"PPT >= 25, homopolymers <= 7, acc_T <= 9, bp >= 36",219
+ctl_ppt,"PPT >= 25, homopolymers <= 9, acc_T <= 9, any bp",455
+ctl_ppt_far,"PPT >= 25, homopolymers <= 9, acc_T <= 9, bp >= 36",271
+ctl_deep,"deep_T >= 15, acc_T <= 9",805
+ctl_deep_far,"deep_T >= 15, acc_T <= 9, bp >= 36",303
+ctl_deep,"deep_T >= 20, acc_T <= 9",342
+ctl_deep_far,"deep_T >= 20, acc_T <= 9, bp >= 36",111
+ctl_don,"don2_T >= 15, acc_T <= 9",673
+ctl_don_far,"don2_T >= 15, acc_T <= 9, bp >= 36",257
+ctl_don,"don2_T >= 20, acc_T <= 9",295
+ctl_don_far,"don2_T >= 20, acc_T <= 9, bp >= 36",117
