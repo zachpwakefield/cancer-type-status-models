@@ -3497,6 +3497,10 @@ def _cap_u28(pr, comp, rt, ctl, cb, gc, mv):
     top = rt[rt.consequence.isin(["canonical", "in_frame", "ptc_nmd", "ptc_escape", "other"])].sort_values(
         "shift", ascending=False).head(15)
     n_p = int(top.consequence.eq("ptc_nmd").sum())
+    top_b = rt[rt.consequence.isin(["canonical", "in_frame", "ptc_nmd", "ptc_escape"])].sort_values(   # as plotted in b
+        "shift", ascending=False).head(15)
+    n_pb = int(top_b.consequence.eq("ptc_nmd").sum())
+    n_eb = int(top_b[top_b.consequence.eq("ptc_nmd")].feature_id.nunique())
     inf_max = float(rt[rt.consequence.eq("in_frame")]["shift"].max())
     c_ = ctl[ctl.group.eq("training") & ctl["class"].eq("B") & ctl.consequence.eq("ptc_nmd")]
     c_h = ctl[ctl.group.eq("held out") & ctl["class"].eq("B") & ctl.consequence.eq("ptc_nmd")]
@@ -3517,9 +3521,10 @@ canonical frame: an in-frame insertion, a premature stop more than 55 nt before 
 (a) Consequence of inclusion for the exons of each class measured in a training cancer (COAD, STAD, UCEC);
 background exons are shown as they are and reweighted to the rising arm's distribution of proficient PSI (deciles);
 "no stop" (< 0.1%) counted with other. (b) Rising-arm exons in the training cancers (exon × cancer): shift (median PSI
-of MMR-deficient minus proficient tumours) against the proficient median, by consequence; the six genes with the
-largest shifts labelled. (c) Mean shift by proficient PSI band, for poison (red) and in-frame (blue) exons, background
-(filled) and rising arm (hollow); bars = 95% bootstrap intervals; bands with ≥ 5 exons. (d) Background exons: per-exon
+of MMR-deficient minus proficient tumours) against the proficient median, by consequence; the five genes with the
+largest poison-exon shifts labelled. (c) Training cancers: mean shift by proficient PSI band, for poison (red) and
+in-frame (blue) exons, background (filled) and rising arm (hollow); bars = 95% bootstrap intervals; bands with at least
+5 exon × cancer rows. (d) Background exons: per-exon
 partial Spearman of PSI with the host gene's log2 CPM across a cancer's tumours, adjusting for the tumour's mean PSI,
 averaged over the 33 cancers; median and quartiles by proficient PSI band (A-21). (e) Rising-arm exons inserted
 into the CDS, training cancers, one per gene and cancer: shift against the host gene's change (mean log2 CPM of
@@ -3531,16 +3536,16 @@ MMR-deficient minus proficient tumours).
 - CQ4, Spearman(shift, gene change), poison minus in-frame: {v('CQ4')}.
 
 None of 4 supported (family CQ). The positive control failed, so CQ2–CQ4 cannot be read. Coupling follows baseline
-inclusion whatever the consequence (panel d; ρ = −0.45 across all annotated exons); within bands, poison background
+inclusion far more than consequence (panel d; ρ = −0.45 across all annotated exons); within bands, poison background
 exons couple slightly more negatively than in-frame ones: {dd('≤ 0.02')}, {dd('0.02–0.1')}, {dd('0.1–0.3')}
 (exploratory, A-21). Panel (a), rising arm: {pc(sh('R_up', 'ptc_nmd'))} poison, {pc(sh('R_up', 'in_frame'))} in-frame,
 {pc(sh('R_up', 'ptc_escape'))} escaping NMD, {pc(sh('R_up', 'canonical'))} canonical ({ru['ptc_nmd']}, {ru['in_frame']} and
 {ru['ptc_escape']} exons inserted into the CDS); matched background {pc(sh('B, matched to R_up proficient PSI', 'ptc_nmd'))},
 {pc(sh('B, matched to R_up proficient PSI', 'in_frame'))}, {pc(sh('B, matched to R_up proficient PSI', 'ptc_escape'))} and
-{pc(sh('B, matched to R_up proficient PSI', 'canonical'))}. Panel (b): {n_p} of the 15 largest shifts are poison exons; no
-in-frame exon moves by more than {inf_max:.3f} ({int(mv.loc['ptc_nmd', 'moving_ge_005'])} of {int(mv.loc['ptc_nmd', 'n'])}
+{pc(sh('B, matched to R_up proficient PSI', 'canonical'))}. Panel (b): {n_pb} of the 15 largest shifts plotted (exon × cancer rows) are
+rows of {n_eb} poison exons ({n_p} of the 15 largest rows when UTR, non-coding and other exons are counted); no in-frame exon moves by more than {inf_max:.3f} ({int(mv.loc['ptc_nmd', 'moving_ge_005'])} of {int(mv.loc['ptc_nmd', 'n'])}
 poison and {int(mv.loc['in_frame', 'moving_ge_005'])} of {int(mv.loc['in_frame', 'n'])} in-frame rows move by ≥ 0.05;
-Fisher p = {fp(mv.loc['ptc_nmd', 'fisher_p_ptc_nmd_vs_in_frame'])}; exploratory). Panel (c): background poison exons do not rise
+Fisher p = {fp(mv.loc['ptc_nmd', 'fisher_p_ptc_nmd_vs_in_frame'])}; exploratory). Panel (c): background poison exons barely move
 in MMR-deficient tumours (band means {rng_(c_)}; held out {rng_(c_h)}). Panel (e), host-gene change, BOD1L1:
 {gl('BOD1L1')}; CCNDBP1: {gl('CCNDBP1')}; BRCA1: {gl('BRCA1')}. No in-frame rising-arm exon reaches a median PSI of
 0.10 in MMR-deficient tumours while ≤ 0.05 in proficient and normal tissue."""
@@ -3574,7 +3579,7 @@ TITLES = {
     "U25": "The model agrees with the exome measures on its confident calls; its own extra calls are borderline.",
     "U26": "Expression models trained the same way transfer almost as well; splicing adds to them.",
     "U27": "A minority of exons move by a tenth of PSI or more; the typical exon moves by a few hundredths.",
-    "U28": "The rising exons that move are poison exons; in-frame insertions stay silent.",
+    "U28": "Most of the rising-arm exons that move furthest are poison exons.",
 }
 
 

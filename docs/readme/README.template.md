@@ -44,7 +44,7 @@ the splicing marks of microsatellite instability, grew into a study of its own (
 | [1. Cancer type](#part-1-cancer-type) | Which of 33 cancers, or normal tissue? | {{n:T1}}–{{n:T7}} | [results/CANCER_TYPE.md](results/CANCER_TYPE.md) |
 | [2. Tumour status](#part-2-tumour-status) | Tumour or adjacent normal tissue? | {{n:S1}}–{{n:S8}} | [results/TUMOUR_STATUS.md](results/TUMOUR_STATUS.md) |
 | [3. Subtype](#part-3-subtype) | Which subtype of this cancer? | {{n:U1}}–{{n:U7}} | [results/SUBTYPE.md](results/SUBTYPE.md) |
-| [4. The MSI study](#part-4-the-msi-study) | Does MMR deficiency move splicing by a rule written in the genome? | {{n:M1}}–{{n:U27}} | [manuscript/MSI_SPLICING_CODE.md](manuscript/MSI_SPLICING_CODE.md) |
+| [4. The MSI study](#part-4-the-msi-study) | Does MMR deficiency move splicing by a rule written in the genome? | {{n:M1}}–{{n:U28}} | [manuscript/MSI_SPLICING_CODE.md](manuscript/MSI_SPLICING_CODE.md) |
 | [5. Across the tasks](#part-5-connections-across-the-tasks) | How do the three tasks' models relate? | {{n:X1}}–{{n:X4}} | [results/ACROSS_TASKS.md](results/ACROSS_TASKS.md) |
 
 The rest of this page has three more sections:
@@ -630,7 +630,7 @@ in LumA against basal-like tumours, per event.
 ## Part 4. The MSI study
 
 *Journal-style write-up: [manuscript/MSI_SPLICING_CODE.md](manuscript/MSI_SPLICING_CODE.md) ·
-methods: [docs/SUBTYPE_METHODS.md](docs/SUBTYPE_METHODS.md) (D-52 to D-56, D-61 to D-75 and D-77) ·
+methods: [docs/SUBTYPE_METHODS.md](docs/SUBTYPE_METHODS.md) (D-52 to D-56 and D-61 to D-77) ·
 step-wise test of the rising arm: [results/MSI_RISING_ARM_PROOF.md](results/MSI_RISING_ARM_PROOF.md) ·
 literature: [docs/MSI_REPEATS_LITERATURE.md](docs/MSI_REPEATS_LITERATURE.md).*
 
@@ -899,6 +899,43 @@ difference. (f) Mean arm shift by purity fifth; filled, MMR-deficient; hollow, p
 bootstrap intervals.
 :::
 
+**What the rising exons are.** Rising-arm exons are mostly near-silent in proficient tumours (median
+PSI 0.06). We placed every cassette exon in its gene's canonical protein-coding transcript and
+translated through it, to ask what including it does (D-76; {{ref:U28}}). The largest rises are mostly
+in *poison* exons: including one puts a premature stop codon where nonsense-mediated decay (NMD)
+should see it (exploratory).
+- **The movers.** Of the 15 largest exon × cancer rises among exons with a coding consequence, 12
+  belong to five poison exons (BOD1L1, CCNDBP1, LRR1, C19orf12 and BRCA1), each rising in two or three
+  training cancers. As a class, poison exons are not shown to move more often: at a rise of 0.05 or
+  more, 14 of 129 poison rows moved, about as often as other rows. Only in-frame rows stand apart (0 of
+  23), and that contrast is not resolved (Fisher p = 0.13). The three exons switched on in a training
+  cancer's MMR-deficient tumours, from at most 0.05 in its proficient tumours and normal tissue to
+  0.10 or more, are all poison exons.
+- **An ordinary set of exons** (exploratory). As a whole the rising arm is 35% poison exons, as many as
+  background exons of the same baseline inclusion (33%).
+- **No sign of a global NMD defect** (exploratory). Background poison exons barely moved in
+  MMR-deficient tumours, about as little as in-frame ones (band means −0.0086 to +0.0014 PSI over
+  training and held-out cancers).
+- **Not shown: an effect on gene output.** The pre-specified tests asked whether MSI's rise in poison
+  exons lowers their genes' mRNA. Their positive control was not resolved: background poison exons
+  tracked their gene's mRNA no more negatively than in-frame ones. That coupling follows baseline
+  inclusion far more than consequence, which suggests why (exploratory). The three tests on the rising
+  arm therefore could not be read. Why the largest movers are poison exons, like the rising arm's
+  mechanism, is open.
+
+::: figure U28
+Each cassette exon placed in its gene's canonical protein-coding transcript (GENCODE v45) and
+translated through: canonical exon, in-frame insertion, poison (premature stop, predicted NMD), stop
+escaping NMD, or other (UTR, non-coding). (a) Consequence of inclusion by exon class, training
+cancers; background as it is and reweighted to the rising arm's proficient PSI. (b) Rising-arm
+exons, one dot per exon and training cancer: shift in MMR-deficient tumours against the proficient
+median PSI, by consequence. (c) Training cancers: mean shift by proficient PSI band for poison (red)
+and in-frame (blue) exons; filled, background; hollow, rising arm; bars, 95% bootstrap intervals.
+(d) Background exons: partial Spearman ρ of PSI with the host gene's mRNA across tumours, by
+proficient PSI band; median and quartiles. (e) Rising-arm exons inserted into the coding sequence,
+training cancers: shift against the host gene's mRNA change.
+:::
+
 **Where this stands.** A literature search found no splicing-based MSI classifier. It also found no
 report of exons gaining inclusion at long poly-T tracts, and no RNA classifier tested across many
 held-out organs against DNA calls. Three parts of this work are therefore new:
@@ -1047,7 +1084,7 @@ helix. Fisher exact tests against all measured exons.
   (D-01 to D-12). Every later analysis was committed to [config/followup.yaml](config/followup.yaml)
   with its predictions before it was run. Decisions and amendments are explained in three files:
   - [docs/BIOLOGY_METHODS.md](docs/BIOLOGY_METHODS.md), D-13 to D-29;
-  - [docs/SUBTYPE_METHODS.md](docs/SUBTYPE_METHODS.md), D-30 to D-47, D-52 to D-75 and D-77;
+  - [docs/SUBTYPE_METHODS.md](docs/SUBTYPE_METHODS.md), D-30 to D-47 and D-52 to D-77;
   - [docs/ACROSS_TASKS_METHODS.md](docs/ACROSS_TASKS_METHODS.md), D-48 to D-51.
 - **Individual-level data stay local.** Per-sample predictions, SHAP arrays and per-tumour figure
   points are written to the git-ignored `data.nosync/`; only aggregates are committed (D-12).
@@ -1085,10 +1122,11 @@ src/ctsm/     library: cohort, splits, extraction, preprocessing, model, pipelin
               biology helpers, subtype labels, figure style
 scripts/      00–06    data, models and summaries (05 runs all jobs)
               07–25    interpretation of tumour status and cancer type; 20/21 draw S1–S10, T1–T9
-              30–38    subtype task; 36 draws U1–U27
+              30–38    subtype task; 36 draws U1–U28
               40–41    across tasks (X1–X4)
               42–57    MSI study (repeats, code, rising arm, models, benchmarks); 53 draws M1
               60       MSI study: size of the shifts in PSI units (D-75)
+              61       MSI study: what including a rising-arm exon does to its transcript (D-76)
               62–63    MSI study: step-wise test of the rising arm in junction reads (D-77); 63 draws RP0–RP8, RPM
               46–49    breast cancer with DNA
               58–59    overview figure (O1) and this README

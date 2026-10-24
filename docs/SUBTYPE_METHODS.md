@@ -864,11 +864,13 @@ normal-tissue PSI.
   17% canonical. Background exons matched on baseline PSI: 33%, 9%, 3%, 23%. The rising arm hits
   ordinary low-inclusion exons.
 - **The movers are poison exons** (exploratory). 12 of the 15 largest shifts are poison (BOD1L1,
-  CCNDBP1, LRR1, C19orf12, BRCA1). No in-frame exon moves by more than 0.022 (14 of 129 poison and
-  0 of 23 in-frame rows move by ≥ 0.05; Fisher p = 0.13). No in-frame exon is switched on
+  CCNDBP1, LRR1, C19orf12, BRCA1). The 15 are exon × cancer rows with a coding consequence (Figure
+  U28b), and the 12 are five exons; counting UTR, non-coding and other exons too, 10 of the 15
+  rows. No in-frame exon moves by more than 0.022 (14 of 129 poison and 0 of 23 in-frame rows
+  move by ≥ 0.05; Fisher p = 0.13). No in-frame exon is switched on
   (≥ 0.10 in MMR-deficient tumours, ≤ 0.05 in proficient and normal tissue).
-- **No global NMD weakening** (A-21). Background poison exons do not rise in MMR-deficient
-  tumours in any baseline band, training or held out. Figure U28.
+- **No global NMD weakening** (A-21). Background poison exons barely move in MMR-deficient
+  tumours in any baseline band, training or held out (at most +0.0014). Figure U28.
 
 
 ### D-77 A step-wise test of the rising arm · `config/followup.yaml` · `scripts/62`
